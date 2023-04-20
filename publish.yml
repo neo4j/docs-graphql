@@ -1,13 +1,13 @@
 # Use this playbook file when you need to build and publish multuple versions of your content together
 site:
-  title: Neo4j Docs Template
-  url: https://neo4j.com/docs/add-on
-  start_page: docs-template:ROOT:index.adoc
+  title: GraphQL Manual
+  url: https://neo4j.com/docs
+  start_page: graphql-manual:ROOT:index.adoc
 
 content:
   sources:
-  - url: https://github.com/neo4j/docs-template.git
-    branches: ['master', 'dev']
+  - url: https://github.com/neo4j/docs-graphql.git
+    branches: ['main']
     exclude:
     - '!**/_includes/*'
     - '!**/readme.adoc'
@@ -25,7 +25,7 @@ urls:
 antora:
   extensions:
   - require: "@neo4j-antora/antora-modify-sitemaps"
-    sitemap_version: '1.0'
+    sitemap_version: '3.0'
     sitemap_loc_version: 'current'
     move_sitemaps_to_components: true
 
@@ -33,8 +33,6 @@ asciidoc:
   extensions:
   - "@neo4j-documentation/remote-include"
   - "@neo4j-documentation/macros"
-  - "@neo4j-antora/antora-add-notes"
-  - "@neo4j-antora/antora-table-footnotes"
   attributes:
     page-theme: docs
     page-type: Docs
@@ -42,8 +40,8 @@ asciidoc:
     page-search-site: Reference Docs
     page-canonical-root: /docs
     page-pagination: true
-    page-no-canonical: true 
-    page-origin-private: true
+    page-no-canonical: true
+    page-origin-private: false
     page-hide-toc: false
     page-mixpanel: 4bfb2414ab973c741b6f067bf06d5575
     includePDF: false
@@ -51,3 +49,5 @@ asciidoc:
     experimental: ''
     copyright: 2022
     common-license-page-uri: https://neo4j.com/docs/license/
+    neo4j-base-uri: ''
+    neo4j-docs-base-uri: /docs
