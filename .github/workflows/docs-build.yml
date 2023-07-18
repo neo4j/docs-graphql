@@ -1,0 +1,24 @@
+name: "Documentation Build"
+
+on:
+  pull_request:
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Build documentation
+        env:
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          npm i
+          npm run build
+          echo "$PULL_REQUEST_NUMBER" > ./build/prnumber
+      - name: Archive documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: build/
