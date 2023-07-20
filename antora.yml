@@ -1,5 +1,5 @@
 name: graphql-manual
-title: Neo4j GraphQL Library
+title: Neo4j GraphQL Library Manual
 version: '4.0'
 start_page: ROOT:index.adoc
 nav:

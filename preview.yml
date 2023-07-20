@@ -1,5 +1,5 @@
 site:
-  title: GraphQL Manual
+  title: Neo4j GraphQL Library Manual
   url: https://neo4j.com/docs
   start_page: graphql-manual:ROOT:index.adoc
 

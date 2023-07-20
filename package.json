@@ -1,7 +1,7 @@
 {
-  "name": "docs-template",
-  "version": "1.0.0",
-  "description": "Template repo for Neo4j documentation projects",
+  "name": "graphql-manual",
+  "version": "4.0.0",
+  "description": "Neo4j GraphQL Library Manual",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

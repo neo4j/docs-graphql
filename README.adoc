@@ -1,6 +1,6 @@
-= Documentation Template
+= Neo4j GraphQL Library Manual
 
-This repo contains the files that you need to start a new Neo4j documentation project.
+This repo contains the documentation for the Neo4j GraphQL Library.
 
 == Prereqs
 
