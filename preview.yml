@@ -1,7 +1,7 @@
 site:
-  title: Neo4j Docs Template
+  title: Neo4j GraphQL Library Manual
   url: https://neo4j.com/docs
-  start_page: docs-template:ROOT:index.adoc
+  start_page: graphql-manual:ROOT:index.adoc
 
 content:
   sources:
