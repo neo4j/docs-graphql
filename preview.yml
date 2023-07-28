@@ -1,5 +1,5 @@
 site:
-  title: Neo4j GraphQL Library
+  title: Neo4j GraphQL Library Manual
   url: https://neo4j.com/docs
   start_page: graphql:ROOT:index.adoc
 
@@ -14,7 +14,7 @@ content:
 
 ui:
   bundle:
-    url: https://s3-eu-west-1.amazonaws.com/static-content.neo4j.com/build/ui-bundle-latest.zip
+    url: https://d12wh7zj8x3amw.cloudfront.net/build/ui-bundle-latest.zip
     snapshot: true
   output_dir: /assets
 
