@@ -13,4 +13,6 @@ Only changes made through `@neo4j/graphql` will trigger events. Changes made dir
 ====
 
 == Subscriptions with Auth
-Some `auth` clauses can be used with subscriptions. How these work is documented xref::auth/auth-directive-subs.adoc#subscriptions[here].
+label:deprecated[]
+
+Some `auth` clauses can be used with subscriptions.

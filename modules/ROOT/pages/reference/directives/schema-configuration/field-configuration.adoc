@@ -94,7 +94,7 @@ directive @relationship(
 [NOTE]
 ====
 In version 4.0.0, `aggregate` is `false` as default.
-See xref:migration/v4-migration.adoc#_relationship_changes[`@relationship changes`] for more information.
+See xref:migration/v4-migration/index.adoc#_relationship_changes[`@relationship changes`] for more information.
 ====
 
 === Usage

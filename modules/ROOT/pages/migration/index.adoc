@@ -237,7 +237,7 @@ No change. See xref::reference/directives/cypher.adoc[`@cypher` directive] for m
 
 ==== `@isAuthenticated`, `@hasRole` and `@hasScope`
 
-Will require significant migration, but will be worth the effort! See xref::auth/index.adoc[Authentication and Authorization].
+Will require significant migration, but will be worth the effort! See xref::authentication-and-authorization/index.adoc[Authentication and Authorization].
 
 ==== `@additionalLabels`
 
