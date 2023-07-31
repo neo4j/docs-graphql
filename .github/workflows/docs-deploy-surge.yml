@@ -45,6 +45,7 @@ jobs:
       - id: get-deploy-id
         run: |
           deployid=$(<deployid)
+          case "$deployid" in ''|*[!0-9]*) echo "Provided PR number is not an integer"; exit 1 ;; esac
           echo "::set-output name=deploy-id::$deployid"
       
       - uses: actions/setup-node@v3
