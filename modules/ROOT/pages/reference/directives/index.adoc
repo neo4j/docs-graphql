@@ -8,10 +8,9 @@ The `@alias` directive will map a GraphQL schema field to a Neo4j property on a 
 Reference: xref::reference/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
 
 == `@auth`
+label:deprecated[]
 
 The `@auth` directive is used to define complex fine-grained and role-based access control for object types and fields.
-
-Reference: xref::auth/auth-directive-subs.adoc[`@auth` directive]
 
 == `@coalesce`
 

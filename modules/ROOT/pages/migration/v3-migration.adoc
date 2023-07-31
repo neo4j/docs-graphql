@@ -123,9 +123,11 @@ NOTE: Old queries will still work in this release, but are marked as `@deprecate
 To better reflect its intended usage, the `@ignore` directive is now named `@computed`. Behaviour is unchanged, so you just need to
 rename this directive in your schema.
 
-== Auth plugin system
-Auth setup now relies on _plugins_ to setup the configuration. You'll need to install `@neo4j/graphql-plugin-auth` or a custom plugin
-as shown in the xref::auth/getting-started.adoc[auth setup page].
+== Auth plugin system 
+label:deprecated[]
+
+Auth setup now relies on _plugins_ to setup the configuration. 
+You'll need to install `@neo4j/graphql-plugin-auth` or a custom plugin.
 
 === JWT auth
 For JWT authorization, instead of the previous configuration:
@@ -192,7 +194,7 @@ const neoSchema = new Neo4jGraphQL({
 });
 ----
 
-NOTE: Please, refer to xref::auth/getting-started.adoc[auth setup] before setting up auth.
+NOTE: Please, refer to xref::authentication-and-authorization/index.adoc[auth setup] before setting up auth.
 
 == Types plurals changes
 To improve consistency, some automatically generated plurals (e.g. `createActors`) have changed. This may cause issues if

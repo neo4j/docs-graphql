@@ -25,7 +25,7 @@
 *** xref:pagination/offset-based.adoc[]
 *** xref:pagination/cursor-based.adoc[]
 
-** Authentication and Authorization
+** xref:authentication-and-authorization/index.adoc[]
 *** xref:authentication-and-authorization/configuration.adoc[]
 *** xref:authentication-and-authorization/authentication.adoc[]
 *** xref:authentication-and-authorization/authorization.adoc[]
