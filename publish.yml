@@ -1,8 +1,8 @@
 # Use this playbook file when you need to build and publish multuple versions of your content together
 site:
-  title: Neo4j GraphQL Library Manual
+  title: Neo4j GraphQL Library
   url: https://neo4j.com/docs
-  start_page: graphql-manual:ROOT:index.adoc
+  start_page: graphql:ROOT:index.adoc
 
 content:
   sources:
