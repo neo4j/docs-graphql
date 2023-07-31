@@ -1,7 +1,7 @@
 {
-  "name": "graphql-manual",
+  "name": "graphql",
   "version": "4.0.0",
-  "description": "Neo4j GraphQL Library Manual",
+  "description": "Neo4j GraphQL Library",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

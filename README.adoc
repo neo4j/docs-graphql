@@ -1,4 +1,4 @@
-= Neo4j GraphQL Library Manual
+= Neo4j GraphQL Library
 
 This repo contains the documentation for the Neo4j GraphQL Library.
 
