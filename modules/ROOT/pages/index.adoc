@@ -1,16 +1,13 @@
 [[index]]
+:description: This section describes the Neo4j GraphQL Library.
 = Neo4j GraphQL Library
-:experimental:
-:chapter-label:
-:toc-title: Contents
-//:front-cover-image: image::title-page.png[]
-:header-title: NEO4J GRAPHQL LIBRARY
-:title-page-background-image: image::title-page.png[]
 
-The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript library that enables rapid API development for cross-platform and mobile applications by tapping into the power of connected data.
+The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript library that enables rapid API development for cross-platform, and mobile applications by tapping into the power of connected data.
 
-With Neo4j as the graph database, the GraphQL Library makes it simple for applications to have application data treated as a graph natively from the front-end all the way to storage, avoiding duplicate schema work and ensuring flawless integration between front-end and backend developers.
+With Neo4j as the graph database, the GraphQL Library makes it simple for applications to have data treated as a graph natively from the front-end all the way to storage.
+This avoids duplicate schema work and ensures flawless integration between front-end and backend developers.
 
+// I'm not sure if I understand what this paragraph is actually saying? Isn't it a little bit of a repetition from the previous paragraphs?//
 Written in TypeScript, the library's schema-first paradigm lets developers focus on the application data they need, while taking care of the heavy lifting involved in building the API.
 
 TIP: Are you a GRANDstack user? We have deprecated the GRANDstack starter app, find more information xref::deprecations.adoc[here].
