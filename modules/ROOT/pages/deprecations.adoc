@@ -33,3 +33,6 @@ The associated GitHub repositories have also been archived.
 This tool was repurposed and expanded with xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox], an onboarding, embeddable low-code tool that can be integrated to Neo4j.
 
 == `@auth` directive
+
+The `@auth` directive has been replaced by xref:authentication-and-authorization/authentication.adoc[`@authentication`] and xref:authentication-and-authorization/authorization.adoc[`@authorization`]. 
+See the xref::migration/v4-migration/authorization.adoc[Migration guide] for details on how to upgrade.
