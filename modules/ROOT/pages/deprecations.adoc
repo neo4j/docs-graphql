@@ -13,8 +13,6 @@ The main purpose of the GRANDstack starter app to demonstrate how the Neo4j Labs
 It allowed developers to build applications more quickly and with a bigger focus on functionality, while also helping users who already had an existing front end and needed a new backend.
 
 Over time, the GRANDstack starter app grew to support other frameworks such as Flutter and Angular, thus the need to revisit its scope.
-
-// I suppose this is still WIP? //
 The intention is to replace this project with a new starter application product, which will focus on the backend and the configuration of the GraphQL library, as well as help developers with their front-end.
 
 In the meantime, the `create-grandstack-app` npm package has been marked as deprecated.
