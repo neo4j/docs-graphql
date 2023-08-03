@@ -2,9 +2,15 @@
 
 = Neo4j GraphQL Toolbox
 
-Experiment with your Neo4j GraphQL API using the purpose-built web IDE.
+Neo4j GraphQL Toolbox is an onboarding, embeddable low-code tool that allows writing and executing GraphQL queries and mutations against your Neo4j database, with absolutely no setup required. Intrigued to see more? Let’s try it out together!
 
 > This tool is for development and experimentation purposes only!
+
+we released a beta version of a developer user interface to build a powerful GraphQL API using the @neo4j/graphql library, which we named the Neo4j GraphQL Toolbox.
+
+We also made it publicly available under https://graphql-toolbox.neo4j.io. I wrote an article back when we released the beta version, which offers an introduction to the web application Neo4j GraphQL Toolbox. A very brief intro is further available on our documentation page.
+
+
 
 == Link
 
