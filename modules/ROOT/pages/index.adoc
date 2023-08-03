@@ -8,14 +8,14 @@ The GRANDstack starter app has been deprecated.
 For more information, read the section on xref::deprecations.adoc[Deprecations].
 ====
 
-The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript library that enables rapid API development for cross-platform, and mobile applications by tapping into the power of connected data.
+The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript library that enables rapid API development for cross-platform and mobile applications by tapping into the power of connected data.
 
 With Neo4j as the graph database, the GraphQL Library makes it simple for applications to have data treated as a graph natively from the front-end all the way to storage.
 This avoids duplicate schema work and ensures flawless integration between front-end and backend developers.
 
 == How it works
 
-Written in TypeScript, the Neo4j GraphQL Library offers a set of type definitions that describes the shape of your graph data.
+The Neo4j GraphQL Library requires a set of type definitions that describes the shape of your graph data.
 It can generate an entire executable schema with all of the additional types needed to execute queries and mutations to interact with your Neo4j database.
 
 For every query and mutation that is executed against this generated schema, the Neo4j GraphQL Library generates a single Cypher query which is executed against the database. This eliminates the https://www.google.com/search?q=graphql+n%2B1[N+1 Problem], which can make GraphQL implementations slow and inefficient.

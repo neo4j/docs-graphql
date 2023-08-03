@@ -8,7 +8,7 @@ The following products and applications are deprecated:
 
 == GRANDstack starter app
 
-The main purpose of the GRANDstack starter app to demonstrate how the Neo4j Labs GraphQL library could be used in the context of a full-stack application using React and Apollo client.
+The main purpose of the GRANDstack starter app was to demonstrate how the Neo4j Labs GraphQL library could be used in the context of a full-stack application using React and Apollo client.
 It allowed developers to build applications more quickly and with a bigger focus on functionality, while also helping users who already had an existing front end and needed a new backend.
 
 Over time, the GRANDstack starter app grew to support other frameworks such as Flutter and Angular, thus the need to revisit its scope.
@@ -27,4 +27,4 @@ Neo4j GraphQL Architect was a low-code graph app for Neo4j Desktop that enabled 
 It was deprecated and removed from npm, the https://install.graphapp.io/[Graph App gallery], and Neo4j Desktop.
 The associated GitHub repositories have also been archived.
 
-This tool was repurposed and expanded with xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox], an onboarding, embeddable low-code tool that can be integrated to Neo4j.
+This tool was reimagined in the xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox], an onboarding, low-code tool that can be integrated to Neo4j.
