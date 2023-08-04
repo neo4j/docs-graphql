@@ -4,7 +4,8 @@
 To get started with subscriptions you need a GraphQL server with subscription capabilities. 
 You can enable them by passing the `subscriptions` feature to `Neo4jGraphQL`:
 
-```javascript
+[source, javascript]
+----
 new Neo4jGraphQL({
     typeDefs,
     driver,
@@ -12,7 +13,7 @@ new Neo4jGraphQL({
         subscriptions: true
     },
 });
-```
+----
 
 == Example using Apollo and WebSockets
 For this example, we will use link:https://www.apollographql.com/[Apollo] and link:https://github.com/enisdenjo/graphql-ws[graphql-ws].
@@ -20,13 +21,17 @@ For this example, we will use link:https://www.apollographql.com/[Apollo] and li
 === Setting up the server
 
 Install the following dependencies:
-```bash
+
+[source, bash]
+----
 npm i --save ws graphql-ws neo4j-driver @neo4j/graphql express @apollo/server body-parser cors
-```
+----
 
 The following code implements a simple `@apollo/server` server with subscriptions. You can find more examples and documentation
 on subscriptions in link:https://www.apollographql.com/docs/apollo-server/data/subscriptions/[Apollo's documentation].
-```javascript
+
+[source, javascript]
+----
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -116,7 +121,7 @@ async function main() {
 }
 
 main();
-```
+----
 
 [NOTE]
 ====
@@ -126,7 +131,9 @@ If you need to scale horizontally for a production-ready application, see xref::
 
 === GraphQL subscriptions
 With the previous server running, we have subscriptions available for `Movie` and `Actor`. We can subscribe to new movies created with the following statement:
-```graphql
+
+[source, graphql]
+----
 subscription {
     movieCreated(where: { title: "The Matrix" }) {
         createdMovie {
@@ -134,10 +141,12 @@ subscription {
         }
     }
 }
-```
+----
 
 Any new movie created with the matching title will trigger a subscription. You can try this with the following query:
-```graphql
+
+[source, graphql]
+----
 mutation {
     createMovies(input: [{ title: "The Matrix" }]) {
         movies {
@@ -145,7 +154,7 @@ mutation {
         }
     }
 }
-```
+----
 
 NOTE: This example uses the link:https://www.npmjs.com/package/graphql-ws[graphql-ws] implementation, if you are using Apollo Studio, make sure
 to select "graphql-ws" implementation in connection settings.

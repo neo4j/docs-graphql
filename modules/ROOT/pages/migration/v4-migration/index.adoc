@@ -49,25 +49,27 @@ Subscriptions are no longer configured as a plugin, but as a feature within the 
 
 This means that, instead of:
 
-```javascript
+[source, javascript]
+----
 const neoSchema = new Neo4jGraphQL({
     typeDefs,
     plugins: {
         subscriptions: plugin,
     },
 });
-```
+----
 
 Subscriptions are now defined as:
 
-```javascript
+[source, javascript]
+----
 const neoSchema = new Neo4jGraphQL({
     typeDefs,
     features: {
         subscriptions: plugin,
     },
 });
-```
+----
 
 ==== Default subscriptions
 
