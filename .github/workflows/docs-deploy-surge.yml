@@ -55,7 +55,7 @@ jobs:
       - name: Deploy docs to surge
         shell: bash
         env:
-          SURGE_TOKEN: "${{ secrets.DOCS_SURGE_TOKEN }}"
+          SURGE_TOKEN: ${{ secrets.DOCS_SURGE_TOKEN }}
         run: |
           npm install -g surge
           surge ./site ${{ github.event.repository.owner.login}}-${{ github.event.repository.name}}-${{ steps.get-deploy-id.outputs.deploy-id }}.surge.sh --token "$SURGE_TOKEN"
