@@ -74,9 +74,11 @@
 
 *** xref:reference/driver-configuration.adoc[]
 
-** xref:guides/index.adoc[]
-*** xref:guides/apollo-federation.adoc[]
-*** xref:guides/frameworks/nextjs.adoc[]
+** How-to guides
+*** xref:how-to-guides/create-project.adoc[]
+*** Integrations
+**** xref:how-to-guides/integrations/apollo-federation.adoc[]
+**** xref:how-to-guides/integrations/nextjs.adoc[]
 
 ** xref:troubleshooting.adoc[]
 
