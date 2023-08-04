@@ -31,4 +31,4 @@ jobs:
             Thanks for the documentation updates.
 
             The preview documentation has now been torn down - reopening this PR will republish it.
-          GITHUB_TOKEN: ${{ secrets.PR_COMMENT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DOCS_PR_COMMENT_TOKEN }}
