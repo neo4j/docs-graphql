@@ -1,4 +1,5 @@
 [[Deprecations]]
+:description: This section lists the products and applications that were deprecated from the Neo4j GraphQL Library.
 = Deprecations
 
 The following products and applications are deprecated:

@@ -1,0 +1,12 @@
+[queries-aggregations]
+:description: This section describes queries and aggregations. 
+= Queries and aggregations
+
+Each node defined in type definitions have two query fields generated for it: one for *querying* data and the other for *aggregating* data.
+
+This section describes the following topics:
+
+* xref:queries-aggregations/queries.adoc[Queries] - 
+* xref:queries-aggregations/aggregations.adoc[Aggregations] - 
+* xref:queries-aggregations/filtering.adoc[Filtering] - 
+* xref:queries-aggregations/sorting.adoc[Sorting] - 
