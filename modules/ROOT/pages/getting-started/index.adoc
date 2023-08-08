@@ -149,7 +149,7 @@ The address http://localhost:4000/ is the default URL in which Apollo Server sta
 == Create nodes in the database
 
 . Visit http://localhost:4000/ in your web browser. 
-You should get redirected to the Sandbox:
+You should get redirected to the Apollo Sandbox:
 +
 image::apollo-server-landing-page.png[]
 
