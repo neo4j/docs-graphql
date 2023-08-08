@@ -10,10 +10,10 @@ The following products and applications are deprecated:
 == GRANDstack starter app
 
 The main purpose of the GRANDstack starter app was to demonstrate how the Neo4j Labs GraphQL library could be used in the context of a full-stack application using React and Apollo client.
-It allowed developers to build applications more quickly and with a bigger focus on functionality, while also helping users who already had an existing front end and needed a new backend.
+It allowed developers to build applications more quickly and with a bigger focus on functionality, while also helping users who already had an existing front end and needed a new back end.
 
 Over time, the GRANDstack starter app grew to support other frameworks such as Flutter and Angular, thus the need to revisit its scope.
-The intention is to replace this project with a new starter application product, which will focus on the backend and the configuration of the GraphQL library, as well as help developers with their front-end.
+The intention is to replace this project with a new starter application product, which will focus on the back end and the configuration of the GraphQL library, as well as help developers with their front end.
 
 In the meantime, the `create-grandstack-app` npm package has been marked as deprecated.
 It can still be used to skeleton a GRANDstack app, but the user will be warned that the package is deprecated.

@@ -32,7 +32,7 @@ image::toolbox-editor-view.png[]
 
 == Store type definitions as favorite
 
-You can store your type definitions as favorites and that a range of settings are available to work with.
+You can store your type definitions as favorites and access a range of settings to work with.
 
 . Go to the Type definitions tab and click on the star icon to save it as a favorite:
 +
