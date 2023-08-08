@@ -15,7 +15,7 @@ content:
 
 ui:
   bundle:
-    url: static-content.neo4j.com/build/ui-bundle-latest.zip
+    url: https://static-content.neo4j.com/build/ui-bundle-latest.zip
     snapshot: true
   output_dir: /assets
 
