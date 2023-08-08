@@ -22,9 +22,6 @@ It can generate an entire executable schema with all of the additional types nee
 
 For every query and mutation that is executed against this generated schema, the Neo4j GraphQL Library generates a single Cypher query which is executed against the database. This eliminates the https://www.google.com/search?q=graphql+n%2B1[N+1 Problem], which can make GraphQL implementations slow and inefficient.
 
-
-== Features
-
 - Automatic generation of xref::queries-aggregations/queries.adoc[Queries] and xref::mutations/index.adoc[Mutations] for CRUD interactions.
 - xref::reference/type-definitions/types.adoc[Types], including temporal and spatial.
 - Support for both node and relationship properties.
@@ -44,7 +41,7 @@ In case you prefer to use front-end frameworks, these are some clients that inte
 
 - https://reactjs.org/[React] - support through https://www.apollographql.com/docs/react/[Apollo Client]
 - https://vuejs.org/[Vue.js] - support through https://apollo.vuejs.org/[Vue Apollo]
-- https://angularjs.org/[AngularJS] - support through https://apollo-angular.com/docs/[Apollo Angular]
+- https://angularjs.org/[AngularJS] - support through https://apollo-angular.com/docs/[Apollo Angular].
 
 == Deployment
 
@@ -57,8 +54,8 @@ You can check their own documentation about https://www.apollographql.com/docs/a
 The Neo4j GraphQL Library uses https://semver.org/[Semantic Versioning]. 
 Given a version number `MAJOR.MINOR.PATCH`, the increment is based on:
 
-- `MAJOR` - incompatible API changes compared to the previous `MAJOR` version, for which you will likely have to migrate.
-- `MINOR` - new features have been added in a backwards compatible manner.
+- `MAJOR` - incompatible API changes compared to the previous `MAJOR` version, for which you will likely have to migrate
+- `MINOR` - new features have been added in a backwards compatible manner
 - `PATCH` - bug fixes have been added in a backwards compatible manner.
 
 Additionally, prerelease version numbers may have additional suffixes, for example `MAJOR.MINOR.PATCH-PRERELEASE.NUMBER`, where `PRERELEASE` is one of the following:
@@ -71,14 +68,14 @@ Additionally, prerelease version numbers may have additional suffixes, for examp
 
 == Requirements
 
-1. https://neo4j.com/[Neo4j Database] version 4.4 and newer with https://neo4j.com/docs/apoc/current/[APOC] plugin.
-2. https://nodejs.org/en/[Node.js] 16+.
+. https://neo4j.com/[Neo4j Database] version 4.4 and newer with https://neo4j.com/docs/apoc/current/[APOC] plugin.
+. https://nodejs.org/en/[Node.js] 16+.
 
 == Resources
 
-1. https://github.com/neo4j/graphql[GitHub]
-2. https://github.com/neo4j/graphql/issues[Issue Tracker]
-3. https://www.npmjs.com/package/@neo4j/graphql[npm package]
+. https://github.com/neo4j/graphql[GitHub]
+. https://github.com/neo4j/graphql/issues[Issue Tracker]
+. https://www.npmjs.com/package/@neo4j/graphql[npm package]
 
 == Licence
 
