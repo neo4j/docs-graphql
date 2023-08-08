@@ -1,65 +1,18 @@
-[[queries-aggregations]]
+[[aggregations]]
+:description: This page describes aggregations supported by Neo4j GraphQL.
 = Aggregations
 
-Neo4j GraphQL supports aggregations on fields with type:
+Here is a list of fields that accept aggregations supported by Neo4j GraphQL:
 
-1. `ID`- String
-2. `String` - String
-3. `Int` - Numerical
-4. `Float` - Numerical
-5. `BigInt` - Numerical
-6. `DateTime`
-7. `Time`
-8. `LocalTime`
-9. `LocalDateTime`
-10. `Duration`
+[cols="1,1,2,3"]
+|===
+| Field | Type | Argument | Query examples
 
-Numerical Fields will expose the following aggregation selections:
-
-1. `min`
-2. `max`
-3. `average`
-4. `sum`
-
-String fields will expose:
-
-1. `shortest`
-2. `longest`
-
-The rest will only expose:
-
-1. `min`
-2. `max`
-
-
-Aggregation queries accepts a `where` argument for xref::queries-aggregations/filtering.adoc[filtering] data.
-
-== Counting Using aggregation
-
-The following Query will count all User nodes:
-
-[source, graphql, indent=0]
-----
-query {
-    usersAggregate {
-        count
-    }
-}
-----
-
-== Counting User nodes where name starts with "J"
-
-[source, graphql, indent=0]
-----
-query {
-    usersAggregate(where: { name_STARTS_WITH: "J" }) {
-        count
-    }
-}
-----
-
-== Querying for the longest User name
-
+| `ID`, `String`
+| String
+| `shortest`, `longest`
+a| 
+.Longest User name
 [source, graphql, indent=0]
 ----
 query {
@@ -71,8 +24,34 @@ query {
 }
 ----
 
-== Querying for first Post date
+| `Int`, `Float`, `BigInt`, `count`
+| Numerical
+| `min`, `max`, `average`, `sum`
+a|
+.Count all User nodes
+[source, graphql, indent=0]
+----
+query {
+    usersAggregate {
+        count
+    }
+}
+---- 
+.How many User with name starting with "J"
+[source, graphql, indent=0]
+----
+query {
+    usersAggregate(where: { name_STARTS_WITH: "J" }) {
+        count
+    }
+}
+----
 
+| `DateTime`, `Time`, `LocalTime`, `LocalDateTime`, `Duration`
+| 
+| `min`, `max`
+a|
+.First Post date
 [source, graphql, indent=0]
 ----
 query {
@@ -84,7 +63,13 @@ query {
 }
 ----
 
-[[queries-aggregate-related-nodes]]
+|===
+
+[NOTE]
+====
+The argument `where` can also be used in aggregation queries for xref::queries-aggregations/filtering.adoc[filtering] data.
+====
+
 == Aggregate related nodes
 
 Related nodes can also be aggregated within a query by accessing the aggregation fields in the node.
