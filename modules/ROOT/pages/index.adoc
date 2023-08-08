@@ -77,7 +77,7 @@ Additionally, prerelease version numbers may have additional suffixes, for examp
 . https://github.com/neo4j/graphql/issues[Issue Tracker]
 . https://www.npmjs.com/package/@neo4j/graphql[npm package]
 
-== Licence
+== License
 
 ifndef::backend-pdf[]
 Documentation license: link:{common-license-page-uri}[Creative Commons 4.0]
