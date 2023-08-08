@@ -1,3 +1,5 @@
+* xref:index.adoc[Neo4j GraphQL Library]
+
 ** xref:getting-started/index.adoc[]
 *** xref:getting-started/toolbox.adoc[]
 
