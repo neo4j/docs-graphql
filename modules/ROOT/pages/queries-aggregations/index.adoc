@@ -1,0 +1,10 @@
+[queries-aggregations]
+:description: This section describes queries and aggregations. 
+= Queries and aggregations
+
+This section addresses the following topics:
+
+* xref:queries-aggregations/queries.adoc[Queries] - How to read or fetch values.
+* xref:queries-aggregations/aggregations.adoc[Aggregations] - How to combine lists of types from different sources into a single list.
+* xref:queries-aggregations/filtering.adoc[Filtering] - How to filter query results to find objects.
+* xref:queries-aggregations/sorting.adoc[Sorting] - How to sort query results by each individual field.
