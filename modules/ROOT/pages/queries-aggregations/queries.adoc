@@ -29,7 +29,7 @@ query {
 }
 ----
 
-=== Undirected queries
+== Undirected queries
 
 All xref:reference/type-definitions/relationships.adoc[relationships] are created with a direction from one node to another.
 By default, all queries follow the direction defined in the relationship. 

@@ -13,7 +13,7 @@ This section addresses the following topics:
 * xref:queries-aggregations/sorting.adoc[Sorting] - How to sort query results by each individual field.
 
 [#examples-reference]
-==== All examples featured in this section use the following type definitions:
+*All examples featured in this section use the following type definitions:*
 
 [source, graphql, indent=0]
 ----
