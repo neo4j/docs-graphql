@@ -4,12 +4,11 @@
 
 Here is a list of fields that accept aggregations supported by Neo4j GraphQL:
 
-[cols="1,1,2,3"]
+[cols="1,1,2"]
 |===
-| Field | Type | Argument | Query examples
+| Type | Aggregation function | Query example
 
 | `ID`, `String`
-| String
 | `shortest`, `longest`
 a| 
 .Longest User name
@@ -24,31 +23,20 @@ query {
 }
 ----
 
-| `Int`, `Float`, `BigInt`, `count`
-| Numerical
+| `Int`, `Float`, `BigInt`
 | `min`, `max`, `average`, `sum`
 a|
-.Count all User nodes
+.Example query
 [source, graphql, indent=0]
 ----
 query {
     usersAggregate {
-        count
+        
     }
 }
 ---- 
-.How many User with name starting with "J"
-[source, graphql, indent=0]
-----
-query {
-    usersAggregate(where: { name_STARTS_WITH: "J" }) {
-        count
-    }
-}
-----
 
 | `DateTime`, `Time`, `LocalTime`, `LocalDateTime`, `Duration`
-| 
 | `min`, `max`
 a|
 .First Post date
@@ -62,7 +50,6 @@ query {
     }
 }
 ----
-
 |===
 
 [NOTE]
@@ -77,8 +64,27 @@ In these fields, you can **count**, aggregate the **nodes** or **edges** fields.
 
 The same selections and types as before are available in relationship aggregations.
 
-=== Counting all posts per users
+.Counting User nodes
+[source, graphql, indent=0]
+----
+query {
+    usersAggregate {
+        count
+    }
+}
+----
 
+.Counting User nodes where name starts with "J"
+[source, graphql, indent=0]
+----
+query {
+    usersAggregate(where: { name_STARTS_WITH: "J" }) {
+        count
+    }
+}
+----
+
+.Counting all posts per User
 [source, graphql, indent=0]
 ----
 query {
@@ -91,9 +97,9 @@ query {
 }
 ----
 
-=== Finding longest post per user
-By using the `node` field, related nodes properties can be aggregated.
+By using the `node` field, related nodes properties can be aggregated:
 
+.Finding longest post per User
 [source, graphql, indent=0]
 ----
 query {
@@ -110,9 +116,11 @@ query {
 }
 ----
 
-=== Aggregate relationships
-Relationship properties can be aggregated as well by using the `edge` field.
+== Aggregate relationships
 
+Relationship properties can be aggregated as well by using the `edge` field:
+
+.Querying what User nodes posted up to a date
 [source, graphql, indent=0]
 ----
 query {
@@ -129,10 +137,8 @@ query {
 }
 ----
 
-=== Undirected aggregation queries
-
 When performing an aggregation on related nodes, the query against the relationship
-can be defined as an xref::queries-aggregations/queries.adoc#_undirected_queries[undirected] using the argument `directed: false`:
+can be defined as "undirect" by using the argument `directed: false`:
 
 [source, graphql, indent=0]
 ----
