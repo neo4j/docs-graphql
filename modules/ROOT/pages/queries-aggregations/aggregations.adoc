@@ -2,7 +2,7 @@
 :description: This page describes aggregations supported by Neo4j GraphQL.
 = Aggregations
 
-Here is a list of fields that accept aggregations supported by Neo4j GraphQL:
+Based on the given <<queries-aggregations/index.adoc#examples-reference, type definitions>>, here is a list of fields that accept aggregations supported by Neo4j GraphQL:
 
 [cols="1,1,2"]
 |===
