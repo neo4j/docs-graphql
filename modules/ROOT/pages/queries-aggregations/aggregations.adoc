@@ -6,9 +6,9 @@ Here is a list of fields that accept aggregations supported by Neo4j GraphQL:
 
 [cols="1,1,2"]
 |===
-| Type | Aggregation function | Query example
+| Type | Aggregating function | Query example
 
-| `ID`, `String`
+| String (e.g. `ID`, `String`)
 | `shortest`, `longest`
 a| 
 .Longest User name
@@ -23,7 +23,7 @@ query {
 }
 ----
 
-| `Int`, `Float`, `BigInt`
+| Numeric (e.g. `Int`, `Float`, `BigInt`)
 | `min`, `max`, `average`, `sum`
 a|
 .Example query
@@ -36,7 +36,7 @@ query {
 }
 ---- 
 
-| `DateTime`, `Time`, `LocalTime`, `LocalDateTime`, `Duration`
+| Temporal (e.g. `DateTime`, `Time`, `LocalTime`, `LocalDateTime`, `Duration`)
 | `min`, `max`
 a|
 .First Post date
