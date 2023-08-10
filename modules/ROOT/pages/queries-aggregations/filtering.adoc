@@ -28,10 +28,10 @@ For the `Boolean` type, equality operators are the only ones available.
 
 These are the operators available for numeric (`Int`, `Float`, xref::reference/type-definitions/types.adoc#type-definitions-types-bigint[`BigInt`]), xref::reference/type-definitions/types.adoc#type-definitions-types-temporal[temporal] and xref::reference/type-definitions/types.adoc#type-definitions-types-spatial[spatial] types:
 
-* `_LT`: less than.
-* `_LTE`: less than or equal to.
-* `_GT`: greater than.
-* `_GTE`: greater than or equal to.
+* `_LT`
+* `_LTE`
+* `_GT`
+* `_GTE`
 
 Here is an example of how to use them:
 
