@@ -6,7 +6,7 @@ Based on the given <<queries-aggregations/index.adoc#examples-reference, type de
 
 [cols="1,1,2"]
 |===
-| Type | Aggregating function | Query example
+| Type | Aggregating function | Example
 
 | String (e.g. `ID`, `String`)
 | `shortest`, `longest`
