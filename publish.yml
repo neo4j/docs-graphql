@@ -12,6 +12,8 @@ content:
     - '!**/_includes/*'
     - '!**/readme.adoc'
     - '!**/README.adoc'
+  - url: https://github.com/neo4j/graphql/docs.git
+    branches: ['master']
 
 ui:
   bundle:
