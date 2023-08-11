@@ -2,7 +2,7 @@
 site:
   title: Neo4j GraphQL Library
   url: https://neo4j.com/docs
-  start_page: graphql:ROOT:index.adoc
+  start_page: graphql-manual:ROOT:index.adoc
 
 content:
   sources:
