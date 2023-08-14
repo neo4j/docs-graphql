@@ -1,9 +1,11 @@
 [[sorting]]
+:description: This page describes how to use sorting input types.
 = Sorting
 
-A sorting input type is generated for every object type defined in your type definitions, allowing for query results to be sorted by each individual field.
+A sorting input type is generated for every object type defined in your type definitions.
+It allows for query results to be sorted by each individual field.
 
-Using the following example type definition:
+Using this example type definition:
 
 [source, graphql, indent=0]
 ----
@@ -13,7 +15,7 @@ type Movie {
 }
 ----
 
-The following sorting input type and query will be generated:
+The following sorting input type and query should be generated:
 
 [source, graphql, indent=0]
 ----
@@ -44,7 +46,7 @@ type Query {
 }
 ----
 
-The following query would then allow you to fetch all movies sorted by runtime in ascending order:
+The resulting query should then allow fetching all movies sorted by runtime in ascending order:
 
 [source, graphql, indent=0]
 ----
@@ -62,7 +64,7 @@ query {
 }
 ----
 
-Additionally, say there was a relationship between the `Movie` and an `Actor` type, sorting can also be applied when fetching the `actors` field:
+Additionally, in case there was a relationship between the `Movie` and an `Actor` type, sorting can also be applied when fetching the `actors` field:
 
 [source, graphql, indent=0]
 ----

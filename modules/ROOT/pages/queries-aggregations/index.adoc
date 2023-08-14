@@ -2,9 +2,49 @@
 :description: This section describes queries and aggregations. 
 = Queries and aggregations
 
+Each node defined in xref::/reference/type-definitions/index.adoc[type definitions] has two query fields generated for it: one for *querying* data and another one for *aggregating* it.
+Each of these fields, by their part, accepts two arguments used for *filtering*, *sorting*, and *pagination*.
+
 This section addresses the following topics:
 
 * xref:queries-aggregations/queries.adoc[Queries] - How to read or fetch values.
 * xref:queries-aggregations/aggregations.adoc[Aggregations] - How to combine lists of types from different sources into a single list.
 * xref:queries-aggregations/filtering.adoc[Filtering] - How to filter query results to find objects.
 * xref:queries-aggregations/sorting.adoc[Sorting] - How to sort query results by each individual field.
+
+[#examples-reference]
+*All examples featured in this section use the following type definitions:*
+
+[source, graphql, indent=0]
+----
+type Post {
+    id: ID! @id
+    content: String!
+    creator: User! @relationship(type: "HAS_POST", direction: IN, properties: "PostedAt")
+    createdAt: DateTime!
+}
+
+type User {
+    id: ID! @id
+    name: String!
+    posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT, properties: "PostedAt")
+    friends: [User!]! @relationship(type: "FRIENDS_WITH", direction: OUT)
+}
+
+interface PostedAt @relationshipProperties {
+    date: DateTime
+}
+----
+
+For which the following query fields are generated:
+
+[source, graphql, indent=0]
+----
+type Query {
+    posts(where: PostWhere, options: PostOptions): [Post!]!
+    postsAggregate(where: PostWhere): PostAggregationSelection!
+
+    users(where: UserWhere, options: UserOptions): [User!]!
+    usersAggregate(where: UserWhere): UserAggregationSelection!
+}
+----
