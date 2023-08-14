@@ -138,7 +138,7 @@ query {
 ----
 
 When performing an aggregation on related nodes, the query against the relationship
-can be defined as "undirect" by using the argument `directed: false`:
+can be defined as "directed" by using the argument `directed: false`:
 
 [source, graphql, indent=0]
 ----
