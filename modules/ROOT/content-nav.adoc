@@ -13,6 +13,8 @@
 *** xref:mutations/create.adoc[]
 *** xref:mutations/update.adoc[]
 *** xref:mutations/delete.adoc[]
+*** xref:mutations/array-methods.adoc[]
+*** xref:mutations/mathematical-operators.adoc[]
 
 ** xref:subscriptions/index.adoc[]
 *** xref:subscriptions/getting-started.adoc[Getting Started]

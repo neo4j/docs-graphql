@@ -1,7 +1,8 @@
 [[mutations-update]]
-= Update
+:description: This page describes how to update nodes through mutations.
+= `update`
 
-Using the following type definitions for these examples:
+Using these type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -18,7 +19,7 @@ type User {
 }
 ----
 
-The following update mutations and response types will be generated for the above type definitions:
+These `update` mutations and response types should be generated:
 
 [source, graphql, indent=0]
 ----
@@ -50,11 +51,14 @@ type Mutation {
 }
 ----
 
-> The `id` field not be update-able as the xref::reference/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive has been used.
+[NOTE]
+====
+The `id` field cannot be updated as the xref::reference/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive has been used.
+====
 
-== Single update
+== Single `update`
 
-Say you wanted to edit the content of a Post:
+The content of a `Post` can be updated by executing the following GraphQL statement:
 
 [source, graphql, indent=0]
 ----
@@ -74,9 +78,11 @@ mutation {
 }
 ----
 
-== Nested create
+This should update the post by adding the sentence "Some new content for this Post!".
 
-Instead of creating a Post and connecting it to a User, you could update a User and create a Post as part of the mutation:
+== Nested `create` using `update`
+
+Instead of creating a `Post` with the `create` mutation and then connecting it to a `User`, you can update a `User` and `create` a `Post` as part of the mutation:
 
 [source, graphql, indent=0]
 ----
@@ -101,40 +107,21 @@ mutation {
 ----
 
 == `connectOrCreate` relationships
-If a related node has a `@unique` or `@id` directive defined, `connectOrCreate` can be used in a nested update to perform a `MERGE` operation on the related node, creating a new relationship and the related node if it doesn't exist.
 
-Consider the following type definitions:
-
-[source, graphql, indent=0]
-----
-type Actor {
-    name: String!
-    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
-}
-
-type Movie {
-    title: String
-    id: ID! @id
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-}
-----
-
-Because a movie ID is unique, `connectOrCreate` can be used in an Actor mutation to ensure a movie exists before connecting. Note that only `@unique` or `@id` fields can be used in `where`:
+Consider the example provided in the xref:mutations/create.adoc#_connectorcreate_relationships[`create`] page:
 
 [source, graphql, indent=0]
 ----
 mutation {
-  updateActors(
-    update: {
-        movies: {
-          connectOrCreate: {
-            where: { node: { id: "1234" } }
-            onCreate: { node: { title: "Forrest Gump" } }
-          }
-        }
-    },
-    where: { name: "Tom Hanks" }
-  ) {
+  createActors(input: {
+    name: "Tom Hanks",
+    movies: {
+      connectOrCreate: {
+        where: { node: { id: "1234" } }
+        onCreate: { node: { title: "Forrest Gump" } }
+      }
+    }
+  }) {
     info {
       nodesCreated
     }
@@ -142,9 +129,7 @@ mutation {
 }
 ----
 
-In this case, all actors matching `"Tom Hanks"` will be connected to the Movie with id `"1234"`. If the movie with given ID does not exist, it will be created with the title `"Forrest Gump"`.
-
-For update operations, `connectOrCreate` can also be used as a top-level input:
+For `update` operations, `connectOrCreate` can also be used as a top-level input for an equivalent operation:
 
 [source, graphql, indent=0]
 ----
@@ -165,9 +150,6 @@ mutation {
 }
 ----
 
-This operation is equivalent to the previous example.
-
-[[array-methods]]
 == Array methods
 
 Array methods allow us to modify existing property arrays in Update mutations within these entities:
