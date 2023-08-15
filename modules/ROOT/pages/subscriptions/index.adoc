@@ -2,10 +2,11 @@
 :description: This section covers how to use subscriptions with the Neo4j GraphQL Library.
 = Subscriptions
 
-GraphQL subscriptions add real-time capabilities to an API.
+GraphQL subscriptions add real-time capabilities to an API by allowing a server to send data to its clients when a specific event happens.
+
 This section covers:
 
-* xref:subscriptions/getting-started.adoc[Getting started] - how to get started with subscriptions.
+* xref:subscriptions/getting-started.adoc[Getting started] - how to get started with subscriptions by setting up a basic example.
 * xref:subscriptions/events.adoc[Events] - how to trigger events when using `@neo4j/graphql`.
 * xref:subscriptions/filtering.adoc[Filtering] - 
 * xref:subscription/scaling.adoc[Horizontal scaling] - 

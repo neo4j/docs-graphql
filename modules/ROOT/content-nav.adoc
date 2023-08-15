@@ -15,11 +15,11 @@
 *** xref:mutations/delete.adoc[]
 
 ** xref:subscriptions/index.adoc[]
-*** xref:subscriptions/getting-started.adoc[Getting Started]
+*** xref:subscriptions/getting-started.adoc[Getting started]
 *** xref:subscriptions/events.adoc[Events]
 *** xref:subscriptions/filtering.adoc[]
 *** xref:subscriptions/scaling.adoc[]
-*** xref:subscriptions/engines.adoc[Subscriptions Engines]
+*** xref:subscriptions/engines.adoc[Subscriptions engines]
 
 ** xref:custom-resolvers.adoc[]
 

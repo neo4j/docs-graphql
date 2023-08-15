@@ -1,5 +1,5 @@
 [[horizontal-scaling]]
-= Horizontal Scaling
+= Horizontal scaling
 
 == The Problem
 Horizontally scaling any real time system can be tricky, especially when dealing with long lived connections such as WebSockets.

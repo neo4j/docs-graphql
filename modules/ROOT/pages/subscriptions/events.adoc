@@ -1,38 +1,37 @@
 [[subscription-events]]
-= Subscription Events
+= Subscription events
 
-[NOTE]
-====
-Only changes made through `@neo4j/graphql` will trigger events. Changes made directly to the database or using the xref::reference/directives/cypher.adoc[`@cypher` directive] will **not** trigger any event.
-====
+This page covers a variety of subscription options offered by the Neo4j GraphQL Library.
 
-[[create]]
-== Create Subscriptions
+Note, however, that only changes made through `@neo4j/graphql` should trigger events. 
+Changes made directly to the database or using the xref::reference/directives/cypher.adoc[`@cypher` directive] will **not** trigger any event.
 
-Subscriptions to `CREATE` events will listen to newly created nodes. A new event will be triggered for each new node.
-The event will contain the node's properties.
+== `CREATE` subscriptions
 
-NOTE: Only nodes created will trigger this event, new relationships will **not** trigger the event.
+Subscriptions to `CREATE` events listen *only* to newly created nodes, not new relationships.
+In this occasion, a new event is triggered for each new node, containing the its properties.
 
-=== `CREATE` event
+This action is performed with the top-level subscription `[type]Created`, which contains the following fields:
 
-A subscription to a type can be made with the top-level subscription `[type]Created`. The subscription will contain the following fields:
+* `event`: the event triggering this subscription (in this case, it is always `CREATE`).
+* `created<typename>`: top-level properties of the newly created node, without relationships.
+* `timestamp`: the timestamp in which the mutation was made.
+If a same query triggers multiple events, it will come with the same timestamp.
 
-* `event`: The event triggering this subscription, in this case it will always be `"CREATE"`.
-* `created<typename>`: The properties of the newly created node, only top-level properties, without relationships, are available.
-* `timestamp`: The timestamp in which the mutation was made. Note that multiple events may come with the same timestamp if triggered by the same query.
+As an example, consider the following type definitions:
 
-==== Example
-Considering the following type definitions:
-```graphql
+[source,graphql,indent=0]
+----
 type Movie {
     title: String
     genre: String
 }
-```
+----
 
-A subscription to any `Movie` created would look like:
-```graphql
+A subscription to any `Movie` created should look like this:
+
+[source,graphql,indent=0]
+----
 subscription {
     movieCreated {
         createdMovie {
@@ -43,36 +42,35 @@ subscription {
         timestamp
     }
 }
-```
+----
 
-[[update]]
-== Update Subscriptions
+== Update subscriptions
 
-Subscription to `UPDATE` events will listen to node properties changes. A new event will be triggered for each mutation that modifies the node top-level properties.
+Subscription to `UPDATE` events listen *only* to node properties changes, not updates to other fields.
+In this occasion, a new event is triggered for each mutation that modifies the node top-level properties.
 
-NOTE: Update events will only be triggered if any of the properties have changed. An update that doesn't modify the properties will be ignored.
+This action is performed with the top-level subscription `[type]Updated`, which contains the following fields:
 
-=== `UPDATE` event
+* `event`: the event triggering this subscription (in this case, it is always `UPDATE`).
+* `updated<typename>`: top-level properties of the updated node, without relationships.
+* `previousState`: the previous top-level properties of the node, before the update event.
+* `timestamp`: the timestamp in which the mutation was made.
+If a same query triggers multiple events, it will come with the same timestamp.
 
-A subscription to a type can be made with the top-level subscription `[type]Updated`. The subscription will contain the following fields:
+As an example, consider the following type definitions:
 
-* `event`: The event triggering this subscription, in this case it will always be `"UPDATE"`.
-* `updated<typename>`: The properties of the updated node, after modification. Only top-level properties, without relationships, are available.
-* `previousState`: The old properties of the node, right before the update event. Only top-level properties are available.
-* `timestamp`: The timestamp in which the mutation was made. Note that multiple events may come with the same timestamp if triggered by the same query.
-
-
-==== Example
-Considering the following type definitions:
-```graphql
+[source,graphql,indent=0]
+----
 type Movie {
     title: String
     genre: String
 }
-```
+----
 
-A subscription to any `Movie` updated could look like:
-```graphql
+A subscription to any `Movie` updated should look like this:
+
+[source,graphql,indent=0]
+----
 subscription MovieUpdated {
     movieUpdated {
         event
@@ -86,7 +84,7 @@ subscription MovieUpdated {
         timestamp
     }
 }
-```
+----
 
 [[delete]]
 == Delete Subscriptions
