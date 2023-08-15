@@ -185,7 +185,7 @@ You can `POP` from this `tags` property array:
 a| 
 ```
 tags: ['a', 'b', 'c']
-````
+```
 a|
 ```
 tags: ['a', 'b']
@@ -253,7 +253,7 @@ a|
 ```
 tags: ['a', 'b', 'c']
 moreTags: ['x', 'y', 'z']
-````
+```
 a|
 ```
     tags: ['a', 'b']
