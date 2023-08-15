@@ -44,7 +44,11 @@
 *** xref:subscriptions/events.adoc[Events]
 *** xref:subscriptions/filtering.adoc[]
 *** xref:subscriptions/scaling.adoc[]
+<<<<<<< HEAD
 *** xref:subscriptions/engines.adoc[Engines]
+=======
+*** xref:subscriptions/engines.adoc[Subscriptions engines]
+>>>>>>> 4cd09fa (update)
 
 ** xref:custom-resolvers.adoc[]
 

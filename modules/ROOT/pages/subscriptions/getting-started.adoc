@@ -136,13 +136,14 @@ This setup uses the default subscriptions mechanism suitable only for developmen
 If you need to scale horizontally for a production-ready application, see xref::subscriptions/scaling.adoc[Horizontal scaling].
 ====
 
-== GraphQL subscriptions
+=== GraphQL subscriptions
 
 With the previous server running, the available subscriptions are set for `Movie` and `Actor`. 
 You can subscribe to new movies created with the following statement:
 
 [source, graphql, indent=0]
 ----
+graphql
 subscription {
     movieCreated(where: { title: "The Matrix" }) {
         createdMovie {
@@ -168,4 +169,4 @@ mutation {
 
 == Further reading
 
-Keep reading this section on xref:subscriptions/index.adoc[Subscriptions] for more information and advanced examples.
+Keep reading the section on xref:subscriptions/index.adoc[Subscriptions] for more information and advanced examples.
