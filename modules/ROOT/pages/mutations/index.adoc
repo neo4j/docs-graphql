@@ -4,9 +4,9 @@
 
 This section addresses basic examples of the following nested mutations:
 
-- xref::mutations/create.adoc[Create] - Create nodes, and recursively create or connect further nodes in the graph.
-- xref::mutations/update.adoc[Update] - Update nodes, and recursively perform any operations from there.
-- xref::mutations/delete.adoc[Delete] - Delete nodes, and recursively delete or disconnect further nodes in the graph.
+- xref::mutations/create.adoc[Create] - create nodes, and recursively create or connect further nodes in the graph.
+- xref::mutations/update.adoc[Update] - update nodes, and recursively perform any operations from there.
+- xref::mutations/delete.adoc[Delete] - delete nodes, and recursively delete or disconnect further nodes in the graph.
 
 [NOTE]
 ====

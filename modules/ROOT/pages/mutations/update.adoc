@@ -150,9 +150,11 @@ mutation {
 }
 ----
 
+This operation is equivalent to the previous example.
+
 == Array methods
 
-Array methods allow us to modify existing property arrays in Update mutations within these entities:
+Array methods allow the modification of existing property arrays in `update` mutations within these entities:
 
 * `Node`
 * `Nested Nodes`
@@ -161,17 +163,12 @@ Array methods allow us to modify existing property arrays in Update mutations wi
 
 The following operators are available:
 
-* `_POP`
-* `_PUSH`
+* `_POP`, which expects a single `Int` value as input
+* `_PUSH`, which conforms to the type of input defined in the type definition.
 
-The POP operator expects a single Int value as input
+=== `_POP`
 
-The PUSH operator conforms to the type of input defined in the type definition.
-
-=== Examples
-
-==== Array pop
-Suppose we have the following type definition, a Movie with a property array called tags:
+Consider the following type definitions, a `Movie` with a property array called `tags`:
 
 [source, graphql, indent=0]
 ----
@@ -181,11 +178,15 @@ type Movie {
 }
 ----
 
-We can pop from this `tags` property array.
+You can pop from this `tags` property array:
 
-Before: `['a', 'b', 'c']`
+[col=1,1]
+|====
+| Before | After
 
-After: `['a', 'b']`
+| `['a', 'b', 'c']`
+| `['a', 'b']`
+|====
 
 
 [source, graphql, indent=0]
@@ -202,9 +203,13 @@ mutation {
 
 Or, for more than one property from the array:
 
-Before: `['a', 'b', 'c']`
+[col=1,1]
+|====
+| Before | After
 
-After: `['a']`
+| `['a', 'b', 'c']`
+| `['a']`
+|====
 
 [source, graphql, indent=0]
 ----
@@ -218,8 +223,7 @@ mutation {
 }
 ----
 
-Similarly, you can have multiple array property fields and update them in the same query:
-
+Similarly, you can also have multiple array property fields and update them in the same query:
 
 [source, graphql, indent=0]
 ----
@@ -230,20 +234,23 @@ type Movie {
 }
 ----
 
-We can pop from both the `tags` and `moreTags` property arrays.
+You can then pop from both the `tags` and `moreTags` property arrays:
 
+[col=1,1]
+|====
+| Before | After
 
-Before: 
+a| 
 ```
     tags: ['a', 'b', 'c']
     moreTags: ['x', 'y', 'z']
 ```
-
-After:
+a|
 ```
     tags: ['a', 'b']
     moreTags: ['x']
 ```
+|====
 
 [source, graphql, indent=0]
 ----
@@ -258,23 +265,18 @@ mutation {
 }
 ----
 
-==== Array push
-Suppose we have the following type definition, a Movie with a property array called tags:
+=== `_PUSH`
 
-[source, graphql, indent=0]
-----
-type Movie {
-    title: String
-    tags: [String]
-}
-----
+Using the same type definitions as before, you can push to the `tags` property array:
 
-We can push to this `tags` property array.
+[col=1,1]
+|====
+| Before | After
 
+| `['some tag']`
 
-Before: `['some tag']`
-
-After: `['some tag', 'another tag']`
+| `['some tag', 'another tag']`
+|====
 
 [source, graphql, indent=0]
 ----
@@ -290,9 +292,13 @@ mutation {
 
 Or push multiple elements in a single update:
 
-Before: `['some tag']`
+[col=1,1]
+|====
+| Before | After
 
-After: `['some tag', 'another tag', 'one more tag']`
+| `['some tag']`
+| `['some tag', 'another tag', 'one more tag']`
+|====
 
 [source, graphql, indent=0]
 ----
@@ -317,19 +323,23 @@ type Movie {
 }
 ----
 
-We can push to both the `tags` and `moreTags` property arrays.
+You can also push to both the `tags` and `moreTags` property arrays:
 
-Before:
+[col=1,1]
+|====
+| Before | After
+
+a|
 ```
     tags: ['some tag']
     moreTags: []
 ```
-
-After:
+a|
 ```
     tags: ['some tag', 'another tag']
     moreTags ['a different tag']
 ```
+|====
 
 [source, graphql, indent=0]
 ----
@@ -344,11 +354,11 @@ mutation {
 }
 ----
 
-==== Array push and pop in one update
+=== Combined methods
 
-It is possible to perform both a push and pop operation in one Update mutation.
+It is possible to perform both a `_PUSH` and `_POP` operation in one single `update` mutation.
 
-Suppose we have the following type definition, a Movie with a property array called tags:
+Consider the following type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -359,19 +369,24 @@ type Movie {
 }
 ----
 
-We can then update both property arrays with either _POP or _PUSH operators.
+You can update both property arrays with either `_POP` or `_PUSH` operators at once:
 
-Before:
+[col=1,1]
+|====
+| Before | After
+
+a|
 ```
     tags: ['some tag']
     moreTags: []
 ```
 
-After:
+a|
 ```
     tags: []
     moreTags ['a different tag']
 ```
+|====
 
 [source, graphql, indent=0]
 ----
@@ -386,28 +401,22 @@ mutation {
 }
 ----
 
-[[mathematical-operators]]
 == Mathematical operators
 
-Mathematical operators are a handy way to update numerical fields based on their original values in a single DB transaction.
+Mathematical operators can be used to update numerical fields based on their original values in a single DB transaction.
+For that, specific operators are available on different numerical types: `Int`, `Float`, xref::reference/type-definitions/types.adoc#type-definitions-types-bigint[`BigInt`].
+They are supported in `update` mutations within these entities:
 
-Specific operators are available on different numerical types (`Int`, `Float`, xref::reference/type-definitions/types.adoc#type-definitions-types-bigint[`BigInt`]).
+* Nodes
+* Nested Nodes
+* Relationship properties
+* Interfaces
 
-
-Mathematical operators are supported in Update Mutations within these entities:
-
-* `Node`
-* `Nested Nodes`
-* `Relationship properties`
-* `Interfaces`
-
-=== Int and BigInt operators
 For `Int` and `BigInt` types, the following operators are available:
 
 * `_DECREMENT`
 * `_INCREMENT`
 
-=== Float operators
 For `Float` type, the following operators are available:
 
 * `_ADD`
@@ -415,10 +424,13 @@ For `Float` type, the following operators are available:
 * `_MULTIPLY`
 * `_DIVIDE`
 
-=== Examples
+[NOTE]
+====
+Operators remain available as optional fields.
+If a mathematical operator has been used in a field not defined, it will prompt a GraphQL error.
+====
 
-==== The social platform schema
-In this section, we use the following GraphQL schema:
+For example, take the following GraphQL schema for a social video platform:
 
 [source, graphql, indent=0]
 ----
@@ -436,9 +448,9 @@ interface OwnVideo @relationshipProperties {
 }
 ----
 
+Suppose a user viewed a video in this platform, so that you want to increment `viewersCount` for that video by `1`.
+Here is how you can do that:
 
-==== Simple increment operation
-Let's say that a user views a video, so we want to increment `viewersCount` for that video by 1.
 [source, graphql, indent=0]
 ----
 mutation incrementViewCountMutation {
@@ -454,9 +466,8 @@ mutation incrementViewCountMutation {
 }
 ----
 
-==== Nested example
-Now, let's say that the video platform wants to reward the user with 0.01 dollars for viewing the video.
-To do that, we have to update the relationship property `revenue`.
+Now, suppose the social platform wants to reward the user with 0.01 dollars for viewing the video.
+To do that, you have to update the relationship property `revenue`:
 
 [source, graphql, indent=0]
 ----
@@ -476,6 +487,3 @@ mutation addRevenueMutation {
   }
 }
 ----
-
-=== Optional fields
-Operators remain available for optional fields, this means that if a mathematical operator has been used in a field not defined then a GraphQL error is raised.
