@@ -153,3 +153,7 @@ mutation {
 ----
 
 This will ensure that a movie with ID 1234 exists and it is connected to `"Tom Hanks"`. If the movie does not exist, it will be created with the title `"Forrest Gump"`. Note that if the movie with the given ID already exists, it will be connected to it, regardless of the title.
+
+== Note on optimization
+
+The operations `@populated_by`, `connect` and `connectOrCreate` are not supported by Neo4j GraphQL for optimization of `create` mutations.
