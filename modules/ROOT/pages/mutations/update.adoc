@@ -161,13 +161,19 @@ Array methods allow the modification of existing property arrays in `update` mut
 * `Relationship properties`
 * `Interfaces`
 
-The following operators are available:
+For that, the following operators are available:
 
+<<<<<<< HEAD
 * `_POP`, which expects a single `Int` value as input
 * `_PUSH`, which conforms to the type of input defined in the type definition.
 
 === `_POP`
 
+=======
+* `_POP`: expects a single `Int` value as input.
+* `_PUSH`: conforms to the type of input defined in the type definition.
+
+>>>>>>> 6820ab6 (update)
 Consider the following type definitions, a `Movie` with a property array called `tags`:
 
 [source, graphql, indent=0]
@@ -178,6 +184,7 @@ type Movie {
 }
 ----
 
+<<<<<<< HEAD
 You can pop from this `tags` property array:
 
 [col=1,1]
@@ -187,7 +194,23 @@ You can pop from this `tags` property array:
 | `['a', 'b', 'c']`
 | `['a', 'b']`
 |====
+=======
+You can `POP` from this `tags` property array:
 
+[cols="1,1"]
+|===
+| Before | After 
+>>>>>>> 6820ab6 (update)
+
+a| 
+```
+tags: ['a', 'b', 'c']
+````
+a|
+```
+tags: ['a', 'b']
+```
+|===
 
 [source, graphql, indent=0]
 ----
@@ -203,6 +226,7 @@ mutation {
 
 Or, for more than one property from the array:
 
+<<<<<<< HEAD
 [col=1,1]
 |====
 | Before | After
@@ -210,6 +234,21 @@ Or, for more than one property from the array:
 | `['a', 'b', 'c']`
 | `['a']`
 |====
+=======
+[cols="1,1"]
+|===
+| Before | After 
+
+a| 
+```
+tags: ['a', 'b', 'c']
+```
+a|
+```
+tags: ['a']
+```
+|===
+>>>>>>> 6820ab6 (update)
 
 [source, graphql, indent=0]
 ----
@@ -223,7 +262,11 @@ mutation {
 }
 ----
 
+<<<<<<< HEAD
 Similarly, you can also have multiple array property fields and update them in the same query:
+=======
+Similarly, you can have multiple array property fields and update them in the same query:
+>>>>>>> 6820ab6 (update)
 
 [source, graphql, indent=0]
 ----
@@ -234,6 +277,7 @@ type Movie {
 }
 ----
 
+<<<<<<< HEAD
 You can then pop from both the `tags` and `moreTags` property arrays:
 
 [col=1,1]
@@ -245,12 +289,29 @@ a|
     tags: ['a', 'b', 'c']
     moreTags: ['x', 'y', 'z']
 ```
+=======
+Then, you can `POP` from both the `tags` and `moreTags` property arrays:
+
+[cols="1,1"]
+|===
+| Before | After 
+
+a| 
+```
+tags: ['a', 'b', 'c']
+moreTags: ['x', 'y', 'z']
+````
+>>>>>>> 6820ab6 (update)
 a|
 ```
     tags: ['a', 'b']
     moreTags: ['x']
 ```
+<<<<<<< HEAD
 |====
+=======
+|===
+>>>>>>> 6820ab6 (update)
 
 [source, graphql, indent=0]
 ----
