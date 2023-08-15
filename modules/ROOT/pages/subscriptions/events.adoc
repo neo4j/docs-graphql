@@ -44,7 +44,7 @@ subscription {
 }
 ----
 
-== Update subscriptions
+== `UPDATE` subscriptions
 
 Subscription to `UPDATE` events listen *only* to node properties changes, not updates to other fields.
 In this occasion, a new event is triggered for each mutation that modifies the node top-level properties.
@@ -86,8 +86,7 @@ subscription MovieUpdated {
 }
 ----
 
-[[delete]]
-== Delete Subscriptions
+== `DELETE` subscriptions
 
 Subscriptions to `DELETE` events will trigger on deleted nodes.
 
