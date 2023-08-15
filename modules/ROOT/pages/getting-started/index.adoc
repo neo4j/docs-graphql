@@ -117,7 +117,7 @@ NEO4J_URI=neo4j+s://0083654f.databases.neo4j.io
 
 === Using a Neo4j database
 
-For a database located at "bolt://localhost:7687", with the username "neo4j" and the password "password", add the following to the bottom of your `index.js` file:
+For a database located at the default "bolt://localhost:7687" (see more about https://neo4j.com/docs/operations-manual/current/configuration/ports[port configuration]), with the username "neo4j" and the password "password", add the following to the bottom of your `index.js` file:
 
 [source, javascript, indent=0]
 ----
