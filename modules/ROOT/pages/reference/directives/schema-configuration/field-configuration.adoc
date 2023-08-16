@@ -30,7 +30,7 @@ type Actor {
 }
 ----
 
-By using the directives `@selectable`, `@settable`, and `@relationship` it is possible to control how these fields are exposed.
+By using the directives `@selectable`, `@settable`, `@filterable` and `@relationship` it is possible to control how these fields are exposed.
 For instance, to hide the field `age` in the Selection Set, you can use the `@selectable` directive:
 
 [source, graphql, indent=0]
@@ -394,6 +394,150 @@ input ActorUpdateInput {
 ----
 
 This means the `actedIn` can be updated on an update, but it will not be available on create operations.
+
+== `@filterable`
+
+This directive defines the filters generated for the field where this directive is applied.
+It has two arguments:
+
+* **byValue**: If disabled, this field will not generates value filters.
+* **byAggregate**: If disabled, this field will not generates aggregation filters.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Instructs @neo4j/graphql to generate filters for this field."""
+directive @filterable(byValue: Boolean! = true, byAggregate: Boolean! = true) on FIELD_DEFINITION
+----
+
+==== Usage
+
+With this definition:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String @filterable(byValue: false, byAggregate: false)
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
+}
+
+type Actor {
+    name: String!
+    actedIn: [Movie!]!
+        @relationship(type: "ACTED_IN", direction: OUT)
+}
+----
+
+The following input fields will be generated:
+
+[source, graphql, indent=0]
+----
+input MovieWhere {
+  OR: [MovieWhere!]
+  AND: [MovieWhere!]
+  NOT: MovieWhere
+  title: String
+  title_IN: [String!]
+  title_CONTAINS: String
+  title_STARTS_WITH: String
+  title_ENDS_WITH: String
+  actorsAggregate: MovieActorsAggregateInput
+  actors_ALL: ActorWhere
+  actors_NONE: ActorWhere
+  actors_SINGLE: ActorWhere
+  actors_SOME: ActorWhere
+  actorsConnection_ALL: MovieActorsConnectionWhere
+  actorsConnection_NONE: MovieActorsConnectionWhere
+  actorsConnection_SINGLE: MovieActorsConnectionWhere
+  actorsConnection_SOME: MovieActorsConnectionWhere
+}
+
+input ActorActedInNodeAggregationWhereInput {
+  AND: [ActorActedInNodeAggregationWhereInput!]
+  OR: [ActorActedInNodeAggregationWhereInput!]
+  NOT: ActorActedInNodeAggregationWhereInput
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_AVERAGE_LENGTH_GT: Float
+  title_LONGEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_AVERAGE_LENGTH_GTE: Float
+  title_LONGEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_AVERAGE_LENGTH_LT: Float
+  title_LONGEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_AVERAGE_LENGTH_LTE: Float
+  title_LONGEST_LENGTH_LTE: Int
+  title_SHORTEST_LENGTH_LTE: Int
+}
+----
+
+As shown by the generated input fields, the `description` field is not available for filtering on both value and aggregation filters.
+
+=== `@filterable` with Relationships
+
+This directive can be used along with relationship fields. 
+When an operation on a field is disabled this way, that relationship will not be available on top-level operations. 
+For example:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String @filterable(byValue: false, byAggregate: false)
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN) @filterable(byValue: false, byAggregate: false)
+}
+
+type Actor {
+    name: String!
+    actedIn: [Movie!]!
+        @relationship(type: "ACTED_IN", direction: OUT)
+        
+}
+----
+
+The following input fields will be generated:
+
+[source, graphql, indent=0]
+----
+input MovieWhere {
+  OR: [MovieWhere!]
+  AND: [MovieWhere!]
+  NOT: MovieWhere
+  title: String
+  title_IN: [String!]
+  title_CONTAINS: String
+  title_STARTS_WITH: String
+  title_ENDS_WITH: String
+}
+
+input ActorActedInNodeAggregationWhereInput {
+  AND: [ActorActedInNodeAggregationWhereInput!]
+  OR: [ActorActedInNodeAggregationWhereInput!]
+  NOT: ActorActedInNodeAggregationWhereInput
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_AVERAGE_LENGTH_GT: Float
+  title_LONGEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_AVERAGE_LENGTH_GTE: Float
+  title_LONGEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_AVERAGE_LENGTH_LT: Float
+  title_LONGEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_AVERAGE_LENGTH_LTE: Float
+  title_LONGEST_LENGTH_LTE: Int
+  title_SHORTEST_LENGTH_LTE: Int
+}
+----
+
+As shown by the above inputs fields, the `actors` field is not available for filtering on both value and aggregation filters.
 
 == `@readonly` label:deprecated[]
 

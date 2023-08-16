@@ -48,6 +48,12 @@ The `@exclude` directive is used on object types to instruct them to be skipped 
 
 Reference: xref::reference/directives/schema-configuration/type-configuration.adoc#_exclude_deprecated[`@exclude`]
 
+== `@filterable`
+
+The `@filterable` directive defines the filters generated for a field. 
+
+Reference: xref:reference/directives/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
+
 == `@fulltext`
 
 The `@fulltext` directive indicates that there should be a Fulltext index inserted into the database for the specified Node and its properties.
