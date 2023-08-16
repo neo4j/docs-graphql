@@ -400,8 +400,8 @@ This means the `actedIn` can be updated on an update, but it will not be availab
 This directive defines the filters generated for the field to which this directive is applied.
 It has two arguments:
 
-* **byValue**: If disabled, this field will not generates value filters.
-* **byAggregate**: If disabled, this field will not generates aggregation filters.
+* **byValue**: If disabled, this field will not generate value filters.
+* **byAggregate**: If disabled, this field will not generate aggregation filters.
 
 === Definition
 
