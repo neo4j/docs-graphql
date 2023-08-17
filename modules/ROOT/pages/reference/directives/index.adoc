@@ -33,6 +33,22 @@ The `@default` directive allows for the setting of a default value for a field o
 
 Reference: xref::reference/directives/default-values.adoc#type-definitions-default-values-default[`@default`]
 
+== `@exclude` label:deprecated[]
+
+This directive is deprecated.
+
+Use the xref:reference/directives/schema-configuration/type-configuration.adoc#_query[`@query`], xref:reference/directives/schema-configuration/type-configuration.adoc#_mutation[`@mutation`] and the xref:reference/directives/schema-configuration/type-configuration.adoc#_subscription[`@subscription`] directives instead.
+
+The `@exclude` directive is used on object types to instruct them to be skipped during Query, Mutation and Subscription generation.
+
+Reference: xref::reference/directives/schema-configuration/type-configuration.adoc#_exclude_deprecated[`@exclude`]
+
+== `@filterable`
+
+The `@filterable` directive defines the filters generated for a field. 
+
+Reference: xref:reference/directives/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
+
 == `@fulltext`
 
 The `@fulltext` directive indicates that there should be a Fulltext index inserted into the database for the specified Node and its properties.
