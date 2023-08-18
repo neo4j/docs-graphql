@@ -156,10 +156,9 @@ This operation is equivalent to the previous example.
 
 Array methods allow the modification of existing property arrays in `update` mutations within these entities:
 
-* `Node`
-* `Nested Nodes`
-* `Relationship properties`
-* `Interfaces`
+* Node
+* Relationship properties
+* Interfaces
 
 For that, the following operators are available:
 
@@ -176,7 +175,7 @@ type Movie {
 }
 ----
 
-You can `POP` from this `tags` property array:
+You can pop from this `tags` property array:
 
 [cols="1,1"]
 |===
@@ -414,10 +413,9 @@ mutation {
 
 Mathematical operators can be used to update numerical fields based on their original values in a single DB transaction.
 For that, specific operators are available on different numerical types: `Int`, `Float`, xref::reference/type-definitions/types.adoc#type-definitions-types-bigint[`BigInt`].
-They are supported in `update` mutations within these entities:
+They are supported within these entities:
 
 * Nodes
-* Nested Nodes
 * Relationship properties
 * Interfaces
 

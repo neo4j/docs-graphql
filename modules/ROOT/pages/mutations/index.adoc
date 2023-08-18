@@ -1,8 +1,8 @@
 [[mutations]]
-:description: This section describes how to use nested mutations with the Neo4j GraphQL Library.
+:description: This section describes how to use mutations with the Neo4j GraphQL Library.
 = Mutations
 
-This section addresses basic examples of the following nested mutations:
+This section addresses basic examples of the following mutations:
 
 - xref::mutations/create.adoc[`create`] - create nodes, and recursively create or connect further nodes in the graph.
 - xref::mutations/update.adoc[`update`] - update nodes, and recursively perform any operations from there.

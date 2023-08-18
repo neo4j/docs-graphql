@@ -154,7 +154,7 @@ mutation {
 
 This will ensure that a movie with ID 1234 exists and it is connected to `"Tom Hanks"`. If the movie does not exist, it will be created with the title `"Forrest Gump"`. Note that if the movie with the given ID already exists, it will be connected to it, regardless of the title.
 
-== Batch `create` optimization
+== `CREATE` optimization
 
 With the `create` operations, there is no limit on how many nodes can be created at once.
 However, there is a known performance issue for large batch sizes. 
