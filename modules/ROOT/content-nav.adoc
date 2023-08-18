@@ -31,9 +31,9 @@
 *** xref:queries-aggregations/aggregations.adoc[]
 *** xref:queries-aggregations/filtering.adoc[]
 *** xref:queries-aggregations/sorting.adoc[]
-** xref:pagination/index.adoc[]
-*** xref:pagination/offset-based.adoc[]
-*** xref:pagination/cursor-based.adoc[]
+*** xref:pagination/index.adoc[]
+**** xref:pagination/offset-based.adoc[]
+**** xref:pagination/cursor-based.adoc[]
 
 ** xref:mutations/index.adoc[Mutating your data]
 *** xref:mutations/create.adoc[]
