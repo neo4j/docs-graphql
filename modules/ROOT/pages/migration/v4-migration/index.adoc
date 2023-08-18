@@ -161,6 +161,26 @@ However, if using TypeScript, the exported interface to implement these classes 
 
 We have renamed a number of directives and their arguments, in order to make using `@neo4j/graphql` more intuitive.
 
+=== `@queryOptions` removed and `limit` argument moved to `@limit`
+
+If you were using the `@queryOptions` directive to configure the default and max values for limiting the data returned by queries, for instance:
+
+[source, graphql, indent=0]
+----
+type Record @queryOptions(limit: { default: 10, max: 100 }) {
+  id: ID!
+}
+----
+
+This is now achieved by using the `@limit` directive:
+
+[source, graphql, indent=0]
+----
+type Record @limit(default: 10, max: 100) {
+  id: ID!
+}
+----
+
 [populatedBy-migration]
 === `@callback` renamed to `@populatedBy`
 
