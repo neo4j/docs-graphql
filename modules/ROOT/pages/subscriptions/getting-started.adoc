@@ -169,4 +169,4 @@ mutation {
 
 == Further reading
 
-Keep reading the section on xref:subscriptions/index.adoc[Subscriptions] for more information and advanced examples.
+Keep reading this section on xref:subscriptions/index.adoc[Subscriptions] for more information and advanced examples.

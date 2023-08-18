@@ -3,20 +3,23 @@
 
 This page covers a variety of subscription options offered by the Neo4j GraphQL Library.
 
-Note, however, that only changes made through `@neo4j/graphql` should trigger events. 
+[NOTE]
+====
+Only changes made through `@neo4j/graphql` should trigger the events here described. 
 Changes made directly to the database or using the xref::reference/directives/cypher.adoc[`@cypher` directive] will **not** trigger any event.
+====
 
-== `CREATE` subscriptions
+== `CREATE`
 
 Subscriptions to `CREATE` events listen *only* to newly created nodes, not new relationships.
-In this occasion, a new event is triggered for each new node, containing the its properties.
+In this occasion, a new event is triggered for each new node, containing its properties.
 
 This action is performed with the top-level subscription `[type]Created`, which contains the following fields:
 
-* `event`: the event triggering this subscription (in this case, it is always `CREATE`).
+* `event`: the event triggering this subscription (in this case, `CREATE`).
 * `created<typename>`: top-level properties of the newly created node, without relationships.
 * `timestamp`: the timestamp in which the mutation was made.
-If a same query triggers multiple events, it will come with the same timestamp.
+If a same query triggers multiple events, they should have the same timestamp.
 
 As an example, consider the following type definitions:
 
@@ -28,7 +31,7 @@ type Movie {
 }
 ----
 
-A subscription to any `Movie` created should look like this:
+A subscription to any newly created node of the `Movie` type should look like this:
 
 [source,graphql,indent=0]
 ----
@@ -44,18 +47,18 @@ subscription {
 }
 ----
 
-== `UPDATE` subscriptions
+== `UPDATE`
 
-Subscription to `UPDATE` events listen *only* to node properties changes, not updates to other fields.
+Subscriptions to `UPDATE` events listen *only* to node properties changes, not updates to other fields.
 In this occasion, a new event is triggered for each mutation that modifies the node top-level properties.
 
 This action is performed with the top-level subscription `[type]Updated`, which contains the following fields:
 
-* `event`: the event triggering this subscription (in this case, it is always `UPDATE`).
+* `event`: the event triggering this subscription (in this case, `UPDATE`).
 * `updated<typename>`: top-level properties of the updated node, without relationships.
-* `previousState`: the previous top-level properties of the node, before the update event.
+* `previousState`: the previous top-level properties of the node, before the `UPDATE` event.
 * `timestamp`: the timestamp in which the mutation was made.
-If a same query triggers multiple events, it will come with the same timestamp.
+If a same query triggers multiple events, they should have the same timestamp.
 
 As an example, consider the following type definitions:
 
@@ -67,7 +70,7 @@ type Movie {
 }
 ----
 
-A subscription to any `Movie` updated should look like this:
+A subscription to any node of the `Movie` type with its properties recently updated should look like this:
 
 [source,graphql,indent=0]
 ----
@@ -86,30 +89,30 @@ subscription MovieUpdated {
 }
 ----
 
-== `DELETE` subscriptions
+== `DELETE`
 
-Subscriptions to `DELETE` events will trigger on deleted nodes.
+Subscriptions to `DELETE` events listen *only* to nodes being deleted, not deleted relationships.
+This action is performed with the top-level subscription `[type]Deleted`, which contains the following fields:
 
-NOTE: Only deleted nodes will trigger this event, deleted relationships will **not** trigger any event.
+* `event`: the event triggering this subscription (in this case, `DELETE`).
+* `deleted<typename>`: top-level properties of the deleted node, without relationships.
+* `timestamp`: the timestamp in which the mutation was made.
+If a same query triggers multiple events, they should have the same timestamp.
 
-=== `DELETE` event
-A subscription to a type can be made with the top-level subscription `[type]Deleted`. The subscription will contain the following fields:
+As an example, consider the following type definitions:
 
-* `event`: The event triggering this subscription, in this case it will always be `"DELETE"`.
-* `deleted<typename>`: The top-level properties of the deleted node, these will be the properties right before the node was deleted. Relationships are not available.
-* `timestamp`: The timestamp in which the mutation was made. Note that multiple events may come with the same timestamp if triggered by the same query.
-
-==== Example
-Considering the following type definitions:
-```graphql
+[source,graphql,indent=0]
+----
 type Movie {
     title: String
     genre: String
 }
-```
+----
 
-A subscription to any deleted `Movie` would look like:
-```graphql
+A subscription to any deleted nodes of the `Movie` type should look like this:
+
+[source,graphql,indent=0]
+----
 subscription {
     movieDeleted {
         deletedMovie {
@@ -119,41 +122,45 @@ subscription {
         timestamp
     }
 }
-```
+----
 
-[[create_relationship]]
-== Create Relationship Subscriptions
+== `CREATE_RELATIONSHIP`
 
-Subscriptions to `CREATE_RELATIONSHIP` events will listen for newly created relationships to a node of the specified type. 
+Subscriptions to `CREATE_RELATIONSHIP` events listen to new relationships being created and contain information about the connected nodes.
+These events:
 
-NOTE: This subscription operation is **only** available for types that define relationship fields.
+* Contain relationship-specific information, such as the relationship field name and the object containing all relationship field names of the specified type.
+* Trigger an equivalent number of events compared to the relationships created, in case a new relationship is created following a mutation and the type targeted is responsible for defining two or more relationships in the schema.
+* Contain the relationships object populated with the newly created relationship properties for one single relationship name only (all other relationship names should have a null value).
+* Contain the properties of the nodes connected through the relationship, as well as the properties of the new relationship, if any.
 
-As relationship-specific information, the event will contain the relationship field name, as well as an object containing all relationship field names of the specified type. This object will be populated with properties according to the newly created relationship.
+[NOTE]
+====
+Connected nodes that may or may not have previously existed are not covered by this subscription. 
+To subscribe to these nodes' updates, use the xref:subscriptions/events.adoc#_create[`CREATE`] or the xref:subscriptions/events.adoc#_update[`UPDATE`] subscription.
+====
 
-NOTE: A new event will be triggered for each new relationship.
+Subscriptions to `CREATE_RELATIONSHIP` events can be made with the top-level subscription `[type]RelationshipCreated`, which contains the following fields:
 
-This means that, if the type targeted for the subscriptions defines two or more relationships in the schema and one of each relationships are created following a mutation operation, the number of events triggered will be equivalent to the number of relationships created.
+* `event`: the event triggering this subscription (in this case, `CREATE_RELATIONSHIP`).
+* `timestamp`: the timestamp in which the mutation was made. 
+If a same query triggers multiple events, they should have the same timestamp.
+* `<typename>`: top-level properties of the targeted nodes, without relationships, before the `CREATE_RELATIONSHIP` operation was triggered.
+* `relationshipFieldName`: the field name of the newly created relationship.
+* `createdRelationship`: an object having all field names of the nodes affected by the newly created relationships.
+While any event unrelated to `relationshipFieldName` should be `null`, the ones which are related should contain the relationship properties, if defined, and a `node` key containing the properties of the node on the other side of the relationship. 
+Only top-level properties, without relationships, are available and they are the properties that already existed before the `CREATE_RELATIONSHIP` operation took place.
 
-Each event will have the relationships object populated with the created relationship's properties for one single relationship name only - all other relationship names will have a null value.
+[NOTE]
+====
+Irrespective of the relationship direction in the database, the `CREATE_RELATIONSHIP` event is bound to the type targeted for the subscription.
+Consequently, if types A and B have xref:subscriptions/events.adoc#create-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation creates a relationship between them (despite being already previously connected in the database), the `CREATE_RELATIONSHIP` event should only return the subscription to the type A.
+====
 
-The event will also contain the properties of the nodes at both ends of the relationship, as well as the properties of the new relationship, if any.
+As an example, consider the following type definitions:
 
-NOTE: The `CREATE_RELATIONSHIP` events represent new relationships being created and contain information about the nodes at each end of the new relationship. However, the connected nodes may or may not have previously existed. To subscribe to the node's updates, you need to use one of the `CREATE` or `UPDATE` subscriptions.
-
-=== `CREATE_RELATIONSHIP` event
-
-A subscription to a type can be made with the top-level subscription `[type]RelationshipCreated`. The subscription will contain the following fields:
-
-* `event`: The event triggering this subscription, in this case it will always be `"CREATE_RELATIONSHIP"`.
-* `timestamp`: The timestamp in which the mutation was made. Note that multiple events may come with the same timestamp if triggered by the same query.
-* `<typename>`: The properties of the node target to the subscription. Only top-level properties, without relationships, are available. Note these are the properties before the operation that triggered the `CREATE_RELATIONSHIP` took place.
-* `relationshipFieldName`: The field name of the newly created relationship, as part of the node target to the subscription.
-* `createdRelationship`: An object having as keys all field names of the node target to the subscription which represent its relationships. For any given event, all field names except the one corresponding to `relationshipFieldName` will be null. The field name equal to `relationshipFieldName` will contain the relationship properties if defined, and a `node` key containing the properties of the node on the other side of the relationship. Only top-level properties, without relationships, are available. Note these are the properties before the operation that triggered the `CREATE_RELATIONSHIP` took place.
-
-NOTE: Irrespective of the relationship direction in the database, the `CREATE_RELATIONSHIP` event is bound to the type targeted for the subscription. The consequence is that - given a relationship between types A and B that is not reciprocal (that is, in the GraphQL schema type A defines a relationship to B but B does **not** define a relationship to A) and a GraphQL operation that creates the relationship between them - even though the two nodes will be connected in the database, the `CREATE_RELATIONSHIP` event will only be returned to the subscription to type A. Check out the xref:subscriptions/events.adoc#create-non-reciprocal-relationships[Non-reciprocal Relationships] section below for more details.
-
-For example, considering the following type definitions:
-```graphql
+[source,graphql,indent=0]
+----
 type Movie {
     title: String
     genre: String
@@ -177,10 +184,13 @@ type Reviewer {
 interface Reviewed @relationshipProperties {
     score: Int!
 }
-```
+----
 
-An ongoing subscription to created relationships on the `Movie` type, upon a mutation creating an `Actor` named `Tom Hardy` and a `Reviewer` named `Jane` to a `Movie` titled `Inception` would receive the following events:
-```graphql
+Now consider a mutation creating an `Actor` named `Tom Hardy` and a `Reviewer` named `Jane` is connected through a relationship to a `Movie` titled `Inception`.
+A `CREATE_RELATIONSHIP` subscription in this case should receive the following events:
+
+[source,graphql,indent=0]
+----
 {
     # 1  - relationship type `ACTED_IN`
     event: "CREATE_RELATIONSHIP",
@@ -220,14 +230,13 @@ An ongoing subscription to created relationships on the `Movie` type, upon a mut
         }
     }
 }
-```
+----
+=== Standard types
 
-=== Examples
+For another example, this time creating a relationship with standard types, consider the following type definitions:
 
-==== Create Relationship with Standard Types
-
-For example, considering the following type definitions:
-```graphql
+[source,graphql,indent=0]
+----
 type Movie {
     title: String
     genre: String
@@ -241,10 +250,12 @@ type Actor {
 interface ActedIn @relationshipProperties {
     screenTime: Int!
 }
-```
+----
 
-A subscription to any `Movie` created relationships would look like:
-```graphql
+A subscription to any `Movie` with newly created relationships should look like this:
+
+[source,graphql,indent=0]
+----
 subscription {
     movieRelationshipCreated {
         event
@@ -264,17 +275,18 @@ subscription {
         }
     }
 }
-```
+----
 
-==== Create Relationship with Abstract Types
+=== Abstract types
 
-When using Abstract Types with relationships, you will need to specify one or more of the corresponding Concrete Types when performing the subscription operation.
+When using abstract types with relationships, you need to specify one or more of the corresponding concrete types when performing the subscription operation.
 
-These types are generated by the library and conform to the format `[type]EventPayload`, where `[type]` is a **Concrete Type**. 
+These types are generated by the library and conform to the format `[type]EventPayload`, where `[type]` is a concrete type. 
 
-===== Union Example
-Considering the following type definitions:
-```graphql
+As an example, consider the following type definitions:
+
+[source,graphql,indent=0]
+----
 type Movie {
     title: String
     genre: String
@@ -295,10 +307,12 @@ type Person {
 interface Directed @relationshipProperties {
     year: Int!
 }
-```
+----
 
-A subscription to any `Movie` created relationships would look like:
-```graphql
+A subscription to any `Movie` newly created relationships should look like this:
+
+[source,graphql,indent=0]
+----
 subscription {
     movieRelationshipCreated {
         event
@@ -324,11 +338,14 @@ subscription {
         }
     }
 }
-```
+----
 
-===== Interface Example
-Considering the following type definitions:
-```graphql
+=== Interface
+
+For an example in which a relationship is created with an interface, consider the following type definitions:
+
+[source,graphql,indent=0]
+----
 type Movie {
     title: String
     genre: String
@@ -352,10 +369,12 @@ type Influencer implements Reviewer {
 interface Review @relationshipProperties {
     score: Int!
 }
-```
+----
 
-A subscription to any `Movie` created relationships would look like:
-```graphql
+A subscription to any `Movie` newly created relationships should look like this:
+
+[source,graphql,indent=0]
+----
 subscription {
     movieRelationshipCreated {
         event
@@ -383,13 +402,16 @@ subscription {
         }
     }
 }
-```
+----
 
-[[create-non-reciprocal-relationships]]
-==== Non-reciprocal relationships
+=== Non-reciprocal relationships
 
-Considering the following type definitions:
-```graphql
+Non-reciprocal relationships can be described, for example, as when a type A and a type B hold a relationship, but, in the GraphQL schema, type A is the one defining the relationship to B, while B does not define a relationship to A.
+
+To illustrate that, consider the following type definitions:
+
+[source,graphql,indent=0]
+----
 type Movie {
     title: String
     genre: String
@@ -416,18 +438,20 @@ interface ActedIn @relationshipProperties {
 interface Directed @relationshipProperties {
     year: Int!
 }
-```
+----
 
-The type definitions contain 2 relationships: types `ACTED_IN` and `DIRECTED`.
+Note that the type definitions contain two relationships: 
 
-It can be observed that the `ACTED_IN` relationship has a corresponding field defined in both the `Movie` and `Actor` types. As such, we can say that `ACTED_IN` is a reciprocal relationship.
+* `ACTED_IN`, which has a corresponding field defined in both the `Movie` and `Actor` types and, as such, can be considered a reciprocal relationship.
+* `DIRECTED`, which is only defined in the `Movie` type. 
+The `Director` type does not define a matching field and, as such, it can be considered a non-reciprocal relationship.
 
-`DIRECTED` on the other hand is only defined in the `Movie` type. The `Director` type does not define a matching field. As such, we can say `DIRECTED` is **not** a reciprocal relationship.
+Considering the three types previously described (`Movie`, `Actor`, and `Person`), subscribing to `CREATE_RELATIONSHIP` is *not* possible only in the case of the `Person` type, for it does not define any relationships.
+For the other two types, here is how to subscribe:
 
-Let us now take a look at how we can subscribe to created relationships for the 3 types defined above:
-
-===== Movie
-```graphql
+.`Movie` type
+[source,graphql,indent=0]
+----
 subscription {
     movieRelationshipCreated {
         event
@@ -459,14 +483,11 @@ subscription {
         }
     }
 }
-```
+----
 
-==== Person
-
-As the `Person` type does not define any relationships, it is **not** possible to subscribe to `CREATE_RELATIONSHIP` events for this type.
-
-===== Actor
-```graphql
+.`Actor` type
+[source,graphql,indent=0]
+----
 subscription {
     actorRelationshipCreated {
         event
@@ -487,12 +508,14 @@ subscription {
         }
     }
 }
-```
+----
 
-The presence of the `movie` field inside of `createdRelationship` for the `actorRelationshipCreated` subscription reflects the fact that the `ACTED_IN` typed relationship is reciprocal.
+The presence of the `Movie` field inside of `createdRelationship` for the `actorRelationshipCreated` subscription reflects the fact that the `ACTED_IN`-typed relationship is reciprocal.
 
-Therefore, when a new relationship of this type is made, such as by running a mutation as follows:
-```graphql
+Therefore, when a new relationship of this type is created, such as by running this mutation:
+
+[source,graphql,indent=0]
+----
 mutation {
     createMovies(
         input: [
@@ -520,10 +543,12 @@ mutation {
         }
     }
 }
-```
+----
 
-Two events will be published (given that we subscribed to `CREATE_RELATIONSHIP` events on both types):
-```graphql
+Should prompt two events, in case you have subscribed to `CREATE_RELATIONSHIP` events on both types:
+
+[source,graphql,indent=0]
+----
 { 
     # from `movieRelationshipCreated`
     event: "CREATE_RELATIONSHIP"
@@ -561,10 +586,12 @@ Two events will be published (given that we subscribed to `CREATE_RELATIONSHIP` 
         }
     }
 }
-```
+----
 
-Since the `DIRECTED` relationship between types `Movie` and `Director` is **not** reciprocal, executing a mutation as follows:
-```graphql
+Now, since the `DIRECTED` relationship between types `Movie` and `Director` is *not* reciprocal, executing this mutation:
+
+[source,graphql,indent=0]
+----
 mutation {
     createMovies(
         input: [
@@ -607,10 +634,12 @@ mutation {
         }
     }
 }
-```
+----
 
-Two events will be published (given that we subscribed to `CREATE_RELATIONSHIP` events on the `Movie` type):
-```graphql
+Should prompt two events, in case you have subscribed to `CREATE_RELATIONSHIP` events on the `Movie` type:
+
+[source,graphql,indent=0]
+----
 { 
     # relationship 1 - from `movieRelationshipCreated`
     event: "CREATE_RELATIONSHIP"
@@ -650,20 +679,18 @@ Two events will be published (given that we subscribed to `CREATE_RELATIONSHIP` 
         }
     }
 }
-```
+----
 
-=== Special Considerations
+=== Types using the same Neo4j label
 
-[[connect-same-label]]
-==== Types using the same Neo4j label
-
-One case that deserves special consideration is overriding the label in Neo4j for a specific GraphQL type. 
+One scenario to be considered is when Neo4j labels are overriden by a specific GraphQL type.
 This can be achieved using the `@node` directive, by specifying the `label` argument.
+However, in the majority of cases, this is *not* the recommended approach to design your API.
 
-NOTE: While this section serves an informative purpose, it should be mentioned that, in the majority of cases, this is not the recommended approach of designing your API.
+As an example, consider these type definitions:
 
-Consider the following type definitions:
-```graphql
+[source,graphql,indent=0]
+----
 type Actor @node(label: "Person") {
     name: String
     movies: [Movie!]! @relationship(type: "PART_OF", direction: OUT)
@@ -680,15 +707,17 @@ type Movie {
     people: [Person!]!  @relationship(type: "PART_OF", direction: IN)
     actors: [Actor!]!  @relationship(type: "PART_OF", direction: IN)
 }
-```
+----
 
-Although we have 3 GraphQL types, in Neo4j there will only ever be 2 types of nodes: labeled `Movie` or labeled `Person`. 
+Although the example features 3 GraphQL types, in Neo4j there should only ever be 2 types of nodes: labeled `Movie` or labeled `Person`.
 
-At the database level there is no distinction between `Actor` and `Person`. Therefore, when creating a new relationship of type `PART_OF`, there will be one event for each of the 2 types.
+At the database level there is no distinction between `Actor` and `Person`. 
+Therefore, when creating a new relationship of type `PART_OF`, there should be one event for each of the 2 types.
 
 Considering the following subscriptions:
 
-```graphql
+[source,graphql,indent=0]
+----
 subscription {
     movieRelationshipCreated {
         event
@@ -731,10 +760,12 @@ subscription {
         }
     }
 }
-```
+----
 
-Running a mutation as follows:
-```graphql
+Running a mutation such as:
+
+[source,graphql,indent=0]
+----
 mutation {
     createMovies(
         input: [
@@ -768,10 +799,12 @@ mutation {
         }
     }
 }
-```
+----
 
-Results in the following events:
-```graphql
+Should result in this:
+
+[source,graphql,indent=0]
+----
 { 
     # relationship 1 `people` - for GraphQL types `Movie`, `Person`
     event: "CREATE_RELATIONSHIP"
@@ -878,10 +911,12 @@ Results in the following events:
         }
     }
 },
-```
+----
 
-Had we subscribed to `Person` as well, we would have received two more events:
-```graphql
+In case you have subscribed to `Person` as well, you should receive two more events:
+
+[source,graphql,indent=0]
+----
 { 
     # relationship 1 `movies` - for GraphQL types `Person`, `Movie`
     event: "CREATE_RELATIONSHIP"
@@ -916,41 +951,46 @@ Had we subscribed to `Person` as well, we would have received two more events:
         }
     }
 },
-```
+----
 
-[[delete_relationship]]
-== Delete Relationship Subscriptions
+== `DELETE_RELATIONSHIP`
 
-Subscriptions to `DELETE_RELATIONSHIP` events will listen for relationships to a node of the specified type that have been deleted. 
+Subscriptions to `DELETE_RELATIONSHIP` events listen to relationships being deleted and contain information about the previously connected nodes of a specified type.
+This kind of subscription:
 
-NOTE: This subscription operation is **only** available for types that define relationship fields.
+* Is only available for types that define relationship fields.
+* Contains relationship-specific information, such as the relationship field name and the object containing all relationship field names of the specified type.
+This object should be populated with properties according to the deleted relationship.
+* Triggers an equivalent number of events compared to relationships deleted, in case a relationship is deleted following a mutation and the type targeted is responsible for defining two or more relationships in the schema.
+* Contains the relationships object populated with the newly deleted relationship properties for one single relationship name only (all other relationship names should have a null value).
+* Contains the properties of the nodes connected through the relationship, as well as the properties of the newly deleted relationship, if any.
 
-As relationship-specific information, the event will contain the relationship field name, as well as an object containing all relationship field names of the specified type. This object will be populated with properties according to the deleted relationship.
+[NOTE]
+====
+Disconnected nodes that may or may not have been deleted in the process are not covered by this subscription. 
+To subscribe to these nodes' updates, use the `DELETE` subscriptions.
+====
 
-NOTE: A new event will be triggered for each deleted relationship.
+Subscriptions to `DELETE_RELATIONSHIP` events can be made with the top-level subscription `[type]RelationshipDeleted`, which contains the following fields:
 
-This means that, if the type targeted for the subscriptions defines two or more relationships in the schema and one of each relationships are deleted following a mutation operation, the number of events triggered will be equivalent to the number of relationships deleted.
+* `event`: the event triggering this subscription (in this case, `DELETE_RELATIONSHIP`).
+* `timestamp`: the timestamp in which the mutation was made.  If a same query triggers multiple events, they should have the same timestamp.
+* `<typename>`:  top-level properties of the targeted nodes, without relationships, before the `DELETE_RELATIONSHIP` operation was triggered.
+* `relationshipFieldName`: the field name of the newly deleted relationship.
+* `deletedRelationship`: an object having all field names of the nodes affected by the newly deleted relationships. 
+While any event unrelated to `relationshipFieldName` should be `null`, the ones which are related should contain the relationship properties, if defined, and a node key containing the properties of the node on the other side of the relationship. 
+Only top-level properties, without relationships, are available and they are the properties that already existed before the `DELETE_RELATIONSHIP` operation took place.
 
-Each event will have the relationships object populated with the deleted relationship's properties for one single relationship name only - all other relationship names will have a null value.
+[NOTE]
+====
+Irrespective of the relationship direction in the database, the `DELETE_RELATIONSHIP` event is bound to the type targeted for the subscription. 
+Consequently, if types A and B have xref:subscriptions/events.adoc#delete-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation deletes a relationship between them (despite being already previously diconnected in the database), the `DELETE_RELATIONSHIP` event should only return the subscription to the type A.
+====
 
-The event will also contain the properties of the nodes at both ends of the relationship, as well as the properties of the new relationship, if any.
+As an example, consider these type definitions:
 
-NOTE: The `DELETE_RELATIONSHIP` events represent relationships being deleted and contain information about the nodes at each end of the new relationship. However, the disconnected nodes may or may not have been deleted in the process. To subscribe to the node's updates, you need to use the `DELETE` subscriptions.
-
-=== `DELETE_RELATIONSHIP` event
-
-A subscription to a type can be made with the top-level subscription `[type]RelationshipDeleted`. The subscription will contain the following fields:
-
-* `event`: The event triggering this subscription, in this case it will always be `"DELETE_RELATIONSHIP"`.
-* `timestamp`: The timestamp in which the mutation was made. Note that multiple events may come with the same timestamp if triggered by the same query.
-* `<typename>`: The properties of the node target to the subscription. Only top-level properties, without relationships, are available. Note these are the properties before the operation that triggered the `DELETE_RELATIONSHIP` took place.
-* `relationshipFieldName`: The field name of the deleted relationship, as part of the node target to the subscription.
-* `deletedRelationship`: An object having as keys all field names of the node target to the subscription which represent its relationships. For any given event, all field names except the one corresponding to `relationshipFieldName` will be null. The field name equal to `relationshipFieldName` will contain the relationship properties if defined, and a `node` key containing the properties of the node on the other side of the relationship. Only top-level properties, without relationships, are available. Note these are the properties before the operation that triggered the `DELETE_RELATIONSHIP` took place.
-
-NOTE: Irrespective of the relationship direction in the database, the `DELETE_RELATIONSHIP` event is bound to the type targeted for the subscription. The consequence is that - given a relationship between types A and B that is not reciprocal (that is, in the GraphQL schema type A defines a relationship to B but B does **not** define a relationship to A) and a GraphQL operation that deletes the relationship between them - even though the two nodes will be disconnected in the database, the `DELETE_RELATIONSHIP` event will only be returned to the subscription to type A. Check out the xref:subscriptions/events.adoc#delete-non-reciprocal-relationships[Non-reciprocal Relationships] section below for more details.
-
-For example, considering the following type definitions:
-```graphql
+[source,graphql,indent=0]
+----
 type Movie {
     title: String
     genre: String
@@ -974,10 +1014,13 @@ type Reviewer {
 interface Reviewed @relationshipProperties {
     score: Int!
 }
-```
+----
 
-An ongoing subscription to deleted relationships from the `Movie` type, upon a mutation deleting then `Actor` named `Tom Hardy` and the `Reviewer` named `Jane` from a `Movie` titled `Inception` would receive the following events:
-```graphql
+Now consider a mutation deleting the `Actor` named `Tom Hardy` and the `Reviewer` named `Jane`, which are connected through a relationship to a `Movie` titled `Inception`. 
+A `DELETE_RELATIONSHIP` subscription in this case should receive the following events:
+
+[source,graphql,indent=0]
+----
 {
     # 1  - relationship type `ACTED_IN`
     event: "DELETE_RELATIONSHIP",
@@ -1017,14 +1060,14 @@ An ongoing subscription to deleted relationships from the `Movie` type, upon a m
         }
     }
 }
-```
+----
 
-=== Examples
+=== Standard types
 
-==== Delete Relationships with Standard Types
+As an example, consider these type definitions:
 
-For example, considering the following type definitions:
-```graphql
+[source,graphql,indent=0]
+----
 type Movie {
     title: String
     genre: String
@@ -1038,7 +1081,7 @@ type Actor {
 interface ActedIn @relationshipProperties {
     screenTime: Int!
 }
-```
+----
 
 A subscription to any `Movie` deleted relationships would look like:
 ```graphql
