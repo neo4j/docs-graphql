@@ -58,12 +58,6 @@ The `@limit` is to be used on nodes, and when applied will inject values into Cy
 
 Reference: xref::reference/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
 
-== `@limit`
-
-The `@limit` is to be used on nodes, and when applied will inject values into Cypher `LIMIT` clauses.
-
-Reference: xref::reference/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
-
 == `@mutation`
 
 This directive is used to limit the availability of Mutation operations in the library.
@@ -103,12 +97,6 @@ Reference: xref::ogm/private.adoc[`@private` Directive]
 This directive is used to limit the availability of Query operations in the library.
 
 Reference: xref:/schema-configuration/type-configuration.adoc#_query[`@query`]
-
-== `@queryOptions`
-
-The `@queryOptions` is to be used on nodes, where applied will inject values into a query such as the `limit`.
-
-Reference: xref::/directives/default-values.adoc#type-definitions-default-values-queryoptions[`@queryOptions`]
 
 == `@relationship`
 
