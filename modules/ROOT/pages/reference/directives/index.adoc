@@ -125,6 +125,10 @@ Can only be used on interfaces, as per its definition:
 directive @relationshipProperties on INTERFACE
 ----
 
+== `@relayId`
+
+The `@relayId` directive can be used on object type fields, to flag which field should be used as the global node identifier for Relay. Can be used once per type. The use of the `@relayId` directive ensures a unique node property constraint for the field.
+
 == `@selectable`
 
 The `@selectable` directive sets the availability of fields on queries and aggregations. 

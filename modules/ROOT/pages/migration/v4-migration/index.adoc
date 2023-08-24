@@ -1,8 +1,5 @@
 [[v4-migration]]
-
 = 4.0.0 Migration
-
-NOTE: Version 4.0.0 of the library has not yet been released. However, we recommend making these changes early in order to avoid issues in the future.
 
 This document lists all breaking changes from version 3.x.y to 4.0.0 and how to update.
 
@@ -16,10 +13,120 @@ npm update @neo4j/graphql
 
 == Constructor arguments
 
-If you were passing any arguments from https://the-guild.dev/graphql/tools/docs/api/interfaces/schema_src.iexecutableschemadefinition[`IExecutableSchemaDefinition`] into the library
-other than `typeDefs` and `resolvers`, these are no longer supported.
+If you were passing any arguments from https://the-guild.dev/graphql/tools/docs/api/interfaces/schema_src.iexecutableschemadefinition[`IExecutableSchemaDefinition`] into the library other than `typeDefs` and `resolvers`, these are no longer supported.
 
-=== config.enableRegex replaced by `MATCHES` in features.filters
+=== Removal of `config`
+
+==== `debug`
+
+The programmatic toggle for debug logging has been moved from `config.enableDebug` to simply `debug`.
+
+An example of `enableDebug`:
+
+[source, javascript, indent=0]
+----
+const { Neo4jGraphQL } = require("@neo4j/graphql");
+const neo4j = require("neo4j-driver");
+const { ApolloServer } = require("apollo-server");
+
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("neo4j", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    config: {
+      enableDebug: true,
+    }
+});
+----
+
+This now becomes:
+
+[source, javascript, indent=0]
+----
+const { Neo4jGraphQL } = require("@neo4j/graphql");
+const neo4j = require("neo4j-driver");
+const { ApolloServer } = require("apollo-server");
+
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("neo4j", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    debug: true,
+});
+----
+
+=== `driverConfig` moved to context
+
+Session configuration is now available only in the context under the `sessionConfig` key.
+
+This was previously `driverConfig`, available in both the constructor and in the context:
+
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    config: {
+        driverConfig: {
+            database: "different-db"
+        },
+    },
+})
+----
+
+The new `sessionConfig` key is only available in the context:
+
+[source, javascript, indent=0]
+----
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+    type User {
+        name: String
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("neo4j", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ sessionConfig: { database: "my-database" }}),
+});
+----
+
+The `bookmarks` key has been removed because it is no longer needed with the bookmark manager of the newer driver.
+
+==== `enableRegex` replaced by `MATCHES` in features.filters
 
 `config.enableRegex` has been replaced by `MATCHES` in features.filters. With this change comes more granularity in the feature configuration. You can now enable the `MATCHES` filter on `String` and `ID` fields separately.
 
@@ -41,6 +148,81 @@ neoSchema = new Neo4jGraphQL({
     },
 });
 ----
+
+=== `queryOptions` moved to the context
+
+If you had a need to pass in Cypher query options for query tuning, this interface has been changed.
+
+The config option `queryOptions` has now become `cypherQueryOptions` inside the context function, and it now accepts simple strings instead of enums.
+
+The following is an example before the change:
+
+[source, javascript, indent=0]
+----
+const { Neo4jGraphQL, CypherRuntime } = require("@neo4j/graphql");
+const { ApolloServer } = require("apollo-server");
+
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    config: {
+        queryOptions: {
+            runtime: CypherRuntime.INTERPRETED,
+        },
+    },
+});
+----
+
+This is what is required after the change:
+
+[source, javascript, indent=0]
+----
+const { Neo4jGraphQL } = require("@neo4j/graphql");
+const { ApolloServer } = require("apollo-server");
+
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+});
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ cypherQueryOptions: { runtime: "interpreted" }}),
+});
+----
+
+This reflects the fact that the Cypher query options are set on a per-request basis.
+
+[[startup-validation]]
+==== `skipValidateTypeDefs`
+
+The argument `skipValidateTypeDefs` has been moved to the top-level of the constructor input and renamed `validate`, which defaults to `true`.
+
+To disable type definition validation, the following config option should be used:
+
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    validate: false,
+})
+----
+
+If you started using the `config.startupValidation` option, this has also been rolled into the same `validate` setting for simplicity.
+The `resolvers` option of this is now just a warning, and `noDuplicateRelationshipFields` is now a mandatory check rolled into `validate`.
 
 [subscriptions-options]
 === Subscription options
@@ -152,6 +334,7 @@ const subscriptionsEngine = new Neo4jGraphQLAMQPSubscriptionsEngine({
 ----
 
 ==== Custom Subscription Plugins
+
 The underlying subscription system has not changed.
 Custom behavior can be implemented the same way, by creating a class implementing the interface described in xref::subscriptions/engines.adoc#custom-subscription[Subscriptions Engines].
 
@@ -161,23 +344,15 @@ However, if using TypeScript, the exported interface to implement these classes 
 
 We have renamed a number of directives and their arguments, in order to make using `@neo4j/graphql` more intuitive.
 
-=== `@queryOptions` removed and `limit` argument moved to `@limit`
+=== `@alias` values are now automatically escaped
 
-If you were using the `@queryOptions` directive to configure the default and max values for limiting the data returned by queries, for instance:
-
-[source, graphql, indent=0]
-----
-type Record @queryOptions(limit: { default: 10, max: 100 }) {
-  id: ID!
-}
-----
-
-This is now achieved by using the `@limit` directive:
+Properties in the alias directive automatically escaped using backticks. If you were using backticks in the `property` argument of your `@alias` directives, you should now remove the escape strings as this is covered by the library.
 
 [source, graphql, indent=0]
 ----
-type Record @limit(default: 10, max: 100) {
-  id: ID!
+type User {
+    id: ID! @id
+    username: String! @alias(property: "dbUserName")
 }
 ----
 
@@ -351,87 +526,51 @@ type User {
 }
 ----
 
-[plural-migration]
-=== `plural` argument removed from `@node` and replaced with `@plural`
+=== `@cypher` changes
+The default behaviour of the `@cypher` directive regarding the translation will change: Instead of using https://neo4j.com/labs/apoc/4.0/overview/apoc.cypher/apoc.cypher.runFirstColumnMany/[apoc.cypher.runFirstColumnMany] it will directly wrap the query within a `CALL { }` subquery. This behvaiour has proven to be much more performant for the same queries, however, it may lead to unexpected changes, mainly when using Neo4j 5.x, where the subqueries need to be _aliased_.
 
-How a type name is pluralised has nothing to do with nodes in the database. As a result, having a `plural` argument on the `@node` directive did not make sense.
-As a result, the `plural` argument of `@node` has been removed and replaced with a new `@plural` directive. The `@plural` directive takes the pluralised type name using the `value` argument.
+On top of that, to improve performance, it is recommended to pass the returned alias in the property `columnName`, to ensure the subquery is properly integrated into the larger query.
 
-This means that the following type definition is invalid:
+For example:
+
+The graphql query:
+[source, graphql, indent=0]
+----
+type query {
+    test: String! @cypher(statement: "RETURN 'hello'")
+}
+----
+
+Would get translated to:
+[source,cypher, indent=0]
+----
+CALL {
+    RETURN 'hello'
+}
+WITH 'hello' AS this
+RETURN this
+----
+
+Which is invalid in Neo4j 5.x.
+
+To fix it we just need to ensure the `RETURN` elements are aliased:
+[source, graphql, indent=0]
+----
+type query {
+    test: String! @cypher(statement: "RETURN 'hello' as result")
+}
+----
+
+This will be a breaking change, but this new behaviour can be used, as an experimental option with the `columnName` flag in the `@cypher` directive:
 
 [source, graphql, indent=0]
 ----
-type Tech @node(label: "TechDB", plural: "Techs") {
-  name: String
+type query {
+    test: String! @cypher(statement: "RETURN 'hello' as result", columnName: "result")
 }
 ----
 
-It would need to be updated to use the new directive as below:
-
-[source, graphql, indent=0]
-----
-type Tech @node(label: "TechDB") @plural(value: "Techs") {
-  name: String
-}
-----
-
-[label-migration]
-=== `label` and `additionalLabels` arguments removed from `@node` and replaced with new argument `labels`
-
-There is no concept of a "main label" in the Neo4j database. As such, keeping these two separate arguments causes a disconnect between the database and the GraphQL library.
-As a result, the `label` and `additionalLabels` arguments have been condensed into a single argument `labels` which will accept a list of string labels that used when a node of the given GraphQL type is created.
-Please note that defining `labels` means you take control of the database labels of the node. Indexes and constraints in Neo4j only support a single label, for which the first element of the `labels` argument will be used.
-
-The equivalent of using just the `label` argument is now a list with a single value:
-
-[source, graphql, indent=0]
-----
-type Tech @node(label: "TechDB") {
-  name: String
-}
-# becomes
-type Tech @node(labels: ["TechDB"]) {
-  name: String
-}
-----
-
-When creating the equivalent of using just the `additionalLabels` argument now requires the first value in the list to be the GraphQL type name:
-
-[source, graphql, indent=0]
-----
-type Tech @node(additionalLabels: ["TechDB"]) {
-  name: String
-}
-# becomes
-type Tech @node(labels: ["Tech", "TechDB"]) {
-  name: String
-}
-----
-
-The equivalent of using both deprecated arguments is a list with all the values concatenated:
-
-[source, graphql, indent=0]
-----
-type Tech @node(label: "TechDB", additionalLabels: ["AwesomeTech"]) {
-  name: String
-}
-# becomes
-type Tech @node(labels: ["TechDB", "AwesomeTech"]) {
-  name: String
-}
-----
-
-As before, providing none of these arguments results in the node label being the same as the GraphQL type name. 
-
-Please note the implications on constraints.
-In the following example, a unique constraint will be asserted for the label `Tech` and the property `name`:
-
-[source, graphql, indent=0]
-----
-type Tech @node(labels: ["Tech", "TechDB"]) {
-  name: String @unique
-}
-----
+Additionally, escaping strings is no longer needed.
 
 [full-text-migration]
 === `@fulltext` changes
@@ -592,62 +731,177 @@ type Query {
 }
 ----
 
-=== `@cypher` changes
-The default behaviour of the `@cypher` directive regarding the translation will change: Instead of using https://neo4j.com/labs/apoc/4.0/overview/apoc.cypher/apoc.cypher.runFirstColumnMany/[apoc.cypher.runFirstColumnMany] it will directly wrap the query within a `CALL { }` subquery. This behvaiour has proven to be much more performant for the same queries, however, it may lead to unexpected changes, mainly when using Neo4j 5.x, where the subqueries need to be _aliased_.
+=== `@id` changes
 
-On top of that, to improve performance, it is recommended to pass the returned alias in the property `columnName`, to ensure the subquery is properly integrated into the larger query.
+The `@id` directive has been completely pared back in version 4.0.0, with _all_ of its arguments removed.
+This has been done to reduce the number of features that this directive was used to toggle, and to ensure that its behaviour is consistent no matter where it is used.
 
-For example:
+==== `autogenerate`
 
-The graphql query:
-[source, graphql, indent=0]
-----
-type query {
-    test: String! @cypher(statement: "RETURN 'hello'")
-}
-----
+The default value of `autogenerate` was `true`. If this was set to `false`, the `@id` directive was almost a no-op only used to manage a unique node property constraint. Use the `@unique` directive instead.
 
-Would get translated to:
-[source,cypher, indent=0]
-----
-CALL {
-    RETURN 'hello'
-}
-WITH 'hello' AS this
-RETURN this
-----
+==== `global`
 
-Which is invalid in Neo4j 5.x.
+The `global` argument was used to configure the field that would form the global node identifier for Relay.
 
-To fix it we just need to ensure the `RETURN` elements are aliased:
-[source, graphql, indent=0]
-----
-type query {
-    test: String! @cypher(statement: "RETURN 'hello' as result")
-}
-----
+This functionality has been moved into its own directive, `@relayId`. The use of `@relayId` will ensure a unique node property constraint for the field.
 
-This will be a breaking change, but this new behaviour can be used, as an experimental option with the `columnName` flag in the `@cypher` directive:
+==== `unique`
+
+The `@id` directive used to also manage unique node property constraints for a field. This functionality has now been removed, use the `@unique` directive in combination with `@id` if you want the field to be backed by a constraint.
+
+=== `@node` changes
+
+[plural-migration]
+==== `plural` argument removed from `@node` and replaced with `@plural`
+
+How a type name is pluralised has nothing to do with nodes in the database. As a result, having a `plural` argument on the `@node` directive did not make sense.
+As a result, the `plural` argument of `@node` has been removed and replaced with a new `@plural` directive. The `@plural` directive takes the pluralised type name using the `value` argument.
+
+This means that the following type definition is invalid:
 
 [source, graphql, indent=0]
 ----
-type query {
-    test: String! @cypher(statement: "RETURN 'hello' as result", columnName: "result")
+type Tech @node(label: "TechDB", plural: "Techs") {
+  name: String
 }
 ----
 
-Additionally, escaping strings is no longer needed.
+It would need to be updated to use the new directive as below:
 
-=== Mandatory `@relationshipProperties`
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB") @plural(value: "Techs") {
+  name: String
+}
+----
+
+[label-migration]
+==== `label` and `additionalLabels` arguments removed from `@node` and replaced with new argument `labels`
+
+There is no concept of a "main label" in the Neo4j database. As such, keeping these two separate arguments causes a disconnect between the database and the GraphQL library.
+As a result, the `label` and `additionalLabels` arguments have been condensed into a single argument `labels` which will accept a list of string labels that used when a node of the given GraphQL type is created.
+Please note that defining `labels` means you take control of the database labels of the node. Indexes and constraints in Neo4j only support a single label, for which the first element of the `labels` argument will be used.
+
+The equivalent of using just the `label` argument is now a list with a single value:
+
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB") {
+  name: String
+}
+# becomes
+type Tech @node(labels: ["TechDB"]) {
+  name: String
+}
+----
+
+When creating the equivalent of using just the `additionalLabels` argument now requires the first value in the list to be the GraphQL type name:
+
+[source, graphql, indent=0]
+----
+type Tech @node(additionalLabels: ["TechDB"]) {
+  name: String
+}
+# becomes
+type Tech @node(labels: ["Tech", "TechDB"]) {
+  name: String
+}
+----
+
+The equivalent of using both deprecated arguments is a list with all the values concatenated:
+
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB", additionalLabels: ["AwesomeTech"]) {
+  name: String
+}
+# becomes
+type Tech @node(labels: ["TechDB", "AwesomeTech"]) {
+  name: String
+}
+----
+
+As before, providing none of these arguments results in the node label being the same as the GraphQL type name. 
+
+Please note the implications on constraints.
+In the following example, a unique constraint will be asserted for the label `Tech` and the property `name`:
+
+[source, graphql, indent=0]
+----
+type Tech @node(labels: ["Tech", "TechDB"]) {
+  name: String @unique
+}
+----
+
+=== `@queryOptions` removed and `limit` argument moved to `@limit`
+
+If you were using the `@queryOptions` directive to configure the default and max values for limiting the data returned by queries, for instance:
+
+[source, graphql, indent=0]
+----
+type Record @queryOptions(limit: { default: 10, max: 100 }) {
+  id: ID!
+}
+----
+
+This is now achieved by using the `@limit` directive:
+
+[source, graphql, indent=0]
+----
+type Record @limit(default: 10, max: 100) {
+  id: ID!
+}
+----
+
+[relationship-aggregate]
+=== `@relationship` changes
+
+==== Relationship types are now automatically escaped
+
+Relationship types are now automatically escaped. If you have previously escaped your relationship types using backticks, you must now remove these as this is covered by the library.
+
+==== `aggregate` argument
+
+In version 4.0.0, the default value of the aggregate argument will be false.
+This means that aggregation operation fields will no longer be generated by default when a relationship is defined using the `@relationship` directive.
+
+For instance, given the following type definitions:
+
+[source, graphql, indent=0]
+----
+type Movie {
+  title: String!
+}
+
+type Actor {
+  name: String!
+  actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT) 
+}
+----
+
+These will no longer generate `actedInAggregate` for the type `Actor`.
+
+To enable it, explicitly set the aggregate argument as `true`:
+
+[source, graphql, indent=0]
+----
+type Movie {
+  title: String!
+}
+
+type Actor {
+  name: String!
+  actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, aggregate: true) 
+}
+----
+
+=== `@relationshipProperties` now mandatory
 
 Upcoming changes to interfaces require us to distinguish between interfaces that are used to specify relationship properties, and others. Therefore, the `@relationshipProperties` directive is now required on all relationship property interfaces.
 If it is not included, an error will be thrown.
 
 As a result, in version 4.0.0, the following type definitions are invalid:
-
-=== Relationship types are now automatically escaped
-
-Relationship types are now automatically escaped. If you have previously escaped your relationship types, you should now remove the escape strings as this is covered by the library.
 
 [source, graphql, indent=0]
 ----
@@ -666,17 +920,16 @@ interface ActedIn {
 }
 ----
 
-=== Properties in the alias directive are now automatically escaped
-
-Properties in the alias directive automatically escaped using backticks. If you were using backticks in the `property` argument of your `@alias` directives, you should now remove the escape strings as this is covered by the library.
+`ActedIn` must be decorated with `@relationshipProperties`:
 
 [source, graphql, indent=0]
 ----
-type User {
-    id: ID! @id
-    username: String! @alias(property: "dbUserName")
+interface ActedIn @relationshipProperties {
+  screenTime: Int!
 }
 ----
+
+== Miscellaneous changes
 
 === Duplicate relationship fields are now checked for
 
@@ -709,62 +962,6 @@ const neoSchema = new Neo4jGraphQL({
 });
 ----
 
-[relationship-aggregate]
-=== `@relationship` changes
-
-In version 4.0.0, the default value of the aggregate argument will be false.
-This means that aggregation operation fields will no longer be generated by default when a relationship is defined using the `@relationship` directive.
-
-For instance, the following type definitions
-
-[source, graphql, indent=0]
-----
-type Movie {
-  title: String!
-}
-
-type Actor {
-  name: String!
-  actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT) 
-}
-----
-
-will no longer generate `actedInAggregate` for the type `Actor`.
-
-To enable it back, explicitly set the aggregate argument as `true`:
-
-[source, graphql, indent=0]
-----
-type Movie {
-  title: String!
-}
-
-type Actor {
-  name: String!
-  actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, aggregate: true) 
-}
-----
-
-== Miscellaneous changes
-
-[[startup-validation]]
-=== Startup validation
-
-The argument `config.skipValidateTypeDefs` has been moved to the top-level of the constructor input and renamed `validate`, which defaults to `true`.
-
-To disable type definition validation, the following config option should be used:
-
-[source, javascript, indent=0]
-----
-const neoSchema = new Neo4jGraphQL({
-    typeDefs,
-    validate: false,
-})
-----
-
-If you started using the `config.startupValidation` option, this has also been rolled into the same `validate` setting for simplicity.
-The `resolvers` option of this is now just a warning, and `noDuplicateRelationshipFields` is now a mandatory check rolled into `validate`.
-
 [[opt-in-aggregation]]
 === Opt-in Aggregation
 
@@ -785,168 +982,6 @@ type Actor @query(aggregate: true) {
 }
 ----
 
-=== Cypher query options
+=== `cypherParams`
 
-If you had a need to pass in Cypher query options for query tuning, this interface has been changed.
-
-The config option `queryOptions` has now become `cypherQueryOptions` inside the context function, and it now accepts simple strings instead of enums.
-
-The following is an example before the change:
-
-[source, javascript, indent=0]
-----
-const { Neo4jGraphQL, CypherRuntime } = require("@neo4j/graphql");
-const { ApolloServer } = require("apollo-server");
-
-const typeDefs = `
-    type Movie {
-        title: String!
-    }
-`;
-
-const neoSchema = new Neo4jGraphQL({
-    typeDefs,
-    config: {
-        queryOptions: {
-            runtime: CypherRuntime.INTERPRETED,
-        },
-    },
-});
-----
-
-This is what is required after the change:
-
-[source, javascript, indent=0]
-----
-const { Neo4jGraphQL } = require("@neo4j/graphql");
-const { ApolloServer } = require("apollo-server");
-
-const typeDefs = `
-    type Movie {
-        title: String!
-    }
-`;
-
-const neoSchema = new Neo4jGraphQL({
-    typeDefs,
-});
-
-const server = new ApolloServer({
-    schema: await neoSchema.getSchema(),
-});
-
-await startStandaloneServer(server, {
-    context: async ({ req }) => ({ cypherQueryOptions: { runtime: "interpreted" }}),
-});
-----
-
-This reflects the fact that the Cypher query options are set on a per-request basis.
-
-=== Session configuration
-
-Session configuration is now available only in the context under the `sessionConfig` key.
-
-This was previously `driverConfig`, available in both the constructor and in the context:
-
-[source, javascript, indent=0]
-----
-const neoSchema = new Neo4jGraphQL({
-    typeDefs,
-    config: {
-        driverConfig: {
-            database: "different-db"
-        },
-    },
-})
-----
-
-The new `sessionConfig` key is only available in the context:
-
-[source, javascript, indent=0]
-----
-import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
-import { Neo4jGraphQL } from "@neo4j/graphql";
-import neo4j from "neo4j-driver";
-
-const typeDefs = `#graphql
-    type User {
-        name: String
-    }
-`;
-
-const driver = neo4j.driver(
-    "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
-);
-
-const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
-
-const server = new ApolloServer({
-    schema: await neoSchema.getSchema(),
-});
-
-await startStandaloneServer(server, {
-    context: async ({ req }) => ({ sessionConfig: { database: "my-database" }}),
-});
-----
-
-The `bookmarks` key has been removed because it is no longer needed with the bookmark manager of the newer driver.
-
-=== Debug logging
-
-The programmatic toggle for debug logging has been moved from `config.enableDebug` to simply `debug`.
-
-An example of `enableDebug`:
-
-[source, javascript, indent=0]
-----
-const { Neo4jGraphQL } = require("@neo4j/graphql");
-const neo4j = require("neo4j-driver");
-const { ApolloServer } = require("apollo-server");
-
-const typeDefs = `
-    type Movie {
-        title: String!
-    }
-`;
-
-const driver = neo4j.driver(
-    "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
-);
-
-const neoSchema = new Neo4jGraphQL({
-    typeDefs,
-    driver,
-    config: {
-      enableDebug: true,
-    }
-});
-----
-
-This now becomes:
-
-[source, javascript, indent=0]
-----
-const { Neo4jGraphQL } = require("@neo4j/graphql");
-const neo4j = require("neo4j-driver");
-const { ApolloServer } = require("apollo-server");
-
-const typeDefs = `
-    type Movie {
-        title: String!
-    }
-`;
-
-const driver = neo4j.driver(
-    "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
-);
-
-const neoSchema = new Neo4jGraphQL({
-    typeDefs,
-    driver,
-    debug: true,
-});
-----
+`cypherParams` is available in the context to provide the ability to pass arbitrary parameters to a custom Cypher query. This functionality remains in 4.0.0, but you no longer have to use the `$cypherParams` prefix to reference these parameters.
