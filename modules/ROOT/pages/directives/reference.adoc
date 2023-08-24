@@ -6,7 +6,7 @@
 
 The `@alias` directive will map a GraphQL schema field to a Neo4j property on a node or relationship.
 
-Reference: xref::reference/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
+Reference: xref::/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
 
 == `@coalesce`
 
@@ -116,6 +116,7 @@ The `@queryOptions` is to be used on nodes, where applied will inject values int
 
 Reference: xref::/directives/default-values.adoc#type-definitions-default-values-queryoptions[`@queryOptions`]
 
+<<<<<<< HEAD
 == `@readonly` label:deprecated[]
 
 This directive is deprecated. See the xref:/schema-configuration/field-configuration.adoc#_settable[`@settable`] directive.
@@ -124,6 +125,8 @@ The `@readonly` directive marks fields as read-only.
 Reference: xref::/schema-configuration/field-configuration.adoc#_readonly_deprecated[`@readonly`]
 >>>>>>> e36251b (fixing broken links)
 
+=======
+>>>>>>> dbb023b (Remove references to deprecated directives (#11))
 == `@relationship`
 
 The `@relationship` directive is used to configure relationships between object types.
@@ -171,6 +174,7 @@ Reference: xref::/directives/autogeneration.adoc#type-definitions-autogeneration
 The `@unique` directive indicates that there should be a uniqueness constraint in the database for the fields that it is applied to.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 Reference: xref::reference/type-definitions/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
 =======
 Reference: xref::/directives/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
@@ -184,3 +188,6 @@ The `@writeonly` directive marks fields as write-only.
 
 Reference: xref::/schema-configuration/field-configuration.adoc#_writeonly_deprecated[`@writeonly`]
 >>>>>>> e36251b (fixing broken links)
+=======
+Reference: xref::reference/type-definitions/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
+>>>>>>> dbb023b (Remove references to deprecated directives (#11))
