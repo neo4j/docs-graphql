@@ -6,7 +6,7 @@
 
 The `@alias` directive will map a GraphQL schema field to a Neo4j property on a node or relationship.
 
-Reference: xref::/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
+Reference: xref::reference/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
 
 == `@coalesce`
 
@@ -106,7 +106,11 @@ Reference: xref:/schema-configuration/type-configuration.adoc#_query[`@query`]
 
 The `@queryOptions` is to be used on nodes, where applied will inject values into a query such as the `limit`.
 
+<<<<<<< HEAD:modules/ROOT/pages/directives/reference.adoc
 Reference: xref::/directives/default-values.adoc#type-definitions-default-values-queryoptions[`@queryOptions`]
+=======
+Reference: xref::reference/directives/default-values.adoc#type-definitions-default-values-queryoptions[`@queryOptions`]
+>>>>>>> dd84992 (Remove references to deprecated directives (#11)):modules/ROOT/pages/reference/directives/index.adoc
 
 == `@relationship`
 
