@@ -1,0 +1,15 @@
+[[type-definitions]]
+:description: Learn about the various data types available in the Neo4j GraphQL Library.
+= Type definitions
+
+Learn about the various data types available in the Neo4j GraphQL Library.
+
+- xref::/type-definitions/default.adoc[Default] - How to use all of the default GraphQL scalar types.
+- xref::/type-definitions/temporal.adoc[Temporal] - How to use temporal types in the Neo4j GraphQL Library.
+- xref::/type-definitions/spatial.adoc[Spatial] - How to use spatial types in the Neo4j GraphQL Library.
+- xref::/type-definitions/interfaces.adoc[Interfaces] - GraphQL interfaces and how to use them to map to the Neo4j database.
+- xref::/type-definitions/unions.adoc[Unions] - GraphQL unions and how to map them to the Neo4j database.
+- xref::/type-definitions/relationships.adoc[Relationships] - How to define relationships using the Neo4j GraphQL Library.
+
+
+
