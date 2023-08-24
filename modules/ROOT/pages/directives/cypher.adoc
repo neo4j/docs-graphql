@@ -53,7 +53,7 @@ type User {
 type Query {
     me: User @cypher(
         statement: """
-        MATCH (user:User {id: $auth.jwt.sub})
+        MATCH (user:User {id: $jwt.sub})
         RETURN user
         """,
         columnName: "user"
@@ -84,7 +84,7 @@ Use in cypher query:
 ----
 type Query {
     userPosts: [Post] @cypher(statement: """
-        MATCH (:User {id: $cypherParams.userId})-[:POSTED]->(p:Post)
+        MATCH (:User {id: $userId})-[:POSTED]->(p:Post)
         RETURN p
     """, columnName: "p")
 }
