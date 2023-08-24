@@ -6,7 +6,7 @@
 
 The `@alias` directive will map a GraphQL schema field to a Neo4j property on a node or relationship.
 
-Reference: xref::/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
+Reference: xref::reference/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
 
 == `@coalesce`
 
@@ -116,6 +116,7 @@ The `@queryOptions` is to be used on nodes, where applied will inject values int
 
 Reference: xref::/directives/default-values.adoc#type-definitions-default-values-queryoptions[`@queryOptions`]
 
+<<<<<<< HEAD:modules/ROOT/pages/directives/reference.adoc
 <<<<<<< HEAD
 == `@readonly` label:deprecated[]
 
@@ -127,6 +128,8 @@ Reference: xref::/schema-configuration/field-configuration.adoc#_readonly_deprec
 
 =======
 >>>>>>> dbb023b (Remove references to deprecated directives (#11))
+=======
+>>>>>>> dd84992 (Remove references to deprecated directives (#11)):modules/ROOT/pages/reference/directives/index.adoc
 == `@relationship`
 
 The `@relationship` directive is used to configure relationships between object types.
@@ -176,6 +179,7 @@ The `@unique` directive indicates that there should be a uniqueness constraint i
 <<<<<<< HEAD
 <<<<<<< HEAD
 Reference: xref::reference/type-definitions/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
+<<<<<<< HEAD:modules/ROOT/pages/directives/reference.adoc
 =======
 Reference: xref::/directives/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
 
@@ -191,3 +195,5 @@ Reference: xref::/schema-configuration/field-configuration.adoc#_writeonly_depre
 =======
 Reference: xref::reference/type-definitions/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
 >>>>>>> dbb023b (Remove references to deprecated directives (#11))
+=======
+>>>>>>> dd84992 (Remove references to deprecated directives (#11)):modules/ROOT/pages/reference/directives/index.adoc
