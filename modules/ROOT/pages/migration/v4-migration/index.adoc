@@ -75,7 +75,7 @@ const neoSchema = new Neo4jGraphQL({
 });
 ----
 
-=== `driverConfig` moved to context
+==== `driverConfig` moved to context
 
 Session configuration is now available only in the context under the `sessionConfig` key.
 
@@ -149,7 +149,7 @@ neoSchema = new Neo4jGraphQL({
 });
 ----
 
-=== `queryOptions` moved to the context
+==== `queryOptions` moved to the context
 
 If you had a need to pass in Cypher query options for query tuning, this interface has been changed.
 
