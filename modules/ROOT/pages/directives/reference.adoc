@@ -107,6 +107,22 @@ Reference: xref::ogm/private.adoc[`@private` Directive]
 This directive is used to limit the availability of Query operations in the library.
 
 Reference: xref:/schema-configuration/type-configuration.adoc#_query[`@query`]
+<<<<<<< HEAD
+=======
+
+== `@queryOptions`
+
+The `@queryOptions` is to be used on nodes, where applied will inject values into a query such as the `limit`.
+
+Reference: xref::/directives/default-values.adoc#type-definitions-default-values-queryoptions[`@queryOptions`]
+
+== `@readonly` label:deprecated[]
+
+This directive is deprecated. See the xref:/schema-configuration/field-configuration.adoc#_settable[`@settable`] directive.
+The `@readonly` directive marks fields as read-only.
+
+Reference: xref::/schema-configuration/field-configuration.adoc#_readonly_deprecated[`@readonly`]
+>>>>>>> e36251b (fixing broken links)
 
 == `@relationship`
 
@@ -154,4 +170,17 @@ Reference: xref::/directives/autogeneration.adoc#type-definitions-autogeneration
 
 The `@unique` directive indicates that there should be a uniqueness constraint in the database for the fields that it is applied to.
 
+<<<<<<< HEAD
 Reference: xref::reference/type-definitions/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
+=======
+Reference: xref::/directives/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
+
+== `@writeonly` label:deprecated[]
+
+This directive is deprecated. 
+
+Use the xref:/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] directive instead.
+The `@writeonly` directive marks fields as write-only.
+
+Reference: xref::/schema-configuration/field-configuration.adoc#_writeonly_deprecated[`@writeonly`]
+>>>>>>> e36251b (fixing broken links)

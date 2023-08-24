@@ -55,10 +55,6 @@ However, it is rare for a `Movie` to have more than one director, so you can mod
 This means that a `Movie` *must* have a `DIRECTED` relationship coming into it to be valid.
 * To figure out whether the `direction` argument of the `@relationship` directive should be `IN` or `OUT`, visualize your relationships like in the diagram above, then model out the direction of the arrows.
 * The `@relationship` directive is a reference to Neo4j relationships, whereas in the schema, the phrase `edge(s)` is used to be consistent with the general API language used by Relay.
-<<<<<<< HEAD:modules/ROOT/pages/type-definitions/relationships.adoc
-* Relationship types are automatically escaped (wrapped with backticks ```), so there is no need to add escape characters around the relationship type name (in this case, `ACTED_IN` and `DIRECTED`).
-=======
->>>>>>> d41d98c (review):modules/ROOT/pages/reference/type-definitions/relationships.adoc
 
 === Relationship properties
 
