@@ -6,7 +6,7 @@
 
 The `@alias` directive will map a GraphQL schema field to a Neo4j property on a node or relationship.
 
-Reference: xref::reference/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
+Reference: xref::/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
 
 == `@coalesce`
 
@@ -33,16 +33,6 @@ Reference: xref::/directives/cypher.adoc[`@cypher` directive]
 The `@default` directive allows for the setting of a default value for a field on object creation.
 
 Reference: xref::/directives/default-values.adoc#type-definitions-default-values-default[`@default`]
-
-== `@exclude` label:deprecated[]
-
-This directive is deprecated.
-
-Use the xref:/schema-configuration/type-configuration.adoc#_query[`@query`], xref:/schema-configuration/type-configuration.adoc#_mutation[`@mutation`] and the xref:/schema-configuration/type-configuration.adoc#_subscription[`@subscription`] directives instead.
-
-The `@exclude` directive is used on object types to instruct them to be skipped during Query, Mutation and Subscription generation.
-
-Reference: xref::/schema-configuration/type-configuration.adoc#_exclude_deprecated[`@exclude`]
 
 == `@filterable`
 
@@ -120,16 +110,6 @@ The `@queryOptions` is to be used on nodes, where applied will inject values int
 
 Reference: xref::/directives/default-values.adoc#type-definitions-default-values-queryoptions[`@queryOptions`]
 
-<<<<<<< HEAD
-=======
-== `@readonly` label:deprecated[]
-
-This directive is deprecated. See the xref:/schema-configuration/field-configuration.adoc#_settable[`@settable`] directive.
-The `@readonly` directive marks fields as read-only.
-
-Reference: xref::/schema-configuration/field-configuration.adoc#_readonly_deprecated[`@readonly`]
-
->>>>>>> 975c4dc (fixing broken links)
 == `@relationship`
 
 The `@relationship` directive is used to configure relationships between object types.
