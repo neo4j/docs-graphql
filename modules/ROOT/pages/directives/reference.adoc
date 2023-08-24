@@ -43,23 +43,23 @@ Reference: xref::/directives/default-values.adoc#type-definitions-default-values
 
 This directive is deprecated.
 
-Use the xref:/directives/schema-configuration/type-configuration.adoc#_query[`@query`], xref:/directives/schema-configuration/type-configuration.adoc#_mutation[`@mutation`] and the xref:/directives/schema-configuration/type-configuration.adoc#_subscription[`@subscription`] directives instead.
+Use the xref:/schema-configuration/type-configuration.adoc#_query[`@query`], xref:/schema-configuration/type-configuration.adoc#_mutation[`@mutation`] and the xref:/schema-configuration/type-configuration.adoc#_subscription[`@subscription`] directives instead.
 
 The `@exclude` directive is used on object types to instruct them to be skipped during Query, Mutation and Subscription generation.
 
-Reference: xref::/directives/schema-configuration/type-configuration.adoc#_exclude_deprecated[`@exclude`]
+Reference: xref::/schema-configuration/type-configuration.adoc#_exclude_deprecated[`@exclude`]
 
 == `@filterable`
 
 The `@filterable` directive defines the filters generated for a field. 
 
-Reference: xref:/directives/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
+Reference: xref:/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
 
 == `@fulltext`
 
 The `@fulltext` directive indicates that there should be a Fulltext index inserted into the database for the specified Node and its properties.
 
-Reference: xref::/type-definitions/indexes-and-constraints.adoc#type-definitions-indexes-fulltext[Fulltext indexes]
+Reference: xref::/directives/indexes-and-constraints.adoc#type-definitions-indexes-fulltext[Fulltext indexes]
 
 == `@id`
 
@@ -71,7 +71,7 @@ Reference: xref::/directives/autogeneration.adoc#type-definitions-autogeneration
 
 This directive is used to limit the availability of Mutation operations in the library.
 
-Reference: xref:/directives/schema-configuration/type-configuration.adoc#_mutation[`@mutation`]
+Reference: xref:/schema-configuration/type-configuration.adoc#_mutation[`@mutation`]
 
 == `@node`
 
@@ -105,7 +105,7 @@ Reference: xref::ogm/private.adoc[`@private` Directive]
 
 This directive is used to limit the availability of Query operations in the library.
 
-Reference: xref:/directives/schema-configuration/type-configuration.adoc#_query[`@query`]
+Reference: xref:/schema-configuration/type-configuration.adoc#_query[`@query`]
 
 == `@queryOptions`
 
@@ -115,16 +115,16 @@ Reference: xref::/directives/default-values.adoc#type-definitions-default-values
 
 == `@readonly` label:deprecated[]
 
-This directive is deprecated. See the xref:/directives/schema-configuration/field-configuration.adoc#_settable[`@settable`] directive.
+This directive is deprecated. See the xref:/schema-configuration/field-configuration.adoc#_settable[`@settable`] directive.
 The `@readonly` directive marks fields as read-only.
 
-Reference: xref::/directives/schema-configuration/field-configuration.adoc#_readonly_deprecated[`@readonly`]
+Reference: xref::/schema-configuration/field-configuration.adoc#_readonly_deprecated[`@readonly`]
 
 == `@relationship`
 
 The `@relationship` directive is used to configure relationships between object types.
 
-Reference: xref::/type-definitions/relationships.adoc[Relationships], xref::/directives/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
+Reference: xref::/type-definitions/relationships.adoc[Relationships], xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
 
 == `@relationshipProperties`
 
@@ -142,19 +142,19 @@ directive @relationshipProperties on INTERFACE
 
 The `@selectable` directive sets the availability of fields on queries and aggregations. 
 
-Reference: xref:/directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`]
+Reference: xref:/schema-configuration/field-configuration.adoc#_selectable[`@selectable`]
 
 == `@settable`
 
 The `@settable` directive sets the availability of fields on the create and update inputs. 
 
-Reference: xref:/directives/schema-configuration/field-configuration.adoc#_settable[`@settable`]
+Reference: xref:/schema-configuration/field-configuration.adoc#_settable[`@settable`]
 
 == `@subscription`
 
 This directive is used to limit Subscription operations in the library.
 
-Reference: xref:/directives/schema-configuration/type-configuration.adoc#_subscription[`@subscription`]
+Reference: xref:/schema-configuration/type-configuration.adoc#_subscription[`@subscription`]
 
 == `@timestamp`
 
@@ -166,13 +166,13 @@ Reference: xref::/directives/autogeneration.adoc#type-definitions-autogeneration
 
 The `@unique` directive indicates that there should be a uniqueness constraint in the database for the fields that it is applied to.
 
-Reference: xref::/type-definitions/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
+Reference: xref::/directives/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
 
 == `@writeonly` label:deprecated[]
 
 This directive is deprecated. 
 
-Use the xref:/directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] directive instead.
+Use the xref:/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] directive instead.
 The `@writeonly` directive marks fields as write-only.
 
-Reference: xref::/directives/schema-configuration/field-configuration.adoc#_writeonly_deprecated[`@writeonly`]
+Reference: xref::/schema-configuration/field-configuration.adoc#_writeonly_deprecated[`@writeonly`]

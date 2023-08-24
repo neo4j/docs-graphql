@@ -305,7 +305,7 @@ type Actor {
 
 [NOTE]
 ====
-Please note how the `actedInAggregate` is not affected by the argument `onAggregate`. To disable the generation of `actedInAggregate` see the `aggregate` argument of the directive xref::/directives/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
+Please note how the `actedInAggregate` is not affected by the argument `onAggregate`. To disable the generation of `actedInAggregate` see the `aggregate` argument of the directive xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
 ====
 
 == `@settable`
@@ -547,7 +547,7 @@ It is not mutable after creation.
 [NOTE]
 ====
 This directive is deprecated. 
-Use the xref::/directives/schema-configuration/field-configuration.adoc#_settable[`@settable`] directive instead.
+Use the xref::/schema-configuration/field-configuration.adoc#_settable[`@settable`] directive instead.
 ====
 
 
@@ -567,7 +567,7 @@ With this directive, fields will only be featured in input types and will not be
 [NOTE]
 ====
 This directive is deprecated. 
-Use the xref::/directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] directive instead.
+Use the xref::/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] directive instead.
 ====
 
 

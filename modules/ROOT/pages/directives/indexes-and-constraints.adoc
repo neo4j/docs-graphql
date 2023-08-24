@@ -17,10 +17,10 @@ directive @unique(
 ) on FIELD_DEFINITION
 ----
 
-Additionally, the usage of the xref::reference/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive by default implies that there should be a unique node property constraint in the database for that property.
+Additionally, the usage of the xref::/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive by default implies that there should be a unique node property constraint in the database for that property.
 
 Using this directive does not automatically ensure the existence of these constraints, and you will need to run a function on server startup. 
-See the section xref::type-definitions/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
+See the section xref::directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
 
 === `@unique` directive usage
 
@@ -84,7 +84,7 @@ directive @fulltext(indexes: [FullTextInput]!) on OBJECT
 
 Using this directive does not automatically ensure the existence of these indexes.
 You need to run a function on server startup. 
-See the section xref::type-definitions/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
+See the section xref::directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
 
 === Specifying the `@fulltext` directive
 
@@ -99,7 +99,7 @@ type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]
 }
 ----
 
-When you run xref::type-definitions/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints], they create the index like so:
+When you run xref::directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints], they create the index like so:
 
 [source, cypher, indent=0]
 ----
@@ -224,7 +224,6 @@ query {
 
 == Asserting constraints
 
-In order to ensure that the specified constraints exist in the database, you need to run the function `assertIndexesAndConstraints` (see xref::reference/api-reference/neo4jgraphql.adoc#api-reference-assertconstraints[API reference] for more details).
 A simple example to create the necessary constraints might look like the following, assuming a valid driver instance in the variable `driver`. 
 This creates two constraints, one for each field decorated with `@id` and `@unique`, and apply the indexes specified in `@fulltext`:
 

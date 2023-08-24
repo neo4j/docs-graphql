@@ -3,6 +3,28 @@
 ** xref:getting-started/index.adoc[]
 *** xref:getting-started/toolbox.adoc[]
 
+** xref:directives/index.adoc[]
+*** xref:directives/autogeneration.adoc[]
+*** xref:directives/basics.adoc[]
+*** xref:directives/custom-directives.adoc[]
+*** xref:directives/cypher.adoc[]
+*** xref:directives/default-values.adoc[]
+*** xref:directives/database-mapping.adoc[]
+*** xref:directives/indexes-and-constraints.adoc[]
+
+** xref:type-definitions/index.adoc[Type definitions]
+*** xref:type-definitions/default.adoc[Default]
+*** xref:type-definitions/temporal.adoc[Temporal]
+*** xref:type-definitions/spatial.adoc[Spatial]
+*** xref:type-definitions/interfaces.adoc[Interface]
+*** xref:type-definitions/unions.adoc[Union]
+*** xref:type-definitions/relationships.adoc[]
+
+** xref:schema-configuration/index.adoc[Schema configuration]
+*** xref:schema-configuration/type-configuration.adoc[]
+*** xref:schema-configuration/global-configuration.adoc[]
+*** xref:schema-configuration/field-configuration.adoc[]
+
 ** xref:queries-aggregations/index.adoc[Queries and aggregations]
 *** xref:queries-aggregations/queries.adoc[]
 *** xref:queries-aggregations/aggregations.adoc[]
@@ -50,31 +72,7 @@
 *** xref:ogm/type-generation.adoc[]
 *** xref:ogm/reference.adoc[]
 
-** Reference
-*** xref:reference/api-reference/index.adoc[]
-**** xref:reference/api-reference/neo4jgraphql.adoc[]
-**** xref:reference/api-reference/ogm.adoc[]
-*** xref:reference/type-definitions/index.adoc[]
-**** xref:reference/type-definitions/indexes-and-constraints.adoc[]
-**** xref:reference/type-definitions/interfaces.adoc[]
-**** xref:reference/type-definitions/relationships.adoc[]
-**** xref:reference/type-definitions/types.adoc[]
-**** xref:reference/type-definitions/unions.adoc[]
-
-*** xref:reference/directives/index.adoc[]
-**** xref:reference/directives/schema-configuration/index.adoc[]
-***** xref:reference/directives/schema-configuration/type-configuration.adoc[]
-***** xref:reference/directives/schema-configuration/global-configuration.adoc[]
-***** xref:reference/directives/schema-configuration/field-configuration.adoc[]
-
-**** xref:reference/directives/autogeneration.adoc[]
-**** xref:reference/directives/basics.adoc[]
-**** xref:reference/directives/custom-directives.adoc[]
-**** xref:reference/directives/cypher.adoc[]
-**** xref:reference/directives/default-values.adoc[]
-**** xref:reference/directives/database-mapping.adoc[]
-
-*** xref:reference/driver-configuration.adoc[]
+*** xref:driver-configuration.adoc[]
 
 ** xref:guides/index.adoc[]
 *** xref:guides/apollo-federation.adoc[]

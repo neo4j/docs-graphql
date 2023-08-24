@@ -183,7 +183,7 @@ type Actor {
 }
 ----
 
-Now, considering that any xref:reference/directives/index.adoc[directives] present on an interface or its fields are "inherited" by any object types implementing it, the example schema could be refactored to have the `@relationship` directive on the `actors` field in the `Production` interface instead of on each implementing type as it is currently.
+Now, considering that any xref:/directives/index.adoc[directives] present on an interface or its fields are "inherited" by any object types implementing it, the example schema could be refactored to have the `@relationship` directive on the `actors` field in the `Production` interface instead of on each implementing type as it is currently.
 That is how it would look like:
 
 [source, graphql, indent=0]

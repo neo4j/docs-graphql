@@ -162,7 +162,7 @@ This directive skips the generation of queries and/or subscriptions and/or parti
 ====
 This directive is deprecated.
 
-Use the xref:/directives/schema-configuration/type-configuration.adoc#_query[`@query`], xref:/directives/schema-configuration/type-configuration.adoc#_mutation[`@mutation`] and the xref:/directives/schema-configuration/type-configuration.adoc#_subscription[`@subscription`] directives instead.
+Use the xref:/schema-configuration/type-configuration.adoc#_query[`@query`], xref:/schema-configuration/type-configuration.adoc#_mutation[`@mutation`] and the xref:/schema-configuration/type-configuration.adoc#_subscription[`@subscription`] directives instead.
 ====
 
 === Definition

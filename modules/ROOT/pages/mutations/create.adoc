@@ -42,7 +42,7 @@ This allows you to create not only the type in question, but to recurse down and
 
 [NOTE]
 ====
-The `id` field is absent from both `create` input types as the xref::reference/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive has been used.
+The `id` field is absent from both `create` input types as the xref::/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive has been used.
 ====
 
 == Single `create`
