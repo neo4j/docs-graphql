@@ -1,12 +1,13 @@
 [[type-definitions-basics]]
+:description: This page describes basic notions about how to use directives with the Neo4j GraphQL Library.
 = Basics
 
-Each type in your GraphQL type definitions can be mapped to an entity in your Neo4j database.
+Each type in your GraphQL type definitions can be mapped to an entity in your Neo4j database, such as nodes, relationships, and relationship properties.
+This page describes how that can be done.
 
 == Nodes
 
-The most basic mapping is of GraphQL types to Neo4j nodes, where the GraphQL type name maps to the Neo4j node label.
-
+The most basic mapping, it uses GraphQL type names to map to the Neo4j node label.
 For example, to represent a node with label "Movie" and a single property "title" of type string:
 
 [source, graphql, indent=0]
@@ -18,9 +19,10 @@ type Movie {
 
 == Relationships
 
-Relationships are represented by marking particular fields with a directive. This directive, `@relationship`, defines the relationship type in the database, as well as which direction that relationship goes in.
+Relationships are represented by marking particular fields with a directive -- in this case, `@relationship`. 
+It defines the relationship type in the database, as well as which direction that relationship goes in.
 
-Add a second node type, "Actor", and connect the two together:
+To add a second node type, "Actor", and connect the two together, you should do the following:
 
 [source, graphql, indent=0]
 ----
@@ -35,12 +37,14 @@ type Actor {
 }
 ----
 
-Note there is a directive on each "end" of the relationship in this case, but it is not essential.
+Note that, in this case, there is a directive on each "end" of the relationship, but it is not essential.
 
 === Relationship properties
 
-In order to add relationship properties to a relationship, you need to add a new type to your type definitions, but this time it will be of type `interface`. This interface must be decorated with the `@relationshipProperties` directive.
-For example, for your "ACTED_IN" relationship, add a property "roles":
+In order to add properties to a relationship, you need to add a new type to your type definitions.
+This time, however, it should be an interface which must be decorated with the `@relationshipProperties` directive.
+
+For example, for the "ACTED_IN" relationship, add a property "roles":
 
 [source, graphql, indent=0]
 ----
@@ -59,4 +63,5 @@ interface ActedIn @relationshipProperties {
 }
 ----
 
-Note that in addition to this new interface type, there is an added a key `properties` in the existing `@relationship` directives.
+Note that in addition to this interface type, there is an added a key `properties` in the existing `@relationship` directives.
+For more information, see xref:type-definitions/relationships.adoc[Type definitions -> Relationships].

@@ -1,10 +1,13 @@
 [[type-definitions-default-values]]
-= Default Values
+:description: This page describes how to use default values in the Neo4j GraphQL Library.
+= Default values
+
+This page describes how to use default values in the Neo4j GraphQL Library.
 
 [[type-definitions-default-values-default]]
 == `@default`
 
-When generating the input type for the create mutation, the value specified in this directive will be used as the default value for this field.
+When generating the input type for the `create`` mutation, the value specified in this directive is used as the default value for this field.
 
 === Definition
 
@@ -20,10 +23,10 @@ directive @default(
 ) on FIELD_DEFINITION
 ----
 
-=== Usage with Enums
+=== Usage
 
-`@default` may be used with enums. When setting the default value for an enum field,
-the value must be one of the enumerated enum values.
+`@default` may be used with enums. 
+When setting the default value for an enum field, it must be one of the enumerated enum values:
 
 [source, graphql, indent=0]
 ----
@@ -42,7 +45,10 @@ type SomeType {
 [[type-definitions-default-values-coalesce]]
 == `@coalesce`
 
-When translating from GraphQL to Cypher, any instances of fields to which this directive is applied will be wrapped in a `coalesce()` function in the WHERE clause (see https://neo4j.com/developer/kb/understanding-non-existent-properties-and-null-values/#_use_coalesce_to_use_a_default_for_a_null_value). This helps to query against non-existent properties in a database, however it is encouraged to populate these properties with meaningful values if this is becoming the norm. This is a very primitive implementation of the function which only takes a static default value as opposed to using another property in a node or a Cypher expression.
+When translating from GraphQL to Cypher, any instances of fields to which this directive is applied will be wrapped in a `coalesce()` function in the WHERE clause (see https://neo4j.com/developer/kb/understanding-non-existent-properties-and-null-values/#_use_coalesce_to_use_a_default_for_a_null_value).
+
+This directive helps querying against non-existent properties in a database. 
+However, it is encouraged to populate these properties with meaningful values if this is becoming the norm. The `@coalesce`directive is a primitive implementation of the function which only takes a static default value as opposed to using another property in a node or a Cypher expression.
 
 === Definition
 
@@ -58,10 +64,10 @@ directive @coalesce(
 ) on FIELD_DEFINITION
 ----
 
-=== Usage with Enums
+=== Usage
 
-`@coalesce` may be used with enums. When setting the default value for an enum field,
-the value must be one of the enumerated enum values.
+`@coalesce` may be used with enums. 
+When setting the default value for an enum field, it must be one of the enumerated enum values:
 
 [source, graphql, indent=0]
 ----
@@ -77,7 +83,7 @@ type Movie {
 [[type-definitions-default-values-limit]]
 == `@limit`
 
-The `@limit` is to be used on nodes, where applied will inject values into a query such as the `limit`.
+Available on nodes, this directive injects values into a query such as the `limit`.
 
 === Definition
 
@@ -90,7 +96,22 @@ directive @limit(
 ) on OBJECT
 ----
 
+=== Usage
+
 The directive has two arguments:
 
-* `default` - If no `limit` argument is passed to the query, the default limit will be used. The query may still pass a higher or lower `limit`.
-* `max` - Defines the maximum limit to be passed to the query. If a higher value is passed, this will be used instead. If no `default` value is set, `max` will be used for queries without limit.
+* `default` - if no `limit` argument is passed to the query, the default limit is used. 
+The query may still pass a higher or lower `limit`.
+* `max` - defines the maximum limit to be passed to the query. 
+If a higher value is passed, it is used instead. 
+If no `default` value is set, `max` is used for queries without limit.
+
+[source, graphql, indent=0]
+----
+{
+  Movie @limit(amount: 5) {
+    title
+    year
+  }
+}
+----

@@ -1,5 +1,6 @@
 [[schema-configuration-field-configuration]]
-= Field Configuration
+:description: This page describes how to use the directives @selectable, @settable, @filterable and `@relationship` to control how fields are exposed.
+= Field configuration
 
 In case you need to remove fields from a GraphQL Object Type or a GraphQL Input Object Type, consider the following type definitions:
 
@@ -17,7 +18,7 @@ type Actor {
 }
 ----
 
-It will generate the type `Actor`:
+It generates the type `Actor`:
 
 [source, graphql, indent=0]
 ----
@@ -30,7 +31,7 @@ type Actor {
 }
 ----
 
-By using the directives `@selectable`, `@settable`, `@filterable` and `@relationship` it is possible to control how these fields are exposed.
+By using the directives `@selectable`, `@settable`, `@filterable`, and `@relationship` it is possible to control how these fields are exposed.
 For instance, to hide the field `age` in the Selection Set, you can use the `@selectable` directive:
 
 [source, graphql, indent=0]
@@ -47,7 +48,7 @@ type Actor {
 }
 ----
 
-Now the type `Actor` will look like this:
+Now the type `Actor` looks like this:
 
 [source, graphql, indent=0]
 ----
@@ -61,12 +62,13 @@ type Actor {
 
 == `@relationship`
 
-There are several nested operations available for every field created using the `@relationship` directive. These are `create`, `connect`, `disconnect`, `connectOrCreate`, `delete`. 
+There are several nested operations available for every field created using the `@relationship` directive. These are `create`, `connect`, `disconnect`, `connectOrCreate`, and `delete`. 
 
 However, these operations are not always needed. 
 The `@relationship` directive allows you to define which operations should be available for a relationship by using the argument `nestedOperations`.
 
-Additionally, the `@relationship` directive causes fields to be added for nested aggregations. These can be disabled using the `aggregate` argument.
+Additionally, the `@relationship` directive causes fields to be added for nested aggregations. 
+These can be disabled using the `aggregate` argument.
 
 === Definition
 
@@ -99,7 +101,7 @@ See xref:migration/v4-migration/index.adoc#_relationship_changes[`@relationship 
 
 === Usage
 
-==== Configure aggregation
+*Configure aggregation*
 
 From the previous type definitions, the type `Actor` produced is:
 
@@ -113,7 +115,8 @@ type Actor {
 }
 ----
 
-As it's visible, the relationship field `actedIn` produces the operation field `actedInAggregate` which allows aggregations on that relationship. It's possible to configure this behavior by passing the argument aggregate on the `@relationship` directive:
+Note that the relationship field `actedIn` produces the operation field `actedInAggregate`, which allows aggregations on that relationship. 
+It is possible to configure this behavior by passing the argument aggregate on the `@relationship` directive:
 
 [source, graphql, indent=0]
 ----
@@ -129,7 +132,7 @@ type Actor {
 }
 ----
 
-In this case, as we passed the argument `aggregate` as false, the type `Actor` produced is:
+In this case, as the argument `aggregate` was passed as false, the type `Actor` produced is:
 
 [source, graphql, indent=0]
 ----
@@ -141,9 +144,10 @@ type Actor {
 }
 ----
 
-=== Configure nested operations
+*Configure nested operations*
 
-A large part of the schema produced by the library is needed to support nested operations. These are enabled by the directive `@relationship` as described in xref:type-definitions/relationships.adoc#_inserting_data[@relationship Inserting Data].
+A large part of the schema produced by the library is needed to support nested operations. 
+These are enabled by the directive `@relationship` as described in xref:type-definitions/relationships.adoc#_inserting_data[`@relationship` -> Inserting data].
 
 The nested operations available are:
 
@@ -159,9 +163,10 @@ enum NestedOperations {
 }
 ----
 
-By default, the `@relationship` enables all of them when defined. To enable only some of them, you have to pass the argument `nestedOperations` specifying the operations required.
+By default, `@relationship` enables all of them when defined. 
+To enable only some of them, you have to pass the argument `nestedOperations` specifying the operations required.
 
-**Disable nested create**
+*Disable nested create*
 
 To disable the nested `CREATE` operation, change the initial type definitions to:
 
@@ -179,11 +184,11 @@ type Actor {
 }
 ----
 
-As the `CREATE` operation is not present in the `nestedOperations` argument array, it will be no longer possible to create movies starting from the `Actor` type.
+As the `CREATE` operation is not present in the `nestedOperations` argument array, it is no longer possible to create movies starting from the `Actor` type.
 
-**Disable all nested operations**
+*Disable all nested operations*
 
-If instead, no nested operations are required, it's possible to disable all the nested operations by passing an empty array, as:
+If instead, no nested operations are required, it is possible to disable all the nested operations by passing an empty array:
 
 [source, graphql, indent=0]
 ----
@@ -204,8 +209,8 @@ type Actor {
 This directive sets the availability of fields on queries and aggregations. 
 It has two arguments:
 
-* **onRead**: If disabled, this field will not be available on queries and subscriptions.
-* **onAggregate**: If disabled, aggregations will not be available for this field.
+* **onRead**: if disabled, this field is not available on queries and subscriptions.
+* **onAggregate**: if disabled, aggregations is not available for this field.
 
 === Definition
 
@@ -227,7 +232,7 @@ type Movie {
 }
 ----
 
-The type `Movie` in the resulting schema will look like this:
+The type `Movie` in the resulting schema looks like this:
 
 [source, graphql, indent=0]
 ----
@@ -248,7 +253,7 @@ type MovieAggregateSelection {
 }
 ----
 
-In case we wanted to remove the `description` field from `MovieAggregateSelection`, what we needed to do is change the `onAggregate` value to `false`, as follow:
+In case you want to remove the `description` field from `MovieAggregateSelection`, you need to change the `onAggregate` value to `false`:
 
 [source, graphql, indent=0]
 ----
@@ -258,7 +263,7 @@ type Movie {
 }
 ----
 
-=== `@selectable` with Relationships
+*`@selectable` with relationships*
 
 This directive can be used along with relationship fields. 
 
@@ -274,9 +279,9 @@ type Actor {
 }
 ----
 
-This means that the `actedIn` field is queryable from the homonymous generated field `actedIn` and the field `actedInConnection`, to avoid that, it's required to use the directive `@selectable`. 
-
-For instance:
+This means that the `actedIn` field can be queried from the homonymous generated field `actedIn` and the field `actedInConnection`.
+To avoid that, it is required to use the directive `@selectable`.
+For instance, these type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -293,7 +298,7 @@ type Actor {
 }
 ----
 
-It will generate the type type `Actor`:
+Generate the type `Actor`:
 
 [source, graphql, indent=0]
 ----
@@ -303,18 +308,16 @@ type Actor {
 }
 ----
 
-[NOTE]
-====
-Please note how the `actedInAggregate` is not affected by the argument `onAggregate`. To disable the generation of `actedInAggregate` see the `aggregate` argument of the directive xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
-====
+Note how `actedInAggregate` is not affected by the argument `onAggregate`. 
+To disable the generation of `actedInAggregate`, see the `aggregate` argument of the directive xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`].
 
 == `@settable`
 
 This directive sets the availability of the input field on creation and update mutations.
 It has two arguments:
 
-* **onCreate**: If disabled, this field will not be available on creation operations.
-* **onUpdate**: If disabled, this field will not be available on update operations.
+* **onCreate**: if disabled, this field is not available on creation operations.
+* **onUpdate**: if disabled, this field is not available on update operations.
 
 === Definition
 
@@ -324,7 +327,7 @@ It has two arguments:
 directive @settable(onCreate: Boolean! = true, onUpdate: Boolean! = true) on FIELD_DEFINITION
 ----
 
-==== Usage
+=== Usage
 
 With this definition:
 
@@ -342,7 +345,7 @@ type Actor {
 }
 ----
 
-The following input fields will be generated:
+The following input fields are generated:
 
 [source, graphql, indent=0]
 ----
@@ -356,12 +359,12 @@ input MovieUpdateInput {
 }
 ----
 
-This means the description can be set on creation, but it will not be available on update operations.
+This means the description can be set on creation, but it is not available on update operations.
 
-=== `@settable` with Relationships
+*`@settable` with relationships*
 
 This directive can be used along with relationship fields. 
-When an operation on a field is disabled this way, that relationship will not be available on top-level operations. 
+When an operation on a field is disabled this way, that relationship is no longer available on top-level operations. 
 For example:
 
 [source, graphql, indent=0]
@@ -379,7 +382,7 @@ type Actor {
 }
 ----
 
-The following input fields will be generated:
+The following input fields are generated:
 
 [source, graphql, indent=0]
 ----
@@ -393,15 +396,15 @@ input ActorUpdateInput {
 }
 ----
 
-This means the `actedIn` can be updated on an update, but it will not be available on create operations.
+This means `actedIn` can be updated on an update, but it is no longer available on `create`` operations.
 
 == `@filterable`
 
 This directive defines the filters generated for the field to which this directive is applied.
 It has two arguments:
 
-* **byValue**: If disabled, this field will not generate value filters.
-* **byAggregate**: If disabled, this field will not generate aggregation filters.
+* **byValue**: if disabled, this field does not generate value filters.
+* **byAggregate**: if disabled, this field does not generate aggregation filters.
 
 === Definition
 
@@ -411,7 +414,7 @@ It has two arguments:
 directive @filterable(byValue: Boolean! = true, byAggregate: Boolean! = true) on FIELD_DEFINITION
 ----
 
-==== Usage
+=== Usage
 
 With this definition:
 
@@ -430,7 +433,7 @@ type Actor {
 }
 ----
 
-The following input fields will be generated:
+The following input fields are generated:
 
 [source, graphql, indent=0]
 ----
@@ -478,10 +481,10 @@ input ActorActedInNodeAggregationWhereInput {
 
 As shown by the generated input fields, the `description` field is not available for filtering on both value and aggregation filters.
 
-=== `@filterable` with Relationships
+*`@filterable` with relationships*
 
 This directive can be used along with relationship fields. 
-When an operation on a field is disabled this way, that relationship will not be available on top-level operations. 
+When an operation on a field is disabled this way, that relationship is no longer available on top-level operations. 
 For example:
 
 [source, graphql, indent=0]
@@ -500,7 +503,7 @@ type Actor {
 }
 ----
 
-The following input fields will be generated:
+The following input fields are generated:
 
 [source, graphql, indent=0]
 ----
@@ -537,44 +540,4 @@ input ActorActedInNodeAggregationWhereInput {
 }
 ----
 
-As shown by the above inputs fields, the `actors` field is not available for filtering on both value and aggregation filters.
-
-== `@readonly` label:deprecated[]
-
-With this directive, fields will only be featured in mutations for creating and in object types for querying.
-It is not mutable after creation.
-
-[NOTE]
-====
-This directive is deprecated. 
-Use the xref::/schema-configuration/field-configuration.adoc#_settable[`@settable`] directive instead.
-====
-
-
-=== Definition
-
-[source, graphql, indent=0]
-----
-"""Instructs @neo4j/graphql to only include a field in generated input type for creating, and in the object type within which the directive is applied."""
-directive @readonly on FIELD_DEFINITION
-----
-
-
-== `@writeonly` label:deprecated[]
-
-With this directive, fields will only be featured in input types and will not be available for querying the object type through a Query or through a mutation response.
-
-[NOTE]
-====
-This directive is deprecated. 
-Use the xref::/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] directive instead.
-====
-
-
-=== Definition
-
-[source, graphql, indent=0]
-----
-"""Instructs @neo4j/graphql to only include a field in the generated input types for the object type within which the directive is applied, but exclude it from the object type itself."""
-directive @writeonly on FIELD_DEFINITION
-----
+As shown by the previous inputs fields, the `actors` field is not available for filtering on both value and aggregation filters.

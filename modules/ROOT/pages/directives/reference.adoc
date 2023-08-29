@@ -1,147 +1,86 @@
 [[directives-reference]]
+:description: This page lists all directives available in the Neo4j GraphQL Library.
 = Directives reference
 
+This page lists all directives available in the Neo4j GraphQL Library:
 
-== `@alias`
+[cols="1,3"]
+|===
+| Directive | Description
 
-The `@alias` directive will map a GraphQL schema field to a Neo4j property on a node or relationship.
+| xref::/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
+| Maps a GraphQL schema field to a Neo4j property on a node or relationship.
 
-Reference: xref::/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
+| xref::/directives/default-values.adoc#type-definitions-default-values-coalesce[`@coalesce`]
+| Exposes a mechanism for querying against non-existent, `null` values on a node.
 
-== `@coalesce`
+| xref::custom-resolvers.adoc#custom-resolver-directive[`@customResolver`]
+| Specifies that a field is resolved by a custom resolver, and allows the specification
+of any required fields that is passed as arguments to the custom resolver.
 
-The `@coalesce` directive exposes a mechanism for querying against non-existent, `null` values on a node.
+| xref::/directives/cypher.adoc[`@cypher`]
+| Overrides field resolution (including `Query` and `Mutation` fields), instead resolving with the specified Cypher.
 
-Reference: xref::/directives/default-values.adoc#type-definitions-default-values-coalesce[`@coalesce`]
+| xref::/directives/default-values.adoc#type-definitions-default-values-default[`@default`]
+| Allows for the setting of a default value for a field on object creation.
 
-[[custom-resolver-directive]]
-== `@customResolver`
+| xref:/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
+| Defines the filters generated for a field.
 
-The `@customResolver` directive specifies that a field will be resolved by a custom resolver, and allows the specification
-of any required fields that will be passed as arguments to the custom resolver.
+| xref::/directives/indexes-and-constraints.adoc#type-definitions-indexes-fulltext[`@fulltext`]
+| Indicates that there should be a fulltext index inserted into the database for the specified Node and its properties.
 
-Reference: xref::custom-resolvers.adoc#custom-resolver-directive[`@customResolver`]
+| xref::/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`]
+| Marks a field as the unique ID for an object type, and allows for autogeneration of IDs.
 
-== `@cypher`
+| xref::/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
+| Used on nodes to inject values into Cypher `LIMIT` clauses.
 
-The `@cypher` directive overrides field resolution (including `Query` and `Mutation` fields), instead resolving with the specified Cypher.
+| xref:/schema-configuration/type-configuration.adoc#_mutation[`@mutation`]
+| Limits the availability of Mutation operations in the library.
 
-Reference: xref::/directives/cypher.adoc[`@cypher` directive]
+| xref::/directives/database-mapping.adoc#type-definitions-node[`@node`]
+| Specifies the configuration of a GraphQL object type which represents a Neo4j node.
 
-== `@default`
-
-The `@default` directive allows for the setting of a default value for a field on object creation.
-
-Reference: xref::/directives/default-values.adoc#type-definitions-default-values-default[`@default`]
-
-== `@filterable`
-
-The `@filterable` directive defines the filters generated for a field. 
-
-Reference: xref:/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
-
-== `@fulltext`
-
-The `@fulltext` directive indicates that there should be a Fulltext index inserted into the database for the specified Node and its properties.
-
-Reference: xref::/directives/indexes-and-constraints.adoc#type-definitions-indexes-fulltext[Fulltext indexes]
-
-== `@id`
-
-The `@id` directive marks a field as the unique ID for an object type, and allows for autogeneration of IDs.
-
-Reference: xref::/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`]
-
-== `@limit`
-
-The `@limit` is to be used on nodes, and when applied will inject values into Cypher `LIMIT` clauses.
-
-Reference: xref::reference/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
-
-== `@mutation`
-
-This directive is used to limit the availability of Mutation operations in the library.
-
-Reference: xref:/schema-configuration/type-configuration.adoc#_mutation[`@mutation`]
-
-== `@node`
-
-The `@node` directive is used to specify the configuration of a GraphQL object type which represents a Neo4j node.
-
-Reference: xref::/directives/database-mapping.adoc#type-definitions-node[`@node`]
-
-[[plural-directive]]
-== `@plural`
-
-The `@plural` directive redefines how to compose the plural of the type for the generated operations.
+| xref::/directives/database-mapping.adoc#type-definitions-plural[`@plural`]
+| Redefines how to compose the plural of the type for the generated operations.
 This is particularly useful for types that are not correctly pluralized or are non-English words.
 
-Reference: xref::/directives/database-mapping.adoc#type-definitions-plural[`@plural`]
-
-[[populated-by-directive]]
-== `@populatedBy`
-
-The `@populatedBy` directive is used to specify a callback function that gets executed during GraphQL query parsing,
+| xref::/directives/autogeneration.adoc#type-definitions-autogeneration-populated-by[`@populatedBy`]
+| Specifies a callback function that gets executed during GraphQL query parsing,
 to populate fields which have not been provided within the input.
 
-Reference: xref::/directives/autogeneration.adoc#type-definitions-autogeneration-populated-by[`@populatedBy`]
+| xref::ogm/private.adoc[`@private`]
+| Protects fields which should only be available through the xref::ogm/index.adoc[OGM].
 
-== `@private`
+| xref:/schema-configuration/type-configuration.adoc#_query[`@query`]
+| Limits the availability of Query operations in the library.
 
-The `@private` directive protects fields which should only be available through the xref::ogm/index.adoc[OGM].
+| xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
+| Configure  xref::/type-definitions/relationships.adoc[relationships] between object types.
 
-Reference: xref::ogm/private.adoc[`@private` Directive]
-
-== `@query`
-
-This directive is used to limit the availability of Query operations in the library.
-
-Reference: xref:/schema-configuration/type-configuration.adoc#_query[`@query`]
-
-== `@relationship`
-
-The `@relationship` directive is used to configure relationships between object types.
-
-Reference: xref::/type-definitions/relationships.adoc[Relationships], xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
-
-== `@relationshipProperties`
-
-Required to help you distinguish between interfaces which are used for relationship properties, and otherwise.
-
+| *`@relationshipProperties`*
+a| Required to help you distinguish between interfaces which are used for relationship properties, and otherwise.
 Can only be used on interfaces, as per its definition:
-
 [source, graphql, indent=0]
 ----
 """Required to differentiate between interfaces for relationship properties, and otherwise."""
 directive @relationshipProperties on INTERFACE
 ----
 
-== `@selectable`
+| xref:/schema-configuration/field-configuration.adoc#_selectable[`@selectable`]
+| Sets the availability of fields on queries and aggregations. 
 
-The `@selectable` directive sets the availability of fields on queries and aggregations. 
+| xref:/schema-configuration/field-configuration.adoc#_settable[`@settable`]
+| Sets the availability of fields on the create and update inputs. 
 
-Reference: xref:/schema-configuration/field-configuration.adoc#_selectable[`@selectable`]
+| xref:/schema-configuration/type-configuration.adoc#_subscription[`@subscription`]
+| Limits subscription operations in the library.
 
-== `@settable`
+| xref::/directives/autogeneration.adoc#type-definitions-autogeneration-timestamp[`@timestamp`]
+| Flags fields to be used to store timestamps on create/update events.
 
-The `@settable` directive sets the availability of fields on the create and update inputs. 
+| xref::/directives/indexes-and-constraints.adoc#type-definitions-constraints-unique[`@unique`]
+| Indicates that there should be a uniqueness constraint in the database for the fields that it is applied to.
 
-Reference: xref:/schema-configuration/field-configuration.adoc#_settable[`@settable`]
-
-== `@subscription`
-
-This directive is used to limit Subscription operations in the library.
-
-Reference: xref:/schema-configuration/type-configuration.adoc#_subscription[`@subscription`]
-
-== `@timestamp`
-
-The `@timestamp` directive flags fields to be used to store timestamps on create/update events.
-
-Reference: xref::/directives/autogeneration.adoc#type-definitions-autogeneration-timestamp[`@timestamp`]
-
-== `@unique`
-
-The `@unique` directive indicates that there should be a uniqueness constraint in the database for the fields that it is applied to.
-
-Reference: xref::/directives/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
+|===

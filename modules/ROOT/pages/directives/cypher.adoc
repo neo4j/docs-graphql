@@ -1,38 +1,43 @@
 [[type-definitions-cypher]]
-= `@cypher` directive
+:description: This page describes how to use the @cypher directive in the Neo4j GraphQL Library.
+= `@cypher` 
 
-The `@cypher` directive binds a GraphQL field to the result(s) of a Cypher query.
+The `@cypher` directive binds a GraphQL field to the results of a Cypher query.
+This directive can be used both for properties in a type or as top level queries.
 
-This directive can be used both for properties in a type or as top level queries:
+== Global variables
 
-== Definition
+Global variables are available for use within the Cypher statement and can be applied to the `@cypher` directive.
 
+[cols="1,2,2"]
+|===
+| Variable | Description | Example
+
+| `this`
+| This value is a reference to the currently resolved node, and it can be used to traverse the graph.
+a| 
 [source, graphql, indent=0]
 ----
-"""Instructs @neo4j/graphql to run the specified Cypher statement in order to resolve the value of the field to which the directive is applied."""
-directive @cypher(
-    """The Cypher statement to run which returns a value of the same type composition as the field definition on which the directive is applied."""
-    statement: String!,
-    """Name of the returned variable from the Cypher statement."""
-    columnName: String!
-) on FIELD_DEFINITION
+{
+  Movie {
+    title
+    actors: ACTED_IN @this {
+      role
+      actor {
+        name
+      }
+    }
+    directors: DIRECTED @this {
+      director {
+        name
+      }
+    }
+  }
+}
 ----
 
-
-== Globals
-
-Global variables are available for use within the Cypher statement.
-
-=== `this`
-
-The value `this` is a reference to the currently resolved node, and it can be used to traverse the graph.
-
-This can be seen in the usage example xref::/directives/cypher.adoc#type-definitions-cypher-object-usage[On an object type field] below.
-
-=== `auth`
-
-The value `auth` is represented by the following TypeScript interface definition:
-
+| `auth`
+a| This value is represented by the following TypeScript interface definition:
 [source, typescript, indent=0]
 ----
 interface Auth {
@@ -41,9 +46,7 @@ interface Auth {
     jwt: any;
 }
 ----
-
-For example, you could use the JWT in the request to return the value of the currently logged in User:
-
+a| You can use the JWT in the request to return the value of the currently logged in User:
 [source, graphql, indent=0]
 ----
 type User {
@@ -61,12 +64,9 @@ type Query {
 }
 ----
 
-
-=== `cypherParams`
-Use to inject values into the cypher query from the GraphQL context function.
-
-Inject into context:
-
+| `cypherParams`
+| Use it to inject values into the Cypher query from the GraphQL context function.
+a| Inject into context:
 [source, typescript, indent=0]
 ----
 const server = new ApolloServer({
@@ -78,7 +78,7 @@ await startStandaloneServer(server, {
 });
 ----
 
-Use in cypher query:
+Use in Cypher query:
 
 [source, graphql, indent=0]
 ----
@@ -89,16 +89,20 @@ type Query {
     """, columnName: "p")
 }
 ----
+|===
+
 
 == Return values
 
-The return value of the Cypher statement must be of the same type to which the directive is applied.
+The return value of Cypher statements must always be of the same type to which the directive is applied.
 
-The variable should also be aliased with a name that must be the same as the named passed to `columnName`, this can be the name of a node or relationship query or an alias in the `RETURN` statement of the cypher.
+The variable must also be aliased with a name that is the same as the one passed to `columnName`.
+This can be the name of a node, relationship query or an alias in the `RETURN` statement of the Cypher statement.
 
 === Scalar values
 
-The Cypher statement must return a value which matches the scalar type to which the directive was applied.
+Cypher statements must return a value which matches the scalar type to which the directive was applied.
+For example:
 
 [source, graphql, indent=0]
 ----
@@ -109,7 +113,9 @@ type Query {
 
 === Object types
 
-When returning an object type, all fields of the type must be available in the Cypher return value. This can be achieved by either returning the entire object from the Cypher query, or returning a map of the fields which are required for the object type. Both approaches are demonstrated below:
+When returning an object type, all fields of the type must be available in the Cypher return value. 
+This can be achieved by either returning the entire object from the Cypher query, or returning a map of the fields which are required for the object type. 
+Both approaches are demonstrated below:
 
 [source, graphql, indent=0]
 ----
@@ -145,9 +151,11 @@ type Query {
 }
 ----
 
-The downside of the latter approach is that you will need to adjust the return object as you change your object type definition.
+The downside of the latter approach is that you need to adjust the return object as you change your object type definition.
 
 == Usage examples
+
+The `@cypher` directive can be used in different contexts, such as the ones described in this section.
 
 [[type-definitions-cypher-object-usage]]
 === On an object type field
@@ -183,7 +191,7 @@ type Movie {
 
 === On a query type field
 
-The example below demonstrates a simple query to return all of the actors in the database:
+The following example demonstrates a query to return all of the actors in the database:
 
 [source, graphql, indent=0]
 ----
@@ -206,7 +214,7 @@ type Query {
 
 === On a mutation type field
 
-The example below demonstrates a simple mutation using a Cypher query to insert a single actor with the specified name argument:
+The following example demonstrates a mutation using a Cypher query to insert a single actor with the specified name argument:
 
 [source, graphql, indent=0]
 ----

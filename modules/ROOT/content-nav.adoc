@@ -3,15 +3,6 @@
 ** xref:getting-started/index.adoc[]
 *** xref:getting-started/toolbox.adoc[]
 
-** xref:directives/index.adoc[]
-*** xref:directives/autogeneration.adoc[]
-*** xref:directives/basics.adoc[]
-*** xref:directives/custom-directives.adoc[]
-*** xref:directives/cypher.adoc[]
-*** xref:directives/default-values.adoc[]
-*** xref:directives/database-mapping.adoc[]
-*** xref:directives/indexes-and-constraints.adoc[]
-
 ** xref:type-definitions/index.adoc[Type definitions]
 *** xref:type-definitions/default.adoc[Default]
 *** xref:type-definitions/temporal.adoc[Temporal]
@@ -19,6 +10,16 @@
 *** xref:type-definitions/interfaces.adoc[Interface]
 *** xref:type-definitions/unions.adoc[Union]
 *** xref:type-definitions/relationships.adoc[]
+
+** xref:directives/index.adoc[]
+*** xref:directives/basics.adoc[]
+*** xref:directives/autogeneration.adoc[]
+*** xref:directives/custom-directives.adoc[]
+*** xref:directives/cypher.adoc[]
+*** xref:directives/default-values.adoc[]
+*** xref:directives/database-mapping.adoc[]
+*** xref:directives/indexes-and-constraints.adoc[]
+*** xref:directives/reference.adoc[Reference]
 
 ** xref:schema-configuration/index.adoc[Schema configuration]
 *** xref:schema-configuration/type-configuration.adoc[]

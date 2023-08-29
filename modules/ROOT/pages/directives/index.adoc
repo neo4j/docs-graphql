@@ -1,10 +1,13 @@
 [[directives]]
+:description: This section lists how to use directives in the Neo4j GraphQL Library.
 = Directives
 
-- xref::/directives/basics.adoc[Basics] - How to define your nodes and relationships using GraphQL type definitions.
-- xref::/directives/autogeneration.adoc[Autogeneration] - How to use types for values autogeneration.
-- xref::/directives/cypher.adoc[`@cypher` directive] - How to add custom Cypher to your type definitions.
-- xref::/directives/default-values.adoc[Default Values] - How to set default values for particular fields.
-- xref::/directives/database-mapping.adoc[Database Mapping] - How to map the GraphQL Schema fields to custom Neo4j node and relationship properties.
-- xref::/directives/indexes-and-constraints.adoc[Indexes and Constraints] - How to use schema directives to add indexes and constraints to your Neo4j database.
-- xref::/directives/reference.adoc[Reference] - List of all available directives.
+This section lists how to use directives and types in the Neo4j GraphQL Library:
+
+- xref::/directives/basics.adoc[Basics] - Define your nodes and relationships using GraphQL type definitions.
+- xref::/directives/autogeneration.adoc[Autogeneration] - Use types for values autogeneration.
+- xref::/directives/cypher.adoc[`@cypher` directive] - Add custom Cypher to your type definitions.
+- xref::/directives/default-values.adoc[Default Values] - Set default values for particular fields.
+- xref::/directives/database-mapping.adoc[Database Mapping] - Map the GraphQL Schema fields to custom Neo4j node and relationship properties.
+- xref::/directives/indexes-and-constraints.adoc[Indexes and Constraints] - Use schema directives to add indexes and constraints to your Neo4j database.
+- xref::/directives/reference.adoc[Reference] - Check the list of all available directives.
