@@ -572,6 +572,20 @@ type query {
 
 Additionally, escaping strings is no longer needed.
 
+=== `@exclude` removed
+
+The `@exclude` directive has been removed in favor of much more granular configuration directives.
+
+The new `@query`, `@mutation` and `@subscription` directives instead allow for fully granular configuration for each operation.
+
+As a direct migration, the following usages are equivalent:
+
+* `@exclude` and `@query(read: false, aggregate: false) @mutation(operations: []) @subscription(events: [])`.
+* `@exclude(operations: [READ])` and `@query(read: false, aggregate: false)`.
+* `@exclude(operation: [CREATE, UPDATE, DELETE])` and `@mutation(operations: [])`.
+
+Whilst there is more verbosity, the directives are significantly more powerful and extensible as the library gains features.
+
 [full-text-migration]
 === `@fulltext` changes
 
@@ -853,6 +867,16 @@ type Record @limit(default: 10, max: 100) {
   id: ID!
 }
 ----
+
+=== `@readonly` and `@writeonly` removed
+
+The `@readonly` and `@writeonly` directives have been removed in favor of more granular configuration directives.
+The new `@selectable` and `@settable` directives can be used to configure not only if fields are readable or writable, but also when they should be readable or writable.
+
+As a direct migration, the following usages are equivalent:
+
+* `@readonly` and `@settable(onCreate: false, onUpdate: false)`.
+* `@writeonly` and `@selectable(onRead: false, onAggregate: false)`.
 
 [relationship-aggregate]
 === `@relationship` changes
