@@ -1,7 +1,9 @@
+* xref:index.adoc[Neo4j GraphQL Library]
+
 ** xref:getting-started/index.adoc[]
 *** xref:getting-started/toolbox.adoc[]
 
-** Queries and Aggregations
+** xref:queries-aggregations/index.adoc[Queries and aggregations]
 *** xref:queries-aggregations/queries.adoc[]
 *** xref:queries-aggregations/aggregations.adoc[]
 *** xref:queries-aggregations/filtering.adoc[]

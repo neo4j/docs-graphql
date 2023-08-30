@@ -7,11 +7,6 @@ The `@alias` directive will map a GraphQL schema field to a Neo4j property on a 
 
 Reference: xref::reference/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
 
-== `@auth`
-label:deprecated[]
-
-The `@auth` directive is used to define complex fine-grained and role-based access control for object types and fields.
-
 == `@coalesce`
 
 The `@coalesce` directive exposes a mechanism for querying against non-existent, `null` values on a node.
@@ -48,6 +43,12 @@ The `@exclude` directive is used on object types to instruct them to be skipped 
 
 Reference: xref::reference/directives/schema-configuration/type-configuration.adoc#_exclude_deprecated[`@exclude`]
 
+== `@filterable`
+
+The `@filterable` directive defines the filters generated for a field. 
+
+Reference: xref:reference/directives/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
+
 == `@fulltext`
 
 The `@fulltext` directive indicates that there should be a Fulltext index inserted into the database for the specified Node and its properties.
@@ -59,6 +60,12 @@ Reference: xref::reference/type-definitions/indexes-and-constraints.adoc#type-de
 The `@id` directive marks a field as the unique ID for an object type, and allows for autogeneration of IDs.
 
 Reference: xref::reference/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`]
+
+== `@limit`
+
+The `@limit` is to be used on nodes, and when applied will inject values into Cypher `LIMIT` clauses.
+
+Reference: xref::reference/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
 
 == `@mutation`
 
@@ -100,19 +107,6 @@ This directive is used to limit the availability of Query operations in the libr
 
 Reference: xref:reference/directives/schema-configuration/type-configuration.adoc#_query[`@query`]
 
-== `@queryOptions`
-
-The `@queryOptions` is to be used on nodes, where applied will inject values into a query such as the `limit`.
-
-Reference: xref::reference/directives/default-values.adoc#type-definitions-default-values-queryoptions[`@queryOptions`]
-
-== `@readonly` label:deprecated[]
-
-This directive is deprecated. See the xref:reference/directives/schema-configuration/field-configuration.adoc#_settable[`@settable`] directive.
-The `@readonly` directive marks fields as read-only.
-
-Reference: xref::reference/directives/schema-configuration/field-configuration.adoc#_readonly_deprecated[`@readonly`]
-
 == `@relationship`
 
 The `@relationship` directive is used to configure relationships between object types.
@@ -130,6 +124,10 @@ Can only be used on interfaces, as per its definition:
 """Required to differentiate between interfaces for relationship properties, and otherwise."""
 directive @relationshipProperties on INTERFACE
 ----
+
+== `@relayId`
+
+The `@relayId` directive can be used on object type fields, to flag which field should be used as the global node identifier for Relay. Can be used once per type. The use of the `@relayId` directive ensures a unique node property constraint for the field.
 
 == `@selectable`
 
@@ -160,12 +158,3 @@ Reference: xref::reference/directives/autogeneration.adoc#type-definitions-autog
 The `@unique` directive indicates that there should be a uniqueness constraint in the database for the fields that it is applied to.
 
 Reference: xref::reference/type-definitions/indexes-and-constraints.adoc#type-definitions-constraints-unique[Unique node property constraints]
-
-== `@writeonly` label:deprecated[]
-
-This directive is deprecated. 
-
-Use the xref:reference/directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] directive instead.
-The `@writeonly` directive marks fields as write-only.
-
-Reference: xref::reference/directives/schema-configuration/field-configuration.adoc#_writeonly_deprecated[`@writeonly`]

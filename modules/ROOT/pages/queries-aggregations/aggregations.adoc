@@ -1,65 +1,17 @@
-[[queries-aggregations]]
+[[aggregations]]
+:description: This page describes aggregations supported by Neo4j GraphQL.
 = Aggregations
 
-Neo4j GraphQL supports aggregations on fields with type:
+Based on the given <<queries-aggregations/index.adoc#examples-reference, type definitions>>, here is a list of fields that accept aggregations supported by Neo4j GraphQL:
 
-1. `ID`- String
-2. `String` - String
-3. `Int` - Numerical
-4. `Float` - Numerical
-5. `BigInt` - Numerical
-6. `DateTime`
-7. `Time`
-8. `LocalTime`
-9. `LocalDateTime`
-10. `Duration`
+[cols="1,1,2"]
+|===
+| Type | Aggregating function | Example
 
-Numerical Fields will expose the following aggregation selections:
-
-1. `min`
-2. `max`
-3. `average`
-4. `sum`
-
-String fields will expose:
-
-1. `shortest`
-2. `longest`
-
-The rest will only expose:
-
-1. `min`
-2. `max`
-
-
-Aggregation queries accepts a `where` argument for xref::queries-aggregations/filtering.adoc[filtering] data.
-
-== Counting Using aggregation
-
-The following Query will count all User nodes:
-
-[source, graphql, indent=0]
-----
-query {
-    usersAggregate {
-        count
-    }
-}
-----
-
-== Counting User nodes where name starts with "J"
-
-[source, graphql, indent=0]
-----
-query {
-    usersAggregate(where: { name_STARTS_WITH: "J" }) {
-        count
-    }
-}
-----
-
-== Querying for the longest User name
-
+| String (e.g. `ID`, `String`)
+| `shortest`, `longest`
+a| 
+.Longest User name
 [source, graphql, indent=0]
 ----
 query {
@@ -71,8 +23,23 @@ query {
 }
 ----
 
-== Querying for first Post date
+| Numeric (e.g. `Int`, `Float`, `BigInt`)
+| `min`, `max`, `average`, `sum`
+a|
+.Example query
+[source, graphql, indent=0]
+----
+query {
+    usersAggregate {
+        
+    }
+}
+---- 
 
+| Temporal (e.g. `DateTime`, `Time`, `LocalTime`, `LocalDateTime`, `Duration`)
+| `min`, `max`
+a|
+.First Post date
 [source, graphql, indent=0]
 ----
 query {
@@ -83,8 +50,13 @@ query {
     }
 }
 ----
+|===
 
-[[queries-aggregate-related-nodes]]
+[NOTE]
+====
+The argument `where` can also be used in aggregation queries for xref::queries-aggregations/filtering.adoc[filtering] data.
+====
+
 == Aggregate related nodes
 
 Related nodes can also be aggregated within a query by accessing the aggregation fields in the node.
@@ -92,8 +64,27 @@ In these fields, you can **count**, aggregate the **nodes** or **edges** fields.
 
 The same selections and types as before are available in relationship aggregations.
 
-=== Counting all posts per users
+.Counting User nodes
+[source, graphql, indent=0]
+----
+query {
+    usersAggregate {
+        count
+    }
+}
+----
 
+.Counting User nodes where name starts with "J"
+[source, graphql, indent=0]
+----
+query {
+    usersAggregate(where: { name_STARTS_WITH: "J" }) {
+        count
+    }
+}
+----
+
+.Counting all posts per User
 [source, graphql, indent=0]
 ----
 query {
@@ -106,9 +97,9 @@ query {
 }
 ----
 
-=== Finding longest post per user
-By using the `node` field, related nodes properties can be aggregated.
+By using the `node` field, related nodes properties can be aggregated:
 
+.Finding longest post per User
 [source, graphql, indent=0]
 ----
 query {
@@ -125,9 +116,11 @@ query {
 }
 ----
 
-=== Aggregate relationships
-Relationship properties can be aggregated as well by using the `edge` field.
+== Aggregate relationships
 
+Relationship properties can be aggregated as well by using the `edge` field:
+
+.Querying what User nodes posted up to a date
 [source, graphql, indent=0]
 ----
 query {
@@ -144,10 +137,8 @@ query {
 }
 ----
 
-=== Undirected aggregation queries
-
 When performing an aggregation on related nodes, the query against the relationship
-can be defined as an xref::queries-aggregations/queries.adoc#_undirected_queries[undirected] using the argument `directed: false`:
+can be defined as "undirected" by using the argument `directed: false`:
 
 [source, graphql, indent=0]
 ----

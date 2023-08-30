@@ -1,7 +1,8 @@
 [[mutations-update]]
-= Update
+:description: This page describes how to update nodes through mutations.
+= `update`
 
-Using the following type definitions for these examples:
+Using these type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -18,7 +19,7 @@ type User {
 }
 ----
 
-The following update mutations and response types will be generated for the above type definitions:
+These `update` mutations and response types should be generated:
 
 [source, graphql, indent=0]
 ----
@@ -50,11 +51,14 @@ type Mutation {
 }
 ----
 
-> The `id` field not be update-able as the xref::reference/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive has been used.
+[NOTE]
+====
+The `id` field cannot be updated as the xref::reference/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive has been used.
+====
 
-== Single update
+== Single `update`
 
-Say you wanted to edit the content of a Post:
+The content of a `Post` can be updated by executing the following GraphQL statement:
 
 [source, graphql, indent=0]
 ----
@@ -74,9 +78,11 @@ mutation {
 }
 ----
 
-== Nested create
+This should update the post by adding the sentence "Some new content for this Post!".
 
-Instead of creating a Post and connecting it to a User, you could update a User and create a Post as part of the mutation:
+== Nested `create` using `update`
+
+Instead of creating a `Post` with the `create` mutation and then connecting it to a `User`, you can update a `User` and `create` a `Post` as part of the mutation:
 
 [source, graphql, indent=0]
 ----
@@ -101,40 +107,21 @@ mutation {
 ----
 
 == `connectOrCreate` relationships
-If a related node has a `@unique` or `@id` directive defined, `connectOrCreate` can be used in a nested update to perform a `MERGE` operation on the related node, creating a new relationship and the related node if it doesn't exist.
 
-Consider the following type definitions:
-
-[source, graphql, indent=0]
-----
-type Actor {
-    name: String!
-    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
-}
-
-type Movie {
-    title: String
-    id: ID! @id
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-}
-----
-
-Because a movie ID is unique, `connectOrCreate` can be used in an Actor mutation to ensure a movie exists before connecting. Note that only `@unique` or `@id` fields can be used in `where`:
+Consider the example provided in the xref:mutations/create.adoc#_connectorcreate_relationships[`create`] page:
 
 [source, graphql, indent=0]
 ----
 mutation {
-  updateActors(
-    update: {
-        movies: {
-          connectOrCreate: {
-            where: { node: { id: "1234" } }
-            onCreate: { node: { title: "Forrest Gump" } }
-          }
-        }
-    },
-    where: { name: "Tom Hanks" }
-  ) {
+  createActors(input: {
+    name: "Tom Hanks",
+    movies: {
+      connectOrCreate: {
+        where: { node: { id: "1234" } }
+        onCreate: { node: { title: "Forrest Gump" } }
+      }
+    }
+  }) {
     info {
       nodesCreated
     }
@@ -142,9 +129,7 @@ mutation {
 }
 ----
 
-In this case, all actors matching `"Tom Hanks"` will be connected to the Movie with id `"1234"`. If the movie with given ID does not exist, it will be created with the title `"Forrest Gump"`.
-
-For update operations, `connectOrCreate` can also be used as a top-level input:
+For `update` operations, `connectOrCreate` can also be used as a top-level input for an equivalent operation:
 
 [source, graphql, indent=0]
 ----
@@ -167,29 +152,20 @@ mutation {
 
 This operation is equivalent to the previous example.
 
-[[array-methods]]
 == Array methods
 
-Array methods allow us to modify existing property arrays in Update mutations within these entities:
+Array methods allow the modification of existing property arrays in `update` mutations within these entities:
 
-* `Node`
-* `Nested Nodes`
-* `Relationship properties`
-* `Interfaces`
+* Node
+* Relationship properties
+* Interfaces
 
-The following operators are available:
+For that, the following operators are available:
 
-* `_POP`
-* `_PUSH`
+* `_POP`: expects a single `Int` value as input.
+* `_PUSH`: conforms to the type of input defined in the type definition.
 
-The POP operator expects a single Int value as input
-
-The PUSH operator conforms to the type of input defined in the type definition.
-
-=== Examples
-
-==== Array pop
-Suppose we have the following type definition, a Movie with a property array called tags:
+Consider the following type definitions, a `Movie` with a property array called `tags`:
 
 [source, graphql, indent=0]
 ----
@@ -199,12 +175,21 @@ type Movie {
 }
 ----
 
-We can pop from this `tags` property array.
+You can pop from this `tags` property array:
 
-Before: `['a', 'b', 'c']`
+[cols="1,1"]
+|===
+| Before | After 
 
-After: `['a', 'b']`
-
+a| 
+```
+tags: ['a', 'b', 'c']
+```
+a|
+```
+tags: ['a', 'b']
+```
+|===
 
 [source, graphql, indent=0]
 ----
@@ -220,9 +205,19 @@ mutation {
 
 Or, for more than one property from the array:
 
-Before: `['a', 'b', 'c']`
+[cols="1,1"]
+|===
+| Before | After 
 
-After: `['a']`
+a| 
+```
+tags: ['a', 'b', 'c']
+```
+a|
+```
+tags: ['a']
+```
+|===
 
 [source, graphql, indent=0]
 ----
@@ -238,7 +233,6 @@ mutation {
 
 Similarly, you can have multiple array property fields and update them in the same query:
 
-
 [source, graphql, indent=0]
 ----
 type Movie {
@@ -248,20 +242,23 @@ type Movie {
 }
 ----
 
-We can pop from both the `tags` and `moreTags` property arrays.
+Then, you can `POP` from both the `tags` and `moreTags` property arrays:
 
+[cols="1,1"]
+|===
+| Before | After 
 
-Before: 
+a| 
 ```
-    tags: ['a', 'b', 'c']
-    moreTags: ['x', 'y', 'z']
+tags: ['a', 'b', 'c']
+moreTags: ['x', 'y', 'z']
 ```
-
-After:
+a|
 ```
     tags: ['a', 'b']
     moreTags: ['x']
 ```
+|===
 
 [source, graphql, indent=0]
 ----
@@ -276,23 +273,18 @@ mutation {
 }
 ----
 
-==== Array push
-Suppose we have the following type definition, a Movie with a property array called tags:
+=== `_PUSH`
 
-[source, graphql, indent=0]
-----
-type Movie {
-    title: String
-    tags: [String]
-}
-----
+Using the same type definitions as before, you can push to the `tags` property array:
 
-We can push to this `tags` property array.
+[col=1,1]
+|====
+| Before | After
 
+| `['some tag']`
 
-Before: `['some tag']`
-
-After: `['some tag', 'another tag']`
+| `['some tag', 'another tag']`
+|====
 
 [source, graphql, indent=0]
 ----
@@ -308,9 +300,13 @@ mutation {
 
 Or push multiple elements in a single update:
 
-Before: `['some tag']`
+[col=1,1]
+|====
+| Before | After
 
-After: `['some tag', 'another tag', 'one more tag']`
+| `['some tag']`
+| `['some tag', 'another tag', 'one more tag']`
+|====
 
 [source, graphql, indent=0]
 ----
@@ -335,19 +331,23 @@ type Movie {
 }
 ----
 
-We can push to both the `tags` and `moreTags` property arrays.
+You can also push to both the `tags` and `moreTags` property arrays:
 
-Before:
+[col=1,1]
+|====
+| Before | After
+
+a|
 ```
     tags: ['some tag']
     moreTags: []
 ```
-
-After:
+a|
 ```
     tags: ['some tag', 'another tag']
     moreTags ['a different tag']
 ```
+|====
 
 [source, graphql, indent=0]
 ----
@@ -362,11 +362,11 @@ mutation {
 }
 ----
 
-==== Array push and pop in one update
+=== Combined methods
 
-It is possible to perform both a push and pop operation in one Update mutation.
+It is possible to perform both a `_PUSH` and `_POP` operation in one single `update` mutation.
 
-Suppose we have the following type definition, a Movie with a property array called tags:
+Consider the following type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -377,19 +377,24 @@ type Movie {
 }
 ----
 
-We can then update both property arrays with either _POP or _PUSH operators.
+You can update both property arrays with either `_POP` or `_PUSH` operators at once:
 
-Before:
+[col=1,1]
+|====
+| Before | After
+
+a|
 ```
     tags: ['some tag']
     moreTags: []
 ```
 
-After:
+a|
 ```
     tags: []
     moreTags ['a different tag']
 ```
+|====
 
 [source, graphql, indent=0]
 ----
@@ -404,28 +409,21 @@ mutation {
 }
 ----
 
-[[mathematical-operators]]
 == Mathematical operators
 
-Mathematical operators are a handy way to update numerical fields based on their original values in a single DB transaction.
+Mathematical operators can be used to update numerical fields based on their original values in a single DB transaction.
+For that, specific operators are available on different numerical types: `Int`, `Float`, xref::reference/type-definitions/types.adoc#type-definitions-types-bigint[`BigInt`].
+They are supported within these entities:
 
-Specific operators are available on different numerical types (`Int`, `Float`, xref::reference/type-definitions/types.adoc#type-definitions-types-bigint[`BigInt`]).
+* Nodes
+* Relationship properties
+* Interfaces
 
-
-Mathematical operators are supported in Update Mutations within these entities:
-
-* `Node`
-* `Nested Nodes`
-* `Relationship properties`
-* `Interfaces`
-
-=== Int and BigInt operators
 For `Int` and `BigInt` types, the following operators are available:
 
 * `_DECREMENT`
 * `_INCREMENT`
 
-=== Float operators
 For `Float` type, the following operators are available:
 
 * `_ADD`
@@ -433,10 +431,13 @@ For `Float` type, the following operators are available:
 * `_MULTIPLY`
 * `_DIVIDE`
 
-=== Examples
+[NOTE]
+====
+Operators remain available as optional fields.
+If a mathematical operator has been used in a field not defined, it will prompt a GraphQL error.
+====
 
-==== The social platform schema
-In this section, we use the following GraphQL schema:
+For example, take the following GraphQL schema for a social video platform:
 
 [source, graphql, indent=0]
 ----
@@ -454,9 +455,9 @@ interface OwnVideo @relationshipProperties {
 }
 ----
 
+Suppose a user viewed a video in this platform, so that you want to increment `viewersCount` for that video by `1`.
+Here is how you can do that:
 
-==== Simple increment operation
-Let's say that a user views a video, so we want to increment `viewersCount` for that video by 1.
 [source, graphql, indent=0]
 ----
 mutation incrementViewCountMutation {
@@ -472,9 +473,8 @@ mutation incrementViewCountMutation {
 }
 ----
 
-==== Nested example
-Now, let's say that the video platform wants to reward the user with 0.01 dollars for viewing the video.
-To do that, we have to update the relationship property `revenue`.
+Now, suppose the social platform wants to reward the user with 0.01 dollars for viewing the video.
+To do that, you have to update the relationship property `revenue`:
 
 [source, graphql, indent=0]
 ----
@@ -494,6 +494,3 @@ mutation addRevenueMutation {
   }
 }
 ----
-
-=== Optional fields
-Operators remain available for optional fields, this means that if a mathematical operator has been used in a field not defined then a GraphQL error is raised.

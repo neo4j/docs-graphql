@@ -44,8 +44,8 @@ The inclusion of the fields `firstName` and `lastName` in the `requires` argumen
 ----
 """Informs @neo4j/graphql that a field will be resolved by a custom resolver, and allows specification of any field dependencies."""
 directive @customResolver(
-    """Fields that the custom resolver will depend on."""
-    requires: [String!]
+    """Selection set of the fields that the custom resolver will depend on. These fields are passed as an object to the first argument of the custom resolver."""
+    requires: SelectionSet
 ) on FIELD_DEFINITION
 ----
 
