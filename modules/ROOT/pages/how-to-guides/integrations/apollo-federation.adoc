@@ -1,7 +1,10 @@
 [[apollo-federation]]
-= How to create a subgraph compatible with Apollo Federation
+:description: This guide shows how to create a subgraph using the Neo4j GraphQL Library, for composition into a supergraph using Apollo Federation.
+= Create a subgraph compatible with Apollo Federation
 
-This guide shows you how to create a subgraph using the Neo4j GraphQL Library, for composition into a supergraph using Apollo Federation. In this guide, the following monolithic schema will be converted into a subgraph schema for use behind a Federation gateway:
+This guide shows how to create a subgraph using the Neo4j GraphQL Library, for composition into a supergraph using Apollo Federation. 
+
+The objective is to convert the following monolithic schema into a subgraph schema for use behind a Federation gateway:
 
 [source, javascript]
 ----
@@ -40,7 +43,7 @@ const { url } = await startStandaloneServer(server);
 console.log(`🚀  Server ready at ${url}`);
 ----
 
-== 1. Create a new project
+== Create a new project and install the Apollo Server
 
 Follow the steps in xref::how-to-guides/create-project.adoc.
 
@@ -57,7 +60,7 @@ Run the following command to install this final package:
 npm install @apollo/server
 ----
 
-== 3. Opt in to Federation
+== Opt in to Federation
 
 For a set of type definitions to be usable as a subgraph for Federation, they must include the following schema extension:
 
@@ -73,11 +76,13 @@ const typeDefs = `#graphql
 `;
 ----
 
-NOTE: This example only includes the Federation `@key` directive. As you want to use more https://www.apollographql.com/docs/federation/federated-types/federated-directives[Federation directives], you will need to add them to the `import` array.
+Note that this example only includes the Federation `@key` directive. 
+To use more https://www.apollographql.com/docs/federation/federated-types/federated-directives[Federation directives], add them to the `import` array.
 
-== 4. Define an entity
+== Define an entity
 
-In order for other subgraphs to be able to contribute fields to the `Movie` type, we must define that type as an https://www.apollographql.com/docs/federation/entities/[entity]. You do this by using the `@key` directive to designate a field (or fields) as a key:
+Defining a type as an https://www.apollographql.com/docs/federation/entities/[entity] allows other subgraphs to contribute with fields to the `Movie` type.
+To achieve that, use the `@key` directive to designate a field (or fields) as a key:
 
 [source, javascript]
 ----
@@ -91,20 +96,22 @@ const typeDefs = `#graphql
 `;
 ----
 
-NOTE: Whilst only the `@key` directive has been added in this example, you should consider using either the `@id` or `@unique` directive on the `id` field. The Federation gateway expects each key to resolve to one result, so it is good practice to ensure that these values are unique in the database.
+Although only the `@key` directive has been added to this example, consider using either the `@id` or the `@unique` directives on the `id` field.
+The Federation gateway expects each key to resolve to one result, so it is good practice to ensure that these values are unique in the database.
 
-== 5. Generate a subgraph schema
+== Generate a subgraph schema
 
-When using the Neo4j GraphQL Library, generating the subgraph schema is as simple as calling `getSubgraphSchema` instead of `getSchema`, so only the following line needs to be changed:
+When using the Neo4j GraphQL Library, generating the subgraph schema can be achieved by calling `getSubgraphSchema` instead of `getSchema`.
+In other words, only the following line needs to be changed:
 
 [source, javascript]
 ----
 const schema = neo4jgraphql.getSubgraphSchema();
 ----
 
-== Complete example
+== Conclusion
 
-The above snippets are combined below:
+By combining all previous snippets, you should get this:
 
 [source, javascript]
 ----
@@ -142,9 +149,9 @@ const { url } = await startStandaloneServer(server);
 console.log(`🚀  Server ready at ${url}`);
 ----
 
-== Next steps
 
-The subgraph above can now be composed into a supergraph. The following guides from Apollo guide you through this:
+For further iteration, this subgraph can also be composed into a supergraph. 
+Check Apollo's guides for more instructions:
 
 * https://www.apollographql.com/docs/federation/quickstart/studio-composition[Composition in Apollo Studio]
 * https://www.apollographql.com/docs/federation/quickstart/local-composition[Local composition]
