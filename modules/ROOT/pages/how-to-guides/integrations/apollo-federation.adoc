@@ -45,19 +45,126 @@ console.log(`🚀  Server ready at ${url}`);
 
 == Create a new project and install the Apollo Server
 
-Follow the steps in xref::how-to-guides/create-project.adoc.
+=== Create the project directory
 
-== 2. Install dependencies
-
-The core dependencies for a Neo4j GraphQL Library have already been installed in your new project.
-
-The final dependency to install is `@apollo/server`, the library for Apollo Server. It is used in this guide to host the subgraph.
-
-Run the following command to install this final package:
+Create a directory for a new project and `cd` into it:
 
 [source, bash]
 ----
-npm install @apollo/server
+mkdir neo4j-graphql-subgraph-example
+cd neo4j-graphql-subgraph-example
+----
+
+=== Initialize the project
+
+Initialize a new Node.js project with `npm`:
+
+[source, bash]
+----
+npm init --yes
+npm pkg set type="module"
+----
+
+NOTE: This how-to guide sets up the project using ES Modules, which allows the usage of features such as top-level `await`.
+
+=== Language specific setup
+
+Follow the instructions below to set up with either TypeScript or JavaScript:
+
+.TypeScript
+[%collapsible]
+====
+. Create a `src` directory with an empty `index.ts` file to contain the entrypoint to your code for this project:
++
+[source, bash]
+----
+mkdir src
+touch src/index.ts
+----
++
+. Install the development dependencies required for working with a TypeScript project:
++
+[source, bash]
+----
+npm install --save-dev typescript @types/node @tsconfig/node-lts
+----
++
+. Create an empty `tsconfig.json` file which will contain the compiler configuration for TypeScript:
++
+[source, bash]
+----
+touch tsconfig.json
+----
++
+. Add the following configuration to the `tsconfig.json` file created above:
++
+[source, json]
+----
+{
+  "extends": "@tsconfig/node-lts/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+  }
+}
+----
++
+NOTE: The configuration above extends the https://github.com/tsconfig/bases#node-lts-tsconfigjson[community base for Node.js LTS], provided by the `@tsconfig/node-lts` package installed above. For more information on the available options, see the https://www.typescriptlang.org/tsconfig[TypeScript Compiler docs]. 
++
+. Replace the default `scripts` entry in your `package.json` file with the following `scripts` entry:
++
+[source, json]
+----
+{
+  // ...etc.
+  "scripts": {
+    "compile": "tsc",
+    "start": "npm run compile && node ./dist/index.js"
+  }
+  // other dependencies
+}
+----
+====
+
+.JavaScript
+[%collapsible]
+====
+. Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code for this project:
++
+[source, bash]
+----
+mkdir src
+touch src/index.js
+----
++
+. Replace the default `scripts` entry in your `package.json` file with the following `scripts` entry:
++
+[source, json]
+----
+{
+  // ...etc.
+  "scripts": {
+    "start": "node index.js"
+  }
+  // other dependencies
+}
+----
+====
+
+=== Install dependencies
+
+The following dependencies are required for this guide:
+
+* `@apollo/server`, the library for Apollo Server, is used in this guide to host the subgraph.
+* `@neo4j/graphql` is the Neo4j GraphQL Library, which translates GraphQL into Cypher and returns the results.
+* `graphql` is the reference implementation of the GraphQL specification. It is required for `@neo4j/graphql` to function.
+* `neo4j-driver` is the library for the Neo4j driver, which is required to execute Cypher queries against the database.
+
+Install these dependencies by running the following command:
+
+[source, bash]
+----
+npm install @apollo/server @neo4j/graphql graphql neo4j-driver
 ----
 
 == Opt in to Federation
