@@ -9,5 +9,5 @@ This section covers:
 * xref:subscriptions/getting-started.adoc[Getting started] - how to get started with subscriptions by setting up a basic example.
 * xref:subscriptions/events.adoc[Events] - how to trigger events when using `@neo4j/graphql`.
 * xref:subscriptions/filtering.adoc[Filtering] - 
-* xref:subscription/scaling.adoc[Horizontal scaling] - 
-* xref:subscription/engines.adoc[Subscriptions engines] - 
+* xref:subscriptions/scaling.adoc[Horizontal scaling] - 
+* xref:subscriptions/engines.adoc[Subscriptions engines] - 
