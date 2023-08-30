@@ -1,6 +1,6 @@
 [[apollo-federation]]
 :description: This guide shows how to create a subgraph using the Neo4j GraphQL Library, for composition into a supergraph using Apollo Federation.
-= Create a subgraph compatible with Apollo Federation
+= Apollo Federation
 
 This guide shows how to create a subgraph using the Neo4j GraphQL Library, for composition into a supergraph using Apollo Federation. 
 

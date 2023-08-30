@@ -1,6 +1,6 @@
 [[next.js]]
 :description: This page shows information on how to use the Neo4j GraphQL Library with Next.js
-= Use the Neo4j GraphQL Library with Next.js
+= Next.js
 
 This https://github.com/vercel/next.js/tree/canary/examples/with-apollo-neo4j-graphql[example project] in the Next.js repository demonstrates how to use Neo4j with https://neo4j.com/docs/getting-started/appendix/example-data/[the "Movies" example], the Neo4j GraphQL Library and https://www.apollographql.com/docs/apollo-server/[Apollo Server].
 See the https://github.com/vercel/next.js/blob/canary/examples/with-apollo-neo4j-graphql/README.md[README] file for more instructions.
