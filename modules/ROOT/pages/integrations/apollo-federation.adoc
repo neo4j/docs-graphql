@@ -45,7 +45,7 @@ console.log(`🚀  Server ready at ${url}`);
 
 == Create a new project and install the Apollo Server
 
-=== Create the project directory
+*Create the project directory*
 
 Create a directory for a new project and `cd` into it:
 
@@ -55,7 +55,7 @@ mkdir neo4j-graphql-subgraph-example
 cd neo4j-graphql-subgraph-example
 ----
 
-=== Initialize the project
+*Initialize the project*
 
 Initialize a new Node.js project with `npm`:
 
@@ -67,7 +67,7 @@ npm pkg set type="module"
 
 NOTE: This how-to guide sets up the project using ES Modules, which allows the usage of features such as top-level `await`.
 
-=== Language specific setup
+*Language specific setup*
 
 Follow the instructions below to set up with either TypeScript or JavaScript:
 
@@ -151,7 +151,7 @@ touch src/index.js
 ----
 ====
 
-=== Install dependencies
+*Install dependencies*
 
 The following dependencies are required for this guide:
 
