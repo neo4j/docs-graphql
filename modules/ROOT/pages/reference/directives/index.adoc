@@ -143,7 +143,7 @@ Reference: xref:reference/directives/schema-configuration/field-configuration.ad
 
 == `@subscription`
 
-This directive is used to limit Subscription operations in the library.
+This directive is used to limit Subscription events available in the library.
 
 Reference: xref:reference/directives/schema-configuration/type-configuration.adoc#_subscription[`@subscription`]
 

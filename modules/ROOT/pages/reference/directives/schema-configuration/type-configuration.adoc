@@ -121,15 +121,15 @@ This directive is used to limit Subscription operations in the library.
 
 [source, graphql, indent=0]
 ----
-enum SubscriptionFields {
-    CREATE
-    UPDATE
-    DELETE
-    CREATE_RELATIONSHIP
-    DELETE_RELATIONSHIP
+enum SubscriptionEvent {
+    CREATED
+    UPDATED
+    DELETED
+    RELATIONSHIP_CREATED
+    RELATIONSHIP_DELETED
 }
 
-directive @subscription(operations: [SubscriptionFields!]! = [CREATE, UPDATE, DELETE, CREATE_RELATIONSHIP, DELETE_RELATIONSHIP]) on OBJECT | SCHEMA
+directive @subscription(events: [SubscriptionEvent!]! = [CREATED, UPDATED, DELETED, RELATIONSHIP_CREATED, RELATIONSHIP_DELETED]) on OBJECT | SCHEMA
 ----
 
 === Usage
@@ -138,7 +138,7 @@ directive @subscription(operations: [SubscriptionFields!]! = [CREATE, UPDATE, DE
 
 [source, graphql, indent=0]
 ----
-type Movie @subscription(operations: [])  { 
+type Movie @subscription(events: [])  { 
     title: String 
     length: Int
 }
@@ -148,7 +148,7 @@ type Movie @subscription(operations: [])  {
 
 [source, graphql, indent=0]
 ----
-type Movie @subscription(operations: [CREATE]) { 
+type Movie @subscription(events: [CREATED]) { 
     title: String 
     length: Int
 }
