@@ -1,4 +1,5 @@
 [[subscription-events]]
+:description: This page covers a variety of subscription options offered by the Neo4j GraphQL Library.
 = Subscription events
 
 This page covers a variety of subscription options offered by the Neo4j GraphQL Library.
@@ -130,7 +131,7 @@ subscription {
 
 Subscriptions to `CREATE_RELATIONSHIP` events listen for newly created relationships to a node of the specified type. 
 
-[NOTE
+[NOTE]
 ====
 This subscription operation is **only** available for types that define relationship fields.
 ====
