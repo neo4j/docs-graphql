@@ -20,7 +20,7 @@ All types can be tested for either equality or non-equality. For the `Boolean` t
 [[filtering-numerical-operators]]
 === Numerical operators
 
-The following comparison operators are available for numeric types (`Int`, `Float`, xref::/type-definitions/types/default.adoc[`BigInt`])
+The following comparison operators are available for numeric types (`Int`, `Float`, xref::type-definitions/types/scalar.adoc[`BigInt`])
 
 * `_LT`
 * `_LTE`

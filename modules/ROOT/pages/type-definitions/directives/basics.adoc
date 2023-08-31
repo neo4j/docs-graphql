@@ -64,4 +64,4 @@ interface ActedIn @relationshipProperties {
 ----
 
 Note that in addition to this interface type, there is an added a key `properties` in the existing `@relationship` directives.
-For more information, see xref:type-definitions/relationships.adoc[Type definitions -> Relationships].
+For more information, see xref::/type-definitions/types/relationships.adoc[Type definitions -> Relationships].

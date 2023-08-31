@@ -412,7 +412,7 @@ mutation {
 == Mathematical operators
 
 Mathematical operators can be used to update numerical fields based on their original values in a single DB transaction.
-For that, specific operators are available on different numerical types: `Int`, `Float`, xref::/type-definitions/default.adoc[`BigInt`].
+For that, specific operators are available on different numerical types: `Int`, `Float`, xref::/type-definitions/typesdefault.adoc[`BigInt`].
 They are supported within these entities:
 
 * Nodes

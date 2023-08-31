@@ -3,5 +3,5 @@
 
 The Neo4j GraphQL Library offers two mechanisms for pagination:
 
-- xref::/queries-and-aggregations/pagination/offset-based.adoc[Offset-based pagination] - Pagination based on offsets, often associated with navigation via pages.
-- xref::/queries-and-aggregations/pagination/cursor-based.adoc[Cursor-based pagination] - Pagination based on cursors, often associated with infinitely-scrolling applications.
+- xref::/queries-aggregations/pagination/offset-based.adoc[Offset-based pagination] - Pagination based on offsets, often associated with navigation via pages.
+- xref::/queries-aggregations/pagination/cursor-based.adoc[Cursor-based pagination] - Pagination based on cursors, often associated with infinitely-scrolling applications.

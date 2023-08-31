@@ -5,7 +5,7 @@
 
 ** Type definitions
 *** xref:type-definitions/types/index.adoc[]
-**** xref:type-definitions/types/scalars.adoc[Scalar]
+**** xref:type-definitions/types/scalar.adoc[Scalar]
 **** xref:type-definitions/types/temporal.adoc[Temporal]
 **** xref:type-definitions/types/spatial.adoc[Spatial]
 **** xref:type-definitions/types/interfaces.adoc[Interface]

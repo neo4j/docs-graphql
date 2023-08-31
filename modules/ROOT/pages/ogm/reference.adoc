@@ -390,7 +390,7 @@ const users = await User.find({ where: { name: "Jane Smith" }});
 |`options` +
  +
  Type: `GraphQLOptionsArg`
-|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-and-aggregations/pagination/index.adoc[Pagination].
+|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination/index.adoc[Pagination].
 
 |`selectionSet` +
  +
@@ -467,7 +467,7 @@ const { users } = await User.update({
 |`options` +
  +
  Type: `GraphQLOptionsArg`
-|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-and-aggregations/pagination/index.adoc[Pagination].
+|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination/index.adoc[Pagination].
 
 |`selectionSet` +
  +
