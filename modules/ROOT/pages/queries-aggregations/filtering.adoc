@@ -164,18 +164,17 @@ const features = {
 const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
 ----
 
-// This next section seems to be wrong. It mentions 4 operators, but there's one 2 and a similar sentence is repicated with not much context. Please take a look.
-
 == Array comparison
 
-The following two comparison operators are available on non-array fields, and accept an array argument:
+The following operator is available on non-array fields, and accepts an array argument:
 
 * `_IN`
-Conversely, the following operators are available on array fields, and accept a single argument:
+
+Conversely, the following operator is available on array fields, and accepts a single argument:
 
 * `_INCLUDES`
 
-These four operators are available for all types apart from `Boolean`.
+These operators are available for all types apart from `Boolean`.
 
 == Combining operators
 
@@ -448,18 +447,46 @@ query {
 | Used in the case of `DateTime`, `LocalDateTime`, `LocalTime`, `Time`, and `Duration`.
 | `_MIN_EQUAL`, `_MIN_GT`, `_MIN_GTE`, `_MIN_LT`, `_MIN_LTE`, `_MAX_EQUAL`, `_MAX_GT`, `_MAX_GTE`, `_MAX_LT`, `_MAX_LTE`
 a|
+.Type definitions
 [source, graphql, indent=0]
 ----
-{}
+type Event {
+    title: String!
+    startTime: DateTime!
+}
+----
+
+.Query
+[source, graphql, indent=0]
+----
+query EventsAggregate {
+    users(where: { eventsAggregate: { node: { startTime_GT: "2022-08-14T15:00:00Z" } } }) {
+        name
+    }
+}
 ----
 
 | `Duration`
 | Description.
 | `_AVERAGE_EQUAL`, `_AVERAGE_GT`, `_AVERAGE_GTE`, `_AVERAGE_LT`, `_AVERAGE_LTE`
 a|
+.Type definitions
 [source, graphql, indent=0]
 ----
-{}
+type Event {
+    title: String!
+    duration: Duration!
+}
+----
+
+.Query
+[source, graphql, indent=0]
+----
+query EventsAggregate {
+    users(where: { eventsAggregate: { node: { duration_AVERAGE_LT: "PT2H" } } }) {
+        name
+    }
+}
 ----
 
 | `ID`

@@ -1,6 +1,6 @@
 = Authentication and Authorization
 
-The largest breaking change in version 4.0.0 is the removal of the `@auth` directive, which requires a migration to the new `@authentication` and `@authorization` directives.
+The largest breaking change in version 4.0.0 is the removal of the `@auth` directive, which requires a migration to the new `@authentication`, `@authorization` and `@subscriptionsAuthorization` directives.
 
 == Instantiation
 
@@ -12,7 +12,9 @@ You should uninstall the previous plugin:
 npm uninstall @neo4j/graphql-plugin-auth
 ----
 
-Then, given an example of instantiation using a basic secret with the plugin:
+=== Symmetric secret
+
+Given an example of instantiation using a symmetric secret with the plugin:
 
 [source, typescript, indent=0]
 ----
@@ -35,6 +37,38 @@ new Neo4jGraphQL({
     features: {
         authorization: {
             key: "secret",
+        }
+    }
+})
+----
+
+=== JWKS endpoint
+
+When using a JWKS endpoint, an example of how this might be configured currently is:
+
+[source, typescript, indent=0]
+----
+new Neo4jGraphQL({
+    typeDefs,
+    plugins: {
+        auth: new Neo4jGraphQLAuthJWKSPlugin({
+            jwksEndpoint: "https://YOUR_DOMAIN/well-known/jwks.json",
+        }),
+    }
+})
+----
+
+In version 4.0.0, delete the import of `Neo4jGraphQLAuthJWKSPlugin`, and change the instantiation to:
+
+[source, typescript, indent=0]
+----
+new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        authorization: {
+            key: {
+                url: "https://YOUR_DOMAIN/well-known/jwks.json",
+            },
         }
     }
 })
@@ -67,7 +101,7 @@ const server = new ApolloServer({
 const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
     context: async ({ req }) => ({
-        token: req.headers.Authorization,
+        token: req.headers.authorization,
     }),
 });
 ----

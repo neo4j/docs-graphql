@@ -16,11 +16,16 @@ Most applications won't just expose a single GraphQL API. There may also be sche
 
 The following directives are excluded from the OGM's schema:
 
-- `@auth`
-- `@exclude`
+- `@authentication`
+- `@authorization`
+- `@subscriptionsAuthorization`
 - `@private`
-- `@readonly`
-- `@writeonly`
+- `@query`
+- `@mutation`
+- `@subscription`
+- `@filterable`
+- `@selectable`
+- `@settable`
 
 This is because the OGM is only ever used programmatically, as opposed to an exposed API which needs these security measures.
 
