@@ -1,10 +1,10 @@
 [[type-definitions-types]]
 :description: This page lists the default types available in the Neo4j GraphQL Library.
-= Default types
+= Scalar types
 
-Neo4j GraphQL supports all of the default GraphQL https://graphql.org/learn/schema/#scalar-types[scalar types] as well as additional scalar and object types specific to the Neo4j database.
+Neo4j GraphQL supports all of the built-in GraphQL https://graphql.org/learn/schema/#scalar-types[scalar types] as well as additional scalar and object types specific to the Neo4j database.
 
-== Default types
+== Scalar types
 
 [cols="1,2,2"]
 |===

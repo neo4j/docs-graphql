@@ -1,8 +1,8 @@
-[[directives-reference]]
+[[directives]]
 :description: This page lists all directives available in the Neo4j GraphQL Library.
-= Directives reference
+= Directives
 
-This page lists all directives available in the Neo4j GraphQL Library:
+The Neo4j GraphQL Library provides the following directives to be used whilst defining types:
 
 [cols="1,3"]
 |===
