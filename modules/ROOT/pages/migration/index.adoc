@@ -173,7 +173,7 @@ Migrating this directive is trivial:
 
 For example, `@relation(name: "ACTED_IN", direction: OUT)` becomes `@relationship(type: "ACTED_IN", direction: OUT)`.
 
-See xref::type-definitions/relationships.adoc[Relationships] for more information on relationships in `@neo4j/graphql`.
+See xref::/type-definitions/types/relationships.adoc[Relationships] for more information on relationships in `@neo4j/graphql`.
 
 ==== Relationship Properties
 
@@ -226,7 +226,7 @@ And note the following changes to the two node types:
 
 === `@cypher`
 
-No change. See xref::/directives/cypher.adoc[`@cypher` directive] for more details on this directive in `@neo4j/graphql`.
+No change. See xref::/type-definitions/directives/cypher.adoc[`@cypher` directive] for more details on this directive in `@neo4j/graphql`.
 
 ==== `@neo4j_ignore`
 
@@ -245,7 +245,7 @@ Not supported at this time.
 
 ==== `@id`
 
-There is an equivalent directive in the new library, but it does not work using database constraints as per the old library. See xref::/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`].
+There is an equivalent directive in the new library, but it does not work using database constraints as per the old library. See xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`].
 
 ==== `@unique`, `@index` and `@search`
 
@@ -255,7 +255,7 @@ These all relate to database indexes and constraints, which are not currently su
 
 ==== Scalar Types
 
-Supported as you would expect, with additional xref::type-definitions/default.adoc[`BigInt`] support for 64 bit integers.
+Supported as you would expect, with additional xref::/type-definitions/types/scalar.adoc[`BigInt`] support for 64 bit integers.
 
 ==== Temporal Types (`DateTime`, `Date`)
 
@@ -285,14 +285,14 @@ Has become:
 
 Due to the move to ISO 8601 strings, input types are no longer necessary for temporal instances, so `_Neo4jDateTimeInput` has become `DateTime` and `_Neo4jDateInput` has become `Date` for input.
 
-See xref::type-definitions/temporal.adoc[Temporal Types].
+See xref::/type-definitions/types/temporal.adoc[Temporal Types].
 
 ==== Spatial Types
 
 The single type in `neo4j-graphql-js`, `Point`, has been split out into two types:
 
-* xref::type-definitions/spatial.adoc#_point[`Point`]
-* xref::type-definitions/spatial.adoc#_cartesianpoint[`CartesianPoint`]
+* xref::/type-definitions/types/spatial.adoc#_point[`Point`]
+* xref::/type-definitions/types/spatial.adoc#_cartesianpoint[`CartesianPoint`]
 
 Correspondingly, `_Neo4jPointInput` has also been split out into two input types:
 
@@ -303,11 +303,11 @@ Using them in Queries and Mutations should feel remarkably similar.
 
 ==== Interface Types
 
-Supported, queryable using inline fragments as per `neo4j-graphql-js`, but can also be created using Nested Mutations. See xref::type-definitions/interfaces.adoc[Interfaces].
+Supported, queryable using inline fragments as per `neo4j-graphql-js`, but can also be created using Nested Mutations. See xref::/type-definitions/types/interfaces.adoc[Interfaces].
 
 ==== Union Types
 
-Supported, queryable using inline fragments as per `neo4j-graphql-js`, but can also be created using Nested Mutations. See xref::type-definitions/unions.adoc#type-definitions-unions[Unions].
+Supported, queryable using inline fragments as per `neo4j-graphql-js`, but can also be created using Nested Mutations. See xref::/type-definitions/types/unions.adoc#type-definitions-unions[Unions].
 
 === Fields
 
