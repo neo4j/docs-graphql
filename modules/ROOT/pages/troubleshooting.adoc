@@ -142,13 +142,14 @@ You can ensure that the data is available to query by passing a bookmark into yo
 
 The following example will create inputs with `_emptyInput`:
 
-```graphql
+[source, graphql]
+----
 type Cookie {
     id: ID! @id
     owner: Owner!  @relationship(type: "HAS_OWNER", direction: OUT)
     # f: String # If you don't want _emptyInput, uncomment this line.
 }
-```
+----
 
 === Relationship nullability isn't being enforced in my graph
 

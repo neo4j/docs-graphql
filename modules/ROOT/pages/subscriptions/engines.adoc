@@ -7,7 +7,8 @@ There are different ways to how a GraphQL subscription may be set along with `@n
 == Default
 The default behavior is automatically set if the `subscriptions` feature is set to `true`, as described in xref::subscriptions/getting-started.adoc[Getting Started]:
 
-```javascript
+[source, javascript]
+----
 new Neo4jGraphQL({
     typeDefs,
     driver,
@@ -15,7 +16,7 @@ new Neo4jGraphQL({
         subscriptions: true
     },
 });
-```
+----
 
 This behavior enables a simple subscription system that will work on a single instance, which is ideal for development, testing, and servers that do not require horizontal scaling.
 
@@ -35,9 +36,10 @@ Some brokers supporting this protocol are:
 
 The plugin can be installed with `npm`:
 
-```sh
+[source, bash]
+----
 npm install @neo4j/graphql-amqp-subscriptions-engine
-```
+----
 
 NOTE: AMQP 1.0 is **not** supported by this plugin.
 
@@ -46,7 +48,8 @@ NOTE: AMQP 1.0 is **not** supported by this plugin.
 The AMQP plugin should be instanced and passed to the `subscription` field in features.
 This will automatically enable the subscriptions with the AMQP broker as a message queue:
 
-```javascript
+[source, javascript]
+----
 const { Neo4jGraphQLAMQPSubscriptionsEngine } = require("@neo4j/graphql-amqp-subscriptions-engine");
 
 const amqpSubscription = new Neo4jGraphQLAMQPSubscriptionsEngine({
@@ -64,7 +67,7 @@ const neoSchema = new Neo4jGraphQL({
         subscriptions: amqpSubscription,
     },
 });
-```
+----
 
 === API
 The following options can be passed to the constructor:
@@ -95,7 +98,8 @@ This is useful for setting up the connection to a broker.
 
 In case you want to handle subscriptions using link:https://redis.io/[redis]:
 
-```javascript
+[source, javascript]
+----
 // Note: This is an example of a custom subscription behavior and not a production ready redis implementation.
 class CustomRedisSubscriptionEngine {
     constructor(redisClient) {
@@ -132,7 +136,7 @@ const neoSchema = new Neo4jGraphQL({
         subscriptions: redisSubscriptions,
     },
 });
-```
+----
 
 Note that extra properties and methods are often needed to handle the connection to the broker.
 As long as the messages are sent to the broker in the `publish` method and that these messages are received and then emitted through the `events` property, the subscriptions will be properly handled.
@@ -141,9 +145,10 @@ As long as the messages are sent to the broker in the `publish` method and that 
 If using Typescript, you may import the interface `Neo4jGraphQLSubscriptionsEngine` to implement your own class.
 Ensure the API is correctly defined:
 
-```typescript
+[source, typescript]
+----
 class CustomRedisEngine implements Neo4jGraphQLSubscriptionsEngine {}
-```
+----
 
 [NOTE]
 ====

@@ -1,0 +1,264 @@
+[[apollo-federation]]
+:description: This guide shows how to create a subgraph using the Neo4j GraphQL Library, for composition into a supergraph using Apollo Federation.
+= Apollo Federation
+
+This guide shows how to create a subgraph using the Neo4j GraphQL Library, for composition into a supergraph using Apollo Federation. 
+
+The objective is to convert the following monolithic schema into a subgraph schema for use behind a Federation gateway:
+
+[source, javascript]
+----
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+  type User {
+    id: ID!
+    name: String!
+  }
+`;
+
+const {
+  NEO4J_URI = "neo4j://localhost:7687/neo4j",
+  NEO4J_USERNAME = "neo4j",
+  NEO4J_PASSWORD = "password",
+} = process.env;
+
+const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD));
+
+const neo4jgraphql = new Neo4jGraphQL({
+  typeDefs,
+  driver,
+})
+
+const schema = await neo4jGraphQL.getSchema();
+
+const server = new ApolloServer({
+  schema,
+});
+
+const { url } = await startStandaloneServer(server);
+console.log(`🚀  Server ready at ${url}`);
+----
+
+== Create a new project and install the Apollo Server
+
+*Create the project directory*
+
+Create a directory for a new project and `cd` into it:
+
+[source, bash]
+----
+mkdir neo4j-graphql-subgraph-example
+cd neo4j-graphql-subgraph-example
+----
+
+*Initialize the project*
+
+Initialize a new Node.js project with `npm`:
+
+[source, bash]
+----
+npm init --yes
+npm pkg set type="module"
+----
+
+NOTE: This how-to guide sets up the project using ES Modules, which allows the usage of features such as top-level `await`.
+
+*Language specific setup*
+
+Follow the instructions below to set up with either TypeScript or JavaScript:
+
+.TypeScript
+[%collapsible]
+====
+. Create a `src` directory with an empty `index.ts` file to contain the entrypoint to your code for this project:
++
+[source, bash]
+----
+mkdir src
+touch src/index.ts
+----
++
+. Install the development dependencies required for working with a TypeScript project:
++
+[source, bash]
+----
+npm install --save-dev typescript @types/node @tsconfig/node-lts
+----
++
+. Create an empty `tsconfig.json` file which will contain the compiler configuration for TypeScript:
++
+[source, bash]
+----
+touch tsconfig.json
+----
++
+. Add the following configuration to the `tsconfig.json` file created above:
++
+[source, json]
+----
+{
+  "extends": "@tsconfig/node-lts/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+  }
+}
+----
++
+NOTE: The configuration above extends the https://github.com/tsconfig/bases#node-lts-tsconfigjson[community base for Node.js LTS], provided by the `@tsconfig/node-lts` package installed above. For more information on the available options, see the https://www.typescriptlang.org/tsconfig[TypeScript Compiler docs]. 
++
+. Replace the default `scripts` entry in your `package.json` file with the following `scripts` entry:
++
+[source, json]
+----
+{
+  // ...etc.
+  "scripts": {
+    "compile": "tsc",
+    "start": "npm run compile && node ./dist/index.js"
+  }
+  // other dependencies
+}
+----
+====
+
+.JavaScript
+[%collapsible]
+====
+. Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code for this project:
++
+[source, bash]
+----
+mkdir src
+touch src/index.js
+----
++
+. Replace the default `scripts` entry in your `package.json` file with the following `scripts` entry:
++
+[source, json]
+----
+{
+  // ...etc.
+  "scripts": {
+    "start": "node index.js"
+  }
+  // other dependencies
+}
+----
+====
+
+*Install dependencies*
+
+The following dependencies are required for this guide:
+
+* `@apollo/server`, the library for Apollo Server, is used in this guide to host the subgraph.
+* `@neo4j/graphql` is the Neo4j GraphQL Library, which translates GraphQL into Cypher and returns the results.
+* `graphql` is the reference implementation of the GraphQL specification. It is required for `@neo4j/graphql` to function.
+* `neo4j-driver` is the library for the Neo4j driver, which is required to execute Cypher queries against the database.
+
+Install these dependencies by running the following command:
+
+[source, bash]
+----
+npm install @apollo/server @neo4j/graphql graphql neo4j-driver
+----
+
+== Opt in to Federation
+
+For a set of type definitions to be usable as a subgraph for Federation, they must include the following schema extension:
+
+[source, javascript]
+----
+const typeDefs = `#graphql
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key"])
+
+  type User {
+    id: ID!
+    name: String!
+  }
+`;
+----
+
+Note that this example only includes the Federation `@key` directive. 
+To use more https://www.apollographql.com/docs/federation/federated-types/federated-directives[Federation directives], add them to the `import` array.
+
+== Define an entity
+
+Defining a type as an https://www.apollographql.com/docs/federation/entities/[entity] allows other subgraphs to contribute with fields to the `Movie` type.
+To achieve that, use the `@key` directive to designate a field (or fields) as a key:
+
+[source, javascript]
+----
+const typeDefs = `#graphql
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key"])
+
+  type User @key(fields: "id") {
+    id: ID!
+    name: String!
+  }
+`;
+----
+
+Although only the `@key` directive has been added to this example, consider using either the `@id` or the `@unique` directives on the `id` field.
+The Federation gateway expects each key to resolve to one result, so it is good practice to ensure that these values are unique in the database.
+
+== Generate a subgraph schema
+
+When using the Neo4j GraphQL Library, generating the subgraph schema can be achieved by calling `getSubgraphSchema` instead of `getSchema`.
+In other words, only the following line needs to be changed:
+
+[source, javascript]
+----
+const schema = neo4jgraphql.getSubgraphSchema();
+----
+
+== Conclusion
+
+By combining all previous snippets, you should get this:
+
+[source, javascript]
+----
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { Neo4jGraphQL } from "@neo4j/graphql";
+
+const typeDefs = `#graphql
+  type User @key(fields: "id") {
+    id: ID!
+    name: String!
+  }
+`;
+
+const {
+  NEO4J_URI = "neo4j://localhost:7687/neo4j",
+  NEO4J_USERNAME = "neo4j",
+  NEO4J_PASSWORD = "password",
+} = process.env;
+
+const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD));
+
+const neo4jgraphql = new Neo4jGraphQL({
+  typeDefs,
+  driver,
+})
+
+const schema = await neo4jGraphQL.getSubgraphSchema();
+
+const server = new ApolloServer({
+  schema,
+});
+
+const { url } = await startStandaloneServer(server);
+console.log(`🚀  Server ready at ${url}`);
+----
+
+
+For further iteration, this subgraph can also be composed into a supergraph. 
+Check Apollo's guides for more instructions:
+
+* https://www.apollographql.com/docs/federation/quickstart/studio-composition[Composition in Apollo Studio]
+* https://www.apollographql.com/docs/federation/quickstart/local-composition[Local composition]
