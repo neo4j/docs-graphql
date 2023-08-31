@@ -1,4 +1,4 @@
-[[create]]
+[[filtering]]
 :description: This page covers how to apply filters to subscriptions in the Neo4j GraphQL Library.
 = Filtering
 
@@ -24,7 +24,7 @@ For the `Boolean` type, these are the only available comparison operators.
 [[filtering-numerical-operators]]
 === Numerical operators
 
-The following comparison operators are available for numeric types (`Int`, `Float`, xref::reference/type-definitions/types.adoc#type-definitions-types-bigint[`BigInt`]):
+The following comparison operators are available for numeric types (`Int`, `Float`, xref::type-definitions/types.adoc[`BigInt`]):
 
 * `_LT`
 * `_LTE`

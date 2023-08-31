@@ -152,6 +152,16 @@ subscription {
 }
 ----
 
+[[create_relationship]]
+== `CREATE_RELATIONSHIP`
+
+Subscriptions to `CREATE_RELATIONSHIP` events listen for newly created relationships to a node of the specified type. 
+
+[NOTE]
+====
+This subscription operation is **only** available for types that define relationship fields.
+====
+
 == `CREATE_RELATIONSHIP`
 
 Subscriptions to `CREATE_RELATIONSHIP` events listen to new relationships being created and contain information about the connected nodes.
