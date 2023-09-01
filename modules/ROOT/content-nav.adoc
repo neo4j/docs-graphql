@@ -3,11 +3,36 @@
 ** xref:getting-started/index.adoc[]
 *** xref:getting-started/toolbox.adoc[]
 
+** Type definitions
+*** xref:type-definitions/types/index.adoc[]
+**** xref:type-definitions/types/scalar.adoc[Scalar]
+**** xref:type-definitions/types/temporal.adoc[Temporal]
+**** xref:type-definitions/types/spatial.adoc[Spatial]
+**** xref:type-definitions/types/interfaces.adoc[Interface]
+**** xref:type-definitions/types/unions.adoc[Union]
+**** xref:type-definitions/types/relationships.adoc[]
+*** xref:type-definitions/directives/index.adoc[]
+**** xref:type-definitions/directives/basics.adoc[]
+**** xref:type-definitions/directives/autogeneration.adoc[]
+**** xref:type-definitions/directives/custom-directives.adoc[]
+**** xref:type-definitions/directives/cypher.adoc[]
+**** xref:type-definitions/directives/default-values.adoc[]
+**** xref:type-definitions/directives/database-mapping.adoc[]
+**** xref:type-definitions/directives/indexes-and-constraints.adoc[]
+
+** xref:schema-configuration/index.adoc[Schema configuration]
+*** xref:schema-configuration/type-configuration.adoc[]
+*** xref:schema-configuration/global-configuration.adoc[]
+*** xref:schema-configuration/field-configuration.adoc[]
+
 ** xref:queries-aggregations/index.adoc[Queries and aggregations]
 *** xref:queries-aggregations/queries.adoc[]
 *** xref:queries-aggregations/aggregations.adoc[]
 *** xref:queries-aggregations/filtering.adoc[]
 *** xref:queries-aggregations/sorting.adoc[]
+*** xref:queries-aggregations/pagination/index.adoc[]
+**** xref:queries-aggregations/pagination/offset-based.adoc[]
+**** xref:queries-aggregations/pagination/cursor-based.adoc[]
 
 ** xref:mutations/index.adoc[]
 *** xref:mutations/create.adoc[]
@@ -23,14 +48,11 @@
 
 ** xref:custom-resolvers.adoc[]
 
-** xref:pagination/index.adoc[]
-*** xref:pagination/offset-based.adoc[]
-*** xref:pagination/cursor-based.adoc[]
-
 ** xref:authentication-and-authorization/index.adoc[]
 *** xref:authentication-and-authorization/configuration.adoc[]
 *** xref:authentication-and-authorization/authentication.adoc[]
 *** xref:authentication-and-authorization/authorization.adoc[]
+*** xref:authentication-and-authorization/impersonation-and-user-switching.adoc[]
 
 ** xref:introspector.adoc[Introspector]
 
@@ -50,31 +72,7 @@
 *** xref:ogm/type-generation.adoc[]
 *** xref:ogm/reference.adoc[]
 
-** Reference
-*** xref:reference/api-reference/index.adoc[]
-**** xref:reference/api-reference/neo4jgraphql.adoc[]
-**** xref:reference/api-reference/ogm.adoc[]
-*** xref:reference/type-definitions/index.adoc[]
-**** xref:reference/type-definitions/indexes-and-constraints.adoc[]
-**** xref:reference/type-definitions/interfaces.adoc[]
-**** xref:reference/type-definitions/relationships.adoc[]
-**** xref:reference/type-definitions/types.adoc[]
-**** xref:reference/type-definitions/unions.adoc[]
-
-*** xref:reference/directives/index.adoc[]
-**** xref:reference/directives/schema-configuration/index.adoc[]
-***** xref:reference/directives/schema-configuration/type-configuration.adoc[]
-***** xref:reference/directives/schema-configuration/global-configuration.adoc[]
-***** xref:reference/directives/schema-configuration/field-configuration.adoc[]
-
-**** xref:reference/directives/autogeneration.adoc[]
-**** xref:reference/directives/basics.adoc[]
-**** xref:reference/directives/custom-directives.adoc[]
-**** xref:reference/directives/cypher.adoc[]
-**** xref:reference/directives/default-values.adoc[]
-**** xref:reference/directives/database-mapping.adoc[]
-
-*** xref:reference/driver-configuration.adoc[]
+*** xref:driver-configuration.adoc[]
 
 ** Frameworks and integrations
 *** xref:integrations/apollo-federation.adoc[]

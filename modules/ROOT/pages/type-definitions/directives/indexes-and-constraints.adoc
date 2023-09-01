@@ -1,7 +1,9 @@
 [[type-definitions-indexes-and-constraints]]
-= Indexes and Constraints
+:description: This page describes how to use indexes and constraints in the Neo4j GraphQL Library.
+= Indexes and constraints
 
-[[type-definitions-constraints-unique]]
+This page describes how to use indexes and constraints in the Neo4j GraphQL Library.
+
 == Unique node property constraints
 
 Unique node property constraints map to `@unique` directives used in your type definitions, which has the following definition:
@@ -15,15 +17,16 @@ directive @unique(
 ) on FIELD_DEFINITION
 ----
 
-Additionally, the usage of the xref::reference/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive by default implies that there should be a unique node property constraint in the database for that property.
+Additionally, the usage of the xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive by default implies that there should be a unique node property constraint in the database for that property.
 
-Using this directive does not automatically ensure the existence of these constraints, and you will need to run a function on server startup. See the section xref::reference/type-definitions/indexes-and-constraints.adoc#type-definitions-indexes-and-constraints-asserting[Asserting constraints] below for details.
+Using this directive does not automatically ensure the existence of these constraints, and you will need to run a function on server startup. 
+See the section xref::/type-definitions/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
 
-=== `@unique` directive usage
+=== Usage
 
-`@unique` directives can only be used in GraphQL object types representing nodes, and will only be applied for the "main" label for the node. You can find some examples below.
+`@unique` directives can only be used in GraphQL object types representing nodes, and they are only applicable for the "main" label for the node.
 
-In the following example, a unique constraint will be asserted for the label `Colour` and the property `hexadecimal`:
+In the following example, a unique constraint is asserted for the label `Colour` and the property `hexadecimal`:
 
 [source, graphql, indent=0]
 ----
@@ -32,7 +35,7 @@ type Colour {
 }
 ----
 
-In the next example, a unique constraint with name `unique_colour` will be asserted for the label `Colour` and the property `hexadecimal`:
+In the next example, a unique constraint with name `unique_colour` is asserted for the label `Colour` and the property `hexadecimal`:
 
 [source, graphql, indent=0]
 ----
@@ -41,7 +44,7 @@ type Colour {
 }
 ----
 
-The `@node` directive is used to change the database label mapping in this next example, so a unique constraint will be asserted for the first label in the list, `Color`, and the property `hexadecimal`:
+The `@node` directive is used to change the database label mapping in this next example, so a unique constraint is asserted for the first label in the list, `Color`, and the property `hexadecimal`:
 
 [source, graphql, indent=0]
 ----
@@ -51,7 +54,7 @@ type Colour @node(labels: ["Color"]) {
 ----
 
 In the following example, all labels specified in the `labels` argument of the `@node` directive are also checked when asserting constraints.
-If there is a unique constraint specified for the `hexadecimal` property of nodes with the `Hue` label, but not the `Color` label, no error will be thrown and no new constraints created when running `assertIndexesAndConstraints`.
+If there is a unique constraint specified for the `hexadecimal` property of nodes with the `Hue` label, but not the `Color` label, no error is thrown and no new constraints are created when running `assertIndexesAndConstraints`.
 
 [source, graphql, indent=0]
 ----
@@ -60,10 +63,10 @@ type Colour @node(labels: ["Color", "Hue"]) {
 }
 ----
 
-[[type-definitions-indexes-fulltext]]
 == Fulltext indexes
 
 You can use the `@fulltext` directive to add a https://neo4j.com/docs/cypher-manual/current/indexes-for-full-text-search/[Full text index] inside Neo4j.
+For example:
 
 [source, graphql, indent=0]
 ----
@@ -71,7 +74,6 @@ input FullTextInput {
   indexName: String
   queryName: String
   fields: [String]!
-  name: String # Deprecated and will be removed in version 4.0. of the library. Use indexName instead.
 }
 
 """
@@ -80,11 +82,14 @@ Informs @neo4j/graphql that there should be a fulltext index in the database, al
 directive @fulltext(indexes: [FullTextInput]!) on OBJECT
 ----
 
-Using this directive does not automatically ensure the existence of these indexes, and you will need to run a function on server startup. See the section xref::reference/type-definitions/indexes-and-constraints.adoc#type-definitions-indexes-and-constraints-asserting[Asserting constraints] below for details.
+Using this directive does not automatically ensure the existence of these indexes.
+You need to run a function on server startup. 
+See the section xref::/type-definitions/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
 
-=== Specifying the `@fulltext` directive
+=== Specifying
 
-The directive can be used on nodes. Here we add a Fulltext index, called 'ProductName', for the name field, on the Product node.
+The `@fulltext` directive can be used on nodes.
+In this example, a `Fulltext` index called "ProductName", for the name `field`, on the `Product` node, is added:
 
 [source, graphql, indent=0]
 ----
@@ -94,17 +99,17 @@ type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]
 }
 ----
 
-When you run xref::reference/type-definitions/indexes-and-constraints.adoc#type-definitions-indexes-and-constraints-asserting[Asserting constraints] this shall do the index creation like so:
+When you run xref::/type-definitions/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints], they create the index like so:
 
 [source, cypher, indent=0]
 ----
 CALL db.index.fulltext.createNodeIndex("ProductName", ["Product"], ["name"])
 ----
 
-=== Using the `@fulltext` directive
+=== Usage
 
-For every index specified, a new top level query will be generated by the library. For example, for the type definitions above,
-the following query and types would be generated:
+For every index specified, a new top level query is generated by the library. 
+For example, for the previous type definitions, the following query and types are generated:
 
 [source, graphql, indent=0]
 ----
@@ -138,7 +143,8 @@ input FloatWhere {
 }
 ----
 
-This query can then be used to perform a https://lucene.apache.org/[Lucene full-text query] to match and return products. Below is an example of this:
+This query can then be used to perform a https://lucene.apache.org/[Lucene full-text query] to match and return products. 
+Here is an example of this:
 
 [source, graphql, indent=0]
 ----
@@ -152,7 +158,7 @@ query {
 }
 ----
 
-The above query would produce results in the following format:
+This query produces results in the following format:
 
 [source, json, indent=0]
 ----
@@ -182,7 +188,7 @@ The above query would produce results in the following format:
 }
 ----
 
-Additionally, it is possible to define a custom query name as part of the `@fulltext` directive, using the `queryName` argument as shown below:
+Additionally, it is possible to define a custom query name as part of the `@fulltext` directive by using the `queryName` argument:
 
 [source, graphql, indent=0]
 ----
@@ -192,7 +198,7 @@ type Product @fulltext(indexes: [{ queryName: "CustomProductFulltextQuery", inde
 }
 ----
 
-This would then produce the following top-level query:
+This produces the following top-level query:
 
 [source, graphql, indent=0]
 ----
@@ -202,7 +208,7 @@ type Query {
 }
 ----
 
-This query can then be used as shown below:
+This query can then be used like this:
 
 [source, graphql, indent=0]
 ----
@@ -216,35 +222,11 @@ query {
 }
 ----
 
-==== Deprecated usage
-
-
-NOTE: Querying full-text indexes in the following ways has been deprecated and will be removed in version 4.0.
-
-Once you specify the index, you will now gain a 'Top Level' `fulltext` key on the following operations:
-
-1. read
-2. count
-3. aggregate
-
-Here we use the `fulltext` key, and the phrase is using https://lucene.apache.org/[Lucene’s full-text query language] to match and return Products:
-
-[source, graphql, indent=0]
-----
-query {
-    products(fulltext: { ProductName: { phrase: "beer OR cerveza" } }) {
-        name
-    }
-}
-----
-
-> Note that you can only query one Fulltext index at once and that the fulltext key is only available on 'Top Level' queries.
-
-
-[[type-definitions-indexes-and-constraints-asserting]]
 == Asserting constraints
 
-In order to ensure that the specified constraints exist in the database, you will need to run the function `assertIndexesAndConstraints`, the full details of which can be found in the xref::reference/api-reference/neo4jgraphql.adoc#api-reference-assertconstraints[API reference]. A simple example to create the necessary constraints might look like the following, assuming a valid driver instance in the variable `driver`. This will create two constraints, one for each field decorated with `@id`,  `@unique` and apply the indexes specified in `@fulltext`:
+In order to ensure that the specified constraints exist in the database, you need to run the function `assertIndexesAndConstraints` (see more details in xref::reference/api-reference/neo4jgraphql.adoc#api-reference-assertconstraints[API reference]).
+A simple example to create the necessary constraints might look like the following, assuming a valid driver instance in the variable `driver`. 
+This creates two constraints, one for each field decorated with `@id` and `@unique`, and apply the indexes specified in `@fulltext`:
 
 [source, javascript, indent=0]
 ----

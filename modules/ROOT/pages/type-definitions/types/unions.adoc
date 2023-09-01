@@ -1,0 +1,108 @@
+[[type-definitions-unions]]
+:description: This page describes how to use unions on relatinship fields with the Neo4j GraphQL Library.
+= Union types
+
+The Neo4j GraphQL Library supports the use of unions on relationship fields. 
+
+As an example, consider the following schema.
+It defines a `User` type that has a relationship `HAS_CONTENT`, of type `[Content!]!`. 
+`Content` is of type `union`, representing either a `Blog` or a `Post`:
+
+[source, graphql, indent=0]
+----
+union Content = Blog | Post
+
+type Blog {
+    title: String
+    posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)
+}
+
+type Post {
+    content: String
+}
+
+type User {
+    name: String
+    content: [Content!]! @relationship(type: "HAS_CONTENT", direction: OUT)
+}
+----
+
+== Creating a union
+
+To create the union featured in the example, you need to do this mutation:
+
+[source, graphql, indent=0]
+----
+mutation CreateUserAndContent {
+    createUsers(
+        input: [
+            {
+                name: "Dan"
+                content: {
+                    Blog: {
+                        create: [
+                            {
+                                node: {
+                                    title: "My Cool Blog"
+                                    posts: {
+                                        create: [
+                                            {
+                                                node: {
+                                                    content: "My Cool Post"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    ) {
+        users {
+            name
+        }
+    }
+}
+----
+
+== Querying a union
+
+Which union members are returned by a query are dictated by the `where` filter applied to the query.
+The following example returns all user content, more specifically the title of each blog:
+
+[source, graphql, indent=0]
+----
+query GetUsersWithBlogs {
+    users {
+        name
+        content {
+            ... on Blog {
+                title
+            }
+        }
+    }
+}
+----
+
+While this particular query only returns blogs, you could for instance use a filter to check that the title is not null when the list of blogs is returned:
+
+[source, graphql, indent=0]
+----
+query GetUsersWithAllContent {
+    users {
+        name
+        content(where: { Blog: { NOT: { title: null } }}) {
+            ... on Blog {
+                title
+            }
+        }
+    }
+}
+----
+
+This also helps with preventing overfetching.
+See more information in the xref::troubleshooting.adoc#appendix-preventing-overfetching[Troubleshooting] section.
+

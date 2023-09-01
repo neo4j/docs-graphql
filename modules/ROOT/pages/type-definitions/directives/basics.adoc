@@ -1,0 +1,67 @@
+[[type-definitions-basics]]
+:description: This page describes basic notions about how to use directives with the Neo4j GraphQL Library.
+= Basics
+
+Each type in your GraphQL type definitions can be mapped to an entity in your Neo4j database, such as nodes, relationships, and relationship properties.
+This page describes how that can be done.
+
+== Nodes
+
+The most basic mapping, it uses GraphQL type names to map to the Neo4j node label.
+For example, to represent a node with label "Movie" and a single property "title" of type string:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String
+}
+----
+
+== Relationships
+
+Relationships are represented by marking particular fields with a directive -- in this case, `@relationship`. 
+It defines the relationship type in the database, as well as which direction that relationship goes in.
+
+To add a second node type, "Actor", and connect the two together, you should do the following:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
+}
+
+type Actor {
+    name: String
+    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+}
+----
+
+Note that, in this case, there is a directive on each "end" of the relationship, but it is not essential.
+
+=== Relationship properties
+
+In order to add properties to a relationship, you need to add a new type to your type definitions.
+This time, however, it should be an interface which must be decorated with the `@relationshipProperties` directive.
+
+For example, for the "ACTED_IN" relationship, add a property "roles":
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
+}
+
+type Actor {
+    name: String
+    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedIn")
+}
+
+interface ActedIn @relationshipProperties {
+    roles: [String]
+}
+----
+
+Note that in addition to this interface type, there is an added a key `properties` in the existing `@relationship` directives.
+For more information, see xref::/type-definitions/types/relationships.adoc[Type definitions -> Relationships].

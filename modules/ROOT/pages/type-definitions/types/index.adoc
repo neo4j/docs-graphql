@@ -1,0 +1,53 @@
+[[types]]
+:description: This page lists all types available in the Neo4j GraphQL Library.
+= Types
+
+The Neo4j GraphQL Library provides the following types:
+
+[cols="1,3"]
+|===
+| Type | Description
+
+| xref::/type-definitions/types/scalar.adoc[`Int`]
+| The `Int` scalar type represents a signed 32-bit numeric non-fractional value.
+
+| xref::/type-definitions/types/scalar.adoc[`Float`]
+| The `Float` scalar type represents a signed double-precision fractional value.
+
+| xref::/type-definitions/types/scalar.adoc[`String`]
+| The `String` scalar type represents textual data, represented as UTF-8 character sequences.
+
+| xref::/type-definitions/types/scalar.adoc[`Boolean`]
+| The `Boolean` scalar type represents `true` or `false`.
+
+| xref::/type-definitions/types/scalar.adoc[`ID`]
+| The `ID` scalar type represents a unique identifier, often used to refetch an object.
+
+| xref::/type-definitions/types/scalar.adoc[`BigInt`]
+| The `BigInt` scalar type represents a signed 64-bit numeric non-fractional value.
+
+| xref:/type-definitions/types/temporal.adoc[`Date`]
+| The `Date` scalar type is a ISO 8601 date mapping to the Neo4j `DATE` type.
+
+| xref::/type-definitions/types/temporal.adoc[`Time`]
+| The `Time` scalar type is a ISO 8601 time of day and timezone mapping to the Neo4j `ZONED TIME` type.
+
+| xref::/type-definitions/types/temporal.adoc[`LocalTime`]
+| The `LocalTime` scalar type is a ISO 8601 time of day mapping to the Neo4j `LOCAL TIME` type.
+
+| xref::/type-definitions/types/temporal.adoc[`DateTime`]
+| The `DateTime` scalar type is a ISO 8601 date, time of day and timezone mapping to the Neo4j `ZONED DATETIME` type.
+
+| xref:/type-definitions/types/temporal.adoc[`LocalDateTime`]
+| The `LocalDateTime` scalar type is a ISO 8601 date and time of day mapping to the Neo4j `LOCAL DATETIME` type.
+
+| xref::/type-definitions/types/temporal.adoc[`Duration`]
+| The `Duration` scalar type is a ISO 8601 duration mapping to the Neo4j `DURATION` type.
+
+| xref::/type-definitions/types/spatial.adoc#point[`Point`]
+| The `Point` object type is a WGS 84 3D geographic point.
+
+| xref::/type-definitions/types/spatial.adoc#cartesian-point[`CartesianPoint`]
+| The `CartesianPoint` object type is a Cartesian 3D point.
+
+|===

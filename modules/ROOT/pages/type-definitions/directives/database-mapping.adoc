@@ -1,22 +1,16 @@
 [[type-definitions-database-mapping]]
-= Database Mapping
+:description: This page describes how to use directives for database mapping.
+= Database mapping
+
+This page describes how to use directives for database mapping.
 
 [[type-definitions-alias]]
 == `@alias`
 
 This directive maps a GraphQL field to a Neo4j property on a node or relationship.
+It can be used on any fields that are not `@cypher` or `@relationship` fields.
 
-This can be used on any fields that are not `@cypher` or `@relationship` fields.
-
-=== Definition
-
-[source, graphql, indent=0]
-----
-"""Indicates that the field is to be mapped to the underlying Neo4j under a different property name."""
-directive @alias(property: String!) on FIELD_DEFINITION
-----
-
-=== Usage
+For example:
 
 [source, graphql, indent=0]
 ----
@@ -43,15 +37,14 @@ interface UserLivesInProperties @relationshipProperties {
 }
 ----
 
-==== Properties are automatically escaped
-
-The property in aliases are automatically escaped (wrapped with backticks ``), so there's no need to add escape characters around them.
+Note that the property in aliases are automatically escaped (wrapped with backticks ``), so there is no need to add escape characters around them.
 
 [[type-definitions-plural]]
 == `@plural`
 
-The `@plural` directive redefines how to compose the plural of the type for the generated operations.
+This directive redefines how to compose the plural of the type for the generated operations.
 This is particularly useful for types that are not correctly pluralized or are non-English words.
+Take this type definition as an example:
 
 [source, graphql, indent=0]
 ----
@@ -71,29 +64,19 @@ This way, instead of the wrongly generated `teches`, the type is properly writte
 }
 ----
 
-The same is applied to other operations such as `createTechs`. Note that database labels will not change.
+The same is applied to other operations such as `createTechs`. 
+However, keep in mind that database labels are not changed with this directive.
 
 [[type-definitions-node]]
 == `@node`
 
-The `@node` directive is used to specify the configuration of a GraphQL object type which represents a Neo4j node.
+This directive is used to specify the configuration of a GraphQL object type which represents a Neo4j node.
+It can be appended with the following optional parameters:
 
-=== Definition
+[discrete]
+=== `labels`
 
-[source, graphql, indent=0]
-----
-"""Informs @neo4j/graphql of node metadata"""
-directive @node(
-    """Map the GraphQL type to match Neo4j node labels"""
-    labels: [String]
-) on OBJECT
-----
-
-=== Usage
-`@node` can be used with the following optional parameters.
-
-==== `labels`
-The parameter `labels` defines the list of label to be used in Neo4j instead of the GraphQL type name:
+This parameter defines the list of label to be used in Neo4j instead of the GraphQL type name:
 
 [source, graphql, indent=0]
 ----
@@ -113,7 +96,7 @@ This way, the following query:
 }
 ----
 
-Generates the cypher query:
+Generates the Cypher query:
 
 [source, cypher, indent=0]
 ----
@@ -141,7 +124,7 @@ This way, the following query:
 }
 ----
 
-Generates the cypher query:
+Generates the Cypher query:
 
 [source, cypher, indent=0]
 ----
@@ -149,9 +132,13 @@ MATCH (this:Dog:K9)
 RETURN this { .name } as this
 ----
 
-Please note that defining `labels` means you take control of the database labels of the node. Indexes and constraints in Neo4j only support a single label, for which the first element of the `labels` argument will be used.
+[NOTE]
+====
+Defining `labels` means you take control of the database labels of the node. 
+Indexes and constraints in Neo4j only support a single label, for which the first element of the `labels` argument is used.
+====
 
-The following example results in a unique constraint be asserted for the label `K9` and the property `name`:
+The following example results in a unique constraint to be asserted for the label `K9` and the property `name`:
 
 [source, graphql, indent=0]
 ----
@@ -160,8 +147,11 @@ type Dog @node(labels: ["K9", "Dog"]) {
 }
 ----
 
-===== Using `$jwt` and `$context`
-In some cases, we may want to generate dynamic labels depending on the user requesting. In these cases, we can use the variable `$jwt` to define a custom label define in the JWT:
+[discrete]
+=== Using `$jwt` and `$context`
+
+In some cases, you may want to generate dynamic labels depending on the user requesting. 
+For that, you can use the variable `$jwt` to define a custom label in the JWT:
 
 [source, graphql, indent=0]
 ----
@@ -170,7 +160,7 @@ type User @node(labels: ["$jwt.username"]) {
 }
 ----
 
-The following query will yield a different cypher query depending on the user JWT:
+The following query yielda a different Cypher query depending on the user JWT:
 
 [source, graphql, indent=0]
 ----
@@ -181,7 +171,7 @@ The following query will yield a different cypher query depending on the user JW
 }
 ----
 
-Assuming an user with the value `"username": "arthur"` in JWT, the Cypher query will look like:
+Assuming there is a user with the value `"username": "arthur"` in JWT, the Cypher query looks like:
 
 [source, cypher, indent=0]
 ----
