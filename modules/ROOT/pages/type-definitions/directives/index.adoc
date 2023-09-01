@@ -12,10 +12,10 @@ The Neo4j GraphQL Library provides the following directives to be used whilst de
 | Maps a GraphQL schema field to a Neo4j property on a node or relationship.
 
 | xref::/authentication-and-authorization/authentication.adoc[`@authentication`]
-| Require authentication checks when accessing the type.
+| Requires authentication checks when accessing the type.
 
 | xref::/authentication-and-authorization/authorization.adoc[`@authorization`]
-| Specify authorization rules for queries and mutations on the type.
+| Specifies authorization rules for queries and mutations on the type.
 
 | xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-coalesce[`@coalesce`]
 | Exposes a mechanism for querying against non-existent, `null` values on a node.
@@ -75,7 +75,7 @@ directive @relationshipProperties on INTERFACE
 ----
 
 | `@relayId`
-| Specify that the field should be used as the global node identifier for Relay.
+| Specifies that the field should be used as the global node identifier for Relay.
 
 | xref:/schema-configuration/field-configuration.adoc#_selectable[`@selectable`]
 | Sets the availability of fields on queries and aggregations. 
@@ -87,7 +87,7 @@ directive @relationshipProperties on INTERFACE
 | Limits subscription operations in the library.
 
 | `@subscriptionsAuthorization`
-| Specify authorization rules for subscriptions on the type.
+| Specifies authorization rules for subscriptions on the type.
 
 | xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-timestamp[`@timestamp`]
 | Flags fields to be used to store timestamps on create/update events.
