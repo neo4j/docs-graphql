@@ -1,8 +1,8 @@
 [[create]]
-:description: This page covers how to apply filtering to subscriptions in the Neo4j GraphQL Library.
+:description: This page covers how to apply filters to subscriptions in the Neo4j GraphQL Library.
 = Filtering
 
-This page covers how to apply filtering to subscriptions in the Neo4j GraphQL Library.
+This page covers how to apply filters to subscriptions in the Neo4j GraphQL Library.
 Note, however, that:
 
 * Filtering can only be applied at the root of the subscription operation.
