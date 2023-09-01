@@ -26,7 +26,7 @@ For the `Boolean` type, equality operators are the only ones available.
 
 == Numerical operators
 
-These are the operators available for numeric (`Int`, `Float`, xref::reference/type-definitions/types.adoc#type-definitions-types-bigint[`BigInt`]), xref::reference/type-definitions/types.adoc#type-definitions-types-temporal[temporal] and xref::reference/type-definitions/types.adoc#type-definitions-types-spatial[spatial] types:
+These are the operators available for numeric (`Int`, `Float`, xref::/type-definitions/types/scalar.adoc[`BigInt`]), xref::/type-definitions/types/temporal.adoc[temporal] and xref::/type-definitions/types/spatial.adoc[spatial] types:
 
 * `_LT`
 * `_LTE`
@@ -48,7 +48,7 @@ query {
 ----
 
 Spatial types use numerical filtering differently and they also have additional options. 
-See xref::/reference/type-definitions/types.adoc#_filtering[Spatial types filtering] for more information.
+See xref::/type-definitions/types/spatial.adoc#_filtering[Spatial types filtering] for more information.
 
 These same operators are disabled by default in the case of String comparisons.
 To enable, explicitly add them in the features options:

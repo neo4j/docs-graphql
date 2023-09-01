@@ -2,7 +2,7 @@
 :description: This section describes queries and aggregations. 
 = Queries and aggregations
 
-Each node defined in xref::/reference/type-definitions/index.adoc[type definitions] has two query fields generated for it: one for *querying* data and another one for *aggregating* it.
+Each node defined in type definitions has two query fields generated for it: one for *querying* data and another one for *aggregating* it.
 Each of these fields, by their part, accepts two arguments used for *filtering*, *sorting*, and *pagination*.
 
 This section addresses the following topics:
