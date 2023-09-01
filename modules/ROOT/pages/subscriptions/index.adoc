@@ -1,18 +1,13 @@
 [[subscriptions]]
+:description: This section covers how to use subscriptions with the Neo4j GraphQL Library.
 = Subscriptions
 
-GraphQL subscriptions add real-time capabilities to your API. 
-Subscriptions allow to listen for changes on the database and they are available when using `@neo4j/graphql`.
+GraphQL subscriptions add real-time capabilities to an API by allowing a server to send data to its clients when a specific event happens.
 
-All xref:subscriptions/events.adoc[events] will be triggered individually, even in events caused by the same Mutation. 
-Events are fired on the creation or deletion of nodes and relationships, and on the update of nodes.
+This section covers:
 
-[NOTE]
-====
-Only changes made through `@neo4j/graphql` will trigger events. Changes made directly to the database or using the xref::/type-definitions/directives/cypher.adoc[`@cypher` directive] will **not** trigger any event.
-====
-
-== Subscriptions with Auth
-label:deprecated[]
-
-Some `auth` clauses can be used with subscriptions.
+* xref:subscriptions/getting-started.adoc[Getting started] - How to get started with subscriptions by setting up a basic example.
+* xref:subscriptions/events.adoc[Events] - How to trigger events when using `@neo4j/graphql`.
+* xref:subscriptions/filtering.adoc[Filtering] - How to apply filters to subscriptions.
+* xref:subscriptions/scaling.adoc[Horizontal scaling] - How to perform horizontal scaling.
+* xref:subscriptions/engines.adoc[Subscriptions engines] - How to set up a GraphQL subscription along with a `@neo4j/graphql` server.
