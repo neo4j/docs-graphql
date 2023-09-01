@@ -52,6 +52,7 @@
 *** xref:authentication-and-authorization/configuration.adoc[]
 *** xref:authentication-and-authorization/authentication.adoc[]
 *** xref:authentication-and-authorization/authorization.adoc[]
+*** xref:authentication-and-authorization/impersonation-and-user-switching.adoc[]
 
 ** xref:introspector.adoc[Introspector]
 
