@@ -6,7 +6,7 @@ This guide shows how to start using subscription capabilities on a GraphQL serve
 
 [NOTE]
 ====
-If you use link:https://www.apollographql.com/[Apollo], make sure to select the link:https://www.npmjs.com/package/graphql-ws[graphql-ws] implementation in the connection settings.
+If you use link:https://studio.apollographql.com/[Apollo Studio], make sure to select the link:https://www.npmjs.com/package/graphql-ws[graphql-ws] implementation in the connection settings.
 ====
 
 == Enable subscription capabilities
