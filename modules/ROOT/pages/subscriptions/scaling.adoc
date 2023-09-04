@@ -1,48 +1,45 @@
 [[horizontal-scaling]]
-:description: This page describes horizontal scaling in Neo4j GraphQL.
-= Horizontal scaling
+= Horizontal Scaling
 
-Horizontally scaling any real time system can be complex, especially when dealing with long lived connections such as WebSockets.
-Consider the following example, in which Client A is subscribed to a certain event that is triggered by Client B:
+== The Problem
+Horizontal scaling of any real time system can be tricky. Especially when dealing with long lived connections such as WebSockets.
+Consider the following example, in which _Client A_ is subscribed to a certain event, that is triggered by _Client B_:
 
-image::subscriptions/diagram1.svg[title="Basic subscriptions setup example"]
+image::subscriptions/diagram1.png[title="Simple subscriptions setup"]
 
-The server running the GraphQL service does the following:
 
-. Receives the mutation by Client B.
-. Runs the Cypher query on Neo4j.
-. Triggers the subscription event to Client A.
+In the previous example, the server running the GraphQL service, will do the following:
 
-This setup works for a single instance of a `@neo4j/graphql` server. 
-However, when trying to scale horizontally by adding more GraphQL servers, you may encounter the following situation:
+1. Receive the _mutation_ by _Client B_.
+2. Run the Cypher Query on Neo4j.
+3. Trigger the subscription event to _Client A_.
 
-image::subscriptions/diagram2.svg[title="Subscriptions with 2 servers"]
+This setup works fine for a single instance of `@neo4j/graphql`. However, when trying to scale horizontally, by adding more GraphQL servers,
+we may encounter the following situation:
 
-In this case, Client B is subscribed to one server. 
-However, when Client A triggers the mutation, it may query a different server.
+image::subscriptions/diagram2.png[title="Subscriptions with 2 servers"]
 
-The change happens successfully in the database, and any client connected to the same server receives the subscription event.
-However, Client A does **not** receive any update, as the server it's connected to does not get notified of any mutation.
+In this case, _Client B_ is subscribed to one server, however, when _Client A_ triggers the mutation, it queries a different server.
 
-This is the default behavior of the subscription engine provided by the library, making it unsuitable for use in a horizontally scaled environment.
+The change happens successfully in the database, and any client connected to the same server will receive the subscription event, however, _Client A_
+will **not** receive any update, as the server it's connected to will not get notified of any mutation.
 
-== Using PubSub
+This is the behaviour of the xref::subscriptions/plugins/single-instance.adoc[single instance plugin] provided by the library, so it is not suitable for use in a horizontally scaled environment.
 
-One solution to this problem (as well as how `@neo4j/graphql` is intended to work) is to use a PubSub pattern with an external broker to broadcast events through multiple instances.
-This can be achieved through different xref::subscriptions/engines.adoc[Subscription engines].
+## Using PubSub
+One solution to this problem, and how `@neo4j/graphql` is intended to work, is to use a PubSub pattern with an external broker to broadcast events through multiple
+instances. This can be achieved through xref::subscriptions/plugins/index.adoc[subscription plugins].
 
-Following the previous example, using an intermediate broker to broadcast the events across all instances, the infrastructure would look like this:
+Following the previous example, using an intermediate broker to broadcast the events across all instances, the infrastructure would look like:
 
-image::subscriptions/diagram3.svg[title="Subscriptions with 2 servers and a message broker"]
+image::subscriptions/diagram3.png[title="Subscriptions with 2 servers and message broker"]
 
-The events are as follow:
+In this example, the events are as follow:
 
-. Client B queries the first server.
-. The server performs the mutation in the database.
-. The same server sends an event to the broker.
-. The broker then notifies every server (broadcast), including the server that originally triggered the event.
-. Both servers receive the notification and trigger any event to their subscribed clients.
+1. _Client B_ will query the first server.
+2. The server performs the mutation in the database.
+3. The same server sends an event to the broker.
+4. The broker will then notify every server (broadcast), including the server that originally triggered the event.
+5. Both servers will receive the notification and will trigger any event to their subscribed clients.
 
-== Further reading
-
-You can find more examples of this type of pattern with `@neo4j/graphql` on xref::subscriptions/engines.adoc[Subscription engines].
+NOTE: You can find examples of usage with supported brokers in xref::subscriptions/plugins/index.adoc[plugins].

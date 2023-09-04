@@ -1,6 +1,6 @@
 {
   "name": "graphql",
-  "version": "4.0.0",
+  "version": "3",
   "description": "Neo4j GraphQL Library",
   "main": "server.js",
   "scripts": {

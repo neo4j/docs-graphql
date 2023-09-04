@@ -1,44 +1,21 @@
 [[getting-started]]
-:description: This page shows how to start using subscriptions on a GraphQL server.
-= Getting started with subscriptions
+= Getting Started with Subscriptions
 
-This guide shows how to start using subscription capabilities on a GraphQL server.
+To get started with subscriptions you need a GraphQL server with subscription capabilities.
 
-[NOTE]
-====
-If you use link:https://studio.apollographql.com/[Apollo Studio], make sure to select the link:https://www.npmjs.com/package/graphql-ws[graphql-ws] implementation in the connection settings.
-====
+== Example using Apollo and WebSockets
+For this example, we will use link:https://www.apollographql.com/[Apollo] and link:https://github.com/enisdenjo/graphql-ws[graphql-ws].
 
-== Enable subscription capabilities
+=== Setting up the server
 
-Before using subscriptions on a GraphQL server, you must enable them by passing the `subscriptions` feature to `Neo4jGraphQL`:
-
-[source, javascript]
-----
-new Neo4jGraphQL({
-    typeDefs,
-    driver,
-    features: {
-        subscriptions: true
-    },
-});
-----
-
-== Install dependencies
-
-Then, the next step is to install the following dependencies:
-
-[source, bash]
-----
+Install the following dependencies:
+```bash
 npm i --save ws graphql-ws neo4j-driver @neo4j/graphql express @apollo/server body-parser cors
-----
+```
 
-== Set up an `@apollo/server` server
-
-Add the following code to your `index.js` file to implement a simple `@apollo/server` server with subscriptions (for more options, see link:https://www.apollographql.com/docs/apollo-server/data/subscriptions/[Apollo's documentation]):
-
-[source, javascript, indent=no]
-----
+The following code implements a simple `@apollo/server` server with subscriptions. You can find more examples and documentation
+on subscriptions in link:https://www.apollographql.com/docs/apollo-server/data/subscriptions/[Apollo's documentation].
+```javascript
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -46,7 +23,7 @@ import bodyParser from 'body-parser';
 import cors from "cors";
 import { createServer } from "http";
 import neo4j from 'neo4j-driver';
-import { Neo4jGraphQL } from '@neo4j/graphql';
+import { Neo4jGraphQL, Neo4jGraphQLSubscriptionsSingleInstancePlugin } from '@neo4j/graphql';
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 import express from 'express';
@@ -66,8 +43,8 @@ const driver = neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("neo4j", "
 const neoSchema = new Neo4jGraphQL({
     typeDefs,
     driver,
-    features: {
-        subscriptions: true
+    plugins: {
+        subscriptions: new Neo4jGraphQLSubscriptionsSingleInstancePlugin(),
     },
 });
 
@@ -128,22 +105,13 @@ async function main() {
 }
 
 main();
-----
+```
 
-[NOTE]
-====
-This setup uses the default subscriptions mechanism suitable only for development, testing, and single instance servers. 
-If you need to scale horizontally for a production-ready application, see xref::subscriptions/scaling.adoc[Horizontal scaling].
-====
+NOTE: The example above uses the **xref::subscriptions/plugins/single-instance.adoc[single instance plugin]** and cannot scale horizontally.
 
-== GraphQL subscriptions
-
-With the previous server running, the available subscriptions are set for `Movie` and `Actor`. 
-You can subscribe to new movies created with the following statement:
-
-[source, graphql, indent=0]
-----
-graphql
+=== GraphQL subscriptions
+With the previous server running, we have subscriptions available for `Movie` and `Actor`. We can subscribe to new movies created with the following statement:
+```graphql
 subscription {
     movieCreated(where: { title: "The Matrix" }) {
         createdMovie {
@@ -151,13 +119,10 @@ subscription {
         }
     }
 }
-----
+```
 
-With that, any new movie created with the matching title will trigger a subscription. 
-You can try this with the following query:
-
-[source, graphql, indent=0]
-----
+Any new movie created with the matching title will trigger a subscription. You can try this with the following query:
+```graphql
 mutation {
     createMovies(input: [{ title: "The Matrix" }]) {
         movies {
@@ -165,8 +130,7 @@ mutation {
         }
     }
 }
-----
+```
 
-== Further reading
-
-Keep reading this section on xref:subscriptions/index.adoc[Subscriptions] for more information and advanced examples.
+NOTE: This example uses the link:https://www.npmjs.com/package/graphql-ws[graphql-ws] implementation, if you are using Apollo Studio, make sure
+to select "graphql-ws" implementation in connection settings.
