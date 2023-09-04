@@ -1,14 +1,11 @@
-[[filtering]]
-:description: This page covers how to apply filters to subscriptions in the Neo4j GraphQL Library.
+[[create]]
 = Filtering
 
-This page covers how to apply filters to subscriptions in the Neo4j GraphQL Library.
-Note, however, that:
+Filtering can only be applied at the root of the Subscription operation.
 
-* Filtering can only be applied at the root of the subscription operation.
-* Aggregations are not supported on subscription types and there is currently no available method.
+NOTE: Aggregations are not supported on subscription types, so there is currently no way to apply filter on these fields.
 
-A subscription can be created to target the changes to a node (`create`/`update`/`delete``) or to a relationship (`create`/`delete``).  
+A subscription can be created to target the changes to a node (Create/Update/Delete) or to a relationship (Create/Delete).  
 
 While the format slightly differs depending on whether the subscription targets a node or a relationship, providing a `where` argument allows for filtering on the events that are returned to the subscription.
 
@@ -18,23 +15,19 @@ When creating a subscription, a number of operators are available for different 
 
 === Equality operators
 
-All types can be tested for either equality or non-equality. 
-For the `Boolean` type, these are the only available comparison operators.
+All types can be tested for either equality or non-equality. For the `Boolean` type, these are the only available comparison operators.
 
 [[filtering-numerical-operators]]
 === Numerical operators
 
-The following comparison operators are available for numeric types (`Int`, `Float`, xref::type-definitions/types/index.adoc[`BigInt`]):
+The following comparison operators are available for numeric types (`Int`, `Float`, xref::type-definitions/types.adoc#type-definitions-types-bigint[`BigInt`])
 
 * `_LT`
 * `_LTE`
 * `_GTE`
 * `_GT`
 
-[NOTE]
-====
-Filtering on xref::type-definitions/types/temporal.adoc[Temporal types] and xref::type-definitions/types/spatial.adoc[Spatial types] is not currently supported.
-====
+NOTE: Filtering on xref::type-definitions/types.adoc#type-definitions-types-temporal[Temporal Types] and xref::type-definitions/types.adoc#type-definitions-types-spatial[Spatial Types]: is not yet supported.
 
 === String comparison
 
@@ -46,31 +39,31 @@ The following case-sensitive comparison operators are only available for use on 
 
 === Array comparison
 
-The following operator is available on non-array fields, and accepts an array argument:
+The following two comparison operators are available on non-array fields, and accept an array argument:
 
 * `_IN`
 
-Conversely, the following operator is available on array fields, and accepts a single argument:
+Conversely, the following operators are available on array fields, and accept a single argument:
 
 * `_INCLUDES`
 
-These operators are available for all types apart from `Boolean`.
+These four operators are available for all types apart from `Boolean`.
 
-=== `AND`/`OR` operators
+=== AND, OR operators
 
 Complex combinations of operators are possible using the `AND`/ `OR` operators. 
-They accept as argument an array of items of the same format as the `where` argument.
 
-Check xref:subscriptions/filtering.adoc#combining-operators[Combining operators] for an example.
+`AND`/`OR` operators accept as argument an array of items of the same format as the `where` argument. 
+
+Check out a usage example in the xref:subscriptions/filtering.adoc#combining-operators[Combining operators] section below.
 
 [[node-events-usage]]
 == Subscribing to node events
 
-The `where` argument allows specifying filters on top-level properties of the targeted nodes.
-Only events matching these properties and type are returned to the subscription.
+The `where` argument allows for specifying filters on top-level properties of the targeted nodes.
+Only events matching these properties and type will be returned to the subscription.
 
-As an example, consider the following type definitions:
-
+Considering the following type definitions:
 [source, graphql, indent=0]
 ----
 type Movie {
@@ -80,12 +73,10 @@ type Movie {
     releasedIn: Int
 }
 ----
+Below are some example of how filtering can be applied when creating a subscription.
 
-Now, here is how filtering can be applied when creating a subscription:
-
-=== `CREATE`
-
-To filter subscriptions to `create` operations for movies by their genre, here is how to do it:
+=== Create
+We can filter our movies by their genre:
 
 [source, graphql, indent=0]
 ----
@@ -98,16 +89,12 @@ subscription {
 }
 ----
 
-This way, only newly created movies with the genre `"Drama"` trigger events to this subscription.
+This way, only newly created movies with the genre `"Drama"` will trigger events to this subscription.
 
-[NOTE]
-====
-The `where` argument only filters by properties set at the moment of creation.
-====
+NOTE: `where` will only filter by properties set at the moment of creation.
 
-=== `UPDATE`
-
-Here is how to filter subscription to `update` operations in movies with average rating bigger than 8:
+=== Update
+We can filter our movies with the average rating bigger than 8:
 
 [source, graphql, indent=0]
 ----
@@ -120,14 +107,9 @@ subscription {
 }
 ----
 
-This way, you should only receive events triggered by movies with the average rating bigger than 8 when they are modified.
+This way, we will only receive events triggered by movies with the average rating bigger than 8 being modified.
 
-[NOTE]
-====
-The `where` argument only filters properties that already existed *before* the update.
-====
-
-This is how these events may look like:
+NOTE: `Where` will only filter by existing properties before the update.
 
 [source, graphql, indent=0]
 ----
@@ -158,11 +140,10 @@ mutation {
 }
 ----
 
-Therefore, given the previously described subscription, these GraphQL operations should only triggered for `"The Matrix"` movie.
+Therefore, given the above subscription, these GraphQL operations will only be triggered for `"The Matrix"` movie.
 
-=== `DELETE`
-
-Here is how to filter subscription to `delete` operations in movies by their genre, using the `NOT` filter:
+=== Delete
+we can filter our movies by their genre with the `NOT` filter:
 
 [source, graphql, indent=0]
 ----
@@ -175,21 +156,18 @@ subscription {
 }
 ----
 
-This way, only deleted movies of all genres except for `"Comedy"` should trigger events to this subscription.
+This way, only deleted movies of all genres except for `"Comedy"` will trigger events to this subscription.
 
-[NOTE]
-====
-The `where` argument only filters properties that already existed before the deletion process.
-====
+NOTE: `Where` will only filter by existing properties right before deletion.
 
 [[combining-operators]]
 === Combining operators
 
-All previously mentioned operators can be combined using the `AND`, `OR`, and `NOT` operators. 
+All above-mentioned operators can be combined using the `AND`/`OR`/`NOT` operators. 
 They accept an array argument with items of the same format as the `where` argument, which means they can also be nested to form complex combinations.
 
-As an exampke, consider a user who likes comedy movies, but not romantic comedies from early 2000, and who has the Matrix Trilogy as their favorite titles.
-They could subscribe to any updates that cover this particular set of interests as follows:
+Say we like comedy movies except for romantic comedies from early 2000, although our favorite movies are ones from the Matrix Trilogy.
+We could subscribe to any updates that we are interested in as follows:
 
 [source, graphql, indent=0]
 ----
@@ -215,21 +193,13 @@ subscription {
 
 == Subscribing to relationship events
 
-When subscribing to relationship events, the `where` argument still allows specifying filters on the top-level properties of the targeted nodes.
-It also supports specifying filters on the relationship properties (`edge`) and on the top-level properties (`node`) of the nodes at the other end of the relationship. 
-This is done by using the operators previously described, and the usage is very similar to xref:subscriptions/filtering.adoc#node-events-usage[subscribing to node events].
+When subscribing to relationship events, the `where` argument still allows for specifying filters on the top-level properties of the targeted nodes, and also supports specifying filters on the relationship properties (`edge`) and on the top-level properties (`node`) of the nodes at the other end of the relationship. This is done by using the operators described above, and the usage is very similar to the one in xref:subscriptions/filtering.adoc#node-events-usage[Subscribing to node events].
 
-However, filtering by relationship events is an even more powerful logic.
-This is because these filters can also express the expected relationship field, or the expected concrete type at the other end of the relationship, provided that they are connected to abstract types. 
+The relationship-related filtering logic is even more powerful, as filters can also express the expected relationship field, or the expected concrete type at the other end of the relationship when having relationships to Abstract Types. Note that each relationship field specified is combined with the others using a xref:subscriptions/filtering.adoc#filter-logical-or[logical `OR`]. Only events matching these relationship field names will be returned in the subscription.
 
-Note that each relationship field specified is combined with the others using a xref:subscriptions/filtering.adoc#filter-logical-or[logical `OR`]. 
-Only events matching these relationship field names are returned in the subscription.
+You can further filter each relationship field by node and relationship properties. As per usual, these fields are combined in the resulting filter with a xref:subscriptions/filtering.adoc#filter-logical-and[logical `AND`].
 
-You can further filter each relationship field by node and relationship properties. 
-These fields are combined in the resulting filter with a xref:subscriptions/filtering.adoc#filter-logical-and[logical `AND`].
-
-As an example, in the following type definitions:
-
+Considering the following type definitions:
 [source, graphql, indent=0]
 ----
 type Movie {
@@ -248,7 +218,6 @@ type Actor {
 ----
 
 The format of the `where` argument is:
-
 [source, graphql, indent=0]
 ----
 {
@@ -271,11 +240,10 @@ The format of the `where` argument is:
 }
 ----
 
-The following sections feature examples of how filtering can be applied when creating a subscription to relationship events.
+Below are some example of how filtering can be applied when creating a subscription to relationship events.
 
-=== Newly created relationship
-
-The following example filters the subscriptions to newly created relationships that are connecting a `Movie` from genres other than "Drama", and to an `Actor` with a screen time bigger than 10 minutes:
+=== Create Relationship
+The following example filters the subscriptions to newly created relationships that are connecting a `Movie` from genres other than "Drama", to an `Actor` with a screen time bigger than 10:
 
 [source, graphql, indent=0]
 ----
@@ -296,14 +264,10 @@ subscription {
 }
 ----
 
-[NOTE]
-====
-The `where` argument only filters already existing properties at the moment of the relationship creation.
-====
+NOTE: `where` will only filter by properties set at the moment of creation.
 
-=== Newly deleted relationship
-
-The following example filters the subscriptions to deleted relationships that were connecting a `Movie` of the genre `"Comedy"` or `"Adventure"` to an `Actor` named `"Jim Carrey"`:
+=== Delete Relationship
+The following example filters the subscriptions to deleted relationships that were connecting a `Movie` of genre Comedy or Adventure to an `Actor` named "Jim Carrey":
 
 [source, graphql, indent=0]
 ----
@@ -324,21 +288,15 @@ subscription {
 }
 ----
 
-[NOTE]
-====
-The `where` argument only filters properties that already existed before the relationship deletion.
-====
+NOTE: `Where` will only filter by existing properties right before deletion.
+
 
 === Relationship-related filters
+In addition to filtering on node or relationship properties, the relationship-related filtering logic is even more powerful, as filters can also express the expected relationship field, or the expected concrete type at the other end of the relationship when having relationships to Abstract Types.
 
-In addition to filtering node or relationship properties, the relationship-related filtering logic is even more powerful.
-This is because these filters can also express the expected relationship field, or the expected concrete type at the other end of the relationship, provided that they are connected to abstract types.
-
-The following examples are valid for both `CREATE_RELATIONSHIP` and `DELETE_RELATIONSHIP` events. 
-Their purpose is to illustrate the various ways in which a subscription to a relationship event can be filtered.
+The following examples are valid for both `CREATE_RELATIONSHIP`/`DELETE_RELATIONSHIP` events. Their purpose is to illustrate the various ways in which a subscription to a relationship event can be filtered in a variety of ways.
 
 Considering the following type definitions:
-
 [source, graphql, indent=0]
 ----
 type Movie {
@@ -377,7 +335,7 @@ type Magazine implements Reviewer {
     reputation: Int!
 }
 
-interface Review @relationshipProperties {
+interface Review {
     score: Int!
 }
 ----
@@ -429,17 +387,15 @@ subscription MovieRelationshipDeleted($where: MovieRelationshipDeletedSubscripti
 }
 ----
 
-You can use the following `where` inputs in the GraphQL variable values to get different results:
+Given the above subscription, you can use the following where inputs in the GraphQL variable values to get different results.
 
-==== Filtering via implicit/explicit declaration 
+=== Filtering via implicit/explicit declaration 
 
-Implicit or explicit declaration is used to filter specific relationship types that are expected to be returned to a subscription.
+Implicit or explicit declaration is used to filter on the specific relationship types that are expected to be returned to a subscription.
 
-For example, when subscribing to created or deleted relationships to a `Movie`, a user might only be interested in the relationship of type `ACTED_IN`, but indifferent to the properties of the `Actor` node or the other relationships connected to it. 
-In this case, the corresponding field name of this relationship is `actors`.
+For example, when subscribing to created or deleted relationships to a `Movie` we might only be interested in the relationship of type `ACTED_IN`, indifferent to the properties of the `Actor` node or of the relationship to it. Note that the corresponding field name of this relationship is `actors`.
 
-By explicitly specifying the `actors` field name, you can filter-out events to other relationship properties:
-
+By explicitly specifying the `actors` field name, we filter-out events to other relationship properties:
 [source, graphql, indent=0]
 ----
 {
@@ -451,8 +407,7 @@ By explicitly specifying the `actors` field name, you can filter-out events to o
 }
 ----
 
-In case you are interested in `Actor` nodes conforming to some filters, for example with the name starting with the letter "A", the procedure is no different than xref:subscriptions/filtering.adoc#node-events-usage[subscribing to node events]:
-
+If we were interested in `Actor` nodes conforming to some filters, for example with the name starting with the letter "A", it is no different than when xref:subscriptions/filtering.adoc#node-events-usage[Subscribing to node events]:
 [source, graphql, indent=0]
 ----
 {
@@ -468,8 +423,7 @@ In case you are interested in `Actor` nodes conforming to some filters, for exam
 }
 ----
 
-If you are also interested in the relationship itself conforming to some filters, such as the `Actor` having spent no more than 40 minutes in the `Movie`, this is how the query may look:
-
+Or we could also be interested in the relationship itself conforming to some filters, like the `Actor` to have spent no more than 40 minutes in the `Movie`:
 [source, graphql, indent=0]
 ----
 {
@@ -488,9 +442,7 @@ If you are also interested in the relationship itself conforming to some filters
 }
 ----
 
-Multiple relationship types can also be included in the returned subscriptions by explicitly specifying the corresponding field names.
-For instance:
-
+Multiple relationship types can be included in the returned subscriptions by explicitly specifying the corresponding field names like so:
 [source, graphql, indent=0]
 ----
 {
@@ -504,8 +456,7 @@ For instance:
 }
 ----
 
-Now, if you are interested in all relationship types, you can either express this implicitly by not specifying any:
-
+In case we are interested in all relationship types, we can either express this implicitly by not specifying any:
 [source, graphql, indent=0]
 ----
 {
@@ -514,9 +465,7 @@ Now, if you are interested in all relationship types, you can either express thi
     }
 }
 ----
-
 Or explicitly by specifying the field names of all the relationships connected to the type targeted for the subscription:
-
 [source, graphql, indent=0]
 ----
 {
@@ -532,10 +481,9 @@ Or explicitly by specifying the field names of all the relationships connected t
 }
 ----
 
-Note, however, that as **any** filters are applied to **any** of the relationships, explicitly including those that you are interested in subscribing to is a **mandatory** step.
+NOTE: As soon as we want to apply **any** filter to **any** of the relationships, explicitly including those that we are interested in is **mandatory**
 
-For example, if all relationships should be returned, but you want to filter-out the `REVIEWED` ones which have a score lower than 7, this is how your query may look like:
-
+For example if all relationships should be returned, but we want to filter-out the `REVIEWED` ones with a score less than 7:
 [source, graphql, indent=0]
 ----
 {
@@ -553,9 +501,7 @@ For example, if all relationships should be returned, but you want to filter-out
 }
 ----
 
-Different filters can also be applied to different relationships without any constraints.
-For example:
-
+Different filters can be applied to the different relationships without any constraints:
 [source, graphql, indent=0]
 ----
 {
@@ -581,28 +527,15 @@ For example:
 ----
 
 [[filter-logical-or]]
-
-[NOTE]
-====
-In the previous example, there is an implicit logical `OR` between the `actors`, `directors`, and `reviewers` relationship fields. 
-This is to say that a relationship of **either** type `ACTED_IN` **or** of type `DIRECTED` **or** of type `REVIEWED` should trigger the previously described subscription.
-====
-
+NOTE: Note that in the above, there is an implicit logical `OR` between the `actors`, `directors` and `reviewers`, relationship fields. I.e. a relationship of **either** type `ACTED_IN` **or** of type `DIRECTED` **or** of type `REVIEWED` will trigger the subscription above.
 [[filter-logical-and]]
-[NOTE]
-====
-There is an implicit logical `AND` between the `edge` and `node` fields inside of the `actors` relationship field.
-In other words, the relationship of type `ACTED_IN` with the property `screenTime` less than 60 **and** a target node with name in `["Tom Hardy", "George Clooney"]` should trigger the subscription.
-====
+NOTE: Note that there is an implicit logical `AND` between the `edge` and `node` fields inside of the `actors` relationship field. I.e. a relationship of type `ACTED_IN` with the property `screenTime` less than 60 **and** a target node with name in ["Tom Hardy", "George Clooney"] will trigger the subscription.
 
-=== Abstract types
+=== Abstract Types
 
-The following sections describe how to filter subscriptions using abstract types.
+==== Union Type
 
-==== Union type
-
-This example illustrates how to filter the node at the other end of the relationship when it is of a union type:
-
+The following example illustrates how to filter on the node at the other end of the relationship when it is of a Union type:
 [source, graphql, indent=0]
 ----
 {
@@ -632,13 +565,12 @@ This example illustrates how to filter the node at the other end of the relation
 }
 ----
 
-The result is that only relationships of type `DIRECTED` are returned to the subscription, where the `Director` is a `Person` named `"John Doe"`, who directed the movie after 2010, **or** where the `Director` is an `Actor` named `"Tom Hardy"` who directed the movie before 2005.
+The result is that only relationships of type `DIRECTED` are returned to the subscription, where the `Director` is a `Person` named `John Doe` who directed the movie after 2010, or where the `Director` is an `Actor` named `Tom Hardy` who directed the movie before 2005.
 
-Note that the relationship field name is split into multiple sections, one for each of the concrete types that make up the union type.
-The relationship properties do not exist outside the confines of one of these sections, even though the properties are the same.
+NOTE: Note that the relationship field name is split into multiple sections, one for each of the Concrete types that make up the Union type. The relationship properties do not exist outside the confines of one of these sections, even though the properties are the same.
 
-Now, take the other example that did not explicitly specify the concrete types:
 
+What about the example above that did not explicitly specify the Concrete types?
 [source, graphql, indent=0]
 ----
 {
@@ -650,11 +582,8 @@ Now, take the other example that did not explicitly specify the concrete types:
 }
 ----
 
-Following the same logic as for the relationship field names: when nothing is explicitly provided, then all is accepted. 
-Thus relationships of type `DIRECTED`, established between a `Movie` and any of the concrete types that make up the union type `Director` are returned to the subscription.
-
-It is equivalent to the following:
-
+Following the same logic as for the relationship field names, when nothing is explicitly provided then all is accepted. Thus relationships of type `DIRECTED` between a `Movie` and any of the Concrete types that make up the Union type `Director` will be returned to the subscription.
+It is therefore equivalent to the following:
 [source, graphql, indent=0]
 ----
 {
@@ -669,8 +598,7 @@ It is equivalent to the following:
 }
 ----
 
-Note that explicitly specifying a concrete type excludes the others from the returned events:
-
+Of course, it follows that explicitly specifying a Concrete type will exclude the other from the returned events:
 [source, graphql, indent=0]
 ----
 {
@@ -684,11 +612,9 @@ Note that explicitly specifying a concrete type excludes the others from the ret
 }
 ----
 
-In this case, only relationships of type `DIRECTED` between a `Movie` and an `Actor` are returned to the subscription.
-Those between a `Movie` and a `Person` are filtered out.
+In this case, only relationships of type `DIRECTED` between a `Movie` and an `Actor` will be returned to the subscription, those between a `Movie` and a `Person` being filtered out.
 
 One reason why this might be done is to include some filters on the `Actor` type:
-
 [source, graphql, indent=0]
 ----
 {
@@ -706,8 +632,7 @@ One reason why this might be done is to include some filters on the `Actor` type
 }
 ----
 
-To include filters on the `Actor` type, but also include the `Person` type in the result, you need to make the intent explicit:
-
+To include filters on the `Actor` type but also include `Person` type in the result, we need to make the intent explicit:
 [source, graphql, indent=0]
 ----
 {
@@ -727,10 +652,9 @@ To include filters on the `Actor` type, but also include the `Person` type in th
 ----
 
 
-==== Interface type
+==== Interface Type
 
-The following example illustrates how to filter the node at the other end of the relationship when it is of an interface type:
-
+The following example illustrates how to filter on the node at the other end of the relationship when it is of an Interface type:
 [source, graphql, indent=0]
 ----
 {
@@ -761,20 +685,12 @@ The following example illustrates how to filter the node at the other end of the
 }
 ----
 
-This example returns events for relationships between the type `Movie` and `Reviewer`, where the score is higher than 7, and the `Reviewer` is a `Person` named "Jane Doe", with a reputation greater or equal to 7, or the `Reviewer` is a `Magazine` with the reputation of 8.
+The above will return events for relationships between the type `Movie` and `Reviewer`, where the score is greater than 7 and the `Reviewer` is a Person named "Jane Doe" with a reputation greater or equal to 7, or the `Reviewer` is a Magazine with the reputation of 8.
 
-[NOTE] 
-====
-Note how the reputation field is part of the interface type, and can thus be specified in 3 ways: inside the `node` key, inside each concrete type, or in both places. 
-
-When specified in both places, however, the filter is composed with a logical `AND`.
-Type `Person` then overrides the `reputation_GTE` operator, so the final filter is `reputation_GTE: 7`.
-Likewise, type `Magazine` composes the original operator so the final filter is the interval `reputation_GTE: 8 && reputation_LT: 9`.
-====
+NOTE: Notice how the reputation field is part of the Interface type, and can thus be specified in 3 ways: inside the `node` key, inside each Concrete type, or in both places. When specified in both places, the filter is composed with a logical `AND`. Type `Person` overrides the `reputation_GTE` operator so the final filter is `reputation_GTE: 7`, while type `Magazine` composes the original operator so the final filter is the interval `reputation_GTE: 8 && reputation_LT: 9`.
 
 
-To get all relationships of type `REVIEWED` with a certain score returned, you can use implicit filtering, such as:
-
+To get all relationships of type `REVIEWED` with a certain score returned, we can make use of the implicit filtering like so:
 [source, graphql, indent=0]
 ----
 {
@@ -790,8 +706,7 @@ To get all relationships of type `REVIEWED` with a certain score returned, you c
 }
 ----
 
-Implicit filtering can still be used, even for relationships of type `REVIEWED` to a `Reviewer` of a specific reputation:
-
+Even for relationships of type `REVIEWED` to a `Reviewer` of a specific reputation, we can still make use of the implicit filtering:
 [source, graphql, indent=0]
 ----
 {
@@ -807,8 +722,7 @@ Implicit filtering can still be used, even for relationships of type `REVIEWED` 
 }
 ----
 
-It is only when a specific concrete type needs to be filtered that you need to be explicit in the concrete types that you are interested in:
-
+It is only when a specific Concrete type needs to be filtered that we need to be explicit in the Concrete types that we are interested in:
 [source, graphql, indent=0]
 ----
 {
@@ -829,9 +743,7 @@ It is only when a specific concrete type needs to be filtered that you need to b
 }
 ----
 
-This example does not include relationships of type `REVIEWED` to the `Magazine` type. 
-You can do that by making them explicit:
-
+The above will not include relationships of type `REVIEWED` to the `Magazine` type. We can include them by making the intent explicit:
 [source, graphql, indent=0]
 ----
 {
