@@ -5,7 +5,6 @@ auth/authorization.adoc, auth/auth-directive.adoc, auth/subscriptions.adoc, \
 auth/authorization/allow.adoc, auth/authorization/bind.adoc, auth/authorization/roles.adoc, \
 auth/authorization/where.adoc, guides/v4-migration/authorization.adoc
 
-
 [WARNING]
 ===
 The `@auth` directive has been replaced by `@authentication` and `@authorization`. 
