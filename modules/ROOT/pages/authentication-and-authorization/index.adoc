@@ -1,3 +1,4 @@
+:description: This section covers authentication andd authorization features in the Neo4j GraphQL Library.
 = Authentication and Authorization
 :description: This section covers authentication andd authorization features in the Neo4j GraphQL Library.
 :page-aliases: auth/index.adoc, auth/setup.adoc, auth/authentication.adoc, \
