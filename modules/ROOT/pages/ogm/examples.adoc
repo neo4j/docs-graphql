@@ -1,5 +1,7 @@
 [[ogm-examples]]
 = Examples
+:page-aliases: ogm/examples/rest-api.adoc
+
 
 This chapter runs through some examples of how you might take advantage of the OGM.
 

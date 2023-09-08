@@ -1,5 +1,7 @@
 [[pagination]]
 = Pagination
+:page-aliases: pagination/index.adoc
+
 
 The Neo4j GraphQL Library offers two mechanisms for pagination:
 

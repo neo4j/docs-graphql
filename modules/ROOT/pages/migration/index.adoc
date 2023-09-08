@@ -1,5 +1,7 @@
 [[migration-guide]]
 = Migration from `neo4j-graphql-js`
+:page-aliases: guides/index.adoc, guides/migration-guide/index.adoc, guides/migration-guide/server.adoc, guides/migration-guide/type-definitions.adoc, guides/migration-guide/mutations.adoc
+
 
 `@neo4j/graphql` was never intended to be a drop-in replacement for `neo4j-graphql-js`. However, simple applications should have a fairly trivial migration process.
 

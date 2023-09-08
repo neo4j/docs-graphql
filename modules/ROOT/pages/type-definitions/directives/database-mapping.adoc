@@ -1,6 +1,8 @@
 [[type-definitions-database-mapping]]
-:description: This page describes how to use directives for database mapping.
 = Database mapping
+:page-aliases: type-definitions/database-mapping.adoc
+:description: This page describes how to use directives for database mapping.
+
 
 This page describes how to use directives for database mapping.
 

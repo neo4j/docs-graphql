@@ -1,6 +1,7 @@
 [[Toolbox]]
-:description: This page describes the functionalities of the Neo4j GraphQL Toolbox.
 = Neo4j GraphQL Toolbox
+:page-aliases: toolbox.adoc
+:description: This page describes the functionalities of the Neo4j GraphQL Toolbox.
 
 The https://graphql-toolbox.neo4j.io[Neo4j GraphQL Toolbox] is an onboarding, low-code tool that can be integrated to Neo4j.
 It was created for development and experimentation with Neo4j GraphQL APIs.

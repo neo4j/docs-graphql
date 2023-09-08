@@ -1,6 +1,7 @@
 [[type-definitions-custom-directives]]
 :description: This page describes how to use custom directives in the Neo4j GraphQL Library.
 = Custom directives
+:page-aliases: type-definitions/custom-directives.adoc
 
 As of https://www.graphql-tools.com/docs/schema-directives[`@graphql-tools`] version 8, the mechanism for defining and applying custom directives has changed significantly, and this is reflected in the Neo4j GraphQL Library.
 

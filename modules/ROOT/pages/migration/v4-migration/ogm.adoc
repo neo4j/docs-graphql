@@ -1,4 +1,6 @@
 = OGM
+:page-aliases: guides/v4-migration/ogm.adoc
+
 
 == Specifying which database to use when using the OGM
 
