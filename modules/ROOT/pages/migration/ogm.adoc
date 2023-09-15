@@ -1,6 +1,11 @@
 = OGM
+<<<<<<< HEAD:modules/ROOT/pages/migration/ogm.adoc
 :description: This page describes what updates were made to the OGM tool in version 4.0.0 of the Neo4j GraphQL Library.
 :page-aliases: guides/v4-migration/ogm.adoc, migration/v4-migration/ogm.adoc
+=======
+:page-aliases: guides/v4-migration/ogm.adoc
+
+>>>>>>> e533fd8 (Add page-aliases for version 4 (#31) (#32)):modules/ROOT/pages/migration/v4-migration/ogm.adoc
 
 This page describes what updates were made to the OGM tool in version 4.0.0 of the Neo4j GraphQL Library.
 
