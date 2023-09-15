@@ -1,6 +1,10 @@
 = Authentication and Authorization
+<<<<<<< HEAD:modules/ROOT/pages/migration/authorization.adoc
 :description: This page describes the changes in authentication and authorization features in version 4.0.0 of the Neo4j GraphQL Library.
 :page-aliases: auth/global-authentication.adoc, migration/v4-migration/authorization.adoc
+=======
+:page-aliases: auth/global-authentication.adoc
+>>>>>>> e533fd8 (Add page-aliases for version 4 (#31) (#32)):modules/ROOT/pages/migration/v4-migration/authorization.adoc
 
 The largest breaking change in version 4.0.0 is the removal of the `@auth` directive, which requires a migration to the new `@authentication`, `@authorization`, and `@subscriptionsAuthorization` directives.
 
