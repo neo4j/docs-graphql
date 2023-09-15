@@ -1,10 +1,9 @@
 [[subscription-events]]
 = Subscription events
+:description: This page covers a variety of subscription options offered by the Neo4j GraphQL Library.
 :page-aliases: subscriptions/events/create.adoc, \
 subscriptions/events/create_relationship.adoc, subscriptions/events/delete.adoc, subscriptions/events/delete_relationship.adoc, \
 subscriptions/events/update.adoc
-:description: This page covers a variety of subscription options offered by the Neo4j GraphQL Library.
-
 
 This page covers a variety of subscription options offered by the Neo4j GraphQL Library.
 
