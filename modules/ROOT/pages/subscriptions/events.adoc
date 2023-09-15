@@ -160,9 +160,9 @@ subscription {
 Subscriptions to `CREATE_RELATIONSHIP` events listen for newly created relationships to a node of the specified type. 
 
 [NOTE]
-====
+===
 This subscription operation is **only** available for types that define relationship fields.
-====
+===
 
 == `CREATE_RELATIONSHIP`
 
@@ -175,10 +175,10 @@ These events:
 * Contain the properties of the nodes connected through the relationship, as well as the properties of the new relationship, if any.
 
 [NOTE]
-====
+===
 Connected nodes that may or may not have previously existed are not covered by this subscription. 
 To subscribe to these nodes' updates, use the xref:subscriptions/events.adoc#_create[`CREATE`] or the xref:subscriptions/events.adoc#_update[`UPDATE`] subscription.
-====
+===
 
 Subscriptions to `CREATE_RELATIONSHIP` events can be made with the top-level subscription `[type]RelationshipCreated`, which contains the following fields:
 
@@ -192,10 +192,10 @@ While any event unrelated to `relationshipFieldName` should be `null`, the ones 
 Only top-level properties, without relationships, are available and they are the properties that already existed before the `CREATE_RELATIONSHIP` operation took place.
 
 [NOTE]
-====
+===
 Irrespective of the relationship direction in the database, the `CREATE_RELATIONSHIP` event is bound to the type targeted for the subscription.
 Consequently, if types A and B have xref:subscriptions/events.adoc#create-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation creates a relationship between them (despite being already previously connected in the database), the `CREATE_RELATIONSHIP` event should only return the subscription to the type A.
-====
+===
 
 As an example, consider the following type definitions:
 
@@ -1007,10 +1007,10 @@ This object should be populated with properties according to the deleted relatio
 * Contains the properties of the nodes connected through the relationship, as well as the properties of the newly deleted relationship, if any.
 
 [NOTE]
-====
+===
 Disconnected nodes that may or may not have been deleted in the process are not covered by this subscription. 
 To subscribe to these nodes' updates, use the `DELETE` subscriptions.
-====
+===
 
 Subscriptions to `DELETE_RELATIONSHIP` events can be made with the top-level subscription `[type]RelationshipDeleted`, which contains the following fields:
 
@@ -1023,10 +1023,10 @@ While any event unrelated to `relationshipFieldName` should be `null`, the ones 
 Only top-level properties, without relationships, are available and they are the properties that already existed before the `DELETE_RELATIONSHIP` operation took place.
 
 [NOTE]
-====
+===
 Irrespective of the relationship direction in the database, the `DELETE_RELATIONSHIP` event is bound to the type targeted for the subscription. 
 Consequently, if types A and B have xref:subscriptions/events.adoc#delete-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation deletes a relationship between them (despite being already previously diconnected in the database), the `DELETE_RELATIONSHIP` event should only return the subscription to the type A.
-====
+===
 
 As an example, consider these type definitions:
 
