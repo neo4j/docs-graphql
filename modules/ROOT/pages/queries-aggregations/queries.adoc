@@ -1,6 +1,8 @@
 [[queries]]
-:description: This page describes how to read or fetch values in the Neo4j GraphQL Library.
 = Queries
+:page-aliases: guides/migration-guide/queries.adoc
+:description: This page describes how to read or fetch values in the Neo4j GraphQL Library.
+
 
 Based on the given <<queries-aggregations/index.adoc#examples-reference, type definitions>>, here are two examples of how to write queries for reading or fetching values:
 

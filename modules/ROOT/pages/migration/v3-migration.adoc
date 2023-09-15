@@ -1,5 +1,8 @@
 [[v3-migration]]
 = 3.0.0 Migration
+:page-aliases: guides/v3-migration/index.adoc
+
+
 This document lists all breaking changes from version 2.x.y to 3.0.0 and how to update.
 
 == How to upgrade

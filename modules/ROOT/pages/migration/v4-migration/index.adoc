@@ -1,5 +1,7 @@
 [[v4-migration]]
 = 4.0.0 Migration
+:page-aliases: guides/v4-migration/index.adoc
+
 
 This document lists all breaking changes from version 3.x.y to 4.0.0 and how to update.
 

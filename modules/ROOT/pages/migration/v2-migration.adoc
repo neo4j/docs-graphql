@@ -1,5 +1,7 @@
 [[v2-migration]]
 = 2.0.0 Migration
+:page-aliases: guides/v2-migration/index.adoc, guides/v2-migration/miscellaneous.adoc, guides/v2-migration/unions.adoc, guides/v2-migration/mutations.adoc
+
 
 Version 2.0.0 of `@neo4j/graphql` adds support for relationship properties, with some breaking changes to facilitate these new features. All of the required changes will be on the client side, and this guide will walk through what has changed.
 

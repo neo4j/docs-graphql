@@ -1,6 +1,8 @@
 [[schema-configuration-field-configuration]]
-:description: This page describes how to use the directives @selectable, @settable, @filterable and `@relationship` to control how fields are exposed.
 = Field configuration
+:page-aliases: type-definitions/schema-configuration/field-configuration.adoc
+:description: This page describes how to use the directives @selectable, @settable, @filterable and `@relationship` to control how fields are exposed.
+
 
 In case you need to remove fields from a GraphQL Object Type or a GraphQL Input Object Type, consider the following type definitions:
 

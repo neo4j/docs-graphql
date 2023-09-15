@@ -1,6 +1,8 @@
 [[type-definitions-default-values]]
-:description: This page describes how to use default values in the Neo4j GraphQL Library.
 = Default values
+:page-aliases: type-definitions/default-values.adoc
+:description: This page describes how to use default values in the Neo4j GraphQL Library.
+
 
 This page describes how to use default values in the Neo4j GraphQL Library.
 

@@ -1,6 +1,7 @@
 [[index]]
-:description: This section describes the Neo4j GraphQL Library.
 = Neo4j GraphQL Library
+:page-aliases: introduction.adoc
+:description: This section describes the Neo4j GraphQL Library.
 
 The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript library that enables rapid API development for cross-platform and mobile applications by tapping into the power of connected data.
 

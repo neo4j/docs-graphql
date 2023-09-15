@@ -1,6 +1,8 @@
 [[subscription-engines]]
-:description: This page describes how a GraphQL subscription may be set along with a @neo4j/graphql server.
 = Subscription engines
+:page-aliases: subscriptions/plugins/index.adoc, subscriptions/plugins/amqp.adoc, subscriptions/plugins/single-instance.adoc
+:description: This page describes how a GraphQL subscription may be set along with a @neo4j/graphql server.
+
 
 This page describes different ways to set up a GraphQL subscription along with a `@neo4j/graphql` server.
 

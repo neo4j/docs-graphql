@@ -1,6 +1,7 @@
 [[type-definitions-indexes-and-constraints]]
 :description: This page describes how to use indexes and constraints in the Neo4j GraphQL Library.
 = Indexes and constraints
+:page-aliases: type-definitions/indexes-and-constraints.adoc
 
 This page describes how to use indexes and constraints in the Neo4j GraphQL Library.
 

@@ -1,5 +1,6 @@
 [[api-reference-neo4jgraphql]]
 = `Neo4jGraphQL`
+:page-aliases: api-reference/neo4jgraphql.adoc
 
 == `constructor`
 
