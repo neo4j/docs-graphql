@@ -1,4 +1,5 @@
 = Authentication and Authorization
+:page-aliases: auth/global-authentication.adoc
 
 The largest breaking change in version 4.0.0 is the removal of the `@auth` directive, which requires a migration to the new `@authentication`, `@authorization` and `@subscriptionsAuthorization` directives.
 

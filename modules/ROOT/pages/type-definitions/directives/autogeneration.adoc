@@ -1,6 +1,8 @@
 [[type-definitions-autogeneration]]
-:description: This page describes directives used for autogeneration.
 = Autogeneration
+:page-aliases: type-definitions/autogeneration.adoc
+:description: This page describes directives used for autogeneration.
+
 
 This page describes directives used for autogeneration:
 

@@ -1,7 +1,11 @@
 [[ogm-api-reference]]
 = API Reference
+:page-aliases: ogm/api-reference/model/aggregate.adoc, ogm/api-reference/model/create.adoc, \
+ogm/api-reference/model/find.adoc, ogm/api-reference/model/delete.adoc, \
+ogm/api-reference/model/update.adoc, ogm/api-reference/model/index.adoc, \
+ogm/api-reference/index.adoc, ogm/api-reference/ogm.adoc, ogm/api-reference/type-generation.adoc
 
-[[ogm-api-reference-ogm]]
+
 == `OGM`
 
 === `constructor`

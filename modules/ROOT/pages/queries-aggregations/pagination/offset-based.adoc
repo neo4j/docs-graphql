@@ -1,5 +1,6 @@
 [[pagination-offset-based]]
 = Offset-based pagination
+:page-aliases: pagination/offset-based.adoc
 
 Offset-based pagination, often associated with navigation via pages, can be achieved through the use of the `offset` and `limit` options available when querying for data.
 

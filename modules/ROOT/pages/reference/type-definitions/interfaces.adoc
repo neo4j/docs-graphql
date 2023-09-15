@@ -1,6 +1,7 @@
 [[schema-configuration-type-configuration]]
 = Type Configuration
 
+
 When representing a Neo4j Node, a GraphQL Object type produces multiple operation fields in the `Query`, `Mutation`, and `Subscription` types. 
 For example:
 

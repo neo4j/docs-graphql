@@ -1,6 +1,8 @@
 [[mutations-update]]
-:description: This page describes how to update nodes through mutations.
 = `update`
+:page-aliases: array-methods.adoc, mathematical-operators.adoc
+:description: This page describes how to update nodes through mutations.
+
 
 Using these type definitions:
 

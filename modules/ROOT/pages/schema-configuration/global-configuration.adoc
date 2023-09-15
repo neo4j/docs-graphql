@@ -1,6 +1,8 @@
 [[schema-configuration-global-configuration]]
-:description: This page describes how to globally disable specific types of operations.
 = Global configuration
+:page-aliases: type-definitions/schema-configuration/global-configuration.adoc
+:description: This page describes how to globally disable specific types of operations.
+
 
 Through the schema configuration, it is possible to globally disable specific types of operation.
 To set up operations individually, refer to xref:/schema-configuration/type-configuration.adoc[Type Configuration].

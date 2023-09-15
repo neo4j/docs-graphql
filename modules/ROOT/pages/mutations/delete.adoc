@@ -1,5 +1,7 @@
 [[mutations-delete]]
 :description: This page describes how to delete nodes using mutations.
+
+
 = `delete`
 
 Using these type definitions:

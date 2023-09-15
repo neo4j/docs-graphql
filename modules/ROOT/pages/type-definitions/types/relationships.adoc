@@ -1,6 +1,8 @@
 [[type-definitions-relationships]]
-:description: This page describes how to write type definitions for a simple connected model, inserting data through the schema, and then querying it.
 = Relationships
+:page-aliases: type-definitions/relationships.adoc
+:description: This page describes how to write type definitions for a simple connected model, inserting data through the schema, and then querying it.
+
 
 Without relationships, your type definitions work rather as a collection of disconnected nodes, with little value.
 Adding relationships into your data model gives your data the context that it needs to run complex queries across wide sections of your graph.

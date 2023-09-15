@@ -1,6 +1,7 @@
 [[sorting]]
-:description: This page describes how to use sorting input types.
 = Sorting
+:page-aliases: sorting.adoc
+:description: This page describes how to use sorting input types.
 
 A sorting input type is generated for every object type defined in your type definitions.
 It allows for query results to be sorted by each individual field.

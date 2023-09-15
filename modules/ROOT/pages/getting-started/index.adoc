@@ -1,6 +1,8 @@
 [[getting-started]]
-:description: This section describes how to get started with the Neo4j GraphQL Library.
 = Getting started
+:page-aliases: getting-started.adoc
+:description: This section describes how to get started with the Neo4j GraphQL Library.
+
 
 This tutorial walks you through creating a new project with the Neo4j GraphQL Library.
 
