@@ -1,6 +1,8 @@
 [[type-definitions-unions]]
-:description: This page describes how to use unions on relatinship fields with the Neo4j GraphQL Library.
 = Union types
+:page-aliases: type-definitions/unions.adoc
+:description: This page describes how to use unions on relatinship fields with the Neo4j GraphQL Library.
+
 
 The Neo4j GraphQL Library supports the use of unions on relationship fields. 
 

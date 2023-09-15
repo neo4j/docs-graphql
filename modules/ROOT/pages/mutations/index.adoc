@@ -1,6 +1,7 @@
 [[mutations]]
-:description: This section describes how to use mutations with the Neo4j GraphQL Library.
 = Mutations
+:description: This section describes how to use mutations with the Neo4j GraphQL Library.
+
 
 This section addresses basic examples of the following mutations:
 

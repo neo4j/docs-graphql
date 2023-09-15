@@ -1,5 +1,7 @@
 [[pagination-cursor-based]]
 = Cursor-based pagination
+:page-aliases: pagination/cursor-based.adoc
+
 
 On relationship fields, you are able to take advantage of cursor-based pagination, which is often associated with infinitely-scrolling applications.
 

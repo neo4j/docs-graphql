@@ -1,6 +1,8 @@
 [[type-definitions-interfaces]]
-:description: This page describes how to use and define interfaces on relationship fields.
 = Interface types
+:page-aliases: type-definitions/interfaces.adoc
+:description: This page describes how to use and define interfaces on relationship fields.
+
 
 This page describes how to use and define interfaces on relationship fields.
 

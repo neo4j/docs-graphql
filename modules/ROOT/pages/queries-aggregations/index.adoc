@@ -1,6 +1,7 @@
 [queries-aggregations]
-:description: This section describes queries and aggregations. 
 = Queries and aggregations
+:page-aliases: queries.adoc
+:description: This section describes queries and aggregations. 
 
 Each node defined in type definitions has two query fields generated for it: one for *querying* data and another one for *aggregating* it.
 Each of these fields, by their part, accepts two arguments used for *filtering*, *sorting*, and *pagination*.

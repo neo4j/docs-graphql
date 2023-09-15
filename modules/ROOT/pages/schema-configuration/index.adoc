@@ -1,6 +1,8 @@
 [[type-definitions-schema-configuration]]
-:description: This section describes configurations that can be set to a schema in Neo4j GraphQL.
 = Schema configuration
+:page-aliases: type-definitions/schema-configuration/index.adoc
+:description: This section describes configurations that can be set to a schema in Neo4j GraphQL.
+
 
 Neo4j GraphQL Library supports several functionalities such as CRUD operations, aggregation, filtering, and others.
 To make them work, a large amount of GraphQL types are generated.
