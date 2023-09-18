@@ -428,7 +428,7 @@ Returns a `Promise` that resolves to the equivalent of the Mutation response for
 
 For the User with name "John", update their name to be "Jane":
 
-[source, javascript, indent=0]
+[source, graphql, indent=0]
 ----
 const User = ogm.model("User");
 
@@ -440,56 +440,294 @@ const { users } = await User.update({
 
 ==== Arguments
 
+[cols="2,2,3,3"]
 |===
-|Name and Type |Description
+|Name | Type | Description | Example
 
-|`where` +
- +
- Type: `GraphQLWhereArg`
+|`where`
+|`GraphQLWhereArg`
 |A JavaScript object representation of the GraphQL `where` input type used for xref::queries-aggregations/filtering.adoc[Filtering].
+.5+a|
+.Type definitions
+[source, graphql, indent=0]
+----
+type Post {
+    id: ID! @id
+    content: String!
+    creator: User! @relationship(type: "HAS_POST", direction: IN)
+}
 
-|`update` +
- +
- Type: `any`
-|A JavaScript object representation of the GraphQL `update` input type used for xref::mutations/update.adoc[Update] Mutations.
+type User {
+    id: ID! @id
+    name: String
+    posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)
+}
+----
+.Query
+[source, graphql, indent=0]
+----
+type UpdatePostsMutationResponse {
+    posts: [Post!]!
+}
 
-|`connect` +
- +
- Type: `any`
-|A JavaScript object representation of the GraphQL `connect` input type used for xref::mutations/update.adoc[Update] Mutations.
+type UpdateUsersMutationResponse {
+    users: [User!]!
+}
 
-|`disconnect` +
- +
- Type: `any`
-|A JavaScript object representation of the GraphQL `disconnect` input type used for xref::mutations/update.adoc[Update] Mutations.
+type Mutation {
+    updatePosts(
+        where: PostWhere
+        update: PostUpdateInput
+        connect: PostConnectInput
+        disconnect: PostDisconnectInput
+        create: PostCreateInput
+        delete: PostDeleteInput
+    ): UpdatePostsMutationResponse!
+    updateUsers(
+        where: UserWhere
+        update: UserUpdateInput
+        connect: UserConnectInput
+        disconnect: UserDisconnectInput
+        create: UserCreateInput
+        delete: UserDeleteInput
+    ): UpdateUsersMutationResponse!
+}
+----
 
-|`create` +
- +
- Type: `any`
-|A JavaScript object representation of the GraphQL `create` input type used for xref::mutations/update.adoc[Update] Mutations.
+|`update`
+|`any`
+|A JavaScript object representation of the GraphQL `update` input type used for xref::mutations/update.adoc[Update] mutations.
 
-|`options` +
- +
- Type: `GraphQLOptionsArg`
+|`connect`
+|`any`
+|A JavaScript object representation of the GraphQL `connect` input type used for xref::mutations/update.adoc[Update] mutations.
+
+|`disconnect`
+|`any`
+|A JavaScript object representation of the GraphQL `disconnect` input type used for xref::mutations/update.adoc[Update] mutations.
+
+|`create`
+|`any`
+|A JavaScript object representation of the GraphQL `create` input type used for xref::mutations/update.adoc[Update] mutations.
+
+|`options`
+|`GraphQLOptionsArg`
 |A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination/index.adoc[Pagination].
+a|
+[source, graphql, indent=0]
+----
+query {
+    movies {
+        title
+        runtime
+        actors(options: {
+            sort: [
+                {
+                    surname: ASC
+                }
+            ]
+        }) {
+            surname
+        }
+    }
+}
+----
 
-|`selectionSet` +
- +
- Type: `string` or `DocumentNode` or `SelectionSetNode`
-|Selection set for the Mutation, see xref::ogm/selection-set.adoc[Selection Set] for more information.
+|`selectionSet`
+|`string` or `DocumentNode` or `SelectionSetNode`
+|Selection set for the mutation, see xref::ogm/selection-set.adoc[Selection set] for more information.
+a|
+.Type definition
+[source, graphql, indent=0]
+----
+type Movie {
+    id: ID
+    name: String
+    genres: [Genre!]! @relationship(type: "IN_GENRE", direction: OUT)
+    customCypher: String! @cypher(statement: "RETURN someCustomData")
+}
 
-|`args` +
- +
- Type: `any`
-|The `args` value for the GraphQL Mutation.
+type Genre {
+    name: String
+}
+----
+.Query
+[source, graphql, indent=0]
+----
+const { OGM } = require("@neo4j/graphql-ogm")
+const neo4j = require("neo4j-driver");
 
-|`context` +
- +
- Type: `any`
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("admin", "password")
+);
+
+const typeDefs = `
+    type Movie {
+        id: ID
+        name: String
+        genres: [Genre!]! @relationship(type: "IN_GENRE", direction: OUT)
+        customCypher: String! @cypher(statement: "RETURN someCustomData")
+    }
+
+    type Genre {
+        name: String
+    }
+`;
+
+const ogm = new OGM({ typeDefs, driver });
+const Movie = ogm.model("Movie");
+
+const selectionSet = `
+    {
+        id
+        name
+        genres {
+            name
+        }
+        customCypher
+    }
+`;
+
+ogm.init().then(() => {
+    Movie.find({ selectionSet }).then((movies) => {
+        // work with movies
+    })
+});
+----
+
+|`args`
+|`any`
+|The `args` value for the GraphQL mutation.
+a|
+[source, graphql, indent=0]
+----
+query GetUsersByAge($minAge: Int!, $maxAge: Int!) {
+  users(where: { age: { gte: $minAge, lte: $maxAge } }) {
+    name
+    age
+  }
+}
+----
+
+|`context`
+|`any`
 |The `context` value for the GraphQL Mutation.
+a|
+[source, javascript, indent=0]
+----
+const { ApolloServer, gql } = require('apollo-server');
 
-|`rootValue` +
- +
- Type: `any`
+// Sample data
+const users = [
+  { id: 'user-id-here', name: 'Old Name' },
+  // Other user data...
+];
+
+const typeDefs = gql`
+  type User {
+    id: ID!
+    name: String!
+  }
+
+  type Mutation {
+    updateUser(id: ID!, newName: String!): User
+  }
+`;
+
+const resolvers = {
+  Mutation: {
+    updateUser: (_, { id, newName }, context) => {
+      // Find the user by ID in the sample data (you would replace this with your database logic)
+      const userIndex = users.findIndex(user => user.id === id);
+
+      if (userIndex === -1) {
+        throw new Error('User not found');
+      }
+
+      // Update the user's name
+      users[userIndex].name = newName;
+
+      // Return the updated user
+      return users[userIndex];
+    },
+  },
+};
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: { /* You can provide context data here */ },
+});
+
+server.listen().then(({ url }) => {
+  console.log(`Server ready at ${url}`);
+});
+
+----
+
+|`rootValue`
+|`any`
 |The `rootValue` value for the GraphQL Mutation.
+a|
+[source, javascript, indent=0]
+----
+const { ApolloServer, gql } = require('apollo-server');
+
+// Sample data
+let users = [
+  { id: '1', name: 'John' },
+  { id: '2', name: 'Jane' },
+];
+
+// GraphQL schema definition
+const typeDefs = gql`
+  type User {
+    id: ID!
+    name: String!
+  }
+
+  type Mutation {
+    updateUser(id: ID!, newName: String!): User
+  }
+
+  type Query {
+    user(id: ID!): User
+  }
+`;
+
+// Resolver functions
+const resolvers = {
+  Query: {
+    user: (_, { id }) => users.find(user => user.id === id),
+  },
+  Mutation: {
+    updateUser: (_, { id, newName }, { rootValue }) => {
+      // In this simplified example, we update the user's name in the local data
+      const user = users.find(user => user.id === id);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      user.name = newName;
+
+      // Return the updated user
+      return user;
+    },
+  },
+};
+
+// Create Apollo Server
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: { rootValue: 'Some contextual data or services' }, // You can provide rootValue here
+});
+
+// Start the server
+server.listen().then(({ url }) => {
+  console.log(`Server ready at ${url}`);
+});
+
+----
 |===
