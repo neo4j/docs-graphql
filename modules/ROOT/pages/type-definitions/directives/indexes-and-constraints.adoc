@@ -104,7 +104,7 @@ When you run xref::/type-definitions/directives/indexes-and-constraints.adoc#_as
 
 [source, cypher, indent=0]
 ----
-CALL db.index.fulltext.createNodeIndex("ProductName", ["Product"], ["name"])
+CREATE FULLTEXT INDEX ProductName FOR (n:Product|Book) ON EACH [n.Product, n.name]
 ----
 
 === Usage
