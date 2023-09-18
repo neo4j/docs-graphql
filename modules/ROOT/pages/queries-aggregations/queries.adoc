@@ -52,7 +52,8 @@ query {
 }
 ----
 
-In addition, undirected relationships can also be used in the same fashion with connections:
+In addition, undirected relationships can also be used in the same fashion with connections.
+For instance, this query is asking for a list of users and their friends' names with an undirected friendship connection:
 
 [source, graphql, indent=0]
 ----
