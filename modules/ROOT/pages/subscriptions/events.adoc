@@ -41,7 +41,7 @@ Changes made directly to the database or using the xref::type-definitions/direct
 == `CREATE`
 
 Subscriptions to `CREATE` events listen *only* to newly created nodes, not new relationships.
-In this occasion, a new event is triggered for each new node, containing its properties.
+In this case, a new event is triggered for each new node, containing its properties.
 
 This action is performed with the top-level subscription `[type]Created`, which contains the following fields:
 
