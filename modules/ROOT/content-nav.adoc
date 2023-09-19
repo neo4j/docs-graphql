@@ -25,6 +25,8 @@
 *** xref:schema-configuration/global-configuration.adoc[]
 *** xref:schema-configuration/field-configuration.adoc[]
 
+** xref:introspector.adoc[Introspector]
+
 ** xref:queries-aggregations/index.adoc[Queries and aggregations]
 *** xref:queries-aggregations/queries.adoc[]
 *** xref:queries-aggregations/aggregations.adoc[]
@@ -53,8 +55,6 @@
 *** xref:authentication-and-authorization/authentication.adoc[]
 *** xref:authentication-and-authorization/authorization.adoc[]
 *** xref:authentication-and-authorization/impersonation-and-user-switching.adoc[]
-
-** xref:introspector.adoc[Introspector]
 
 ** Migration Guides
 *** xref:migration/index.adoc[Migration from `neo4j-graphql-js`]

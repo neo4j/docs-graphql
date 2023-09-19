@@ -1,37 +1,34 @@
 [[introspector]]
+:description: This page describes the functionalities of the instrospector tool in Neo4j GraphQL.
 = Introspect schema from an existing Neo4j database
 
-Neo4j provides a tool that enables you, with very little effort, to generate GraphQL type definitions from an existing database. This is provided by a separate npm package, `@neo4j/introspector`.
-
+With a separate npm package, `@neo4j/introspector`, Neo4j provides a tool that enables the generation of GraphQL type definitions from an existing database.
 This is usually a one-time-thing and should be considered a starting point for a GraphQL schema.
 
-== Features
+`@neo4j/introspector` has full support for generating type definitions, including:
 
-This tool has full support for generating type definitions, including:
+* A `@relationship` directive, including relationship properties.
+* A `@node` type featuring:
+** `label` for mapping where a node label might use a character that is not in the GraphQL supported character set.
+** `additionalLabels` for nodes that has multiple labels.
+* A read-only version of the GraphQL type definitions.
 
-- `@relationship` directive, including relationship properties
-- `@node`
-    - `label` for mapping where a node label might use a character that's not in the GraphQL supported character set
-    - `additionalLabels` for nodes that has multiple labels
-- Generating a read-only version of the GraphQL type definitions
+[NOTE]
+If an element property has mixed types throughout your graph, that property is excluded from the
+generated type definitions. 
+The reason for this is that your GraphQL server throws an error if it finds data that doesn't match the specified type.
 
-== Limitations
-
-If an element property has mixed types through out your graph, that property will be excluded from the
-generated type definitions. The reason for this is that your GraphQL server will throw an error if it
-finds data that doesn't match the specified type.
-
-If any properties are skipped, there will be output in the xref::troubleshooting.adoc[Debug Logging].
+If any properties are skipped, this is noted in the xref::troubleshooting.adoc[Debug logging].
 
 == Usage examples
 
-Currently there's a programmatic API for introspecting the Neo4j schema and generating GraphQL type definitions.
+You can use a programmatic API for introspecting the Neo4j schema and generating GraphQL type definitions.
+Here are some scenarios you might encounter.
 
 === Introspect and persist to file
 
 This example introspects the database schema, generates GraphQL type definitions and persists them to a file `schema.graphql`.
-
-You can then serve this file with your GraphQL server.
+You can then serve this file with your GraphQL server:
 
 [source, javascript, indent=0]
 ----
@@ -59,8 +56,7 @@ main()
 === Introspect and spin up a read-only schema
 
 This example generates a **read-only** version of the schema from the database and immediately spins up an Apollo server.
-
-Here the type definitions are never persisted to disk.
+Here the type definitions are never persisted to disk:
 
 [source, javascript, indent=0]
 ----

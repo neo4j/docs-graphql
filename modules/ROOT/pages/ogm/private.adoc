@@ -54,3 +54,22 @@ Promise.all([neoSchema.getSchema(), ogm.init()]).then(([schema]) => {
     const apolloServer = new ApolloServer({ schema });
 })
 ----
+
+== Excluded directives
+
+The following directives are excluded from the OGM's schema:
+
+- `@authentication`
+- `@authorization`
+- `@subscriptionsAuthorization`
+- `@private`
+- `@query`
+- `@mutation`
+- `@subscription`
+- `@filterable`
+- `@selectable`
+- `@settable`
+
+This is because the OGM is only ever used programmatically, as opposed to an exposed API which needs these security measures.
+
+See also: xref::ogm/private.adoc[`@private` Directive]
