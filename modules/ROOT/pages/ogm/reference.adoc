@@ -5,7 +5,6 @@ ogm/api-reference/model/find.adoc, ogm/api-reference/model/delete.adoc, \
 ogm/api-reference/model/update.adoc, ogm/api-reference/model/index.adoc, \
 ogm/api-reference/index.adoc, ogm/api-reference/ogm.adoc, ogm/api-reference/type-generation.adoc
 
-
 == `OGM`
 
 === `constructor`
