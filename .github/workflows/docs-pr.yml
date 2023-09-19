@@ -7,7 +7,7 @@ name: "Verify PR"
 on:
   pull_request:
     branches:
-    - "main"
+    - "4.x"
 
 jobs:
 
