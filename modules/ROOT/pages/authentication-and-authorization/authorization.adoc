@@ -2,8 +2,8 @@
 :description: This page describes how to set up authorization features in the Neo4j GraphQL Library.
 = Authorization
 
-Authorization rules cover to what specific data a generated Cypher query is executed against.
-They use predicates to evaluate the Cypher generated from a GraphQL query, thus allowing or not execution within the context of nodes and their properties.
+Authorization rules cover what specific data a generated Cypher query is executed against.
+They use predicates to evaluate the Cypher generated from a GraphQL query, thus allowing or disallowing execution within the context of nodes and their properties.
 
 All authorization rules have an implied requirement for authentication, given that the rules are normally evaluated against values in the JWT payload.
 
@@ -63,7 +63,7 @@ type User @authorization(validate: [
 Authentication is implicitly required for every authorization check by default, but this can be disabled on a per-rule basis.
 This could be the case, for instance, when a node has a property which flags whether the node should be public or not.
 
-For instance, in case `Post` nodes might be private and belong to a particular `User`, or be public and readable by any user, here is how to set this up:
+For instance, in the case where some `Post` nodes are private and belong to a particular `User`, while other `Post` nodes are public and readable by any user, here is how to set this up:
 
 [source, graphql, indent=0]
 ----
