@@ -15,5 +15,5 @@ This section includes:
 - xref::ogm/reference.adoc[API Reference]
 
 [NOTE]
-Before diving into the OGM, it's recommended that you have a good understanding of the Neo4j GraphQL Library first. 
+Before using the OGM, it's recommended that you have a good understanding of the Neo4j GraphQL Library first. 
 Walk through the xref::getting-started/index.adoc[Getting started] guide or take the course https://graphacademy.neo4j.com/courses/graphql-basics/?ref=docs[Introduction to Neo4j & GraphQL] in GraphAcademy for more instructions.
