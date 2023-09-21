@@ -427,7 +427,7 @@ Returns a `Promise` that resolves to the equivalent of the Mutation response for
 
 For the User with name "John", update their name to be "Jane":
 
-[source, graphql, indent=0]
+[source, javascript, indent=0]
 ----
 const User = ogm.model("User");
 
