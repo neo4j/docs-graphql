@@ -1,6 +1,5 @@
 [[ogm-installation]]
 :description: This page describes how to install the OGM in Neo4j GraphQL and includes examples of how to use it.
-:page-aliases: ogm/examples/rest-api.adoc
 = Installation
 
 The OGM can be installed into a new or existing Node.js project in a similar way to the installation of the Neo4j GraphQL Library.
@@ -22,7 +21,7 @@ To use the OGM, you must always import it:
 const { OGM } = require("@neo4j/graphql-ogm");
 ----
 
-== Examples
+== Usage examples
 
 Here are some examples of how you might take advantage of the OGM.
 
@@ -207,7 +206,7 @@ You should see the following output:
 You can execute the `signUp` Mutation against this GraphQL API to sign up, but when you go to query the user through the same API, the password field will not be available.
 
 [[ogm-examples-rest-api]]
-== REST API
+=== REST API
 
 This example demonstrates how you might use the OGM without exposing a Neo4j GraphQL API endpoint. The example starts an https://expressjs.com/[Express] server and uses the OGM to interact with the Neo4j GraphQL Library, exposed over a REST endpoint.
 

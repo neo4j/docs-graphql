@@ -1,18 +1,19 @@
 [[ogm-private]]
-= `@private` Directive
+:description: This page describes how to use the @private directive in OGM.
+= `@private` directive
 
-The `@private` directive allows you to specify fields that should only be accessible through the OGM. This is very handy as you can hide fields such as passwords to the outside world. Simply put the `@private` directive on the field you wish to be inaccessible through the exposed API;
+The `@private` directive allows specifying what fields should only be accessible through the OGM. 
+This is a useful feature when in need of hiding fields such as passwords, for example.
 
 == Definition
 
-=== Definition
 [source, graphql, indent=0]
 ----
 """Instructs @neo4j/graphql to only expose a field through the Neo4j GraphQL OGM."""
 directive @private on FIELD_DEFINITION
 ----
 
-== Example use-case
+== Usage example
 
 [source, graphql, indent=0]
 ----
