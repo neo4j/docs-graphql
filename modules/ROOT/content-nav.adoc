@@ -72,7 +72,7 @@
 *** xref:ogm/type-generation.adoc[]
 *** xref:ogm/reference.adoc[]
 
-*** xref:driver-configuration.adoc[]
+** xref:driver-configuration.adoc[]
 
 ** Frameworks and integrations
 *** xref:integrations/apollo-federation.adoc[]
