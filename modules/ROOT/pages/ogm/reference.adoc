@@ -1,21 +1,23 @@
 [[ogm-api-reference]]
+:description: This page is a reference guide to all functionalities in OGM.
 = API Reference
 :page-aliases: ogm/api-reference/model/aggregate.adoc, ogm/api-reference/model/create.adoc, \
 ogm/api-reference/model/find.adoc, ogm/api-reference/model/delete.adoc, \
 ogm/api-reference/model/update.adoc, ogm/api-reference/model/index.adoc, \
 ogm/api-reference/index.adoc, ogm/api-reference/ogm.adoc, ogm/api-reference/type-generation.adoc
 
+The following sections work as a reference guide to all functionalities in OGM and in the Model class.
 
 == `OGM`
 
-=== `constructor`
+[cols="1,2,2"]
+|===
+|Function|Description|Example
 
-Returns an `OGM` instance.
-
+|`constructor`
+|Returns an `OGM` instance.
 Takes an `input` object as a parameter, which is then passed to the `Neo4jGraphQL` constructor. Supported options are listed in the documentation for xref::reference/api-reference/neo4jgraphql.adoc[`Neo4jGraphQL`].
-
-==== Example
-
+a|
 [source, javascript, indent=0]
 ----
 const ogm = new OGM({
@@ -23,20 +25,21 @@ const ogm = new OGM({
 });
 ----
 
-=== `init`
+|`init`
+|Asynchronous method to initialize the OGM. 
+Internally, calls xref::reference/api-reference/neo4jgraphql.adoc#api-reference-getschema[`Neo4jGraphQL.getSchema()`] to generate a GraphQL schema, and stores the result. 
+Initializes any models which have been created before this execution, and will throw an error if any of them are invalid.
+a|
+[source, javascript, indent=0]
+----
+PLEASE PROVIDE
+----
 
-Asynchronous method to initialize the OGM. Internally, calls xref::reference/api-reference/neo4jgraphql.adoc#api-reference-getschema[`Neo4jGraphQL.getSchema()`] to generate a GraphQL schema, and stores the result. Initializes any models which have been created before this execution, and will throw an error if any of them are invalid.
-
-=== `model`
-
-Returns a `Model` instance matching the passed in name, or (if the OGM has been initialized) throws an `Error` if one can't be found.
-
+|`model`
+|Returns a `model` instance matching the passed in name, or (if the OGM has been initialized) throws an `Error` if one can't be found.
 Accepts a single argument `name` of type `string`.
-
-==== Example
-
-For the following type definitions:
-
+a|
+.Type definition
 [source, graphql, indent=0]
 ----
 type User {
@@ -44,29 +47,22 @@ type User {
 }
 ----
 
-The following would successfully return a `Model` instance:
-
+.Query return
 [source, javascript, indent=0]
 ----
 const User = ogm.model("User");
 ----
 
-The following would throw an `Error`:
-
+.Wrong query
 [source, javascript, indent=0]
 ----
 const User = ogm.model("NotFound");
 ----
 
-[[ogm-api-type-generation]]
-=== `generate`
-
-Either writes to specified `outFile` or returns a string - if `noWrite` is set. 
-
-==== Example with outFile
-
-Will write to outFile:
-
+|`generate`
+|Either writes to specified `outFile` or returns a string - if `noWrite` is set. 
+a|
+.Writing to outFile
 [source, typescript, indent=0]
 ----
 import { OGM, generate } from "@neo4j/graphql-ogm";
@@ -93,10 +89,7 @@ await generate({
 console.log("Types Generated");
 ----
 
-==== Example with noWrite
-
-Will return a string:
-
+.Writing with noWrite
 [source, typescript, indent=0]
 ----
 import { OGM, generate } from "@neo4j/graphql-ogm";
@@ -122,18 +115,15 @@ const source = await generate({
 
 console.log("Types Generated ", source);
 ----
+|===
 
-
-[[ogm-api-reference-assertconstraints]]
+[discrete]
 === `assertIndexesAndConstraints`
 
 Asynchronous method to assert the existence of database constraints, that either resolves to `void` in a successful scenario, or throws an error if the necessary constraints do not exist following its execution.
+It takes an `input` object as a parameter, being the supported fields the following examples.
 
-Takes an `input` object as a parameter, the supported fields of which are described below.
-
-==== Example
-
-Given the following type definitions saved to the variable `typeDefs` and a valid driver instance saved to the variable `driver`:
+Given the type definitions saved to the variable `typeDefs` and a valid driver instance saved to the variable `driver`:
 
 [source, graphql, indent=0]
 ----
@@ -142,7 +132,7 @@ type Book {
 }
 ----
 
-And the construction and initialisation of an `OGM`, using:
+And the construction and initialization of an `OGM`, using:
 
 [source, javascript, indent=0]
 ----
@@ -152,37 +142,37 @@ const ogm = new OGM({
 await ogm.init();
 ----
 
-The following will check whether a unique node property constraint exists for label "Book" and property "isbn", and throw an error if it does not:
+The following checks whether a unique node property constraint exists for label "Book" and property "isbn", and throws an error if it does not:
 
 [source, javascript, indent=0]
 ----
 await ogm.assertIndexesAndConstraints();
 ----
 
-The next example will create the constraint if it does not exist:
+The next example creates the constraint if it does not exist:
 
 [source, javascript, indent=0]
 ----
 await ogm.assertIndexesAndConstraints({ options: { create: true } });
 ----
 
-[[ogm-api-reference-assertconstraints-input]]
+[discrete]
 ==== Input
 
-Accepts the arguments below:
+Accepts the argument:
 
 [cols="1,2,3"]
 |===
 |Name |Type |Description
 
 |`options`
-|xref::ogm/reference.adoc#ogm-api-reference-assertconstraints-input-assertconstraintsoptions[`AssertConstraintsOptions`]
+|`AssertConstraintsOptions`
 |Options for the execution of `assertIndexesAndConstraints`.
 |===
 
 
-[[ogm-api-reference-assertconstraints-input-assertconstraintsoptions]]
-===== `AssertConstraintsOptions`
+[discrete]
+==== `AssertConstraintsOptions`
 
 [cols="1,2,3"]
 |===
@@ -193,6 +183,7 @@ Accepts the arguments below:
 |Whether or not to create constraints if they do not yet exist. Disabled by default.
 |===
 
+
 [[ogm-model]]
 == Model
 
@@ -201,9 +192,20 @@ Accepts the arguments below:
 
 This method can be used to aggregate nodes, and maps to the underlying schema xref::queries-aggregations/queries.adoc#queries-aggregate[Aggregate].
 
+==== Arguments
+
+[cols="1,2,2"]
+|===
+|Name|Type|Description
+
+|`where`
+|`GraphQLWhereArg`
+|A JavaScript object representation of the GraphQL `where` input type used for xref::queries-aggregations/filtering.adoc[Filtering].
+|===
+
 ==== Example
 
-Find the longest User name:
+Here is how you can write a query to find the longest User name:
 
 [source, javascript, indent=0]
 ----
@@ -218,7 +220,7 @@ const usersAggregate = await User.aggregate({
 });
 ----
 
-Find the longest User name where name starts with the letter "D":
+And this one is to find the longest User name where name starts with the letter "D":
 
 [source, javascript, indent=0]
 ----
@@ -236,27 +238,43 @@ const usersAggregate = await User.aggregate({
 });
 ----
 
-==== Arguments
-
-|===
-|Name and Type |Description
-
-|`where` +
- +
- Type: `GraphQLWhereArg`
-|A JavaScript object representation of the GraphQL `where` input type used for xref::queries-aggregations/filtering.adoc[Filtering].
-|===
 
 [[ogm-api-reference-model-create]]
 === `create`
 
-This method can be used to update nodes, and maps to the underlying xref::mutations/create.adoc[Create] Mutation.
+This method can be used to update nodes, and maps to the underlying xref::mutations/create.adoc[`create`] Mutation.
+It returns a `Promise` that resolves to the equivalent of the Mutation response for this operation.
 
-Returns a `Promise` that resolves to the equivalent of the Mutation response for this operation.
+==== Arguments
+
+[cols="1,2,2"]
+|===
+|Name|Type |Description
+
+|`input`
+|`any`
+|JavaScript object representation of the GraphQL `input` input type used for xref::mutations/create.adoc[Create] mutations.
+
+|`selectionSet`
+|`string` or `DocumentNode` or `SelectionSetNode`
+|Selection set for the Mutation, see xref::ogm/selection-set.adoc[Selection Set] for more information.
+
+|`args`
+|`any`
+|The `args` value for the GraphQL Mutation.
+
+|`context`
+|`any`
+|The `context` value for the GraphQL Mutation.
+
+|`rootValue`
+|`any`
+|The `rootValue` value for the GraphQL Mutation.
+|===
 
 ==== Example
 
-To create a Movie with title "The Matrix":
+Here is an example on how to create a Movie with title "The Matrix":
 
 [source, javascript, indent=0]
 ----
@@ -265,61 +283,51 @@ const Movie = ogm.model("Movie");
 await Movie.create({ input: [{ title: "The Matrix" }] })
 ----
 
-==== Arguments
-
-|===
-|Name and Type |Description
-
-|`input` +
- +
- Type: `any`
-|JavaScript object representation of the GraphQL `input` input type used for xref::mutations/create.adoc[Create] mutations.
-
-|`selectionSet` +
- +
- Type: `string` or `DocumentNode` or `SelectionSetNode`
-|Selection set for the Mutation, see xref::ogm/selection-set.adoc[Selection Set] for more information.
-
-|`args` +
- +
- Type: `any`
-|The `args` value for the GraphQL Mutation.
-
-|`context` +
- +
- Type: `any`
-|The `context` value for the GraphQL Mutation.
-
-|`rootValue` +
- +
- Type: `any`
-|The `rootValue` value for the GraphQL Mutation.
-|===
-
 [[ogm-api-reference-model-delete]]
 === `delete`
 
 This method can be used to delete nodes, and maps to the underlying xref::mutations/delete.adoc[Delete] Mutation.
+It returns a `Promise` which resolvers to a `DeleteInfo` object:
 
-Returns a `Promise` which resolvers to a `DeleteInfo` object:
-
+[cols="1,1,1"]
 |===
-|Name and Type |Description
+|Name|Type |Description
 
-|`nodesDeleted` +
- +
- Type: `number`
+|`nodesDeleted`
+|`number`
 |The number of nodes deleted.
 
-|`relationshipsDeleted` +
- +
- Type: `number`
+|`relationshipsDeleted`
+|`number`
 |The number of relationships deleted.
+|===
+
+==== Arguments
+
+[cols="1,2,2"]
+|===
+|Name|Type |Description
+
+|`where`
+|`GraphQLWhereArg`
+|A JavaScript object representation of the GraphQL `where` input type used for xref::queries-aggregations/filtering.adoc[Filtering].
+
+|`delete`
+|`string` or `DocumentNode` or `SelectionSetNode`
+|A JavaScript object representation of the GraphQL `delete` input type used for xref::mutations/delete.adoc[`delete`] mutations.
+
+|`context`
+|`any`
+|The `context` value for the GraphQL mutation.
+
+|`rootValue`
+|`any`
+|The `rootValue` value for the GraphQL mutation.
 |===
 
 ==== Example
 
-To delete all User nodes where the name is "Dan":
+This is how you can delete all User nodes where the name is "Dan":
 
 [source, javascript, indent=0]
 ----
@@ -328,42 +336,46 @@ const User = ogm.model("User");
 await User.delete({ where: { name: "Dan" }});
 ----
 
-==== Arguments
-
-|===
-|Name and Type |Description
-
-|`where` +
- +
- Type: `GraphQLWhereArg`
-|A JavaScript object representation of the GraphQL `where` input type used for xref::queries-aggregations/filtering.adoc[Filtering].
-
-|`delete` +
- +
- Type: `string` or `DocumentNode` or `SelectionSetNode`
-|A JavaScript object representation of the GraphQL `delete` input type used for xref::mutations/delete.adoc[Delete] Mutations.
-
-|`context` +
- +
- Type: `any`
-|The `context` value for the GraphQL Mutation.
-
-|`rootValue` +
- +
- Type: `any`
-|The `rootValue` value for the GraphQL Mutation.
-|===
-
 [[ogm-api-reference-model-find]]
 === `find`
 
 This method can be used to find nodes, and maps to the underlying schema xref::queries-aggregations/queries.adoc[Queries].
+It returns a `Promise` which resolvers to an array of objects matching the type of the Model.
 
-Returns a `Promise` which resolvers to an array of objects matching the type of the Model.
+==== Arguments
+
+[cols="1,2,2"]
+|===
+|Name|Type |Description
+
+|`where`
+|`GraphQLWhereArg`
+|A JavaScript object representation of the GraphQL `where` input type used for xref::queries-aggregations/filtering.adoc[Filtering].
+
+|`options`
+|`GraphQLOptionsArg`
+|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination/index.adoc[Pagination].
+
+|`selectionSet` 
+|`string` or `DocumentNode` or `SelectionSetNode`
+|Selection set for the Mutation, see xref::ogm/selection-set.adoc[Selection Set] for more information.
+
+|`args`
+|`any`
+|The `args` value for the GraphQL Mutation.
+
+|`context`
+|`any`
+|The `context` value for the GraphQL Mutation.
+
+|`rootValue`
+|`any`
+|The `rootValue` value for the GraphQL Mutation.
+|===
 
 ==== Example
 
-To find all user nodes in the database:
+Here is how to find all user nodes in the database:
 
 [source, javascript, indent=0]
 ----
@@ -372,7 +384,7 @@ const User = ogm.model("User");
 const users = await User.find();
 ----
 
-To find users with name "Jane Smith":
+In case you want to find users with name "Jane Smith", here is how to do it:
 
 [source, javascript, indent=0]
 ----
@@ -381,52 +393,63 @@ const User = ogm.model("User");
 const users = await User.find({ where: { name: "Jane Smith" }});
 ----
 
-==== Arguments
-
-|===
-|Name and Type |Description
-
-|`where` +
- +
- Type: `GraphQLWhereArg`
-|A JavaScript object representation of the GraphQL `where` input type used for xref::queries-aggregations/filtering.adoc[Filtering].
-
-|`options` +
- +
- Type: `GraphQLOptionsArg`
-|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination/index.adoc[Pagination].
-
-|`selectionSet` +
- +
- Type: `string` or `DocumentNode` or `SelectionSetNode`
-|Selection set for the Mutation, see xref::ogm/selection-set.adoc[Selection Set] for more information.
-
-|`args` +
- +
- Type: `any`
-|The `args` value for the GraphQL Mutation.
-
-|`context` +
- +
- Type: `any`
-|The `context` value for the GraphQL Mutation.
-
-|`rootValue` +
- +
- Type: `any`
-|The `rootValue` value for the GraphQL Mutation.
-|===
-
 [[ogm-api-reference-model-update]]
 === `update`
 
-This method can be used to update nodes, and maps to the underlying xref::mutations/update.adoc[Update] Mutation.
+This method can be used to update nodes, and maps to the underlying xref::mutations/update.adoc[`update`] mutation.
+It returns a `Promise` that resolves to the equivalent of the mutation response for this operation.
 
-Returns a `Promise` that resolves to the equivalent of the Mutation response for this operation.
+
+==== Arguments
+
+[cols="1,2,2"]
+|===
+|Name|Type |Description
+
+|`where`
+|`GraphQLWhereArg`
+|A JavaScript object representation of the GraphQL `where` input type used for xref::queries-aggregations/filtering.adoc[Filtering].
+
+|`update`
+|`any`
+|A JavaScript object representation of the GraphQL `update` input type used for xref::mutations/update.adoc[`update`] Mutations.
+
+|`connect`
+|`any`
+|A JavaScript object representation of the GraphQL `connect` input type used for xref::mutations/update.adoc[`update`] Mutations.
+
+|`disconnect`
+|`any`
+|A JavaScript object representation of the GraphQL `disconnect` input type used for xref::mutations/update.adoc[`update`] Mutations.
+
+|`create`
+|`any`
+|A JavaScript object representation of the GraphQL `create` input type used for xref::mutations/update.adoc[`update`] Mutations.
+
+|`options`
+|`GraphQLOptionsArg`
+|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination/index.adoc[Pagination].
+
+|`selectionSet`
+|`string` or `DocumentNode` or `SelectionSetNode`
+|Selection set for the Mutation, see xref::ogm/selection-set.adoc[Selection set] for more information.
+
+|`args`
+|`any`
+|The `args` value for the GraphQL Mutation.
+
+|`context`
+|`any`
+|The `context` value for the GraphQL Mutation.
+
+|`rootValue`
+|`any`
+|The `rootValue` value for the GraphQL Mutation.
+|===
 
 ==== Example
 
-For the User with name "John", update their name to be "Jane":
+Here is how to update the User with name "John" to be "Jane":
 
 [source, javascript, indent=0]
 ----
@@ -437,59 +460,3 @@ const { users } = await User.update({
     update: { name: "Jane" },
 });
 ----
-
-==== Arguments
-
-|===
-|Name and Type |Description
-
-|`where` +
- +
- Type: `GraphQLWhereArg`
-|A JavaScript object representation of the GraphQL `where` input type used for xref::queries-aggregations/filtering.adoc[Filtering].
-
-|`update` +
- +
- Type: `any`
-|A JavaScript object representation of the GraphQL `update` input type used for xref::mutations/update.adoc[Update] Mutations.
-
-|`connect` +
- +
- Type: `any`
-|A JavaScript object representation of the GraphQL `connect` input type used for xref::mutations/update.adoc[Update] Mutations.
-
-|`disconnect` +
- +
- Type: `any`
-|A JavaScript object representation of the GraphQL `disconnect` input type used for xref::mutations/update.adoc[Update] Mutations.
-
-|`create` +
- +
- Type: `any`
-|A JavaScript object representation of the GraphQL `create` input type used for xref::mutations/update.adoc[Update] Mutations.
-
-|`options` +
- +
- Type: `GraphQLOptionsArg`
-|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination/index.adoc[Pagination].
-
-|`selectionSet` +
- +
- Type: `string` or `DocumentNode` or `SelectionSetNode`
-|Selection set for the Mutation, see xref::ogm/selection-set.adoc[Selection Set] for more information.
-
-|`args` +
- +
- Type: `any`
-|The `args` value for the GraphQL Mutation.
-
-|`context` +
- +
- Type: `any`
-|The `context` value for the GraphQL Mutation.
-
-|`rootValue` +
- +
- Type: `any`
-|The `rootValue` value for the GraphQL Mutation.
-|===

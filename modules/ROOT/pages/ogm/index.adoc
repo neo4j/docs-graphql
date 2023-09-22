@@ -9,9 +9,9 @@ This section includes:
 
 * xref::ogm/installation.adoc[Installation] - How to install the OGM and usage examples.
 * xref::ogm/directives.adoc[Directives] - How to use directives in OGM.
-* xref::ogm/selection-set.adoc[Selection Set]
-- xref::ogm/type-generation.adoc[TypeScript Type Generation]
-- xref::ogm/reference.adoc[API Reference]
+* xref::ogm/selection-set.adoc[Selection set] - How to use this GraphQL functionality in OGM.
+* xref::ogm/type-generation.adoc[TypeScript Type Generation]
+* xref::ogm/reference.adoc[API Reference]
 
 [NOTE]
 Before using the OGM, it's recommended that you have a good understanding of the Neo4j GraphQL Library first. 
