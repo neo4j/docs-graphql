@@ -1,11 +1,16 @@
 [[ogm-private]]
-:description: This page describes how to use the @private directive in OGM.
-= `@private` directive
+:description: This page describes how to use directives in OGM.
+:page-aliases: ogm/private.adoc
+= Directives
+
+This page describes how to use directives in OGM and which ones were excluded.
+
+== `@private`
 
 The `@private` directive allows specifying what fields should only be accessible through the OGM. 
 This is a useful feature when in need of hiding fields such as passwords, for example.
 
-== Definition
+=== Definition
 
 [source, graphql, indent=0]
 ----
@@ -13,7 +18,9 @@ This is a useful feature when in need of hiding fields such as passwords, for ex
 directive @private on FIELD_DEFINITION
 ----
 
-== Usage example
+=== Usage
+
+Given the following type definition:
 
 [source, graphql, indent=0]
 ----
@@ -24,7 +31,11 @@ type User {
 }
 ----
 
-Using the password field is a great example here. In your application, you would want to hash passwords and hide them from snoopers. You could have a custom resolver, using the OGM, to update and set passwords. This is more apparent when you want to use the same type definitions to drive a public-facing schema and an OGM:
+In your application, you may want to hash passwords and hide them from public viewing. 
+This can be done with a custom resolver, using the OGM, to update and set passwords.
+
+Such a scenario gets more apparent when you want to use the same type definitions to drive a public-facing schema and an OGM.
+For example:
 
 [source, javascript, indent=0]
 ----
@@ -63,7 +74,6 @@ The following directives are excluded from the OGM's schema:
 - `@authentication`
 - `@authorization`
 - `@subscriptionsAuthorization`
-- `@private`
 - `@query`
 - `@mutation`
 - `@subscription`
@@ -71,6 +81,5 @@ The following directives are excluded from the OGM's schema:
 - `@selectable`
 - `@settable`
 
-This is because the OGM is only ever used programmatically, as opposed to an exposed API which needs these security measures.
-
-See also: xref::ogm/private.adoc[`@private` Directive]
+The reason is that the OGM is only ever used programmatically, as opposed to an exposed API which needs these security measures.
+See the page on xref:type-definitions/directives/index.adoc[Neo4j GraphQL directives] for more information.
