@@ -2,8 +2,8 @@
 :description: This page describes how to set up authorization features in the Neo4j GraphQL Library.
 = Authorization
 
-Authorization rules cover what specific data a generated Cypher query is executed against.
-They use predicates to evaluate the Cypher generated from a GraphQL query, thus allowing or disallowing execution within the context of nodes and their properties.
+Authorization rules cover what specific data a generated Cypher query is allowed to access.
+They use predicates to evaluate the data accessed by the Cypher generated from a GraphQL query, thus allowing or disallowing execution within the context of nodes and their properties.
 
 All authorization rules have an implied requirement for authentication, given that the rules are normally evaluated against values in the JWT payload.
 
@@ -15,7 +15,7 @@ Unauthenticated requests with queries requiring authentication never reach the d
 === Filtering
 
 Filtering rules filter out data which users do not have access to, without throwing any errors. 
-These rules are evaluated in the database, then translated into filtering predicates that are evaluated against matched data.
+These rules are translated into filtering predicates, which are evaluated against matched data in the database.
 
 Filtering rules protect data as well as obfuscate the information on the _existence_ of that data to unauthorized users.
 

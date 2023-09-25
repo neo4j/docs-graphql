@@ -121,10 +121,10 @@ ogm.init().then(() => {
 
 Note that the argument `selectionSet` is passed every invocation of the `Movie.find()` function.
 
-== Selection set as a static
+== Setting a default selection set
 
-Using this approach, you can assign a selection set to a particular Model, so that whenever it is queried, it always returns those fields. 
-This is useful if the default selection set doesn't give enough data, but you don't need the selection set to be dynamic on each request. 
+Using this approach, you can assign a selection set to a particular Model, so that whenever it is queried, it always returns those fields by default. 
+This is useful if the generated selection set doesn't give enough data, but you don't need the selection set to be dynamic on each request. 
 
 Here is an example of this:
 
