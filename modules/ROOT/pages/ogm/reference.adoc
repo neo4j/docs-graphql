@@ -32,7 +32,7 @@ Initializes any models which have been created before this execution, and will t
 a|
 [source, javascript, indent=0]
 ----
-PLEASE PROVIDE
+await ogm.init();
 ----
 
 |`model`
