@@ -75,7 +75,7 @@ This how-to guide sets up the project using ES Modules, which allows the usage o
 ====
 
 [.include-with-Typescript]
-=====
+====
 . Create a `src` directory with an empty `index.ts` file to contain the entrypoint to your code:
 +
 [source, bash]
@@ -130,10 +130,10 @@ For more information on the available options, see the https://www.typescriptlan
   // other dependencies
 }
 ----
-=====
+====
 
 [.include-with-JavaScript]
-=====
+====
 . Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
 +
 [source, bash]
@@ -154,7 +154,7 @@ touch src/index.js
   // other dependencies
 }
 ----
-=====
+====
 ====
 +
 . This guide requires the installation of the following dependencies:
