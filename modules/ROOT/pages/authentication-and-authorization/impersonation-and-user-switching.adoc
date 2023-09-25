@@ -7,7 +7,7 @@ Impersonation and user switching are features of the Neo4j database and driver w
 == Impersonation
 
 Impersonation still authenticates with the database as the original configured user, but runs the query in the context of an impersonated user.
-When impersonating a user, the query is run within the complete security context of the impersonated user and not the authenticated user (home database, permissions etc).
+When impersonating a user, the query is run within the complete security context of the impersonated user and not the authenticated user (home database, permissions, etc.).
 
 Consider the following an example of how to impersonate a different user per request.
 Here the user to impersonate is taken from a HTTP header `User`:
