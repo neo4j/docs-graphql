@@ -32,7 +32,9 @@ The following comparison operators are available for numeric types (`Int`, `Floa
 * `_GT`
 
 [NOTE]
+====
 Filtering on xref::type-definitions/types/temporal.adoc[Temporal types] and xref::type-definitions/types/spatial.adoc[Spatial types] is not currently supported.
+====
 
 === String comparison
 
@@ -99,7 +101,9 @@ subscription {
 This way, only newly created movies with the genre `"Drama"` trigger events to this subscription.
 
 [NOTE]
+====
 The `where` argument only filters by properties set at the moment of creation.
+====
 
 === `UPDATE`
 
@@ -119,7 +123,9 @@ subscription {
 This way, you should only receive events triggered by movies with the average rating bigger than 8 when they are modified.
 
 [NOTE]
+====
 The `where` argument only filters properties that already existed *before* the update.
+====
 
 This is how these events may look like:
 
@@ -172,7 +178,9 @@ subscription {
 This way, only deleted movies of all genres except for `"Comedy"` should trigger events to this subscription.
 
 [NOTE]
+====
 The `where` argument only filters properties that already existed before the deletion process.
+====
 
 [[combining-operators]]
 === Combining operators
@@ -289,7 +297,9 @@ subscription {
 ----
 
 [NOTE]
+====
 The `where` argument only filters already existing properties at the moment of the relationship creation.
+====
 
 === Newly deleted relationship
 
@@ -315,7 +325,9 @@ subscription {
 ----
 
 [NOTE]
+====
 The `where` argument only filters properties that already existed before the relationship deletion.
+====
 
 === Relationship-related filters
 
@@ -571,13 +583,17 @@ For example:
 [[filter-logical-or]]
 
 [NOTE]
+====
 In the previous example, there is an implicit logical `OR` between the `actors`, `directors`, and `reviewers` relationship fields. 
 This is to say that a relationship of **either** type `ACTED_IN` **or** of type `DIRECTED` **or** of type `REVIEWED` should trigger the previously described subscription.
+====
 
 [[filter-logical-and]]
 [NOTE]
+====
 There is an implicit logical `AND` between the `edge` and `node` fields inside of the `actors` relationship field.
 In other words, the relationship of type `ACTED_IN` with the property `screenTime` less than 60 **and** a target node with name in `["Tom Hardy", "George Clooney"]` should trigger the subscription.
+====
 
 === Abstract types
 
@@ -747,12 +763,13 @@ The following example illustrates how to filter the node at the other end of the
 
 This example returns events for relationships between the type `Movie` and `Reviewer`, where the score is higher than 7, and the `Reviewer` is a `Person` named "Jane Doe", with a reputation greater or equal to 7, or the `Reviewer` is a `Magazine` with the reputation of 8.
 
-[NOTE] 
+[NOTE]
+====
 Note how the reputation field is part of the interface type, and can thus be specified in 3 ways: inside the `node` key, inside each concrete type, or in both places. +
 When specified in both places, however, the filter is composed with a logical `AND`.
 Type `Person` then overrides the `reputation_GTE` operator, so the final filter is `reputation_GTE: 7`.
 Likewise, type `Magazine` composes the original operator so the final filter is the interval `reputation_GTE: 8 && reputation_LT: 9`.
-
+====
 
 To get all relationships of type `REVIEWED` with a certain score returned, you can use implicit filtering, such as:
 

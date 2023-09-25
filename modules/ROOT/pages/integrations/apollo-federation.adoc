@@ -65,9 +65,9 @@ npm pkg set type="module"
 ----
 +
 [NOTE]
-===
+====
 This how-to guide sets up the project using ES Modules, which allows the usage of features such as top-level `await`.
-===
+====
 
 . Choose TypeScript or JavaScript to proceed with the setup:
 +
@@ -112,10 +112,10 @@ touch tsconfig.json
 ----
 +
 [NOTE]
-===
+====
 This configuration extends the https://github.com/tsconfig/bases#node-lts-tsconfigjson[community base for Node.js LTS], provided by the `@tsconfig/node-lts` package installed above. 
 For more information on the available options, see the https://www.typescriptlang.org/tsconfig[TypeScript Compiler docs].
-===
+====
 +
 . Replace the default `scripts` entry in your `package.json` file with the following:
 +
@@ -190,10 +190,10 @@ const typeDefs = `#graphql
 ----
 
 [NOTE]
-===
+====
 This example only includes the Federation `@key` directive. 
 To use more https://www.apollographql.com/docs/federation/federated-types/federated-directives[Federation directives], add them to the `import` array.
-===
+====
 
 == Define an entity
 

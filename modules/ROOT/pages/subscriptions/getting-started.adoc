@@ -5,7 +5,9 @@
 This guide shows how to start using subscription capabilities on a GraphQL server.
 
 [NOTE]
+====
 If you use link:https://studio.apollographql.com/[Apollo Studio], make sure to select the link:https://www.npmjs.com/package/graphql-ws[graphql-ws] implementation in the connection settings.
+====
 
 == Enable subscription capabilities
 
@@ -129,8 +131,10 @@ main();
 ----
 
 [NOTE]
+====
 This setup uses the default subscriptions mechanism suitable only for development, testing, and single instance servers. 
 If you need to scale horizontally for a production-ready application, see xref::subscriptions/scaling.adoc[Horizontal scaling].
+====
 
 == GraphQL subscriptions
 

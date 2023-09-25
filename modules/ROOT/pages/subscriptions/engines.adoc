@@ -47,7 +47,9 @@ npm install @neo4j/graphql-amqp-subscriptions-engine
 ----
 
 [NOTE]
+====
 AMQP 1.0 is **not** supported by this plugin.
+====
 
 === Usage
 
@@ -162,6 +164,8 @@ class CustomRedisEngine implements Neo4jGraphQLSubscriptionsEngine {}
 ----
 
 [NOTE]
+====
 Events are sent in order to the class.
 However, order is not guaranteed once these events have been broadcasted through a broker.
 For cases when ordering is important, you must set up the field `timestamp` in the subscriptions payload.
+====

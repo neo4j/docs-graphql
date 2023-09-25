@@ -14,9 +14,11 @@ This is usually a one-time-thing and should be considered a starting point for a
 * A read-only version of the GraphQL type definitions.
 
 [NOTE]
+====
 If an element property has mixed types throughout your graph, that property is excluded from the
 generated type definitions. 
 The reason for this is that your GraphQL server throws an error if it finds data that doesn't match the specified type.
+====
 
 If any properties are skipped, this is noted in the xref::troubleshooting.adoc[Debug logging].
 
