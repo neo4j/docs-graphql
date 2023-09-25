@@ -6,7 +6,6 @@ auth/authorization/allow.adoc, auth/authorization/bind.adoc, auth/authorization/
 auth/authorization/where.adoc, guides/v4-migration/authorization.adoc
 
 [WARNING]
-===
 The `@auth` directive has been replaced by `@authentication` and `@authorization`. 
 See the xref::migration/v4-migration/authorization.adoc[Migration guide] for details on how to upgrade.
 ===

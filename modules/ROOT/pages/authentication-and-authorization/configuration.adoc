@@ -123,6 +123,4 @@ type JWT @jwt {
 ----
 
 [NOTE]
-====
 The seemingly excessive escaping is required to doubly escape: once for GraphQL and once for `dot-prop`, which is used under the hood to resolve the path.
-====
