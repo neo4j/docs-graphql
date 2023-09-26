@@ -70,13 +70,14 @@ This how-to guide sets up the project using ES Modules, which allows the usage o
 ====
 
 . Choose TypeScript or JavaScript to proceed with the setup:
-+
+
 [.tabbed-example]
 ====
 
 [.include-with-Typescript]
-====
-. Create a `src` directory with an empty `index.ts` file to contain the entrypoint to your code:
+=====
+
+. Create a src directory with an empty index.ts file to contain the entrypoint to your code:
 +
 [source, bash]
 ----
@@ -91,14 +92,14 @@ touch src/index.ts
 npm install --save-dev typescript @types/node @tsconfig/node-lts
 ----
 +
-. Create an empty `tsconfig.json` file containing the compiler configuration for TypeScript:
+. Create an empty tsconfig.json file containing the compiler configuration for TypeScript:
 +
 [source, bash]
 ----
 touch tsconfig.json
 ----
 +
-. Add the following configuration to the `tsconfig.json` file:
+. Add the following configuration to the tsconfig.json file:
 +
 [source, json]
 ----
@@ -112,12 +113,12 @@ touch tsconfig.json
 ----
 +
 [NOTE]
-====
-This configuration extends the https://github.com/tsconfig/bases#node-lts-tsconfigjson[community base for Node.js LTS], provided by the `@tsconfig/node-lts` package installed above. 
+======
+This configuration extends the https://github.com/tsconfig/bases#node-lts-tsconfigjson[community base for Node.js LTS], provided by the @tsconfig/node-lts package installed above. 
 For more information on the available options, see the https://www.typescriptlang.org/tsconfig[TypeScript Compiler docs].
-====
+======
 +
-. Replace the default `scripts` entry in your `package.json` file with the following:
+. Replace the default scripts entry in your package.json file with the following:
 +
 [source, json]
 ----
@@ -130,20 +131,21 @@ For more information on the available options, see the https://www.typescriptlan
   // other dependencies
 }
 ----
-====
+=====
 
 [.include-with-JavaScript]
-====
-. Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
-+
+=====
+
+Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
+
 [source, bash]
 ----
 mkdir src
 touch src/index.js
 ----
-+
-. Replace the default `scripts` entry in your `package.json` file with the following:
-+
+
+Replace the default `scripts` entry in your `package.json` file with the following:
+
 [source, json]
 ----
 {
@@ -154,8 +156,10 @@ touch src/index.js
   // other dependencies
 }
 ----
+=====
+
 ====
-====
+
 +
 . This guide requires the installation of the following dependencies:
 +
