@@ -7,7 +7,7 @@ As such, it requires some dependencies to be included:
 
 * `@neo4j/graphql-ogm`: the OGM package.
 * `graphql`: the package used by the Neo4j GraphQL Library to generate a schema and execute queries and mutations.
-- `neo4j-driver`: the official Neo4j Driver package for JavaScript, necessary for interacting with the database.
+* `neo4j-driver`: the official Neo4j Driver package for JavaScript, necessary for interacting with the database.
 
 [source, bash, indent=0]
 ----
