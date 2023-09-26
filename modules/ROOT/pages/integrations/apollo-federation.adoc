@@ -1,5 +1,4 @@
 [[apollo-federation]]
-:description: This guide shows how to create a subgraph using the Neo4j GraphQL Library.
 = Apollo Federation
 :page-aliases: guides/apollo-federation.adoc
 :description: This guide shows how to create a subgraph using the Neo4j GraphQL Library, for composition into a supergraph using Apollo Federation.
@@ -66,7 +65,6 @@ npm pkg set type="module"
 ----
 +
 [NOTE]
-<<<<<<< HEAD
 ====
 This how-to guide sets up the project using ES Modules, which allows the usage of features such as top-level `await`.
 ====
@@ -80,20 +78,6 @@ This how-to guide sets up the project using ES Modules, which allows the usage o
 =====
 
 . Create a src directory with an empty index.ts file to contain the entrypoint to your code:
-=======
-===
-This how-to guide sets up the project using ES Modules, which allows the usage of features such as top-level `await`.
-===
-
-. Choose TypeScript or JavaScript to proceed with the setup:
-+
-[.tabbed-example]
-====
-
-[.include-with-Typescript]
-=====
-. Create a `src` directory with an empty `index.ts` file to contain the entrypoint to your code:
->>>>>>> dc07ba9 (Editorial review of the latest additions  (#34))
 +
 [source, bash]
 ----
@@ -108,22 +92,14 @@ touch src/index.ts
 npm install --save-dev typescript @types/node @tsconfig/node-lts
 ----
 +
-<<<<<<< HEAD
 . Create an empty tsconfig.json file containing the compiler configuration for TypeScript:
-=======
-. Create an empty `tsconfig.json` file containing the compiler configuration for TypeScript:
->>>>>>> dc07ba9 (Editorial review of the latest additions  (#34))
 +
 [source, bash]
 ----
 touch tsconfig.json
 ----
 +
-<<<<<<< HEAD
 . Add the following configuration to the tsconfig.json file:
-=======
-. Add the following configuration to the `tsconfig.json` file:
->>>>>>> dc07ba9 (Editorial review of the latest additions  (#34))
 +
 [source, json]
 ----
@@ -137,21 +113,12 @@ touch tsconfig.json
 ----
 +
 [NOTE]
-<<<<<<< HEAD
 ======
 This configuration extends the https://github.com/tsconfig/bases#node-lts-tsconfigjson[community base for Node.js LTS], provided by the @tsconfig/node-lts package installed above. 
 For more information on the available options, see the https://www.typescriptlang.org/tsconfig[TypeScript Compiler docs].
 ======
 +
 . Replace the default scripts entry in your package.json file with the following:
-=======
-===
-This configuration extends the https://github.com/tsconfig/bases#node-lts-tsconfigjson[community base for Node.js LTS], provided by the `@tsconfig/node-lts` package installed above. 
-For more information on the available options, see the https://www.typescriptlang.org/tsconfig[TypeScript Compiler docs].
-===
-+
-. Replace the default `scripts` entry in your `package.json` file with the following:
->>>>>>> dc07ba9 (Editorial review of the latest additions  (#34))
 +
 [source, json]
 ----
@@ -165,34 +132,20 @@ For more information on the available options, see the https://www.typescriptlan
 }
 ----
 =====
-<<<<<<< HEAD
 
 [.include-with-JavaScript]
 =====
 
-Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
-
-=======
-
-[.include-with-JavaScript]
-=====
 . Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
 +
->>>>>>> dc07ba9 (Editorial review of the latest additions  (#34))
 [source, bash]
 ----
 mkdir src
 touch src/index.js
 ----
-<<<<<<< HEAD
-
-Replace the default `scripts` entry in your `package.json` file with the following:
-
-=======
 +
 . Replace the default `scripts` entry in your `package.json` file with the following:
 +
->>>>>>> dc07ba9 (Editorial review of the latest additions  (#34))
 [source, json]
 ----
 {
@@ -204,13 +157,9 @@ Replace the default `scripts` entry in your `package.json` file with the followi
 }
 ----
 =====
-<<<<<<< HEAD
 
 ====
 
-=======
-====
->>>>>>> dc07ba9 (Editorial review of the latest additions  (#34))
 +
 . This guide requires the installation of the following dependencies:
 +
@@ -245,17 +194,10 @@ const typeDefs = `#graphql
 ----
 
 [NOTE]
-<<<<<<< HEAD
 ====
 This example only includes the Federation `@key` directive. 
 To use more https://www.apollographql.com/docs/federation/federated-types/federated-directives[Federation directives], add them to the `import` array.
 ====
-=======
-===
-This example only includes the Federation `@key` directive. 
-To use more https://www.apollographql.com/docs/federation/federated-types/federated-directives[Federation directives], add them to the `import` array.
-===
->>>>>>> dc07ba9 (Editorial review of the latest additions  (#34))
 
 == Define an entity
 
