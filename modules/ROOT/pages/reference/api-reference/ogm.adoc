@@ -1,0 +1,5 @@
+[[api-reference-ogm]]
+= `@neo4j/graphql-ogm`
+:page-aliases: api-reference/ogm.adoc
+
+See xref::ogm/reference.adoc[`OGM`].
