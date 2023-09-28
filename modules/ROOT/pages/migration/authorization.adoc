@@ -1,12 +1,14 @@
 = Authentication and Authorization
-:page-aliases: auth/global-authentication.adoc
+:description: This page describes the changes in authentication and authorization features in version 4.0.0 of the Neo4j GraphQL Library.
+:page-aliases: auth/global-authentication.adoc, migration/v4-migration/authorization.adoc
 
-The largest breaking change in version 4.0.0 is the removal of the `@auth` directive, which requires a migration to the new `@authentication`, `@authorization` and `@subscriptionsAuthorization` directives.
+The largest breaking change in version 4.0.0 is the removal of the `@auth` directive, which requires a migration to the new `@authentication`, `@authorization`, and `@subscriptionsAuthorization` directives.
 
 == Instantiation
 
-Whilst the `@auth` directive required the installation of an additional plugin package, the functionality for the new directives is built directly into the library. 
-You should uninstall the previous plugin:
+While the `@auth` directive required the installation of an additional plugin package, the functionality for the new directives is now built directly into the library.
+
+To start using it, you should uninstall the previous plugin:
 
 [source, bash, indent=0]
 ----
@@ -15,7 +17,7 @@ npm uninstall @neo4j/graphql-plugin-auth
 
 === Symmetric secret
 
-Given an example of instantiation using a symmetric secret with the plugin:
+Given this example of instantiation using a symmetric secret with the plugin:
 
 [source, typescript, indent=0]
 ----
@@ -112,8 +114,9 @@ This is to acknowledge the fact that there are a variety of servers which don't 
 === `rolesPath`
 
 The `rolesPath` argument was used to configure a custom path for the "roles" claim in the JWT structure. 
-This configuration has now been moved into the type definitions themselves. 
-So given a previous instantiation:
+This configuration has now been moved into the type definitions themselves.
+
+Given a previous instantiation:
 
 [source, typescript, indent=0]
 ----
@@ -139,11 +142,11 @@ type JWT @jwt {
 
 The type name itself can be anything, as long as it is decorated by `@jwt`.
 
-Whilst there is more setup required in this version, the strongly typed nature of the definition means there is significantly more powerful filtering options in version 4.0.0.
+Despite the extra setup steps required in 4.0.0, the strongly typed nature of the definition means there is now significantly more powerful filtering options.
 
 == Global authentication
 
-Global authentication was previously configured in the auth plugin consructor, for instance:
+Global authentication was previously configured in the auth plugin constructor, for instance:
 
 [source, typescript, indent=0]
 ----
@@ -187,13 +190,11 @@ type User @authorization(validate: [{ when: [BEFORE], where: { node: { id: "$jwt
 }
 ----
 
-Note that `allow` is no longer a discrete rule, but configured by a `when` argument which is an array accepting the values `BEFORE` and `AFTER`.
-
-It is expected that users will quite rarely need to specify this argument as it defaults to both, and most users will want to validate a node property both before and after each operation.
+Note that `allow` is no longer a discrete rule, but configured by a `when` argument, which is an array accepting the values `BEFORE` and `AFTER`.
 
 === `bind`
 
-Given an `bind` rule, which checks the `id` field of a `User` against the JWT subject _after_ any operation:
+Given a `bind` rule, which checks the `id` field of a `User` against the JWT subject _after_ any operation:
 
 [source, graphql, indent=0]
 ----
@@ -213,14 +214,12 @@ type User @authorization(validate: [{ when: [AFTER], where: { node: { id: "$jwt.
 
 Note that `bind` is no longer a discrete rule, but configured by a `when` argument which is an array accepting values `BEFORE` and `AFTER`.
 
-It is expected that users will quite rarely need to specify this argument as it defaults to both, and most users will want to validate a node property both before and after each operation.
-
 === `isAuthenticated`
 
 [WARNING]
 ====
 There isn't a direct replacement for the `isAuthenticated` argument.
-Please https://github.com/neo4j/graphql/issues/new/choose[raise a feature request] if this is blocking migration.
+https://github.com/neo4j/graphql/issues/new/choose[Raise a feature request] if this is blocking migration.
 ====
 
 Given a previous type definition, which required authentication for any operation on the type `User`:
@@ -258,7 +257,7 @@ This happens _before_ the database execution in order to restrict database acces
 
 === `roles`
 
-For these examples, the following type is required in the type definitions:
+For these examples, the following is required in the type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -267,7 +266,7 @@ type JWT @jwt {
 }
 ----
 
-Given the following type definition, which requires a user to have the "admin" role to perform any operation on the type `User`:
+Given the following type definition, which requires a user to have theb `admin` role to perform any operation on the type `User`:
 
 [source, graphql, indent=0]
 ----
@@ -287,10 +286,10 @@ type User @authorization(validate: [{ where: { jwt: { roles_INCLUDES: "admin" } 
 
 The following changes were made for this migration:
 
-* A `validate` rule has been used, which will throw an error without the role as per the `roles` argument in the `@auth` directive. 
+* If a `validate` rule has been used, it throws an error without the role as per the `roles` argument in the `@auth` directive.
 This can alternatively be a `filter` rule to just return zero results if a user does not have the required role.
 * `roles` has become `roles_INCLUDES`, because the xref::queries-aggregations/filtering.adoc[full filtering capabilities of the library] can now be used within the `@authorization` directive.
-* `roles` is no longer a top-level rule field, but nested within `where` under `jwt`.
+* `roles` is no longer a top-level rule field, but nested within `where`, under `jwt`.
 Any number of JWT claims can now be compared against, if configured within the type decorated with `@jwt`.
 
 === `where`
@@ -304,7 +303,7 @@ type User @auth(rules: [{ where: { id: "$jwt.sub" } }]) {
 }
 ----
 
-Now the `@authorization` directive must be:
+And now the `@authorization` directive must be:
 
 [source, graphql, indent=0]
 ----
