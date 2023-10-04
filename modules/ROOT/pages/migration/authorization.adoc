@@ -266,7 +266,7 @@ type JWT @jwt {
 }
 ----
 
-Given the following type definition, which requires a user to have theb `admin` role to perform any operation on the type `User`:
+Given the following type definition, which requires a user to have the `admin` role to perform any operation on the type `User`:
 
 [source, graphql, indent=0]
 ----
