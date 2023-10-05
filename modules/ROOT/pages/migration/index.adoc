@@ -1,729 +1,1012 @@
-[[migration-guide]]
-= Migration from `neo4j-graphql-js`
-:page-aliases: guides/index.adoc, guides/migration-guide/index.adoc, guides/migration-guide/server.adoc, guides/migration-guide/type-definitions.adoc, guides/migration-guide/mutations.adoc
+[[v4-migration]]
+:description: This page lists the breaking changes from version 3.0.0 to 4.0.0 and describes how to update.
+:page-aliases: guides/v4-migration/index.adoc , migration/v4-migration/index.adoc
+= Migration to 4.0.0
 
+This page lists all breaking changes from the Neo4j GraphQL Library version 3.x to 4.x and how to update it.
 
-`@neo4j/graphql` was never intended to be a drop-in replacement for `neo4j-graphql-js`. However, simple applications should have a fairly trivial migration process.
+== How to update
 
-== How to Upgrade
-
-You need to uninstall the old library and install the new one (and its peer dependencies) using npm or your package manager of choice:
+To update your Neo4j GraphQL Library, use npm or the package manager of choice:
 
 [source, bash, indent=0]
 ----
-npm uninstall neo4j-graphql-js
-npm install @neo4j/graphql graphql neo4j-driver
+npm update @neo4j/graphql
 ----
 
-Subscriptions are not supported at this stage.
+== Breaking changes
 
-[[migration-guide-server]]
-== Server
+Here is a list of all the breaking changes from version 3.0.0 to 4.0.0.
 
-[[migration-guide-server-schema-generation]]
-=== Schema Generation
+=== `IExecutableSchemaDefinition`
 
-In your server codebase, the process of creating an executable schema has changed. For a simple application, what used to be:
+If you were passing any arguments from https://the-guild.dev/graphql/tools/docs/api/interfaces/schema_src.iexecutableschemadefinition[`IExecutableSchemaDefinition`] into the library other than `typeDefs` and `resolvers`, these are no longer supported.
 
-[source, javascript, indent=0]
-----
-const { makeAugmentedSchema } = require("neo4j-graphql-js");
+=== `config.enableDebug`
 
-const typeDefs = require("./type-definitions");
+The programmatic toggle for debug logging has been moved from `config.enableDebug` to simply `debug`.
 
-const schema = makeAugmentedSchema({ typeDefs });
-----
+[cols="1,1"]
+|===
+|Before | Now
 
-Has become:
-
+a|
 [source, javascript, indent=0]
 ----
 const { Neo4jGraphQL } = require("@neo4j/graphql");
+const neo4j = require("neo4j-driver");
+const { ApolloServer } = require("apollo-server");
 
-const typeDefs = require("./type-definitions");
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
 
-const neo4jGraphQL = new Neo4jGraphQL({ typeDefs });
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("neo4j", "password")
+);
 
-const schema = await neo4jGraphQL.getSchema();
-----
-
-Additionally, the `Neo4jGraphQL` constructor allows you to pass in a driver instance instead of passing one in the context of each request.
-
-=== Schema Configuration
-
-The `neo4j-graphql-js` library would allow a user to configure the GraphQL schema via the `makeAugmentedSchema()` function.
-
-For example, to exclude all queries and all mutations:
-
-[source, javascript, indent=0]
-----
-const schema = makeAugmentedSchema({
-  typeDefs,
-  config: {
-    query: false, // exclude all queries
-    mutation: false // exclude all mutations
-  }
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    config: {
+      enableDebug: true,
+    }
 });
 ----
-
-Or to exclude queries for a specific type like so:
-
+a|
 [source, javascript, indent=0]
 ----
-const schema = makeAugmentedSchema({
-  typeDefs,
-  config: {
-    query: {
-      exclude: ["NameOfTypeToExclude"] // exclude query for type NameOfTypeToExclude
+const { Neo4jGraphQL } = require("@neo4j/graphql");
+const neo4j = require("neo4j-driver");
+const { ApolloServer } = require("apollo-server");
+
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("neo4j", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    debug: true,
+});
+----
+|===
+
+=== `driverConfig`
+
+Session configuration is now available only in the context under the `sessionConfig` key.
+Additionally, the `bookmarks` key has been removed as it is no longer needed with the bookmark manager of the newer driver.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, javascript, indent=0]
+----
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+    type User {
+        name: String
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("neo4j", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    config: {
+        driverConfig: {
+            database: "different-db"
+        },
     },
-    mutation: false // exclude all mutations
-  }
+})
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
 });
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ req }),
+});
+
 ----
-
-To achieve the same behaviour with the new `@neo4j/graphql` library, the GraphQL schema has to be extended instead. Note, no additional configuration or parameters need to be passed to the `getSchema()` function.
-
-To exclude all mutations for a specific type:
-[source, graphql, indent=0]
-----
-type NameOfType @exclude(operations: [CREATE, UPDATE, DELETE]) {
-  name: String
-}
-----
-
-Or to exclude all queries and all mutations for a specific type like so:
-
-[source, graphql, indent=0]
-----
-type NameOfTypeToExclude @exclude {
-  name: String
-}
-----
-For more information regarding the above used `@exclude` directive, see xref::/schema-configuration/type-configuration.adoc#_exclude_deprecated[`@exclude`]
-
-=== Database Configuration
-
-==== Driver
-
-Once a schema has been generated, it can be passed into a GraphQL server instance with the driver in the context, identical to using the old library. For example, using Apollo Server and using the schema generated above:
-
+a|
 [source, javascript, indent=0]
 ----
-const { ApolloServer } = require("apollo-server");
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
 
-const driver = require("./driver");
-const schema = require("./schema");
+const typeDefs = `#graphql
+    type User {
+        name: String
+    }
+`;
 
-const server = new ApolloServer({ schema, context: { driver } });
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("neo4j", "password")
+);
 
-server.listen().then(({ url }) => {
-    console.log(`@neo4j/graphql API ready at ${url}`);
+const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ sessionConfig: { database: "my-database" }}),
 });
 ----
+|===
 
-==== Multiple Databases
+=== `config.enableRegex`
 
-Multiple databases were supported in `neo4j-graphql-js` by passing a context key `neo4jDatabase` with the name of a database, for example for database called "sanmateo":
+This has been replaced by `MATCHES` in features.filters. 
+With this change comes more granularity in the feature configuration. 
+You can now enable the `MATCHES` filter on `String` and `ID` fields separately:
 
+[cols="1,1"]
+|===
+|Before | After
+
+a|
 [source, javascript, indent=0]
 ----
-const { ApolloServer } = require("apollo-server");
-
-const driver = require("./driver");
-const schema = require("./schema");
-
-const server = new ApolloServer({ schema, context: { driver, neo4jDatabase: "sanmateo" } });
-
-server.listen().then(({ url }) => {
-    console.log(`@neo4j/graphql API ready at ${url}`);
+neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    config: {
+        enableRegex: true
+   }
 });
 ----
-
-In `@neo4j/graphql`, this has now become:
-
+a|
 [source, javascript, indent=0]
 ----
+neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        filters: {
+            String: {
+                MATCHES: true,
+            },
+            ID: {
+                MATCHES: true,
+            },
+        },
+    },
+});
+----
+|===
+
+=== `queryOptions`
+
+If you had a need to pass in Cypher query options for query tuning, this interface has been changed.
+The config option `queryOptions` has now become `cypherQueryOptions` inside the context function, and it now accepts simple strings instead of enums.
+This change reflects the fact that the Cypher query options are set on a per-request basis.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, javascript, indent=0]
+----
+const { Neo4jGraphQL, CypherRuntime } = require("@neo4j/graphql");
 const { ApolloServer } = require("apollo-server");
 
-const driver = require("./driver");
-const schema = require("./schema");
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
 
-const server = new ApolloServer({ schema, context: { driver, driverConfig: { database: "sanmateo" } } });
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    config: {
+        queryOptions: {
+            runtime: CypherRuntime.INTERPRETED,
+        },
+    },
+});
 
-server.listen().then(({ url }) => {
-    console.log(`@neo4j/graphql API ready at ${url}`);
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ req }),
 });
 ----
 
-Database bookmarks are also supported. See xref::driver-configuration.adoc[Driver Configuration] for more information.
-
-[[migration-guide-type-definitions]]
-== Type Definitions
-
-This page will walk through what needs to change in your type definitions before you can pass them into `@neo4j/graphql`.
-
-=== Directives
-
-Both `neo4j-graphql-js` and `@neo4j/graphql` are highly driven by GraphQL directives. Each heading in this section will address how/if one or many directives available in `neo4j-graphql-js` can be migrated to `@neo4j/graphql`.
-
-==== `@relation`
-
-Migrating this directive is trivial:
-
-1. Rename `@relation` to `@relationship`
-2. Rename the argument `name` to `type`
-
-For example, `@relation(name: "ACTED_IN", direction: OUT)` becomes `@relationship(type: "ACTED_IN", direction: OUT)`.
-
-See xref::/type-definitions/types/relationships.adoc[Relationships] for more information on relationships in `@neo4j/graphql`.
-
-==== Relationship Properties
-
-If for instance using `neo4j-graphql-js`, you have the following type definitions defining an `ACTED_IN` relationship with a `roles` property:
-
-[source, graphql, indent=0]
+a|
+[source, javascript, indent=0]
 ----
-type Actor {
-    movies: [ActedIn!]!
-}
+const { Neo4jGraphQL } = require("@neo4j/graphql");
+const { ApolloServer } = require("apollo-server");
 
-type Movie {
-    actors: [ActedIn!]!
-}
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
 
-type ActedIn @relation(name: "ACTED_IN") {
-    from: Actor
-    to: Movie
-    roles: [String!]
-}
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+});
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ cypherQueryOptions: { runtime: "interpreted" }}),
+});
 ----
+|===
 
-This will need to be refactored to the following in the new library:
+=== `skipValidateTypeDefs`
 
-[source, graphql, indent=0]
+The argument has been moved to the top-level of the constructor input and renamed `validate`, which defaults to `true`.
+If you started using the `config.startupValidation` option, this has also been rolled into the same `validate` setting for simplicity.
+
+Likewise, the `resolvers` option is now just a warning, and `noDuplicateRelationshipFields` is now a mandatory check rolled into `validate`.
+
+Here is an example query of how it looks now:
+
+[cols="1,1"]
+|===
+|Before | After
+
+a|
+[source, javascript, indent=0]
 ----
-type Actor {
-    movies: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
-}
-
-type Movie {
-    actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
-}
-
-interface ActedIn @relationshipProperties {
-    roles: [String!]
-}
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    config: {
+        skipValidateTypeDefs: true,
+    },
+})
 ----
-
-Note the following changes to the `ActedIn` type:
-
-* Changed from `type` to `interface`
-* Removed `@relation` directive
-* Removed `from` and `to` fields
-
-And note the following changes to the two node types:
-
-* Relationship field types changed from the relationship type to the neighbouring node type
-* Normal `@relationship` directive added to each relationship field, with an additional `properties` argument pointing to the relationship properties interface
+a|
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    validate: false,
+})
+----
+|===
 
 === `@cypher`
 
-No change. See xref::/type-definitions/directives/cypher.adoc[`@cypher` directive] for more details on this directive in `@neo4j/graphql`.
+The default behavior of the `@cypher` directive regarding the translation has changed.
+Instead of using https://neo4j.com/labs/apoc/4.0/overview/apoc.cypher/apoc.cypher.runFirstColumnMany/[apoc.cypher.runFirstColumnMany], it directly wraps the query within a `CALL { }` subquery.
 
-==== `@neo4j_ignore`
+This update has proven to be more performant for the same queries, however, it may lead to unexpected changes, mainly when using Neo4j 5.x, where the subqueries need to be _aliased_.
 
-`@neo4j/graphql` offers two directives for skipping autogeneration for specified types/fields:
+On top of that, to improve performance, it is recommended to pass the returned alias in the property `columnName`, to ensure the subquery is properly integrated into the larger query.
 
-* xref::/schema-configuration/type-configuration.adoc#_exclude_deprecated[`@exclude`]: Skip generation of specified Query/Mutation fields for an object type
-* xref::custom-resolvers.adoc#custom-resolver-directive[`@customResolver`]: Ignore a field, which will need custom logic for resolution
-
-==== `@isAuthenticated`, `@hasRole` and `@hasScope`
-
-Will require significant migration, but will be worth the effort! See xref::authentication-and-authorization/index.adoc[Authentication and Authorization].
-
-==== `@additionalLabels`
-
-Not supported at this time.
-
-==== `@id`
-
-There is an equivalent directive in the new library, but it does not work using database constraints as per the old library. See xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`].
-
-==== `@unique`, `@index` and `@search`
-
-These all relate to database indexes and constraints, which are not currently supported by `@neo4j/graphql`.
-
-=== Types
-
-==== Scalar Types
-
-Supported as you would expect, with additional xref::/type-definitions/types/scalar.adoc[`BigInt`] support for 64 bit integers.
-
-==== Temporal Types (`DateTime`, `Date`)
-
-Temporal Types have been massively simplified in `@neo4j/graphql`, down to `DateTime` and `Date`, which use ISO 8601 and "yyyy-mm-dd" strings respectively for parsing and serialization.
-
-In terms of migrating from the old library, the `formatted` field of the old `DateTime` type now becomes the value itself. For example, used in a query:
+For example, the GraphQL query:
 
 [source, graphql, indent=0]
 ----
-{
-  Movie(released: { formatted: "1992-10-09T00:00:00Z" }) {
+type query {
+    test: String! @cypher(statement: "RETURN 'hello'")
+}
+----
+
+Would be translated to:
+[source,cypher, indent=0]
+----
+CALL {
+    RETURN 'hello'
+}
+WITH 'hello' AS this
+RETURN this
+----
+
+Which is invalid in Neo4j 5.x.
+To fix it, ensure the `RETURN` elements are aliased:
+
+[source, graphql, indent=0]
+----
+type query {
+    test: String! @cypher(statement: "RETURN 'hello' as result")
+}
+----
+
+Another way to use this update is through an experimental option with the `columnName` flag in the `@cypher` directive:
+
+[source, graphql, indent=0]
+----
+type query {
+    test: String! @cypher(statement: "RETURN 'hello' as result", columnName: "result")
+}
+----
+
+Note that escaping strings are no longer needed in Neo4j GraphQL 4.0.0.
+
+=== `@fulltext`
+
+In version 4.0.0, a number of improvements have been made to full-text queries.
+These include the ability to return the full-text score, filter by the score and sorting by the score.
+However, these improvements required a number of breaking changes.
+
+==== Full-text queries
+
+Full-text queries now need to be performed using a top-level query, instead of being performed using an argument on a node query.
+
+As a result, the following query is now invalid:
+
+[source, graphql, indent=0]
+----
+query {
+  movies(fulltext: { movieTitleIndex: { phrase: "Some Title" } }) {
     title
   }
 }
 ----
 
-Has become:
+The new top-level queries can be used to return the full-text score, which indicates the confidence of a match, as well as the nodes that have been matched.
+They now accept the following arguments:
+
+* `phrase`: specifies the string to search for in the full-text index.
+* `where`: accepts a min/max score as well as the normal filters available on a node.
+* `sort: used to sort using the score and node attributes.
+* `limit`: used to limit the number of results to the given integer.
+* `offset`: used to offset by the given number of results.
+
+This means that, for the following type definition:
 
 [source, graphql, indent=0]
 ----
-{
-  Movie(released: "1992-10-09T00:00:00Z") {
-    title
+type Movie @fulltext(indexes: [{ indexName: "MovieTitle", fields: ["title"] }]) { # Note that indexName is the new name for the name argument. More about this below.
+  title: String!
+}
+----
+
+The following top-level query and type definitions would be generated by the library:
+
+[source, graphql, indent=0]
+----
+type Query {
+  movieFulltextMovieTitle(phrase: String!, where: MovieFulltextWhere, sort: [MovieFulltextSort!], limit: Int, offset: Int): [MovieFulltextResult!]!
+}
+
+"""The result of a fulltext search on an index of Movie"""
+type MovieFulltextResult {
+  score: Float
+  movies: Movie
+}
+
+"""The input for filtering a fulltext query on an index of Movie"""
+input MovieFulltextWhere {
+  score: FloatWhere
+  movie: MovieWhere
+}
+
+"""The input for sorting a fulltext query on an index of Movie"""
+input MovieFulltextSort {
+  score: SortDirection
+  movie: MovieSort
+}
+
+"""The input for filtering the score of a fulltext search"""
+input FloatWhere {
+  min: Float
+  max: Float
+}
+----
+
+This query can then be used to perform a full-text query:
+
+[source, graphql, indent=0]
+----
+query {
+  movieFulltextMovieTitle(
+    phrase: "Full Metal Jacket",
+    where: { score: min: 0.4 },
+    sort: [{ movie: { title: ASC } }],
+    limit: 5,
+    offset: 10
+  ) {
+    score
+    movies {
+      title
+    }
   }
 }
 ----
 
-Due to the move to ISO 8601 strings, input types are no longer necessary for temporal instances, so `_Neo4jDateTimeInput` has become `DateTime` and `_Neo4jDateInput` has become `Date` for input.
+And thus return results in the following format:
 
-See xref::/type-definitions/types/temporal.adoc[Temporal Types].
-
-==== Spatial Types
-
-The single type in `neo4j-graphql-js`, `Point`, has been split out into two types:
-
-* xref::/type-definitions/types/spatial.adoc#_point[`Point`]
-* xref::/type-definitions/types/spatial.adoc#_cartesianpoint[`CartesianPoint`]
-
-Correspondingly, `_Neo4jPointInput` has also been split out into two input types:
-
-* `PointInput`
-* `CartesianPointInput`
-
-Using them in Queries and Mutations should feel remarkably similar.
-
-==== Interface Types
-
-Supported, queryable using inline fragments as per `neo4j-graphql-js`, but can also be created using Nested Mutations. See xref::/type-definitions/types/interfaces.adoc[Interfaces].
-
-==== Union Types
-
-Supported, queryable using inline fragments as per `neo4j-graphql-js`, but can also be created using Nested Mutations. See xref::/type-definitions/types/unions.adoc#type-definitions-unions[Unions].
-
-=== Fields
-
-==== `_id`
-
-An `_id` field exposing the underlying node ID is not included in each type by default in `@neo4j/graphql` like it was in `neo4j-graphql-js`. If you require this functionality (however, it should be noted that underlying node IDs should not be relied on because they can be reused), you can include a field definition such as in the following type definition:
-
-[source, graphql, indent=0]
+[source, json, indent=0]
 ----
-type ExampleType {
-  _id: ID! @cypher(statement: "RETURN ID(this)")
+{
+  "data": {
+    "movieFulltextMovieTitle": [
+      {
+        "score": 0.44524085521698,
+        "movie": {
+          "title": "Full Moon High"
+        }
+      },
+      {
+        "score": 1.411118507385254,
+        "movie": {
+          "title": "Full Metal Jacket"
+        }
+      }
+    ]
+  }
 }
 ----
 
-[[migration-guide-queries]]
-== Queries
+==== Argument changes
 
-Using `neo4j-graphql-js`, all of the arguments for a Query were root-level arguments. For example, for the following simple type definition:
+The following changes have been made to `@fulltext` arguments:
 
-[source, graphql, indent=0]
-----
-type Movie {
-    title: String!
-    averageRating: Float
-}
-----
+* `queryName` has been added to specify a custom name for the top-level query that is generated.
+* `name` has been renamed to `indexName` to avoid ambiguity with the new `queryName` argument.
 
-The following Query would have been generated:
+These changes mean that the following type definition is now invalid:
 
 [source, graphql, indent=0]
 ----
-type Query {
-    Movie(title: String, averageRating: Float, first: Int, offset: Int, orderBy: [_MovieOrdering], filter: _MovieFilter): [Movie]
+type Movie @fulltext(indexes: [{ name: "MovieTitle", fields: ["title"] }]) {
+  title: String!
 }
 ----
 
-In `@neo4j/graphql`, the ethos has been to simplify the top-level arguments:
+The `name` argument now needs to be replaced with `indexName`:
+
+[source, graphql, indent=0]
+----
+type Movie @fulltext(indexes: [{ indexName: "MovieTitle", fields: ["title"] }]) {
+  title: String!
+}
+----
+
+As an example, the `queryName` argument can be used as:
+
+[source, graphql, indent=0]
+----
+type Movie @fulltext(indexes: [{ queryName: "moviesByTitle", indexName: "MovieTitle", fields: ["title"] }]) {
+  title: String!
+}
+----
+
+This means the top-level query is now `moviesByTitle` instead of `movieFulltextMovieTitle`:
 
 [source, graphql, indent=0]
 ----
 type Query {
-    movies(where: MovieWhere, options: MovieOptions): [Movie]!
+  moviesByTitle(phrase: String!, where: MovieFulltextWhere, sort: [MovieFulltextSort!], limit: Int, offset: Int): [MovieFulltextResult!]!
 }
 ----
 
-Changes to note for migration:
+== Subscription options
 
-* Query fields were previously named in the singular, and in _PascalCase_ - they are now pluralized and in _camelCase_
-* Query return types were previously in nullable lists of nullable types - they are now non-nullable lists of non-nullable types, _e.g._ `[Movie]` is now `[Movie!]!`; ensuring either an array of defined `Movie` objects or an empty array.
-* In this example, the `_MovieFilter` type has essentially been renamed to `MovieWhere`, the `filter` arguments renamed to `where`, and the top-level field arguments `title` and `averageRating` removed - see xref::migration/index.adoc#migration-guide-queries-filtering[Filtering (`where`)] below
-* The `first`, `offset` and `orderBy` have been collapsed into the `MovieOptions` type and renamed `limit`, `offset` and `sort`, respectively - see xref::migration/index.adoc#migration-guide-queries-options[Sorting and Pagination (`options`)] below.
+Subscriptions are no longer configured as a plugin, but as a feature within the `features` option.
 
-[[migration-guide-queries-filtering]]
-=== Filtering (`where`)
-
-Simple equality fields are no longer available at the root of Query fields. As a simple demonstration, a simple query using `neo4j-graphql-js` that looked like:
-
-[source, graphql, indent=0]
-----
-query {
-    Movie(title: "Forrest Gump") {
-        averageRating
-    }
-}
-----
-
-Is now changed to the following using `@neo4j/graphql`:
-
-[source, graphql, indent=0]
-----
-query {
-    movies(where: { title: "Forrest Gump" }) {
-        averageRating
-    }
-}
-----
-
-When discussing how the field `where` of type `MovieWhere` differs to the field `filter` of `_MovieFilter` the following table can be used for guidance:
-
-.Comparing the fields of the `_MovieFilter` and `MovieWhere` types
 [cols="1,1"]
 |===
-|`neo4j-graphql-js` |`@neo4j/graphql`
+|Before | Now
 
-|`AND: [_MovieFilter!]`
-|`AND: [MovieWhere!]`
-
-|`OR: [_MovieFilter!]`
-|`OR: [MovieWhere!]`
-
-|`NOT: _MovieFilter!`
-|`NOT: MovieWhere!`
-
-|`title: String`
-|`title: String`
-
-|`title_in: [String!]`
-|`title_IN: [String!]`
-
-|`title_contains: String`
-|`title_CONTAINS: String`
-
-|`title_starts_with: String`
-|`title_STARTS_WITH: String`
-
-|`title_ends_with: String`
-|`title_ENDS_WITH: String`
-
-|`title_regexp: String`
-|`title_MATCHES: String`
-
-|`averageRating: Float`
-|`averageRating: Float`
-
-|`averageRating_in: [Float!]`
-|`averageRating_IN: [Float]`
-
-|`averageRating_lt: Float`
-|`averageRating_LT: Float`
-
-|`averageRating_lte: Float`
-|`averageRating_LTE: Float`
-
-|`averageRating_gt: Float`
-|`averageRating_GT: Float`
-
-|`averageRating_gte: Float`
-|`averageRating_GTE: Float`
+a|
+[source, javascript]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    plugins: {
+        subscriptions: plugin,
+    },
+});
+----
+a|
+[source, javascript]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        subscriptions: plugin,
+    },
+});
+----
 |===
 
-For filtering on relationship fields, the `_some`, `_none`, `_single` and `_every` filters are not yet implemented.
+=== Default subscriptions
 
-[[migration-guide-queries-options]]
-=== Sorting and Pagination (`options`)
+The class `Neo4jGraphQLSubscriptionsSingleInstancePlugin` is no longer exported. 
+Instead, the default subscriptions behavior can be enabled by setting the `subscriptions` option to `true` .
 
-==== Sorting
+[cols="1,1"]
+|===
+|Before | Now
 
-Sorting has changed somewhat in `@neo4j/graphql`. For the example being used in this page, the `_MovieOrdering` type in `neo4j-graphql-js` was an enum which looked like the following:
+a|
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    plugin: {
+        subscriptions: new Neo4jGraphQLSubscriptionsSingleInstancePlugin(),
+    },
+});
+----
+a|
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        subscriptions: true
+    },
+});
+----
+|===
 
+=== Neo4j GraphQL subscriptions AMQP package
+
+The name of the interface underlying the subscriptions system has changed from `Neo4jGraphQLSubscriptionsPlugin` to `Neo4jGraphQLSubscriptionsEngine`. 
+If you were previously using the `@neo4j/graphql-plugins-subscriptions-amqp` package, this has been changed to `@neo4j/graphql-amqp-subscriptions-engine` to reflect this underlying change.
+
+To keep using it, uninstall the previous package and install the new one:
+
+[source, bash, indent=0]
+----
+npm uninstall @neo4j/graphql-plugins-subscriptions-amqp
+npm install @neo4j/graphql-amqp-subscriptions-engine
+----
+
+Then update any imports:
+
+[cols="1,1"]
+|===
+|From | To
+
+a|
+[source, javascript, indent=0]
+----
+import { Neo4jGraphQLSubscriptionsAMQPPlugin } from "@neo4j/graphql-plugins-subscriptions-amqp";
+----
+a|
+[source, javascript, indent=0]
+----
+import { Neo4jGraphQLAMQPSubscriptionsEngine } from "@neo4j/graphql-amqp-subscriptions-engine";
+----
+|===
+
+And change the instantiations:
+
+[cols="1,1"]
+|===
+|From | To
+
+a|
+[source, javascript, indent=0]
+----
+const plugin = new Neo4jGraphQLSubscriptionsAMQPPlugin({
+    connection: {
+        hostname: "localhost",
+        username: "guest",
+        password: "guest",
+    },
+});
+----
+a|
+[source, javascript, indent=0]
+----
+const subscriptionsEngine = new Neo4jGraphQLAMQPSubscriptionsEngine({
+    connection: {
+        hostname: "localhost",
+        username: "guest",
+        password: "guest",
+    },
+});
+----
+|===
+
+=== Custom subscription plugins
+
+The underlying subscription system has not changed.
+Custom behavior can be implemented the same way, by creating a class implementing the interface described in xref::subscriptions/engines.adoc#custom-subscription[Subscriptions engines].
+
+However, if using TypeScript, the exported interface to implement these classes has been renamed from `Neo4jGraphQLSubscriptionsPlugin` to `Neo4jGraphQLSubscriptionsEngine`.
+
+== Updated directives
+
+A number of directives and their arguments have been renamed in order to make using `@neo4j/graphql` more intuitive.
+Here is a table with all the changes:
+
+[cols="1,2,2"]
+|===
+|Before | Now | Example
+
+|`@alias`
+|Properties in the alias directive are now automatically escaped using backticks. 
+If you were using backticks in the `property` argument of your `@alias` directives, you should now remove the escape strings as this is covered by the library.
+a|
 [source, graphql, indent=0]
 ----
-enum _MovieOrdering {
-    title_asc
-    title_desc
-    averageRating_asc
-    averageRating_desc
+type User {
+    id: ID! @id
+    username: String! @alias(property: "dbUserName")
 }
 ----
 
-You could then query all movies ordered by title ascending by executing:
-
+|`@callback`
+|Renamed to `@populatedBy`.
+Additionally, the `name` argument has been renamed to `callback` and it is still used to specify the callback used to populate the field's value.
+a|
+.Before
 [source, graphql, indent=0]
 ----
-query {
-    Movie(orderBy: [title_asc]) {
-        title
+type User {
+  id: ID! @callback(name: "nanoid", operations: [CREATE])
+  firstName: String!
+  surname: String!
+}
+----
+
+.Now
+[source, graphql, indent=0]
+----
+new Neo4jGraphQL({
+  typeDefs,
+  features: { // changed from config
+    populatedBy: { // changed from callback
+      callbacks: {
+        nanoid: () => { return nanoid(); }
+      }
     }
-}
+  }
+});
 ----
 
-In `@neo4j/graphql`, the sorting type `MovieSort` has become an input type with each field as an enum, like follows:
+|`@computed` 
+a|Renamed to `@customResolver`.
+Note that before and after these changes, a custom resolver needs to be defined as follows:
 
-[source, graphql, indent=0]
+[source, javascript, indent=0]
 ----
-enum SortDirection {
-    ASC
-    DESC
-}
-
-input MovieSort {
-    title: SortDirection
-    averageRating: SortDirection
-}
-----
-
-To fetch all movies sorted by title ascending as per above, you would execute:
-
-[source, graphql, indent=0]
-----
-query {
-    movies(options: { sort: [{ title: ASC }] }) {
-        title
+new Neo4jGraphQL({
+  typeDefs,
+  resolvers: {
+    User: {
+      fullName: ({ firstName, lastName }, args, context, info) => (`${firstName} ${lastName}`),
     }
+  }
+});
+----
+
+a|
+.Before
+[source, graphql, indent=0]
+----
+type User {
+  firstName: String!
+  lastName: String!
+  fullName: String! @computed(from: ["firstName", "lastName"])
 }
 ----
 
-==== Pagination
-
-Pagination is broadly similar, with the arguments just renamed and moved a level deeper. For example, to return "page 3, with 10 results per page" using `neo4j-graphql-js` was:
-
+.Now
 [source, graphql, indent=0]
 ----
-query {
-    Movie(offset: 20, first: 10) {
-        title
-    }
+type User {
+  firstName: String!
+  lastName: String!
+  fullName: String! @customResolver(requires: ["firstName", "lastName"])
 }
 ----
 
-Using `@neo4j/graphql`, this will now be:
-
+|`from`
+a| Renamed to `requires`.
+In version 4.0.0, it is now possible to require non-scalar fields, which means it is also possible to require fields on related type. +
+{nbsp} +
+Additionally, the `requires` argument now accepts a GraphQL selection set instead of a list of strings and also validates the required selection set against your type definitions.
+This means that if there is no field called `someFieldThatDoesNotExist`, an error would be thrown on startup if you tried to use the following type definitions: +
+{nbsp} +
 [source, graphql, indent=0]
 ----
-query {
-    movies(options: { offset: 20, limit: 10 }) {
-        title
-    }
+type User {
+    firstName: String!
+    lastName: String!
+    fullName: String! @customResolver(requires: "firstName someFieldThatDoesNotExist")
 }
 ----
 
-[[migration-guide-mutations]]
-== Mutations
-
-This section will walk through each operation available through GraphQL Mutations, and how to migrate each from `neo4j-graphql-js` to `@neo4j/graphql`.
-
-The examples in this section will be based off the following type definitions (which have been migrated over to `@neo4j/graphql` syntax):
-
+a|
+.Before
 [source, graphql, indent=0]
 ----
-type Actor {
+type User {
+    firstName: String!
+    lastName: String!
+    fullName: String! @customResolver(requires: ["firstName", "lastName"])
+}
+----
+
+.Now
+[source, graphql, indent=0]
+----
+type User {
+    firstName: String!
+    lastName: String!
+    fullName: String! @customResolver(requires: "firstName lastName")
+}
+----
+
+.Additional example
+[source, graphql, indent=0]
+----
+interface Publication {
+    publicationYear: Int!
+}
+
+type Author {
     name: String!
-    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+    publications: [Publication!]! @relationship(type: "WROTE", direction: OUT)
+    publicationsWithAuthor: [String!]!
+        @customResolver(
+            requires: "name publications { publicationYear ...on Book { title } ... on Journal { subject } }"
+        )
+}
+
+type Book implements Publication {
+    title: String!
+    publicationYear: Int!
+    author: [Author!]! @relationship(type: "WROTE", direction: IN)
+}
+
+type Journal implements Publication {
+    subject: String!
+    publicationYear: Int!
+    author: [Author!]! @relationship(type: "WROTE", direction: IN)
+}
+----
+
+|`@exclude`
+|Replaced by `@query`, `@mutation`, and `@subscription`.
+These new directives allow for fully granular configuration for each operation.
+a|* `@exclude` -> `@query(read: false, aggregate: false) @mutation(operations: []) @subscription(events: [])`. +
+* `@exclude(operations: [READ])` -> `@query(read: false, aggregate: false)`. +
+* `@exclude(operation: [CREATE, UPDATE, DELETE])` -> `@mutation(operations: [])`.
+
+|`@id`
+a|Deprecated with _all_ of its arguments removed and/or replaced.
+a|*`autogenerate` -> `@unique`* +
+The default value was `true`.
+If set to `false`, the `@id` directive was almost a no-op only used to manage a unique node property constraint.
+Use the `@unique` directive instead. +
+{nbsp} +
+*`global` -> `@relayId`* +
+This argument was used to configure the field that would form the global node identifier for Relay.
+This functionality has been moved into its own directive, `@relayId`. The use of `@relayId` will ensure a unique node property constraint for the field. +
+{nbsp} +
+*`@id` -> `unique` + `@id`* +
+The `@id` directive used to also manage unique node property constraints for a field. 
+This functionality has been removed.
+Use the `@unique` directive in combination with `@id` if you want the field to be backed by a constraint.
+
+|`@plural`
+|Removed from `@node` and replaced by the `@plural` directive.
+It takes the pluralized type name using the `value` argument.
+a|
+.Invalid `plural` type definition
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB", plural: "Techs") {
+  name: String
+}
+----
+
+.Updated version
+
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB") @plural(value: "Techs") {
+  name: String
+}
+----
+
+|`label` and `additionalLabels`
+a|Removed from `@node` and replaced by `labels`.
+It accepts a list of string labels that are used when a node of the given GraphQL type is created. +
+{nbsp} +
+Note that defining `labels` means taking control of the database labels of the node. 
+Indexes and constraints in Neo4j only support a single label, for which the first element of the `labels` argument will be used. +
+{nbsp} +
+As before, providing none of these arguments results in the node label being the same as the GraphQL type name.
+This can cause implications on constraits.
+For instance, in the case where unique constraint is asserted for the label `Tech` and the property `name`: +
+{nbsp} +
+[source, graphql, indent=0]
+----
+type Tech @node(labels: ["Tech", "TechDB"]) {
+  name: String @unique
+}
+----
+a|
+.Current equivalent to `label`
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB") {
+  name: String
+}
+# becomes
+type Tech @node(labels: ["TechDB"]) {
+  name: String
+}
+----
+
+.Current equivalent to `additionalLabels`
+[source, graphql, indent=0]
+----
+type Tech @node(additionalLabels: ["TechDB"]) {
+  name: String
+}
+# becomes
+type Tech @node(labels: ["Tech", "TechDB"]) {
+  name: String
+}
+----
+
+.Current equivalent to both arguments
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB", additionalLabels: ["AwesomeTech"]) {
+  name: String
+}
+# becomes
+type Tech @node(labels: ["TechDB", "AwesomeTech"]) {
+  name: String
+}
+----
+
+|`@queryOptions` and `limit`
+| Removed and moved to `@limit`.
+a|
+.Outdated example
+[source, graphql, indent=0]
+----
+type Record @queryOptions(limit: { default: 10, max: 100 }) {
+  id: ID!
+}
+----
+
+.Updated version using `@limit`
+[source, graphql, indent=0]
+----
+type Record @limit(default: 10, max: 100) {
+  id: ID!
+}
+----
+
+|`@readonly` and `@writeonly` 
+|Removed and replaced by the `@selectable` and `@settable` directives.
+They can be used to configure not only if fields are readable or writable, but also when they should be readable or writable.
+a|* `@readonly` -> `@settable(onCreate: false, onUpdate: false)`
+* `@writeonly` -> `@selectable(onRead: false, onAggregate: false)`
+
+|`@query` and `@relationship`
+|Aggregation operations are no longer generated by default.
+They can be enabled case by case using the directives xref::/schema-configuration/type-configuration.adoc#_query[`@query`] and xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`].
+a|
+[source, graphql, indent=0]
+----
+type Movie {
+  title: String!
+}
+
+type Actor @query(aggregate: true) {
+  name: String!
+  actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, aggregate: true) 
+}
+----
+|===
+
+[relationship-aggregate]
+== Relationship updates
+
+Here are the changes and updates to `@relationship`-related features.
+
+[discrete]
+=== *Relationship types are now automatically escaped*
+
+Relationship types are now automatically escaped. 
+If you have previously escaped your relationship types using backticks, you must now remove these as this is covered by the library.
+
+[discrete]
+=== *`@relationshipProperties` now mandatory*
+
+Current changes require the distinction between interfaces that are used to specify relationship properties, and others. 
+Therefore, the `@relationshipProperties` directive is now required on all relationship property interfaces.
+If it is not included, an error is thrown.
+
+As a result, in version 4.0.0, the following type definitions are invalid:
+
+[source, graphql, indent=0]
+----
+type Person {
+  name: String!
+  movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedIn")
 }
 
 type Movie {
-    title: String!
-    averageRating: Float
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
+  title: String!
+  actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
+}
+
+interface ActedIn {
+  screenTime: Int!
 }
 ----
 
-A summary of migration points is as follows:
-
-* Mutations which were previously in the singular and in _PascalCase_ are now pluralized and in _camelCase_ - for example `CreateMovie` has become `createMovies`
-* Connect and disconnect Mutations are no longer present, these operations are accessed through an update Mutation
-* The object(s) being mutated are returned as a nested field, to allow for metadata about the operation to be added in future
-* Mutation arguments are now commonly named between different types, but with different input types - such as `where` and `input`
-
-> Note that xref::mutations/index.adoc[Mutations] in `@neo4j/graphql` are incredibly powerful, and it is well worthwhile reading about them in full. You might find that you can collapse multiple current mutations down into one!
-
-=== Creating
-
-For creating nodes, the input arguments of `neo4j-graphql` have been moved inside an `input` argument in `@neo4j/graphql`.
-
-For example, creating a movie using the old library:
+`ActedIn` must be decorated with `@relationshipProperties`:
 
 [source, graphql, indent=0]
 ----
-mutation {
-    CreateMovie(title: "Forrest Gump") {
-        title
-    }
+interface ActedIn @relationshipProperties {
+  screenTime: Int!
 }
 ----
 
-Looks like the following using `@neo4j/graphql`:
+[discrete]
+=== Duplicate relationship fields are now checked for
+
+In 3.0.0, it was possible to define schemas with types that have multiple relationship fields connected by the same type of relationships. 
+Now, this kind of scenario is detected during schema generation and an error is thrown so developers are informed to fix the type definitions.
+
+Here is an example of what is now considered invalid with these checks:
 
 [source, graphql, indent=0]
 ----
-mutation {
-    createMovies(input: { title: "Forrest Gump" }) {
-        movies {
-            title
-        }
-    }
+type Team {
+    player1: Person! @relationship(type: "PLAYS_IN", direction: IN)
+    player2: Person! @relationship(type: "PLAYS_IN", direction: IN)
+    backupPlayers: [Person!]! @relationship(type: "PLAYS_IN", direction: IN)
+}
+
+type Person {
+    teams: [Team!]! @relationship(type: "PLAYS_IN", direction: OUT)
 }
 ----
 
-Note that `movies` must also be first selected in the selection set.
+In this example, there are multiple fields in the `Team` type which have the same `Person` type, the same `@relationship` type and ("PLAYS_IN") direction (IN). This is an issue when returning data from the database, as there would be no difference between `player1`, `player2` and `backupPlayers`. Selecting these fields would then return the same data.
 
-=== Updating
+These checks can be disabled by disabling all validation in the library, however, this is not recommended unless in production with 100% confidence of type definitions input.
 
-An update Mutation using `neo4j-graphql-js` had all of the arguments at the root of the Mutation, including the filter and fields to change.
-
-This has all changed in `@neo4j/graphql`, with a `where` argument to select the node, and then an `update` argument (amongst many others) to select what to update.
-
-For example, updating the average rating of the Movie Forrest Gump:
-
-[source, graphql, indent=0]
+[source, javascript, indent=0]
 ----
-mutation {
-    UpdateMovie(title: "Forrest Gump", averageRating: 5.0) {
-        title
-        averageRating
-    }
-}
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    validate: false,
+});
 ----
 
-Will look like the following using the new library:
+== `cypherParams`
 
-[source, graphql, indent=0]
-----
-mutation {
-    updateMovies(where: { title: "Forrest Gump" }, update: { averageRating: 5.0 }) {
-        movies {
-            title
-            averageRating
-        }
-    }
-}
-----
-
-=== Deleting
-
-The arguments for selecting which node to delete have now been moved into a `where` argument.
-
-Additionally, the return value is now a `DeleteInfo` object informing how many nodes and relationships were deleted.
-
-For example, deleting a movie:
-
-[source, graphql, indent=0]
-----
-mutation {
-    DeleteMovie(title: "Forrest Gump") {
-        title
-    }
-}
-----
-
-Looks like the following using `@neo4j/graphql`:
-
-[source, graphql, indent=0]
-----
-mutation {
-    deleteMovies(where: { title: "Forrest Gump" }) {
-        nodesDeleted
-        relationshipsDeleted
-    }
-}
-----
-
-=== Connecting
-
-Using `neo4j-graphql-js`, connecting two of the nodes in this example would have been achieved by executing either the `AddMovieActors` or `AddActorMovies` Mutation.
-
-In `@neo4j/graphql`, this is achieved by specifying the `connect` argument on either the `updateMovies` or `updateActors` Mutation.
-
-For example:
-
-[source, graphql, indent=0]
-----
-mutation {
-    AddMovieActors(from: { name: "Tom Hanks" }, to: { title: "Forrest Gump" }) {
-        from {
-            name
-        }
-        to {
-            title
-        }
-    }
-}
-----
-
-Would become the following using `@neo4j/graphql`:
-
-[source, graphql, indent=0]
-----
-mutation {
-    updateMovies(
-        where: { title: "Forrest Gump" }
-        connect: { actors: { where: { node: { name: "Tom Hanks" } } } }
-    ) {
-        movies {
-            title
-            actors {
-                name
-            }
-        }
-    }
-}
-----
-
-Note, there are many ways to achieve the same goal using the powerful Mutation ability of `@neo4j/graphql`, so do what feels best for your data!
-
-=== Disconnecting
-
-Similarly to connecting, using `neo4j-graphql-js`, disconnecting two of the nodes in this example would have been achieved by executing either the `RemoveMovieActors` or `RemoveActorMovies` Mutation.
-
-In `@neo4j/graphql`, this is achieved by specifying the `disconnect` argument on either the `updateMovies` or `updateActors` Mutation.
-
-For example:
-
-[source, graphql, indent=0]
-----
-mutation {
-    RemoveMovieActors(from: { name: "Tom Hanks" }, to: { title: "Forrest Gump" }) {
-        from {
-            name
-        }
-        to {
-            title
-        }
-    }
-}
-----
-
-Would become the following using `@neo4j/graphql`:
-
-[source, graphql, indent=0]
-----
-mutation {
-    updateMovies(
-        where: { title: "Forrest Gump" }
-        disconnect: { actors: { where: { node: { name: "Tom Hanks" } } } }
-    ) {
-        movies {
-            title
-            actors {
-                name
-            }
-        }
-    }
-}
-----
-
-In the result field `actors`, Tom Hanks should no longer be present.
-
+In 3.0.0, `cypherParams` was available in the context to provide the ability to pass arbitrary parameters to a custom Cypher query. 
+This functionality remains in 4.0.0, but you no longer have to use the `$cypherParams` prefix to reference these parameters.
