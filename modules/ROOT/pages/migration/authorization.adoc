@@ -217,10 +217,10 @@ Note that `bind` is no longer a discrete rule, but configured by a `when` argume
 === `isAuthenticated`
 
 [WARNING]
-===
+====
 There isn't a direct replacement for the `isAuthenticated` argument.
 https://github.com/neo4j/graphql/issues/new/choose[Raise a feature request] if this is blocking migration.
-===
+====
 
 Given a previous type definition, which required authentication for any operation on the type `User`:
 
