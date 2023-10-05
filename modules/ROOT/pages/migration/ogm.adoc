@@ -1,22 +1,9 @@
 = OGM
-<<<<<<< HEAD
-<<<<<<< HEAD:modules/ROOT/pages/migration/ogm.adoc
-:description: This page describes what updates were made to the OGM tool in version 4.0.0 of the Neo4j GraphQL Library.
-:page-aliases: guides/v4-migration/ogm.adoc, migration/v4-migration/ogm.adoc
-=======
-:page-aliases: guides/v4-migration/ogm.adoc
-
->>>>>>> e533fd8 (Add page-aliases for version 4 (#31) (#32)):modules/ROOT/pages/migration/v4-migration/ogm.adoc
-
-This page describes what updates were made to the OGM tool in version 4.0.0 of the Neo4j GraphQL Library.
-
-=======
 :description: This page describes what updates were made to the OGM tool in version 4.0.0 of the Neo4j GraphQL Library.
 :page-aliases: guides/v4-migration/ogm.adoc, migration/v4-migration/ogm.adoc
 
 This page describes what updates were made to the OGM tool in version 4.0.0 of the Neo4j GraphQL Library.
 
->>>>>>> 166b72c (Update to the migrations guide (#43))
 == Database specification
 
 The method to specify the database that the OGM should use has been changed.
