@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 166b72c (Update to the migrations guide (#43))
 [[v4-migration]]
 :description: This page lists the breaking changes from version 3.0.0 to 4.0.0 and describes how to update.
 :page-aliases: guides/v4-migration/index.adoc , migration/v4-migration/index.adoc
 = Migration to 4.0.0
+<<<<<<< HEAD
 =======
 [[migration-guide]]
 = Migration from `neo4j-graphql-js`
@@ -14,6 +18,13 @@ This page lists all breaking changes from the Neo4j GraphQL Library version 3.x 
 
 == How to update
 
+=======
+
+This page lists all breaking changes from the Neo4j GraphQL Library version 3.x to 4.x and how to update it.
+
+== How to update
+
+>>>>>>> 166b72c (Update to the migrations guide (#43))
 To update your Neo4j GraphQL Library, use npm or the package manager of choice:
 
 [source, bash, indent=0]
