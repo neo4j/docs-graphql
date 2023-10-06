@@ -4,4 +4,3 @@
 
 - xref::reference/api-reference/neo4jgraphql.adoc[`Neo4jGraphQL`]
 - xref::reference/api-reference/ogm.adoc[`@neo4j/graphql-ogm`]
-

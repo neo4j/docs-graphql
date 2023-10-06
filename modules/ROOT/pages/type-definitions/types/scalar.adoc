@@ -43,7 +43,7 @@ query {
 ----
 
 | `Float`
-| Placeholder text to make the table prettier.
+| Represents signed double‐precision fractional values.
 a|
 [source, graphql, indent=0]
 ----
@@ -63,7 +63,7 @@ type Product {
 ----
 
 | `Boolean`
-| Placeholder text to make the table prettier.
+| Represents `true` or `false`.
 a|
 [source, graphql, indent=0]
 ----

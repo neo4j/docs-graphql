@@ -56,13 +56,11 @@
 *** xref:authentication-and-authorization/authorization.adoc[]
 *** xref:authentication-and-authorization/impersonation-and-user-switching.adoc[]
 
-** Migration Guides
-*** xref:migration/index.adoc[Migration from `neo4j-graphql-js`]
-*** xref:migration/v2-migration.adoc[]
-*** xref:migration/v3-migration.adoc[]
-*** xref:migration/v4-migration/index.adoc[]
-**** xref:migration/v4-migration/authorization.adoc[]
-**** xref:migration/v4-migration/ogm.adoc[]
+** xref:introspector.adoc[Introspector]
+
+** xref:migration/index.adoc[Migration guide]
+*** xref:migration/authorization.adoc[]
+*** xref:migration/ogm.adoc[]
 
 ** xref:ogm/index.adoc[]
 *** xref:ogm/installation.adoc[]
