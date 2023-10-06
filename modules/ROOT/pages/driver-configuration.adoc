@@ -1,5 +1,5 @@
 [[driver-configuration]]
-= Driver Configuration
+= Driver configuration
 
 == Neo4j Driver
 
