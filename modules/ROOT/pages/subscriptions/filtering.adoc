@@ -763,15 +763,13 @@ The following example illustrates how to filter the node at the other end of the
 
 This example returns events for relationships between the type `Movie` and `Reviewer`, where the score is higher than 7, and the `Reviewer` is a `Person` named "Jane Doe", with a reputation greater or equal to 7, or the `Reviewer` is a `Magazine` with the reputation of 8.
 
-[NOTE] 
+[NOTE]
 ====
-Note how the reputation field is part of the interface type, and can thus be specified in 3 ways: inside the `node` key, inside each concrete type, or in both places. 
-
+Note how the reputation field is part of the interface type, and can thus be specified in 3 ways: inside the `node` key, inside each concrete type, or in both places. +
 When specified in both places, however, the filter is composed with a logical `AND`.
 Type `Person` then overrides the `reputation_GTE` operator, so the final filter is `reputation_GTE: 7`.
 Likewise, type `Magazine` composes the original operator so the final filter is the interval `reputation_GTE: 8 && reputation_LT: 9`.
 ====
-
 
 To get all relationships of type `REVIEWED` with a certain score returned, you can use implicit filtering, such as:
 

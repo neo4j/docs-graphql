@@ -1,5 +1,4 @@
 [[apollo-federation]]
-:description: This guide shows how to create a subgraph using the Neo4j GraphQL Library.
 = Apollo Federation
 :page-aliases: guides/apollo-federation.adoc
 :description: This guide shows how to create a subgraph using the Neo4j GraphQL Library, for composition into a supergraph using Apollo Federation.
@@ -137,16 +136,16 @@ For more information on the available options, see the https://www.typescriptlan
 [.include-with-JavaScript]
 =====
 
-Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
-
+. Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
++
 [source, bash]
 ----
 mkdir src
 touch src/index.js
 ----
-
-Replace the default `scripts` entry in your `package.json` file with the following:
-
++
+. Replace the default `scripts` entry in your `package.json` file with the following:
++
 [source, json]
 ----
 {

@@ -35,31 +35,6 @@ type Movie {
 }
 ----
 
-Note, however, that only changes made through `@neo4j/graphql` should trigger events. 
-Changes made directly to the database or using the xref::type-definitions/directives/cypher.adoc[`@cypher` directive] will **not** trigger any event.
-
-== `CREATE`
-
-Subscriptions to `CREATE` events listen *only* to newly created nodes, not new relationships.
-In this occasion, a new event is triggered for each new node, containing its properties.
-
-This action is performed with the top-level subscription `[type]Created`, which contains the following fields:
-
-* `event`: the event triggering this subscription (in this case, `CREATE`).
-* `created<typename>`: top-level properties of the newly created node, without relationships.
-* `timestamp`: the timestamp in which the mutation was made.
-If a same query triggers multiple events, they should have the same timestamp.
-
-As an example, consider the following type definitions:
-
-[source,graphql,indent=0]
-----
-type Movie {
-    title: String
-    genre: String
-}
-----
-
 A subscription to any newly created node of the `Movie` type should look like this:
 
 [source,graphql,indent=0]
