@@ -1,11 +1,12 @@
 = OGM
-:page-aliases: guides/v4-migration/ogm.adoc
+:description: This page describes what updates were made to the OGM tool in version 4.0.0 of the Neo4j GraphQL Library.
+:page-aliases: guides/v4-migration/ogm.adoc, migration/v4-migration/ogm.adoc
 
+This page describes what updates were made to the OGM tool in version 4.0.0 of the Neo4j GraphQL Library.
 
-== Specifying which database to use when using the OGM
+== Database specification
 
 The method to specify the database that the OGM should use has been changed.
-
 This was previously configured using the `driverConfig` option:
 
 [source, javascript, indent=0]
@@ -27,7 +28,7 @@ const driver = neo4j.driver(
 const ogm = new OGM({ typeDefs, driver, driverConfig: { database: "some-other-database" } });
 ----
 
-This has now been raised to the top-level:
+And now it has been raised to the top-level:
 
 [source, javascript, indent=0]
 ----

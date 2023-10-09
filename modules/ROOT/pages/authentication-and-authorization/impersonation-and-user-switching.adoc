@@ -1,3 +1,5 @@
+[[impersonation-and-user-switching]]
+:description: This page describes the impersonation and user switching features of the Neo4j GraphQL Library.
 = Impersonation and user switching
 
 Impersonation and user switching are features of the Neo4j database and driver which allow for query execution in a different context to the initial connection.
@@ -7,11 +9,14 @@ Impersonation and user switching are features of the Neo4j database and driver w
 Impersonation still authenticates with the database as the original configured user, but runs the query in the context of an impersonated user.
 When impersonating a user, the query is run within the complete security context of the impersonated user and not the authenticated user (home database, permissions, etc.).
 
-An example of how to impersonate a different user per request can be found below. In this example, the user to impersonate is taken from a HTTP header `User`:
+Consider the following an example of how to impersonate a different user per request.
+Here the user to impersonate is taken from a HTTP header `User`:
 
-.TypeScript
-[%collapsible]
+[.tabbed-example]
 ====
+
+[.include-with-Typescript]
+=====
 [source, typescript, indent=0]
 ----
 import { ApolloServer } from "@apollo/server";
@@ -52,11 +57,10 @@ const { url } = await startStandaloneServer(server, {
 
 console.log(`🚀  Server ready at: ${url}`);
 ----
-====
+=====
 
-.JavaScript
-[%collapsible]
-====
+[.include-with-JavaScript]
+=====
 [source, javascript, indent=0]
 ----
 import { ApolloServer } from "@apollo/server";
@@ -97,6 +101,7 @@ const { url } = await startStandaloneServer(server, {
 
 console.log(`🚀  Server ready at: ${url}`);
 ----
+=====
 ====
 
 == User switching
@@ -105,9 +110,11 @@ User switching completely switches the user authenticating with the database for
 
 An example of configuring user switching on a per request basis can be found in the example below. Note that the username and password are provided in HTTP headers `User` and `Password`, but this would not be recommended for production use:
 
-.TypeScript
-[%collapsible]
+[.tabbed-example]
 ====
+
+[.include-with-TypeScript]
+=====
 [source, typescript, indent=0]
 ----
 import { ApolloServer } from "@apollo/server";
@@ -148,11 +155,10 @@ const { url } = await startStandaloneServer(server, {
 
 console.log(`🚀  Server ready at: ${url}`);
 ----
-====
+=====
 
-.JavaScript
-[%collapsible]
-====
+[.include-with-JavaScript]
+=====
 [source, javascript, indent=0]
 ----
 import { ApolloServer } from "@apollo/server";
@@ -193,6 +199,7 @@ const { url } = await startStandaloneServer(server, {
 
 console.log(`🚀  Server ready at: ${url}`);
 ----
+=====
 ====
 
 

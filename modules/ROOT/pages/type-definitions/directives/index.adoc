@@ -56,7 +56,7 @@ This is particularly useful for types that are not correctly pluralized or are n
 | Specifies a callback function that gets executed during GraphQL query parsing,
 to populate fields which have not been provided within the input.
 
-| xref::ogm/private.adoc[`@private`]
+| xref::ogm/directives.adoc#_private[`@private`]
 | Protects fields which should only be available through the xref::ogm/index.adoc[OGM].
 
 | xref:/schema-configuration/type-configuration.adoc#_query[`@query`]

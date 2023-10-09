@@ -1,7 +1,9 @@
 [[ogm-selection-set]]
-= Selection Set
+:description: This page describes how to use the GraphQL functionality selection set in OGM.
+= Selection set
 
-This is a GraphQL specific term. When you execute a query, you have the operation:
+On its own, selection set is a GraphQL specific term.
+For example, when you execute a query, you have the operation:
 
 [source, graphql, indent=0]
 ----
@@ -10,7 +12,7 @@ query {
 }
 ----
 
-And you also have a selection set. For example, from the example below:
+And you also have a selection set, such as the following:
 
 [source, graphql, indent=0]
 ----
@@ -22,7 +24,7 @@ query {
 }
 ----
 
-The following snippet is the selection set:
+In this case, this snippet is the selection set:
 
 [source, graphql, indent=0]
 ----
@@ -32,7 +34,11 @@ The following snippet is the selection set:
 }
 ----
 
-When using the OGM, you do not have to provide a selection set by default. Doing so would make using the OGM feel more like querying the GraphQL schema directly, when the OGM is designed as an abstraction over it. This is achieved by automatically generated basic selection sets. Given the following type definition:
+When using the OGM, you do not have to provide a selection set by default. 
+Doing so would make using the OGM feel more like querying the GraphQL schema directly, when the OGM is designed as an abstraction over it. 
+This is achieved by automatically generated basic selection sets. 
+
+Given the following type definition:
 
 [source, graphql, indent=0]
 ----
@@ -48,7 +54,8 @@ type Genre {
 }
 ----
 
-Neither relationship fields nor custom Cypher fields are included in the generated selection set, as they could be computationally expensive. So, given the type definition above, the generated selection set would be:
+Neither relationship fields nor custom Cypher fields are included in the generated selection set, as they could be computationally expensive. 
+So, given the type definition above, the generated selection set would be:
 
 [source, graphql, indent=0]
 ----
@@ -58,11 +65,15 @@ Neither relationship fields nor custom Cypher fields are included in the generat
 }
 ----
 
-This means that by default, querying for Node(s), you would only get the `.id` and `.name` properties returned. If you want to select more fields, you can either define a selection set at execution time or as a static on the Model, as described below.
+This means that, by default, when querying for node(s), you only get the `.id` and `.name` properties returned. 
+If you want to select more fields, you can either define a selection set at execution time or as a static on the Model, as described in the following section.
 
 ==  Selection set at execution time
 
-Using this approach, you would pass in a selection set every time you interact with the OGM. This would be an appropriate approach if the selection set is going to be different every time you ask for data. A full example of this would be as follows:
+Using this approach, you can pass in a selection set every time you interact with the OGM. 
+This is an appropriate approach if the selection set is going to be different every time you ask for data. 
+
+Here is an example:
 
 [source, javascript, indent=0]
 ----
@@ -110,9 +121,12 @@ ogm.init().then(() => {
 
 Note that the argument `selectionSet` is passed every invocation of the `Movie.find()` function.
 
-==  Selection set as a static
+== Setting a default selection set
 
-Using this approach, you can assign a selection set to a particular Model, so that whenever it is queried, it will always return those fields. This is useful if the default selection set doesn't quite give you enough data, but you don't need the selection set to be dynamic on each request. See a full example below:
+Using this approach, you can assign a selection set to a particular Model, so that whenever it is queried, it always returns those fields by default. 
+This is useful if the generated selection set doesn't give enough data, but you don't need the selection set to be dynamic on each request. 
+
+Here is an example of this:
 
 [source, javascript, indent=0]
 ----
@@ -160,4 +174,4 @@ ogm.init().then(() => {
 });
 ----
 
-Note that despite not passing this selection set into `Movie.find()`, the requested fields will be returned on each request.
+Note that despite not passing this selection set into `Movie.find()`, the requested fields return on each request.
