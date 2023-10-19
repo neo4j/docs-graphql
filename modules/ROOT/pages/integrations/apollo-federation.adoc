@@ -160,22 +160,20 @@ touch src/index.js
 
 ====
 
+[start=4]
+. To proceed with the setup, install the required dependencies running the following command:
 +
-. This guide requires the installation of the following dependencies:
+[source, bash]
+----
+npm install @apollo/server @neo4j/graphql graphql neo4j-driver
+----
++ 
+There are the dependencies to be installed:
 +
 * `@apollo/server`, the library for Apollo Server, is used in this guide to host the subgraph.
 * `@neo4j/graphql` is the Neo4j GraphQL Library, which translates GraphQL into Cypher and returns the results.
 * `graphql` is the reference implementation of the GraphQL specification. It is required for `@neo4j/graphql` to function.
 * `neo4j-driver` is the library for the Neo4j driver, which is required to execute Cypher queries against the database.
-
-+
-
-Install them by running this command:
-
-[source, bash]
-----
-npm install @apollo/server @neo4j/graphql graphql neo4j-driver
-----
 
 == Opt in to Federation
 
