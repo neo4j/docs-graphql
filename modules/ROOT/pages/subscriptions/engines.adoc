@@ -24,6 +24,56 @@ new Neo4jGraphQL({
 This behavior enables a simple subscription system that works on a single instance.
 It is ideal for development, testing, and servers that do not require horizontal scaling.
 
+[[CDC]]
+== Change Data Capture label:Beta[]
+
+If your database supports Change Data Capture (CDC), you can use it as your mechanism for subscriptions using `Neo4jGraphQLSubscriptionsCDCEngine`.
+Make sure to follow the steps described on the link:https://neo4j.com/docs/cdc/current/[CDC Documentation] to enable it for your Neo4j instance.
+
+Note that CDC-based subscriptions behave differently from other subscription mechanisms.
+In this case, it uses the native CDC events from Neo4j database.
+This has the following implications:
+
+* Any database change, including those changes done outside of GraphQL, will be reported.
+* Relationship events are not supported at the moment.
+* No additional broker mechanism is required. 
+All the events are received by all the instances of `@neo4j/graphql`.
+* Events are not triggered immediately but are polled to the database.
+
+=== Usage
+
+`Neo4jGraphQLSubscriptionsCDCEngine` can be imported directly from the library. 
+The Neo4j driver is the only required argument:
+
+[souce, javascript, indent=0]
+----
+import { Neo4jGraphQL, Neo4jGraphQLSubscriptionsCDCEngine } from '@neo4j/graphql';
+
+const engine = new Neo4jGraphQLSubscriptionsCDCEngine({
+    driver,
+})
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    features: {
+        subscriptions: engine,
+    },
+});
+----
+
+=== API
+
+The following options can be passed to the constructor:
+
+* `driver`: The driver to be used for CDC queries.
+* `pollTime`: The interval, in milliseconds, between queries to CDC. 
+Defaults to 100ms.
+Note that poll time is the period between one request finishing and the next one starting. 
+The actual time it takes for CDC events to trigger the subscription also depend on your network.
+* `queryConfig`: An object with the driver query options to be passed to CDC requests. 
+Use the `db` field to define the target database for CDC. 
+
 [[amqp]]
 == AMQP
 
