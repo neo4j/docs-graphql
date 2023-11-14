@@ -95,12 +95,6 @@ directive @relationship(
 ) on FIELD_DEFINITION
 ----
 
-[NOTE]
-====
-In version 4.0.0, `aggregate` is `false` as default.
-See xref:migration/index.adoc[`Relationship updates`] for more information.
-====
-
 === Usage
 
 *Configure aggregation*
