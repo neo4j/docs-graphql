@@ -73,7 +73,6 @@
 
 ** Frameworks and integrations
 *** xref:integrations/apollo-federation.adoc[]
-*** xref:integrations/nextjs.adoc[]
 
 ** xref:troubleshooting.adoc[]
 
