@@ -111,7 +111,7 @@ Read about xref:mutations/update.adoc#_connectorcreate_relationships[`update`] f
 
 == `connectOrCreate` relationships
 
-If a related node has the `@id` and `@unique` directive defined, `connectOrCreate` can be used in a nested `create` to perform a `MERGE` operation on the related node.
+If a related node has the `@unique` directive defined, `connectOrCreate` can be used in a nested `create` to perform a `MERGE` operation on the related node.
 This will create a new relationship and the related node if it doesn't exist yet.
 
 Consider the following type definitions:
