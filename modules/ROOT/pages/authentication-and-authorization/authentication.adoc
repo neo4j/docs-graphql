@@ -1,4 +1,5 @@
 = Authentication
+:description: This page describes how to set up authentication features in the Neo4j GraphQL Library.
 
 Explicit authentication, configured using the `@authentication` directive, is only ever evaluated 
 during Cypher translation time, and unauthenticated requests with queries requiring authentication 

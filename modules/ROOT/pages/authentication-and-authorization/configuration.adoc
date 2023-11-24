@@ -1,4 +1,5 @@
 = Configuration
+:description: This page describes how to configure authentication and authorization features in the Neo4j GraphQL Library.
 
 == Instantiation
 
