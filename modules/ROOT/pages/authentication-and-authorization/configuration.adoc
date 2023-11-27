@@ -126,3 +126,50 @@ type JWT @jwt {
 ====
 The seemingly excessive escaping is required to doubly escape: once for GraphQL and once for `dot-prop`, which is used under the hood to resolve the path.
 ====
+
+== Passing in JWTs
+
+If you wish to pass in an encoded JWT, this must go into the token field of the context.
+
+Using Apollo Server as an example, you extract the authorization header into the token property of the context as follows:
+
+[source, javascript, indent=0]
+----
+const server = new ApolloServer({
+    schema,
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ token: req.headers.authorization }),
+});
+----
+
+For example, a HTTP request with the following `authorization` header:
+
+[source]
+----
+POST / HTTP/1.1
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJyb2xlcyI6WyJ1c2VyX2FkbWluIiwicG9zdF9hZG1pbiIsImdyb3VwX2FkbWluIl19.IY0LWqgHcjEtOsOw60mqKazhuRFKroSXFQkpCtWpgQI
+content-type: application/json
+----
+
+=== Decoded JWTs
+
+Alternatively, you can pass a key `jwt` of type `JwtPayload` into the context, which has the following definition:
+
+[source, typescript, indent=0]
+----
+// standard claims https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
+interface JwtPayload {
+    [key: string]: any;
+    iss?: string | undefined;
+    sub?: string | undefined;
+    aud?: string | string[] | undefined;
+    exp?: number | undefined;
+    nbf?: number | undefined;
+    iat?: number | undefined;
+    jti?: string | undefined;
+}
+----
+
+_Do not_ pass in the header or the signature.
