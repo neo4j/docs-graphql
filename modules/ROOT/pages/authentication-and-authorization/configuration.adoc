@@ -129,9 +129,8 @@ The seemingly excessive escaping is required to doubly escape: once for GraphQL 
 
 == Passing in JWTs
 
-If you wish to pass in an encoded JWT, this must go into the token field of the context.
-
-Using Apollo Server as an example, you extract the authorization header into the token property of the context as follows:
+To pass in an encoded JWT, you must use the token field of the context.
+When using Apollo Server, extract the authorization header into the token property of the context as follows:
 
 [source, javascript, indent=0]
 ----
@@ -144,7 +143,7 @@ await startStandaloneServer(server, {
 });
 ----
 
-For example, a HTTP request with the following `authorization` header:
+For example, a HTTP request with the following `authorization` header should look like this:
 
 [source]
 ----
@@ -153,7 +152,6 @@ authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3O
 content-type: application/json
 ----
 
-=== Decoded JWTs
 
 Alternatively, you can pass a key `jwt` of type `JwtPayload` into the context, which has the following definition:
 
@@ -172,4 +170,5 @@ interface JwtPayload {
 }
 ----
 
+[WARNING]
 _Do not_ pass in the header or the signature.
