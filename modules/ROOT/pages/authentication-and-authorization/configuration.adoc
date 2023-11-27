@@ -171,4 +171,5 @@ interface JwtPayload {
 ----
 
 [WARNING]
+[WARNING]
 _Do not_ pass in the header or the signature.
