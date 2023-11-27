@@ -152,7 +152,6 @@ authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3O
 content-type: application/json
 ----
 
-
 Alternatively, you can pass a key `jwt` of type `JwtPayload` into the context, which has the following definition:
 
 [source, typescript, indent=0]
