@@ -1,0 +1,76 @@
+[[relay-compatibility]]
+= Relay Compatibility
+
+The https://relay.dev/docs/guides/graphql-server-specification/[Relay GraphQL Server Specification] states that in order for a server to be compatibile with Relay, it must provide:
+
+1. A mechanism for refetching an object.
+2. A description of how to page through connections.
+
+The Neo4j GraphQL Library provides a description of how to page through connections out of the box, however, configuration is required for it to provide a mechanism for refetching an object, which this guide details.
+
+== Object Identification
+
+In order for a Relay client to be able to refetch objects, each type must have a unique object indentifier which can be used for this purpose.
+
+A server informs a Relay client that this requirement has been satisfied by having types implement the `Node` directive, which has the following definition:
+
+[source, graphql]
+----
+interface Node {
+  id: ID!
+}
+----
+
+So for example, a type `Book` might have the definition:
+
+[source, graphql]
+----
+type Book implements Node {
+  id: ID!
+  isbn: String!
+}
+----
+
+With the above definition, Relay clients will be able to refetch `Book` objects using the `node` query field.
+
+With the above in mind, the following section dives into how to do this with the Neo4j GraphQL Library.
+
+== The `@relayId` directive
+
+The Neo4j GraphQL Library provides an abstraction over the required `id` field, allowing the value of any unique property in the database to be used as the object identifier.
+
+This is provided by the `@relayId` directive, which has the following definition:
+
+[source, graphql]
+----
+directive @relayId on FIELD_DEFINITION
+----
+
+Using the `Book` example above, ISBN is normally a unique identifier. So you configure this like so:
+
+[source, graphql]
+----
+type Book {
+  isbn: String! @relayId
+}
+----
+
+When the schema is augmented, this type will be output as:
+
+[source, graphql]
+----
+type Book implements Node {
+  id: ID!
+  isbn: String!
+}
+----
+
+When the `id` field is used, `isbn` is the underlying property that is used in the database.
+
+The `Book` type is now refetchable via the `node` query field, and is ready to be used with a Relay client!
+
+[WARNING]
+====
+The `@relayId` directive does not guarantee uniqueness.
+You should configure a unique node property constraint using xref:type-definitions/directives/indexes-and-constraints.adoc[the `@unique` directive].
+====

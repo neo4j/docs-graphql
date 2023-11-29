@@ -74,7 +74,7 @@ Can only be used on interfaces, as per its definition:
 directive @relationshipProperties on INTERFACE
 ----
 
-| `@relayId`
+| xref:/integrations/relay-compatibility.adoc[`@relayId`]
 | Specifies that the field should be used as the global node identifier for Relay.
 
 | xref:/schema-configuration/field-configuration.adoc#_selectable[`@selectable`]
