@@ -1,18 +1,19 @@
 [[relay-compatibility]]
+:description: This page describes how to set up a mechanism for refetching an object when using a Relay GraphQL server.
 = Relay Compatibility
 
-The https://relay.dev/docs/guides/graphql-server-specification/[Relay GraphQL Server Specification] states that in order for a server to be compatibile with Relay, it must provide:
+The https://relay.dev/docs/guides/graphql-server-specification/[Relay GraphQL Server Specification] states that in order for a server to be compatible with Relay, it must provide:
 
-1. A mechanism for refetching an object.
-2. A description of how to page through connections.
+. A mechanism for refetching an object.
+. A description of how to page through connections.
 
-The Neo4j GraphQL Library provides a description of how to page through connections out of the box, however, configuration is required for it to provide a mechanism for refetching an object, which this guide details.
+The Neo4j GraphQL Library provides a description of how to page through connections out of the box.
+However, configuration is required for it to provide a mechanism for refetching an object, which this page details.
 
-== Object Identification
+== Object identification
 
 In order for a Relay client to be able to refetch objects, each type must have a unique object indentifier which can be used for this purpose.
-
-A server informs a Relay client that this requirement has been satisfied by having types implement the `Node` directive, which has the following definition:
+A server then informs a Relay client that this requirement has been satisfied by having types that implement the `Node` directive, which has the following definition:
 
 [source, graphql]
 ----
@@ -31,9 +32,8 @@ type Book implements Node {
 }
 ----
 
-With the above definition, Relay clients will be able to refetch `Book` objects using the `node` query field.
-
-With the above in mind, the following section dives into how to do this with the Neo4j GraphQL Library.
+With that, Relay clients are able to refetch `Book` objects using the `node` query field.
+The following section dives into how to do this with the Neo4j GraphQL Library.
 
 == The `@relayId` directive
 
@@ -46,7 +46,8 @@ This is provided by the `@relayId` directive, which has the following definition
 directive @relayId on FIELD_DEFINITION
 ----
 
-Using the `Book` example above, ISBN is normally a unique identifier. So you configure this like so:
+Considering the same `Book` example, ISBN is normally a unique identifier. 
+You can configure this like so:
 
 [source, graphql]
 ----
@@ -66,8 +67,7 @@ type Book implements Node {
 ----
 
 When the `id` field is used, `isbn` is the underlying property that is used in the database.
-
-The `Book` type is now refetchable via the `node` query field, and is ready to be used with a Relay client!
+Also, the `Book` type is now refetchable via the `node` query field, and is ready to be used with a Relay client.
 
 [WARNING]
 ====
