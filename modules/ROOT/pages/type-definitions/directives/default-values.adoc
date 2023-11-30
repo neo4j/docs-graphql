@@ -9,7 +9,7 @@ This page describes how to use default values in the Neo4j GraphQL Library.
 [[type-definitions-default-values-default]]
 == `@default`
 
-When generating the input type for the `create`` mutation, the value specified in this directive is used as the default value for this field.
+When generating the input type for the `create` mutation, the value specified in this directive is used as the default value for this field.
 
 === Definition
 
