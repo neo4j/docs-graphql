@@ -7,14 +7,15 @@ When querying for data, a number of operators are available for different types 
 
 == Equality operators
 
-All types can be tested for either equality (`_eq`) or non-equality (`_ne`). 
+All types can be tested for either equality (`_eq`).
+For non-equality (`_ne`), you *must* use the xref:/queries-aggregations/filtering.adoc#_combining_operators[`NOT`] logical operator.
 For example:
 
 .Filtering all Users named John
 [source, graphql, indent=0]
 ----
 query {
-  users(where: {name: { _eq: "John" }})
+  users(where: {name: "John" })
     id
     name
   }
@@ -40,7 +41,7 @@ Here is an example of how to use them:
 [source, graphql, indent=0]
 ----
 query {
-  users(where: {age: { _lt: 50 }}) {
+  users(where: {age_LT: 50 }) {
     id
     name
     age
