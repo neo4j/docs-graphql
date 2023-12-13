@@ -26,12 +26,12 @@ type Post {
 }
 
 type User {
-        id: ID! @id
-        name: String!
-        age: Int!
-        posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT, properties: "PostedAt")
-        friends: [User!]! @relationship(type: "FRIENDS_WITH", direction: OUT)
-    }
+    id: ID! @id
+    name: String!
+    age: Int!
+    posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT, properties: "PostedAt")
+    friends: [User!]! @relationship(type: "FRIENDS_WITH", direction: OUT)
+}
 
 interface PostedAt @relationshipProperties {
     date: DateTime
