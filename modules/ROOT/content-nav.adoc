@@ -8,7 +8,7 @@
 **** xref:type-definitions/types/scalar.adoc[Scalar]
 **** xref:type-definitions/types/temporal.adoc[Temporal]
 **** xref:type-definitions/types/spatial.adoc[Spatial]
-**** xref:type-definitions/types/interfaces.adoc[Interface]
+**** xref:type-definitions/types/interfaces.adoc[Interfaces]
 **** xref:type-definitions/types/unions.adoc[Union]
 **** xref:type-definitions/types/relationships.adoc[]
 *** xref:type-definitions/directives/index.adoc[]

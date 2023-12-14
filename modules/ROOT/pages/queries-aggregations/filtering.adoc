@@ -211,6 +211,11 @@ query {
 }
 ----
 
+== Querying an interface
+
+You can use the `_on` argument to filter interfaces.
+Refer to xref:type-definitions/types/interfaces.adoc#type-definitions-interfaced-types-querying[Type definitions -> Type -> Interface] for more details and an example.
+
 == Relationship filtering
 
 Relationship filtering depends on the type of relationship that you have:
