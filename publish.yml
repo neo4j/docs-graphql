@@ -30,9 +30,6 @@ antora:
     move_sitemaps_to_components: true
   - require: "@neo4j-antora/aliases-redirects"
     redirect_format: neo4j
-    redirect_map:
-    - from: '4'
-      to: 'current'
 
 asciidoc:
   extensions:
