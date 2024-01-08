@@ -20,16 +20,11 @@ const typeDefs = `#graphql
     name: String!
   }
 `;
+;
 
-const {
-  NEO4J_URI = "neo4j://localhost:7687/neo4j",
-  NEO4J_USERNAME = "neo4j",
-  NEO4J_PASSWORD = "password",
-} = process.env;
+const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic("username", "password"));
 
-const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD));
-
-const neo4jgraphql = new Neo4jGraphQL({
+const neo4jGraphQL = new Neo4jGraphQL({
   typeDefs,
   driver,
 })
@@ -46,7 +41,7 @@ console.log(`🚀  Server ready at ${url}`);
 
 == Setup
 
-To proceed with the convertion, follow these steps:
+To proceed with the conversion, follow these steps:
 
 . Create a directory for a new project and `cd` into it:
 +
@@ -224,7 +219,7 @@ For that, the following line needs to be changed:
 
 [source, javascript]
 ----
-const schema = neo4jgraphql.getSubgraphSchema();
+const schema = neo4jGraphql.getSubgraphSchema();
 ----
 
 == Conclusion
@@ -244,15 +239,9 @@ const typeDefs = `#graphql
   }
 `;
 
-const {
-  NEO4J_URI = "neo4j://localhost:7687/neo4j",
-  NEO4J_USERNAME = "neo4j",
-  NEO4J_PASSWORD = "password",
-} = process.env;
+const driver = neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("username", "password"));
 
-const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD));
-
-const neo4jgraphql = new Neo4jGraphQL({
+const neo4jGraphQL = new Neo4jGraphQL({
   typeDefs,
   driver,
 })

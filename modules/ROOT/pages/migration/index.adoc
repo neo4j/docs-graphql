@@ -45,7 +45,7 @@ const typeDefs = `
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({
@@ -71,7 +71,7 @@ const typeDefs = `
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({
@@ -107,7 +107,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({
@@ -144,7 +144,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
