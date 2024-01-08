@@ -992,7 +992,7 @@ Only top-level properties, without relationships, are available and they are the
 [NOTE]
 ====
 Irrespective of the relationship direction in the database, the `DELETE_RELATIONSHIP` event is bound to the type targeted for the subscription. 
-Consequently, if types A and B have xref:subscriptions/events.adoc#delete-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation deletes a relationship between them (despite being already previously diconnected in the database), the `DELETE_RELATIONSHIP` event should only return the subscription to the type A.
+Consequently, if types A and B have xref:subscriptions/events.adoc#delete-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation deletes a relationship between them (despite being already previously disconnected in the database), the `DELETE_RELATIONSHIP` event should only return the subscription to the type A.
 ====
 
 As an example, consider these type definitions:
@@ -1041,7 +1041,7 @@ A `DELETE_RELATIONSHIP` subscription in this case should receive the following e
     deletedRelationship: {
         actors: {
             screenTime: 1000, # relationship properties for the relationship type `ACTED_IN` that was deleted
-            node: { # top-level properties of the node at the other end of the relationship, in this case `Actor` type, before the delete occured
+            node: { # top-level properties of the node at the other end of the relationship, in this case `Actor` type, before the delete occurred
                 name: "Tom Hardy"
             }
         },

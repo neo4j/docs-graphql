@@ -107,16 +107,6 @@ To create an instance of the Neo4j GraphQL Library, you need a Neo4j driver to c
 +
 image::neo4j-aura-dashboard.png[width=500]
 
-. Create a new file `.env` with the credentials described in the previous step.
-It should look like this:
-+
-[source, config]
-----
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=password
-NEO4J_URI=neo4j+s://0083654f.databases.neo4j.io
-----
-
 === Using a Neo4j database
 
 For a database located at the default "bolt://localhost:7687" (see more about https://neo4j.com/docs/operations-manual/current/configuration/ports[port configuration]), with the username "neo4j" and the password "password", add the following to the bottom of your `index.js` file:
@@ -125,7 +115,7 @@ For a database located at the default "bolt://localhost:7687" (see more about ht
 ----
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
@@ -191,7 +181,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
