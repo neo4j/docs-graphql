@@ -266,4 +266,3 @@ CALL {
     RETURN { __resolveType: "Blog", title: blog.title }
 }
 ----
-

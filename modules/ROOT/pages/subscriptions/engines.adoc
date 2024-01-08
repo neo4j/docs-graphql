@@ -45,7 +45,7 @@ All the events are received by all the instances of `@neo4j/graphql`.
 `Neo4jGraphQLSubscriptionsCDCEngine` can be imported directly from the library. 
 The Neo4j driver is the only required argument:
 
-[souce, javascript, indent=0]
+[source, javascript, indent=0]
 ----
 import { Neo4jGraphQL, Neo4jGraphQLSubscriptionsCDCEngine } from '@neo4j/graphql';
 
@@ -106,7 +106,7 @@ AMQP 1.0 is **not** supported by this plugin.
 The AMQP plugin should be instanced and passed to the `subscription` field in features.
 This automatically enables the subscriptions with the AMQP broker as a message queue:
 
-[souce, javascript, indent=0]
+[source, javascript, indent=0]
 ----
 const { Neo4jGraphQLAMQPSubscriptionsEngine } = require("@neo4j/graphql-amqp-subscriptions-engine");
 
@@ -160,7 +160,7 @@ This is useful for setting up the connection to a broker.
 
 In case you want to handle subscriptions using link:https://redis.io/[redis]:
 
-[souce, javascript, indent=0]
+[source, javascript, indent=0]
 ----
 // Note: This is an example of a custom subscription behavior and not a production ready redis implementation.
 class CustomRedisSubscriptionEngine {
