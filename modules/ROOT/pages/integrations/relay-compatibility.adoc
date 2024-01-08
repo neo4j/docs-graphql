@@ -12,7 +12,7 @@ However, configuration is required for it to provide a mechanism for refetching 
 
 == Object identification
 
-In order for a Relay client to be able to refetch objects, each type must have a unique object indentifier which can be used for this purpose.
+In order for a Relay client to be able to refetch objects, each type must have a unique object identifier which can be used for this purpose.
 A server then informs a Relay client that this requirement has been satisfied by having types that implement the `Node` directive, which has the following definition:
 
 [source, graphql]

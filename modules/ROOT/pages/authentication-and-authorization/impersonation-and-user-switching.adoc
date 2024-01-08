@@ -32,15 +32,15 @@ const typeDefs = `#graphql
 
 const driver =  neo4j.driver(
     "neo4j://localhost:7687", 
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
-const neo4jgraphql = new Neo4jGraphQL({
+const neo4jGraphql = new Neo4jGraphQL({
     typeDefs,
     driver,
 });
 
-const schema = await neo4jgraphql.getSchema();
+const schema = await neo4jGraphql.getSchema();
 
 const server = new ApolloServer<Neo4jGraphQLContext>({
   schema,
@@ -76,15 +76,15 @@ const typeDefs = `#graphql
 
 const driver =  neo4j.driver(
     "neo4j://localhost:7687", 
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
-const neo4jgraphql = new Neo4jGraphQL({
+const neo4jGraphql = new Neo4jGraphQL({
     typeDefs,
     driver,
 });
 
-const schema = await neo4jgraphql.getSchema();
+const schema = await neo4jGraphql.getSchema();
 
 const server = new ApolloServer({
   schema,
@@ -130,15 +130,15 @@ const typeDefs = `#graphql
 
 const driver =  neo4j.driver(
     "neo4j://localhost:7687", 
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
-const neo4jgraphql = new Neo4jGraphQL({
+const neo4jGraphql = new Neo4jGraphQL({
     typeDefs,
     driver,
 });
 
-const schema = await neo4jgraphql.getSchema();
+const schema = await neo4jGraphql.getSchema();
 
 const server = new ApolloServer<Neo4jGraphQLContext>({
   schema,
@@ -174,15 +174,15 @@ const typeDefs = `#graphql
 
 const driver =  neo4j.driver(
     "neo4j://localhost:7687", 
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
-const neo4jgraphql = new Neo4jGraphQL({
+const neo4jGraphql = new Neo4jGraphQL({
     typeDefs,
     driver,
 });
 
-const schema = await neo4jgraphql.getSchema();
+const schema = await neo4jGraphql.getSchema();
 
 const server = new ApolloServer({
   schema,
@@ -201,5 +201,3 @@ console.log(`🚀  Server ready at: ${url}`);
 ----
 =====
 ====
-
-
