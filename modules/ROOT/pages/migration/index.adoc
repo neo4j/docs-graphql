@@ -28,6 +28,941 @@ For example:
 |Before | Now
 
 a|
+[source, javascript, indent=0]
+----
+const { Neo4jGraphQL } = require("@neo4j/graphql");
+const neo4j = require("neo4j-driver");
+const { ApolloServer } = require("apollo-server");
+
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("username", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    config: {
+      enableDebug: true,
+    }
+});
+----
+a|
+[source, javascript, indent=0]
+----
+const { Neo4jGraphQL } = require("@neo4j/graphql");
+const neo4j = require("neo4j-driver");
+const { ApolloServer } = require("apollo-server");
+
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("username", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    debug: true,
+});
+----
+|===
+
+=== `driverConfig`
+
+Session configuration is now available only in the context under the `sessionConfig` key.
+Additionally, the `bookmarks` key has been removed as it is no longer needed with the bookmark manager of the newer driver.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, javascript, indent=0]
+----
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+    type User {
+        name: String
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("username", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    config: {
+        driverConfig: {
+            database: "different-db"
+        },
+    },
+})
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ req }),
+});
+
+----
+a|
+[source, javascript, indent=0]
+----
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+    type User {
+        name: String
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("username", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ sessionConfig: { database: "my-database" }}),
+});
+----
+|===
+
+=== `config.enableRegex`
+
+This has been replaced by `MATCHES` in features.filters. 
+With this change comes more granularity in the feature configuration. 
+You can now enable the `MATCHES` filter on `String` and `ID` fields separately:
+
+[cols="1,1"]
+|===
+|Before | After
+
+a|
+[source, javascript, indent=0]
+----
+neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    config: {
+        enableRegex: true
+    }
+});
+----
+a|
+[source, javascript, indent=0]
+----
+neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        filters: {
+            String: {
+                MATCHES: true,
+            },
+            ID: {
+                MATCHES: true,
+            },
+        },
+    },
+});
+----
+|===
+
+=== `queryOptions`
+
+If you had a need to pass in Cypher query options for query tuning, this interface has been changed.
+The config option `queryOptions` has now become `cypherQueryOptions` inside the context function, and it now accepts simple strings instead of enums.
+This change reflects the fact that the Cypher query options are set on a per-request basis.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, javascript, indent=0]
+----
+const { Neo4jGraphQL, CypherRuntime } = require("@neo4j/graphql");
+const { ApolloServer } = require("apollo-server");
+
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    config: {
+        queryOptions: {
+            runtime: CypherRuntime.INTERPRETED,
+        },
+    },
+});
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ req }),
+});
+----
+
+a|
+[source, javascript, indent=0]
+----
+const { Neo4jGraphQL } = require("@neo4j/graphql");
+const { ApolloServer } = require("apollo-server");
+
+const typeDefs = `
+    type Movie {
+        title: String!
+    }
+`;
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+});
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ cypherQueryOptions: { runtime: "interpreted" }}),
+});
+----
+|===
+
+=== `skipValidateTypeDefs`
+
+The argument has been moved to the top-level of the constructor input and renamed `validate`, which defaults to `true`.
+If you started using the `config.startupValidation` option, this has also been rolled into the same `validate` setting for simplicity.
+
+Likewise, the `resolvers` option is now just a warning, and `noDuplicateRelationshipFields` is now a mandatory check rolled into `validate`.
+
+Here is an example query of how it looks now:
+
+[cols="1,1"]
+|===
+|Before | After
+
+a|
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    config: {
+        skipValidateTypeDefs: true,
+    },
+})
+----
+a|
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    validate: false,
+})
+----
+|===
+
+=== `@cypher`
+
+The default behavior of the `@cypher` directive regarding the translation has changed.
+Instead of using https://neo4j.com/labs/apoc/4.0/overview/apoc.cypher/apoc.cypher.runFirstColumnMany/[apoc.cypher.runFirstColumnMany], it directly wraps the query within a `CALL { }` subquery.
+
+This update has proven to be more performant for the same queries, however, it may lead to unexpected changes, mainly when using Neo4j 5.x, where the subqueries need to be _aliased_.
+
+On top of that, to improve performance, it is recommended to pass the returned alias in the property `columnName`, to ensure the subquery is properly integrated into the larger query.
+
+For example, the GraphQL query:
+
+[source, graphql, indent=0]
+----
+type query {
+    test: String! @cypher(statement: "RETURN 'hello'")
+}
+----
+
+Would be translated to:
+[source,cypher, indent=0]
+----
+CALL {
+    RETURN 'hello'
+}
+WITH 'hello' AS this
+RETURN this
+----
+
+Which is invalid in Neo4j 5.x.
+To fix it, ensure the `RETURN` elements are aliased:
+
+[source, graphql, indent=0]
+----
+type query {
+    test: String! @cypher(statement: "RETURN 'hello' as result")
+}
+----
+
+Another way to use this update is through an experimental option with the `columnName` flag in the `@cypher` directive:
+
+[source, graphql, indent=0]
+----
+type query {
+    test: String! @cypher(statement: "RETURN 'hello' as result", columnName: "result")
+}
+----
+
+Note that escaping strings are no longer needed in Neo4j GraphQL 4.0.0.
+
+=== `@fulltext`
+
+In version 4.0.0, a number of improvements have been made to full-text queries.
+These include the ability to return the full-text score, filter by the score and sorting by the score.
+However, these improvements required a number of breaking changes.
+
+==== Full-text queries
+
+Full-text queries now need to be performed using a top-level query, instead of being performed using an argument on a node query.
+
+As a result, the following query is now invalid:
+
+[source, graphql, indent=0]
+----
+query {
+  movies(fulltext: { movieTitleIndex: { phrase: "Some Title" } }) {
+    title
+  }
+}
+----
+
+The new top-level queries can be used to return the full-text score, which indicates the confidence of a match, as well as the nodes that have been matched.
+They now accept the following arguments:
+
+* `phrase`: specifies the string to search for in the full-text index.
+* `where`: accepts a min/max score as well as the normal filters available on a node.
+* `sort: used to sort using the score and node attributes.
+* `limit`: used to limit the number of results to the given integer.
+* `offset`: used to offset by the given number of results.
+
+This means that, for the following type definition:
+
+[source, graphql, indent=0]
+----
+type Movie @fulltext(indexes: [{ indexName: "MovieTitle", fields: ["title"] }]) { # Note that indexName is the new name for the name argument. More about this below.
+  title: String!
+}
+----
+
+The following top-level query and type definitions would be generated by the library:
+
+[source, graphql, indent=0]
+----
+type Query {
+  movieFulltextMovieTitle(phrase: String!, where: MovieFulltextWhere, sort: [MovieFulltextSort!], limit: Int, offset: Int): [MovieFulltextResult!]!
+}
+
+"""The result of a fulltext search on an index of Movie"""
+type MovieFulltextResult {
+  score: Float
+  movies: Movie
+}
+
+"""The input for filtering a fulltext query on an index of Movie"""
+input MovieFulltextWhere {
+  score: FloatWhere
+  movie: MovieWhere
+}
+
+"""The input for sorting a fulltext query on an index of Movie"""
+input MovieFulltextSort {
+  score: SortDirection
+  movie: MovieSort
+}
+
+"""The input for filtering the score of a fulltext search"""
+input FloatWhere {
+  min: Float
+  max: Float
+}
+----
+
+This query can then be used to perform a full-text query:
+
+[source, graphql, indent=0]
+----
+query {
+  movieFulltextMovieTitle(
+    phrase: "Full Metal Jacket",
+    where: { score: min: 0.4 },
+    sort: [{ movie: { title: ASC } }],
+    limit: 5,
+    offset: 10
+  ) {
+    score
+    movies {
+      title
+    }
+  }
+}
+----
+
+And thus return results in the following format:
+
+[source, json, indent=0]
+----
+{
+  "data": {
+    "movieFulltextMovieTitle": [
+      {
+        "score": 0.44524085521698,
+        "movie": {
+          "title": "Full Moon High"
+        }
+      },
+      {
+        "score": 1.411118507385254,
+        "movie": {
+          "title": "Full Metal Jacket"
+        }
+      }
+    ]
+  }
+}
+----
+
+==== Argument changes
+
+The following changes have been made to `@fulltext` arguments:
+
+* `queryName` has been added to specify a custom name for the top-level query that is generated.
+* `name` has been renamed to `indexName` to avoid ambiguity with the new `queryName` argument.
+
+These changes mean that the following type definition is now invalid:
+
+[source, graphql, indent=0]
+----
+type Movie @fulltext(indexes: [{ name: "MovieTitle", fields: ["title"] }]) {
+  title: String!
+}
+----
+
+The `name` argument now needs to be replaced with `indexName`:
+
+[source, graphql, indent=0]
+----
+type Movie @fulltext(indexes: [{ indexName: "MovieTitle", fields: ["title"] }]) {
+  title: String!
+}
+----
+
+As an example, the `queryName` argument can be used as:
+
+[source, graphql, indent=0]
+----
+type Movie @fulltext(indexes: [{ queryName: "moviesByTitle", indexName: "MovieTitle", fields: ["title"] }]) {
+  title: String!
+}
+----
+
+This means the top-level query is now `moviesByTitle` instead of `movieFulltextMovieTitle`:
+
+[source, graphql, indent=0]
+----
+type Query {
+  moviesByTitle(phrase: String!, where: MovieFulltextWhere, sort: [MovieFulltextSort!], limit: Int, offset: Int): [MovieFulltextResult!]!
+}
+----
+
+== Subscription options
+
+Subscriptions are no longer configured as a plugin, but as a feature within the `features` option.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, javascript]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    plugins: {
+        subscriptions: plugin,
+    },
+});
+----
+a|
+[source, javascript]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        subscriptions: plugin,
+    },
+});
+----
+|===
+
+=== Default subscriptions
+
+The class `Neo4jGraphQLSubscriptionsSingleInstancePlugin` is no longer exported. 
+Instead, the default subscriptions behavior can be enabled by setting the `subscriptions` option to `true` .
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    plugin: {
+        subscriptions: new Neo4jGraphQLSubscriptionsSingleInstancePlugin(),
+    },
+});
+----
+a|
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        subscriptions: true
+    },
+});
+----
+|===
+
+=== Neo4j GraphQL subscriptions AMQP package
+
+The name of the interface underlying the subscriptions system has changed from `Neo4jGraphQLSubscriptionsPlugin` to `Neo4jGraphQLSubscriptionsEngine`. 
+If you were previously using the `@neo4j/graphql-plugins-subscriptions-amqp` package, this has been changed to `@neo4j/graphql-amqp-subscriptions-engine` to reflect this underlying change.
+
+To keep using it, uninstall the previous package and install the new one:
+
+[source, bash, indent=0]
+----
+npm uninstall @neo4j/graphql-plugins-subscriptions-amqp
+npm install @neo4j/graphql-amqp-subscriptions-engine
+----
+
+Then update any imports:
+
+[cols="1,1"]
+|===
+|From | To
+
+a|
+[source, javascript, indent=0]
+----
+import { Neo4jGraphQLSubscriptionsAMQPPlugin } from "@neo4j/graphql-plugins-subscriptions-amqp";
+----
+a|
+[source, javascript, indent=0]
+----
+import { Neo4jGraphQLAMQPSubscriptionsEngine } from "@neo4j/graphql-amqp-subscriptions-engine";
+----
+|===
+
+And change the instantiations:
+
+[cols="1,1"]
+|===
+|From | To
+
+a|
+[source, javascript, indent=0]
+----
+const plugin = new Neo4jGraphQLSubscriptionsAMQPPlugin({
+    connection: {
+        hostname: "localhost",
+        username: "guest",
+        password: "guest",
+    },
+});
+----
+a|
+[source, javascript, indent=0]
+----
+const subscriptionsEngine = new Neo4jGraphQLAMQPSubscriptionsEngine({
+    connection: {
+        hostname: "localhost",
+        username: "guest",
+        password: "guest",
+    },
+});
+----
+|===
+
+=== Custom subscription plugins
+
+The underlying subscription system has not changed.
+Custom behavior can be implemented the same way, by creating a class implementing the interface described in xref::subscriptions/engines.adoc#custom-subscription[Subscriptions engines].
+
+However, if using TypeScript, the exported interface to implement these classes has been renamed from `Neo4jGraphQLSubscriptionsPlugin` to `Neo4jGraphQLSubscriptionsEngine`.
+
+== Updated directives
+
+A number of directives and their arguments have been renamed in order to make using `@neo4j/graphql` more intuitive.
+Here is a table with all the changes:
+
+[cols="1,2,2"]
+|===
+|Before | Now | Example
+
+|`@alias`
+|Properties in the alias directive are now automatically escaped using backticks. 
+If you were using backticks in the `property` argument of your `@alias` directives, you should now remove the escape strings as this is covered by the library.
+a|
+[source, graphql, indent=0]
+----
+type User {
+    id: ID! @id
+    username: String! @alias(property: "dbUserName")
+}
+----
+
+|`@callback`
+|Renamed to `@populatedBy`.
+Additionally, the `name` argument has been renamed to `callback` and it is still used to specify the callback used to populate the field's value.
+a|
+.Before
+[source, graphql, indent=0]
+----
+type User {
+  id: ID! @callback(name: "nanoid", operations: [CREATE])
+  firstName: String!
+  surname: String!
+}
+----
+
+.Now
+[source, graphql, indent=0]
+----
+new Neo4jGraphQL({
+  typeDefs,
+  features: { // changed from config
+    populatedBy: { // changed from callback
+      callbacks: {
+        nanoid: () => { return nanoid(); }
+      }
+    }
+  }
+});
+----
+
+|`@computed` 
+a|Renamed to `@customResolver`.
+Note that before and after these changes, a custom resolver needs to be defined as follows:
+
+[source, javascript, indent=0]
+----
+new Neo4jGraphQL({
+  typeDefs,
+  resolvers: {
+    User: {
+      fullName: ({ firstName, lastName }, args, context, info) => (`${firstName} ${lastName}`),
+    }
+  }
+});
+----
+
+a|
+.Before
+[source, graphql, indent=0]
+----
+type User {
+  firstName: String!
+  lastName: String!
+  fullName: String! @computed(from: ["firstName", "lastName"])
+}
+----
+
+.Now
+[source, graphql, indent=0]
+----
+type User {
+  firstName: String!
+  lastName: String!
+  fullName: String! @customResolver(requires: ["firstName", "lastName"])
+}
+----
+
+|`from`
+a| Renamed to `requires`.
+In version 4.0.0, it is now possible to require non-scalar fields, which means it is also possible to require fields on related type. +
+{nbsp} +
+Additionally, the `requires` argument now accepts a GraphQL selection set instead of a list of strings and also validates the required selection set against your type definitions.
+This means that if there is no field called `someFieldThatDoesNotExist`, an error would be thrown on startup if you tried to use the following type definitions: +
+{nbsp} +
+[source, graphql, indent=0]
+----
+type User {
+    firstName: String!
+    lastName: String!
+    fullName: String! @customResolver(requires: "firstName someFieldThatDoesNotExist")
+}
+----
+
+a|
+.Before
+[source, graphql, indent=0]
+----
+type User {
+    firstName: String!
+    lastName: String!
+    fullName: String! @customResolver(requires: ["firstName", "lastName"])
+}
+----
+
+.Now
+[source, graphql, indent=0]
+----
+type User {
+    firstName: String!
+    lastName: String!
+    fullName: String! @customResolver(requires: "firstName lastName")
+}
+----
+
+.Additional example
+[source, graphql, indent=0]
+----
+interface Publication {
+    publicationYear: Int!
+}
+
+type Author {
+    name: String!
+    publications: [Publication!]! @relationship(type: "WROTE", direction: OUT)
+    publicationsWithAuthor: [String!]!
+        @customResolver(
+            requires: "name publications { publicationYear ...on Book { title } ... on Journal { subject } }"
+        )
+}
+
+type Book implements Publication {
+    title: String!
+    publicationYear: Int!
+    author: [Author!]! @relationship(type: "WROTE", direction: IN)
+}
+
+type Journal implements Publication {
+    subject: String!
+    publicationYear: Int!
+    author: [Author!]! @relationship(type: "WROTE", direction: IN)
+}
+----
+
+|`@exclude`
+|Replaced by `@query`, `@mutation`, and `@subscription`.
+These new directives allow for fully granular configuration for each operation.
+a|* `@exclude` -> `@query(read: false, aggregate: false) @mutation(operations: []) @subscription(events: [])`. +
+* `@exclude(operations: [READ])` -> `@query(read: false, aggregate: false)`. +
+* `@exclude(operation: [CREATE, UPDATE, DELETE])` -> `@mutation(operations: [])`.
+
+|`@id`
+a|Deprecated with _all_ of its arguments removed and/or replaced.
+a|*`autogenerate` -> `@unique`* +
+The default value was `true`.
+If set to `false`, the `@id` directive was almost a no-op only used to manage a unique node property constraint.
+Use the `@unique` directive instead. +
+{nbsp} +
+*`global` -> `@relayId`* +
+This argument was used to configure the field that would form the global node identifier for Relay.
+This functionality has been moved into its own directive, `@relayId`. The use of `@relayId` will ensure a unique node property constraint for the field. +
+{nbsp} +
+*`@id` -> `unique` + `@id`* +
+The `@id` directive used to also manage unique node property constraints for a field. 
+This functionality has been removed.
+Use the `@unique` directive in combination with `@id` if you want the field to be backed by a constraint.
+
+|`@plural`
+|Removed from `@node` and replaced by the `@plural` directive.
+It takes the pluralized type name using the `value` argument.
+a|
+.Invalid `plural` type definition
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB", plural: "Techs") {
+  name: String
+}
+----
+
+.Updated version
+
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB") @plural(value: "Techs") {
+  name: String
+}
+----
+
+|`label` and `additionalLabels`
+a|Removed from `@node` and replaced by `labels`.
+It accepts a list of string labels that are used when a node of the given GraphQL type is created. +
+{nbsp} +
+Note that defining `labels` means taking control of the database labels of the node. 
+Indexes and constraints in Neo4j only support a single label, for which the first element of the `labels` argument will be used. +
+{nbsp} +
+As before, providing none of these arguments results in the node label being the same as the GraphQL type name.
+This can cause implications on constraints.
+For instance, in the case where unique constraint is asserted for the label `Tech` and the property `name`: +
+{nbsp} +
+[source, graphql, indent=0]
+----
+type Tech @node(labels: ["Tech", "TechDB"]) {
+  name: String @unique
+}
+----
+a|
+.Current equivalent to `label`
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB") {
+  name: String
+}
+# becomes
+type Tech @node(labels: ["TechDB"]) {
+  name: String
+}
+----
+
+.Current equivalent to `additionalLabels`
+[source, graphql, indent=0]
+----
+type Tech @node(additionalLabels: ["TechDB"]) {
+  name: String
+}
+# becomes
+type Tech @node(labels: ["Tech", "TechDB"]) {
+  name: String
+}
+----
+
+.Current equivalent to both arguments
+[source, graphql, indent=0]
+----
+type Tech @node(label: "TechDB", additionalLabels: ["AwesomeTech"]) {
+  name: String
+}
+# becomes
+type Tech @node(labels: ["TechDB", "AwesomeTech"]) {
+  name: String
+}
+----
+
+|`@queryOptions` and `limit`
+| Removed and moved to `@limit`.
+a|
+.Outdated example
+[source, graphql, indent=0]
+----
+type Record @queryOptions(limit: { default: 10, max: 100 }) {
+  id: ID!
+}
+----
+
+.Updated version using `@limit`
+[source, graphql, indent=0]
+----
+type Record @limit(default: 10, max: 100) {
+  id: ID!
+}
+----
+
+|`@readonly` and `@writeonly` 
+|Removed and replaced by the `@selectable` and `@settable` directives.
+They can be used to configure not only if fields are readable or writable, but also when they should be readable or writable.
+a|* `@readonly` -> `@settable(onCreate: false, onUpdate: false)`
+* `@writeonly` -> `@selectable(onRead: false, onAggregate: false)`
+
+|`@query` and `@relationship`
+|Aggregation operations are no longer generated by default.
+They can be enabled case by case using the directives xref::/schema-configuration/type-configuration.adoc#_query[`@query`] and xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`].
+a|
+[source, graphql, indent=0]
+----
+type Movie {
+  title: String!
+}
+
+type Actor @query(aggregate: true) {
+  name: String!
+  actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, aggregate: true) 
+}
+----
+|===
+
+[relationship-aggregate]
+== Relationship updates
+
+Here are the changes and updates to `@relationship`-related features.
+
+[discrete]
+=== *Relationship types are now automatically escaped*
+
+Relationship types are now automatically escaped. 
+If you have previously escaped your relationship types using backticks, you must now remove these as this is covered by the library.
+
+[discrete]
+=== *`@relationshipProperties` now mandatory*
+
+Current changes require the distinction between interfaces that are used to specify relationship properties, and others. 
+Therefore, the `@relationshipProperties` directive is now required on all relationship property interfaces.
+If it is not included, an error is thrown.
+
+As a result, in version 4.0.0, the following type definitions are invalid:
+
+[source, graphql, indent=0]
+----
+type Person {
+  name: String!
+  movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedIn")
+}
+
+type Movie {
+  title: String!
+  actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
+}
+
+interface ActedIn {
+  screenTime: Int!
+}
+----
+
+`ActedIn` must be decorated with `@relationshipProperties`:
+
 [source, graphql, indent=0]
 ----
 interface ActedIn @relationshipProperties {
