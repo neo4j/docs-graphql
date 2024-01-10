@@ -188,7 +188,7 @@ The `where` argument only filters properties that already existed before the del
 All previously mentioned operators can be combined using the `AND`, `OR`, and `NOT` operators. 
 They accept an array argument with items of the same format as the `where` argument, which means they can also be nested to form complex combinations.
 
-As an exampke, consider a user who likes comedy movies, but not romantic comedies from early 2000, and who has the Matrix Trilogy as their favorite titles.
+As an example, consider a user who likes comedy movies, but not romantic comedies from early 2000, and who has the Matrix Trilogy as their favorite titles.
 They could subscribe to any updates that cover this particular set of interests as follows:
 
 [source, graphql, indent=0]
