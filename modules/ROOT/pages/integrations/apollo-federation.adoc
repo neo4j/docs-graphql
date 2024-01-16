@@ -68,6 +68,31 @@ This how-to guide sets up the project using ES Modules, which allows the usage o
 [.tabbed-example]
 ====
 
+[.include-with-JavaScript]
+=====
+
+. Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
++
+[source, bash]
+----
+mkdir src
+touch src/index.js
+----
++
+. Replace the default `scripts` entry in your `package.json` file with the following:
++
+[source, json]
+----
+{
+  // ...etc.
+  "scripts": {
+    "start": "node index.js"
+  }
+  // other dependencies
+}
+----
+=====
+
 [.include-with-Typescript]
 =====
 
@@ -126,32 +151,6 @@ For more information on the available options, see the https://www.typescriptlan
 }
 ----
 =====
-
-[.include-with-JavaScript]
-=====
-
-. Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
-+
-[source, bash]
-----
-mkdir src
-touch src/index.js
-----
-+
-. Replace the default `scripts` entry in your `package.json` file with the following:
-+
-[source, json]
-----
-{
-  // ...etc.
-  "scripts": {
-    "start": "node index.js"
-  }
-  // other dependencies
-}
-----
-=====
-
 ====
 
 [start=4]
