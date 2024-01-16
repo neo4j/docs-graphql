@@ -15,6 +15,50 @@ Here the user to impersonate is taken from a HTTP header `User`:
 [.tabbed-example]
 ====
 
+[.include-with-JavaScript]
+=====
+[source, javascript, indent=0]
+----
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+    type Movie {
+        title: String!
+    }
+`;
+
+const driver =  neo4j.driver(
+    "neo4j://localhost:7687", 
+    neo4j.auth.basic("username", "password")
+);
+
+const neo4jGraphql = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+});
+
+const schema = await neo4jGraphql.getSchema();
+
+const server = new ApolloServer({
+  schema,
+});
+
+const { url } = await startStandaloneServer(server, {
+  // Your async context function should async and return an object
+  context: async ({ req }) => ({
+    sessionConfig: {
+        impersonatedUser: req.headers.user,
+    },
+  }),
+});
+
+console.log(`🚀  Server ready at: ${url}`);
+----
+=====
+
 [.include-with-Typescript]
 =====
 [source, typescript, indent=0]
@@ -58,6 +102,16 @@ const { url } = await startStandaloneServer(server, {
 console.log(`🚀  Server ready at: ${url}`);
 ----
 =====
+====
+
+== User switching
+
+User switching completely switches the user authenticating with the database for the given session, without the performance cost of instantiating an entire new driver instance.
+
+An example of configuring user switching on a per request basis can be found in the example below. Note that the username and password are provided in HTTP headers `User` and `Password`, but this would not be recommended for production use:
+
+[.tabbed-example]
+====
 
 [.include-with-JavaScript]
 =====
@@ -94,7 +148,7 @@ const { url } = await startStandaloneServer(server, {
   // Your async context function should async and return an object
   context: async ({ req }) => ({
     sessionConfig: {
-        impersonatedUser: req.headers.user,
+        auth: neo4j.auth.basic(req.headers.user, req.headers.password),
     },
   }),
 });
@@ -102,16 +156,6 @@ const { url } = await startStandaloneServer(server, {
 console.log(`🚀  Server ready at: ${url}`);
 ----
 =====
-====
-
-== User switching
-
-User switching completely switches the user authenticating with the database for the given session, without the performance cost of instantiating an entire new driver instance.
-
-An example of configuring user switching on a per request basis can be found in the example below. Note that the username and password are provided in HTTP headers `User` and `Password`, but this would not be recommended for production use:
-
-[.tabbed-example]
-====
 
 [.include-with-TypeScript]
 =====
@@ -141,50 +185,6 @@ const neo4jGraphql = new Neo4jGraphQL({
 const schema = await neo4jGraphql.getSchema();
 
 const server = new ApolloServer<Neo4jGraphQLContext>({
-  schema,
-});
-
-const { url } = await startStandaloneServer(server, {
-  // Your async context function should async and return an object
-  context: async ({ req }) => ({
-    sessionConfig: {
-        auth: neo4j.auth.basic(req.headers.user, req.headers.password),
-    },
-  }),
-});
-
-console.log(`🚀  Server ready at: ${url}`);
-----
-=====
-
-[.include-with-JavaScript]
-=====
-[source, javascript, indent=0]
-----
-import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
-import { Neo4jGraphQL } from "@neo4j/graphql";
-import neo4j from "neo4j-driver";
-
-const typeDefs = `#graphql
-    type Movie {
-        title: String!
-    }
-`;
-
-const driver =  neo4j.driver(
-    "neo4j://localhost:7687", 
-    neo4j.auth.basic("username", "password")
-);
-
-const neo4jGraphql = new Neo4jGraphQL({
-    typeDefs,
-    driver,
-});
-
-const schema = await neo4jGraphql.getSchema();
-
-const server = new ApolloServer({
   schema,
 });
 
