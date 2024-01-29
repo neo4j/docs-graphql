@@ -1,7 +1,7 @@
-[[v5-migration]]
+[[v4-migration]]
 :description: This page lists the breaking changes from version 3.0.0 to 4.0.0 and describes how to update.
-:page-aliases: guides/v5-migration/index.adoc , migration/v5-migration/index.adoc
-= Migration to 5.0.0
+:page-aliases: guides/v4-migration/index.adoc , migration/v4-migration/index.adoc
+= Migration to 4.0.0
 
 This page lists all breaking changes from the Neo4j GraphQL Library version 3.x to 4.x and how to update it.
 
