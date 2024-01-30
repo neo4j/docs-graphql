@@ -18,9 +18,9 @@ npm update @neo4j/graphql
 
 Here is a list of all the breaking changes from version 4.0.0 to 5.0.0.
 
-=== `relationshipProperties`
+=== `@relationshipProperties`
 
-The directive `@relationshipProperties` is now used on types rather than interfaces 
+The directive `@relationshipProperties` should now be used on types rather than interfaces:
 
 [cols="1,1"]
 |===
@@ -29,6 +29,10 @@ The directive `@relationshipProperties` is now used on types rather than interfa
 a|
 [source, graphql, indent=0]
 ----
+interface ActedIn @relationshipProperties {
+    screenTime: Int
+}
+
 type Movie {
     title: String
     actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
@@ -36,15 +40,15 @@ type Movie {
 
 type Person {
     name: String
-}
-
-interface ActedIn @relationshipProperties {
-    screenTime: Int
 }
 ----
 a|
 [source, graphql, indent=0]
 ----
+type ActedIn @relationshipProperties {
+    screenTime: Int
+}
+
 type Movie {
     title: String
     actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
@@ -52,10 +56,6 @@ type Movie {
 
 type Person {
     name: String
-}
-
-type ActedIn @relationshipProperties {
-    screenTime: Int
 }
 ----
 |===
@@ -70,7 +70,7 @@ To better match the default behavior of GraphQL, library directives used in inte
 
 The `@relationship` directive is no longer available in interfaces. If you need a relationship to be available on interfaces, you'll need to use the new `@declareRelationship` directive instead, as well as define the relationships in the concrete type.
 
-This is due to directives no longer cascading from interfaces to types and allows for a relationship to have different properties and labels in each type
+This is due to directives no longer cascading from interfaces to types and allows for a relationship to have different properties and labels in each type.
 
 [cols="1,1"]
 |===
@@ -124,10 +124,9 @@ type Actor {
 |===
 
 
-
 === Edge properties
 
-Edge properties in connections now exist within the field `properties` in edge:
+Edge properties in connections now exist within the field `properties` in `edges`:
 
 [cols="1,1"]
 |===
@@ -165,28 +164,50 @@ query ActedInConnection {
 
 === `_on` filters deprecated
 
+`_on` filters for interfaces are no longer available in `where` and mutations. To filter by a implementing type you need to use the new filter `typename_IN`: 
 
+
+[cols="1,1"]
+|===
+|Before | Now
+a|
 [source, graphql, indent=0]
 ----
 query MyQuery {
   actors(
     where: {
-      actedInConnection_SINGLE: { node: { _on: { Movie: { cost: 1.5 } } } }
+      actedInConnection_SINGLE: { node: { _on: { Movie: { } } } }
     }
   ) {
     name
   }
 }
-
 ----
+a|
+[source, graphql, indent=0]
+----
+query MyQuery {
+ actors(
+    where: {
+      actedInConnection_SINGLE: { node: { typename_IN: [Movie] } }
+    }
+  ) {
+    name
+  }
+}
+----
+|===
 
-This also applies to nested mutations using `_on`. To achieve a similar behavior, you must use the `typename` field in your filters. Using fields of a type in an interface operation is no longer supported.
 
+[NOTE]
+====
+Using fields of a type in an interface operation is no longer supported.
+====
 
-== `experimental` flag removed
-
-The `experimental` flag is no longer available on the options of `Neo4jGraphQL` class.
-
-== Minimum Node updated to `18.0.0`
+=== Minimum Node updated to `18.0.0`
 
 With the deprecation of Node 16, the minimum supported NodeJS version is `18.0.0`
+
+=== `experimental` flag removed
+
+The `experimental` flag is no longer available on the options of `Neo4jGraphQL` class.
