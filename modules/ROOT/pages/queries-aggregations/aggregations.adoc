@@ -30,9 +30,11 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-    usersAggregate {
-        
+  usersAggregate {
+    age {
+      average
     }
+  }
 }
 ---- 
 

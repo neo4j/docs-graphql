@@ -162,7 +162,7 @@ type User @node(labels: ["$jwt.username"]) {
 }
 ----
 
-The following query yielda a different Cypher query depending on the user JWT:
+The following query yields a different Cypher query depending on the user JWT:
 
 [source, graphql, indent=0]
 ----

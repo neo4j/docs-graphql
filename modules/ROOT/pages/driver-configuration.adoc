@@ -29,7 +29,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
@@ -61,7 +61,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
@@ -72,6 +72,73 @@ const server = new ApolloServer({
 
 await startStandaloneServer(server, {
     context: async ({ req }) => ({ req, executionContext: driver }),
+});
+
+----
+
+==== Session in context
+
+[source, javascript, indent=0]
+----
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+    type User {
+        name: String
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("username", "password")
+);
+const session = driver.session();
+
+const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ req, executionContext: session }),
+});
+
+----
+
+==== Transaction in context
+
+[source, javascript, indent=0]
+----
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+    type User {
+        name: String
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("username", "password")
+);
+const session = driver.transaction();
+const transaction = session.beginTransaction();
+
+const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ req, executionContext: transaction }),
 });
 
 ----
@@ -91,7 +158,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const ogm = new OGM({ typeDefs, driver });
@@ -118,7 +185,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
@@ -140,7 +207,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const ogm = new OGM({ typeDefs, driver });
@@ -168,7 +235,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });

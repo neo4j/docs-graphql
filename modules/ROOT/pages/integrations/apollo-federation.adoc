@@ -21,15 +21,9 @@ const typeDefs = `#graphql
   }
 `;
 
-const {
-  NEO4J_URI = "neo4j://localhost:7687/neo4j",
-  NEO4J_USERNAME = "neo4j",
-  NEO4J_PASSWORD = "password",
-} = process.env;
+const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic("username", "password"));
 
-const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD));
-
-const neo4jgraphql = new Neo4jGraphQL({
+const neo4jGraphQL = new Neo4jGraphQL({
   typeDefs,
   driver,
 })
@@ -46,7 +40,7 @@ console.log(`🚀  Server ready at ${url}`);
 
 == Setup
 
-To proceed with the convertion, follow these steps:
+To proceed with the conversion, follow these steps:
 
 . Create a directory for a new project and `cd` into it:
 +
@@ -73,6 +67,31 @@ This how-to guide sets up the project using ES Modules, which allows the usage o
 
 [.tabbed-example]
 ====
+
+[.include-with-JavaScript]
+=====
+
+. Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
++
+[source, bash]
+----
+mkdir src
+touch src/index.js
+----
++
+. Replace the default `scripts` entry in your `package.json` file with the following:
++
+[source, json]
+----
+{
+  // ...etc.
+  "scripts": {
+    "start": "node index.js"
+  }
+  // other dependencies
+}
+----
+=====
 
 [.include-with-Typescript]
 =====
@@ -132,32 +151,6 @@ For more information on the available options, see the https://www.typescriptlan
 }
 ----
 =====
-
-[.include-with-JavaScript]
-=====
-
-. Create a `src` directory with an empty `index.js` file to contain the entrypoint to your code:
-+
-[source, bash]
-----
-mkdir src
-touch src/index.js
-----
-+
-. Replace the default `scripts` entry in your `package.json` file with the following:
-+
-[source, json]
-----
-{
-  // ...etc.
-  "scripts": {
-    "start": "node index.js"
-  }
-  // other dependencies
-}
-----
-=====
-
 ====
 
 [start=4]
@@ -224,7 +217,7 @@ For that, the following line needs to be changed:
 
 [source, javascript]
 ----
-const schema = neo4jgraphql.getSubgraphSchema();
+const schema = neo4jGraphql.getSubgraphSchema();
 ----
 
 == Conclusion
@@ -244,15 +237,9 @@ const typeDefs = `#graphql
   }
 `;
 
-const {
-  NEO4J_URI = "neo4j://localhost:7687/neo4j",
-  NEO4J_USERNAME = "neo4j",
-  NEO4J_PASSWORD = "password",
-} = process.env;
+const driver = neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("username", "password"));
 
-const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD));
-
-const neo4jgraphql = new Neo4jGraphQL({
+const neo4jGraphQL = new Neo4jGraphQL({
   typeDefs,
   driver,
 })

@@ -8,7 +8,7 @@
 **** xref:type-definitions/types/scalar.adoc[Scalar]
 **** xref:type-definitions/types/temporal.adoc[Temporal]
 **** xref:type-definitions/types/spatial.adoc[Spatial]
-**** xref:type-definitions/types/interfaces.adoc[Interface]
+**** xref:type-definitions/types/interfaces.adoc[Interfaces]
 **** xref:type-definitions/types/unions.adoc[Union]
 **** xref:type-definitions/types/relationships.adoc[]
 *** xref:type-definitions/directives/index.adoc[]
@@ -24,8 +24,6 @@
 *** xref:schema-configuration/type-configuration.adoc[]
 *** xref:schema-configuration/global-configuration.adoc[]
 *** xref:schema-configuration/field-configuration.adoc[]
-
-** xref:introspector.adoc[Introspector]
 
 ** xref:queries-aggregations/index.adoc[Queries and aggregations]
 *** xref:queries-aggregations/queries.adoc[]
@@ -55,6 +53,7 @@
 *** xref:authentication-and-authorization/authentication.adoc[]
 *** xref:authentication-and-authorization/authorization.adoc[]
 *** xref:authentication-and-authorization/impersonation-and-user-switching.adoc[]
+*** xref:authentication-and-authorization/operations.adoc[]
 
 ** xref:introspector.adoc[Introspector]
 
@@ -74,7 +73,7 @@
 
 ** Frameworks and integrations
 *** xref:integrations/apollo-federation.adoc[]
-*** xref:integrations/nextjs.adoc[]
+*** xref:integrations/relay-compatibility.adoc[]
 
 ** xref:troubleshooting.adoc[]
 

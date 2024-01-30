@@ -132,18 +132,10 @@ subscription {
 [[create_relationship]]
 == `CREATE_RELATIONSHIP`
 
-Subscriptions to `CREATE_RELATIONSHIP` events listen for newly created relationships to a node of the specified type. 
-
-[NOTE]
-====
-This subscription operation is **only** available for types that define relationship fields.
-====
-
-== `CREATE_RELATIONSHIP`
-
 Subscriptions to `CREATE_RELATIONSHIP` events listen to new relationships being created and contain information about the connected nodes.
 These events:
 
+* Are only available for types that define relationship fields.
 * Contain relationship-specific information, such as the relationship field name and the object containing all relationship field names of the specified type.
 * Trigger an equivalent number of events compared to the relationships created, in case a new relationship is created following a mutation and the type targeted is responsible for defining two or more relationships in the schema.
 * Contain the relationships object populated with the newly created relationship properties for one single relationship name only (all other relationship names should have a null value).
@@ -1000,7 +992,7 @@ Only top-level properties, without relationships, are available and they are the
 [NOTE]
 ====
 Irrespective of the relationship direction in the database, the `DELETE_RELATIONSHIP` event is bound to the type targeted for the subscription. 
-Consequently, if types A and B have xref:subscriptions/events.adoc#delete-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation deletes a relationship between them (despite being already previously diconnected in the database), the `DELETE_RELATIONSHIP` event should only return the subscription to the type A.
+Consequently, if types A and B have xref:subscriptions/events.adoc#delete-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation deletes a relationship between them (despite being already previously disconnected in the database), the `DELETE_RELATIONSHIP` event should only return the subscription to the type A.
 ====
 
 As an example, consider these type definitions:
@@ -1049,7 +1041,7 @@ A `DELETE_RELATIONSHIP` subscription in this case should receive the following e
     deletedRelationship: {
         actors: {
             screenTime: 1000, # relationship properties for the relationship type `ACTED_IN` that was deleted
-            node: { # top-level properties of the node at the other end of the relationship, in this case `Actor` type, before the delete occured
+            node: { # top-level properties of the node at the other end of the relationship, in this case `Actor` type, before the delete occurred
                 name: "Tom Hardy"
             }
         },

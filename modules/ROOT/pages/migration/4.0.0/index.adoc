@@ -1,7 +1,7 @@
-[[v4-migration]]
+[[migration-guide]]
 :description: This page lists the breaking changes from version 3.0.0 to 4.0.0 and describes how to update.
-:page-aliases: guides/v4-migration/index.adoc , migration/v4-migration/index.adoc
 = Migration to 4.0.0
+:page-aliases: guides/index.adoc, guides/migration-guide/index.adoc, guides/migration-guide/server.adoc, guides/migration-guide/type-definitions.adoc, guides/migration-guide/mutations.adoc
 
 This page lists all breaking changes from the Neo4j GraphQL Library version 3.x to 4.x and how to update it.
 
@@ -45,7 +45,7 @@ const typeDefs = `
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({
@@ -71,7 +71,7 @@ const typeDefs = `
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({
@@ -107,7 +107,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({
@@ -144,7 +144,7 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
@@ -176,7 +176,7 @@ neoSchema = new Neo4jGraphQL({
     typeDefs,
     config: {
         enableRegex: true
-   }
+    }
 });
 ----
 a|
@@ -839,7 +839,7 @@ Note that defining `labels` means taking control of the database labels of the n
 Indexes and constraints in Neo4j only support a single label, for which the first element of the `labels` argument will be used. +
 {nbsp} +
 As before, providing none of these arguments results in the node label being the same as the GraphQL type name.
-This can cause implications on constraits.
+This can cause implications on constraints.
 For instance, in the case where unique constraint is asserted for the label `Tech` and the property `name`: +
 {nbsp} +
 [source, graphql, indent=0]
