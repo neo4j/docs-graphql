@@ -20,8 +20,12 @@ Here is a list of all the breaking changes from version 4.0.0 to 5.0.0.
 
 === `@relationshipProperties`
 
+<<<<<<< HEAD
 The directive `@relationshipProperties` should now be used on types rather than interfaces.
 For example:
+=======
+The directive `@relationshipProperties` should now be used on types rather than interfaces:
+>>>>>>> 20f6bef (Migration guide to 5.0.0)
 
 [cols="1,1"]
 |===
@@ -74,9 +78,13 @@ This also applies to custom directives.
 The `@relationship` directive is no longer available in interfaces. 
 If you need a relationship to be available on interfaces, you need to use the new `@declareRelationship` directive instead, as well as define the relationships in the concrete type.
 
+<<<<<<< HEAD
 This change is due to directives no longer cascading from interfaces to types.
 However, now it is possible for a relationship to have different properties and labels in each type.
 For example:
+=======
+This is due to directives no longer cascading from interfaces to types and allows for a relationship to have different properties and labels in each type.
+>>>>>>> 20f6bef (Migration guide to 5.0.0)
 
 [cols="1,1"]
 |===
@@ -170,7 +178,11 @@ query ActedInConnection {
 
 === `_on` filters deprecated
 
+<<<<<<< HEAD
 `_on` filters for interfaces are no longer available in `where` and mutations. To filter by an implementing type, you need to use the new filter `typename_IN`: 
+=======
+`_on` filters for interfaces are no longer available in `where` and mutations. To filter by a implementing type you need to use the new filter `typename_IN`: 
+>>>>>>> 20f6bef (Migration guide to 5.0.0)
 
 
 [cols="1,1"]
@@ -210,10 +222,10 @@ query MyQuery {
 Using fields of a type in an interface operation is no longer supported.
 ====
 
-==== Minimum NodeJS version
+=== Minimum Node updated to `18.0.0`
 
-With the deprecation of Node 16, the minimum supported NodeJS version is `18.0.0`.
+With the deprecation of Node 16, the minimum supported NodeJS version is `18.0.0`
 
-==== `experimental` flag
+=== `experimental` flag removed
 
-The `experimental` flag is no longer available in the options of the `Neo4jGraphQL` class.
+The `experimental` flag is no longer available on the options of `Neo4jGraphQL` class.
