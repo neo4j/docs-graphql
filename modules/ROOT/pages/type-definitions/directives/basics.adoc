@@ -43,8 +43,7 @@ Note that, in this case, there is a directive on each "end" of the relationship,
 
 === Relationship properties
 
-In order to add properties to a relationship, you need to add a new type to your type definitions.
-This time, however, it should be an interface which must be decorated with the `@relationshipProperties` directive.
+In order to add properties to a relationship, you need to add a new type to your type definitions decorated with the `@relationshipProperties` directive.
 
 For example, for the "ACTED_IN" relationship, add a property "roles":
 
@@ -60,10 +59,10 @@ type Actor {
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedIn")
 }
 
-interface ActedIn @relationshipProperties {
+type ActedIn @relationshipProperties {
     roles: [String]
 }
 ----
 
-Note that in addition to this interface type, there is an added a key `properties` in the existing `@relationship` directives.
+Note that in addition to this type, there is an added a key `properties` in the existing `@relationship` directives.
 For more information, see xref::/type-definitions/types/relationships.adoc[Type definitions -> Relationships].
