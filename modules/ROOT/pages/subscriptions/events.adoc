@@ -179,7 +179,7 @@ type Actor {
     name: String
 }
 
-interface ActedIn @relationshipProperties {
+type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
@@ -255,7 +255,7 @@ type Actor {
     name: String
 }
 
-interface ActedIn @relationshipProperties {
+type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 ----
@@ -312,7 +312,7 @@ type Person {
     reputation: Int
 }
 
-interface Directed @relationshipProperties {
+type Directed @relationshipProperties {
     year: Int!
 }
 ----
@@ -374,7 +374,7 @@ type Influencer implements Reviewer {
     reputation: Int!
 }
 
-interface Review @relationshipProperties {
+type Review @relationshipProperties {
     score: Int!
 }
 ----
@@ -439,11 +439,11 @@ type Person {
 
 union Director = Person | Actor
 
-interface ActedIn @relationshipProperties {
+type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
-interface Directed @relationshipProperties {
+type Directed @relationshipProperties {
     year: Int!
 }
 ----
@@ -1010,7 +1010,7 @@ type Actor {s
     name: String
 }
 
-interface ActedIn @relationshipProperties {
+type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
@@ -1019,7 +1019,7 @@ type Reviewer {
     reputation: Int
 }
 
-interface Reviewed @relationshipProperties {
+type Reviewed @relationshipProperties {
     score: Int!
 }
 ----
@@ -1086,7 +1086,7 @@ type Actor {
     name: String
 }
 
-interface ActedIn @relationshipProperties {
+type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 ----
@@ -1144,7 +1144,7 @@ type Person {
     reputation: Int
 }
 
-interface Directed @relationshipProperties {
+type Directed @relationshipProperties {
     year: Int!
 }
 ----
@@ -1205,7 +1205,7 @@ type Influencer implements Reviewer {
     reputation: Int!
 }
 
-interface Review @relationshipProperties {
+type Review @relationshipProperties {
     score: Int!
 }
 ----
@@ -1269,11 +1269,11 @@ type Person {
 
 union Director = Person | Actor
 
-interface ActedIn @relationshipProperties {
+type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
-interface Directed @relationshipProperties {
+type Directed @relationshipProperties {
     year: Int!
 }
 ----

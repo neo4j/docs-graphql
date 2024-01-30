@@ -387,7 +387,7 @@ type Person {
     name: String
 }
 
-interface ActedIn @relationshipProperties {
+type ActedIn @relationshipProperties {
     screenTime: Int
 }
 ----

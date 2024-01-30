@@ -34,7 +34,7 @@ type City {
     name: String
 }
 
-interface UserLivesInProperties @relationshipProperties {
+type UserLivesInProperties @relationshipProperties {
     since: DateTime @alias(property: "moveInDate")
 }
 ----
