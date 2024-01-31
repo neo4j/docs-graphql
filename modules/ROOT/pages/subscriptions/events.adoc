@@ -8,10 +8,10 @@ subscriptions/events/update.adoc
 This page covers a variety of subscription options offered by the Neo4j GraphQL Library.
 
 [NOTE]
-====
+===
 Only changes made through `@neo4j/graphql` should trigger the events here described. 
 Changes made directly to the database or using the xref::type-definitions/directives/cypher.adoc[`@cypher` directive] will **not** trigger any event.
-====
+===
 
 == `CREATE`
 

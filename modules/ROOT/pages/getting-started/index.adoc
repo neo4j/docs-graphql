@@ -1,6 +1,5 @@
 [[getting-started]]
 = Getting started
-:page-aliases: getting-started.adoc
 :description: This section describes how to get started with the Neo4j GraphQL Library.
 
 
