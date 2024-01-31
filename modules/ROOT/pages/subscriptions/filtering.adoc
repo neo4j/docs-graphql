@@ -751,4 +751,4 @@ The following example illustrates how to filter the node at the other end of the
 }
 ----
 
-This example returns events for relationships between the type `Movie` and `Reviewer`, where the score is higher than 7, and the `Reviewer` has a reputation greater or equal to 7
+This example returns events for relationships between the type `Movie` and `Reviewer`, where the score is higher than 7, and the `Reviewer` has a reputation greater or equal to 7.

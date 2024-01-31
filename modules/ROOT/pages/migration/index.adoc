@@ -1,6 +1,6 @@
 [[v5-migration]]
 :description: This page lists the breaking changes from version 4.0.0 to 5.0.0 and describes how to update.
-:page-aliases: guides/v5-migration/index.adoc , migration/v5-migration/index.adoc
+:page-aliases: guides/index.adoc, guides/migration-guide/index.adoc, guides/migration-guide/server.adoc, guides/migration-guide/type-definitions.adoc, guides/migration-guide/mutations.adoc
 = Migration to 5.0.0
 
 This page lists all breaking changes from the Neo4j GraphQL Library version 4.x to 5.x and how to update it.
@@ -20,7 +20,8 @@ Here is a list of all the breaking changes from version 4.0.0 to 5.0.0.
 
 === `@relationshipProperties`
 
-The directive `@relationshipProperties` should now be used on types rather than interfaces:
+The directive `@relationshipProperties` should now be used on types rather than interfaces.
+For example:
 
 [cols="1,1"]
 |===
@@ -62,15 +63,20 @@ type Person {
 
 === Interface directives
 
-To better match the default behavior of GraphQL, library directives used in interfaces will not cascade to the implementing types anymore. This means that most directives are no longer valid in interfaces and have to be defined in the implementing types. This also applies to custom directives.
+To better match the default behavior of GraphQL, library directives used in interfaces will not cascade to the implementing types anymore. 
+This means that most directives are no longer valid in interfaces and have to be defined in the implementing types. 
+This also applies to custom directives.
 
 
 
 === `@declareRelationship`
 
-The `@relationship` directive is no longer available in interfaces. If you need a relationship to be available on interfaces, you'll need to use the new `@declareRelationship` directive instead, as well as define the relationships in the concrete type.
+The `@relationship` directive is no longer available in interfaces. 
+If you need a relationship to be available on interfaces, you need to use the new `@declareRelationship` directive instead, as well as define the relationships in the concrete type.
 
-This is due to directives no longer cascading from interfaces to types and allows for a relationship to have different properties and labels in each type.
+This change is due to directives no longer cascading from interfaces to types.
+However, now it is possible for a relationship to have different properties and labels in each type.
+For example:
 
 [cols="1,1"]
 |===
@@ -204,10 +210,10 @@ query MyQuery {
 Using fields of a type in an interface operation is no longer supported.
 ====
 
-=== Minimum Node updated to `18.0.0`
+==== Minimum NodeJS version
 
-With the deprecation of Node 16, the minimum supported NodeJS version is `18.0.0`
+With the deprecation of Node 16, the minimum supported NodeJS version is `18.0.0`.
 
-=== `experimental` flag removed
+==== `experimental` flag
 
-The `experimental` flag is no longer available on the options of `Neo4jGraphQL` class.
+The `experimental` flag is no longer available in the options of the `Neo4jGraphQL` class.
