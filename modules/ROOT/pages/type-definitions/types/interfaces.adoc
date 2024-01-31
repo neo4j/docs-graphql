@@ -8,7 +8,8 @@ This page describes how to use and define interfaces on relationship fields.
 
 == Creating an interface field
 
-The following schema defines a `Actor` type, that has a relationship `ACTED_IN`, of type `[Production!]!`. `Production` is an interface type with `Movie` and `Series` implementations.
+The following schema defines an `Actor` type, that has a relationship `ACTED_IN`, of type `[Production!]!`.
+`Production` is an interface type with `Movie` and `Series` implementations.
 
 [source, graphql, indent=0]
 ----
@@ -64,7 +65,7 @@ query GetProductionsStartingWithThe {
 }
 ----
 
-The query below will only return the movies with title starting with "The " for each actor by filtering by `typename_IN`.
+The following query will only return the movies with title starting with "The " for each actor by filtering them by `typename_IN`:
 
 [source, graphql, indent=0]
 ----
