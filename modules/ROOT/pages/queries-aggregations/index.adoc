@@ -33,7 +33,7 @@ type User {
     friends: [User!]! @relationship(type: "FRIENDS_WITH", direction: OUT)
 }
 
-interface PostedAt @relationshipProperties {
+type PostedAt @relationshipProperties {
     date: DateTime
 }
 ----
