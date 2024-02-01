@@ -170,7 +170,7 @@ query ActedInConnection {
 
 === `_on` filters deprecated
 
-`_on` filters for interfaces are no longer available in `where` and mutations. To filter by a implementing type you need to use the new filter `typename_IN`: 
+`_on` filters for interfaces are no longer available in `where` and mutations. To filter by an implementing type, you need to use the new filter `typename_IN`: 
 
 
 [cols="1,1"]
