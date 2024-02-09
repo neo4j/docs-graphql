@@ -96,7 +96,7 @@ type Movie implements Production {
 
 type Series implements Production {
     title: String!
-    episodes: Number!
+    episodes: Int!
     actors: [Actor!]! 
 }
 
@@ -119,7 +119,7 @@ type Movie implements Production {
 
 type Series implements Production {
     title: String!
-    episodes: Number!
+    episodes: Int!
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
