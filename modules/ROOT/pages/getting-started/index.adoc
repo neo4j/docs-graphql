@@ -108,12 +108,12 @@ image::neo4j-aura-dashboard.png[width=500]
 
 === Using a Neo4j database
 
-For a database located at the default "bolt://localhost:7687" (see more about https://neo4j.com/docs/operations-manual/current/configuration/ports[port configuration]), with the username "neo4j" and the password "password", add the following to the bottom of your `index.js` file:
+For a database located at the default "neo4j://localhost:7687" (see more about https://neo4j.com/docs/operations-manual/current/configuration/ports[port configuration]), with the username "neo4j" and the password "password", add the following to the bottom of your `index.js` file:
 
 [source, javascript, indent=0]
 ----
 const driver = neo4j.driver(
-    "bolt://localhost:7687",
+    "neo4j://localhost:7687",
     neo4j.auth.basic("username", "password")
 );
 
@@ -131,7 +131,6 @@ const server = new ApolloServer({
 });
 
 const { url } = await startStandaloneServer(server, {
-    context: async ({ req }) => ({ req }),
     listen: { port: 4000 },
 });
 
@@ -179,7 +178,7 @@ const typeDefs = `#graphql
 `;
 
 const driver = neo4j.driver(
-    "bolt://localhost:7687",
+    "neo4j://localhost:7687",
     neo4j.auth.basic("username", "password")
 );
 
