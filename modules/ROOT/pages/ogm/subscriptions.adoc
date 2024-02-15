@@ -1,7 +1,8 @@
 [[ogm-subscriptions]]
+:description: This how-to guide shows how to use the OGM with subscriptions.
 = How to use the OGM with subscriptions
 
-The Neo4j GraphQL Library can be used in conjunction with the OGM in order to extend the Library's functionalities, or to take advantage of the xref:ogm/private.adoc[`@private` directive]. 
+The Neo4j GraphQL Library can be used in conjunction with the OGM in order to extend the library's functionalities, or to take advantage of the xref:ogm/private.adoc[`@private` directive]. 
 
 == Usage
 
@@ -26,7 +27,8 @@ const typeDefs = `#graphql
 const subscriptionsPlugin = new Neo4jGraphQLSubscriptionsSingleInstancePlugin();
 ----
 
-. Set up a server that supports subscriptions according to the xref:subscriptions/getting-started.adoc#setting-up-server[subscriptions reference usage].
+. Set up a server that supports subscriptions.
+See more instructions in the xref:subscriptions/getting-started.adoc#setting-up-server[Getting started page].
 
 
 === Adding the OGM
@@ -48,9 +50,10 @@ await ogm.init();
 
 === Adding a custom resolver
 
-Custom resolvers can be used for multiple reasons such as performing data manipulation and checks, or interact with third party systems. 
+xref:custom-resolvers/[Custom resolvers] can be used for multiple reasons such as performing data manipulation and checks, or interact with third party systems. 
 In this case, you only need to create a `User` node with the `password` field set.
-You can add a sign-up mutation, for example:
+You can do that by adding a sign-up mutation.
+For example:
 
 [source, javascript, indent=0]
 ----
