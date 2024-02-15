@@ -27,6 +27,9 @@ of any required fields that is passed as arguments to the custom resolver.
 | xref::/type-definitions/directives/cypher.adoc[`@cypher`]
 | Overrides field resolution (including `Query` and `Mutation` fields), instead resolving with the specified Cypher.
 
+| xref::/schema-configuration/field-configuration.adoc#_relationship[`@declareRelationship`]
+| Configure xref::/type-definitions/types/relationships.adoc[relationships] to be implemented on object types.
+
 | xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-default[`@default`]
 | Allows for the setting of a default value for a field on object creation.
 
