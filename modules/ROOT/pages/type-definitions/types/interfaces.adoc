@@ -15,7 +15,7 @@ The following schema defines an `Actor` type, that has a relationship `ACTED_IN`
 ----
 interface Production {
     title: String!
-    actors: [Actor!]!
+    actors: [Actor!]! @declareRelationship
 }
 
 type Movie implements Production {

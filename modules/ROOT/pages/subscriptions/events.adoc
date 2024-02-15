@@ -188,7 +188,7 @@ type Reviewer {
     reputation: Int
 }
 
-interface Reviewed @relationshipProperties {
+type Reviewed @relationshipProperties {
     score: Int!
 }
 ----

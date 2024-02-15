@@ -88,6 +88,39 @@ type ActedIn @relationshipProperties {
 }
 ----
 
+If you need a relationship to be available on interfaces, you need to use the new `@declareRelationship` directive instead, as well as define the relationships in the concrete type:
+
+[source, graphql, indent=0]
+----
+interface Production {
+    title: String!
+    actors: [Actor!]! @declareRelationship
+}
+
+type Actor {
+    name: String!
+    born: Int!
+    actedInMovies: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
+}
+
+type Movie {
+    title: String!
+    released: Int!
+    actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
+}
+
+type Series {
+    title: String!
+    released: Int!
+    episodes: Int!
+    actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
+}
+
+type ActedIn @relationshipProperties {
+    roles: [String!]
+}
+----
+
 === `queryDirection`
 
 All relationships have a direction.
