@@ -62,6 +62,7 @@ new Neo4jGraphQL({
 });
 ----
 
+[[authentication-and-authorization-jwt]]
 == JWT
 
 By default, filtering is available on https://www.rfc-editor.org/rfc/rfc7519#section-4.1[the registered claim names] in the JWT specification.
