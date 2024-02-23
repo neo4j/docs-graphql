@@ -1,282 +1,293 @@
-[[subscription-events]]
-= Subscription events
-:description: This page covers a variety of subscription options offered by the Neo4j GraphQL Library.
-:page-aliases: subscriptions/events/create.adoc, \
-subscriptions/events/create_relationship.adoc, subscriptions/events/delete.adoc, subscriptions/events/delete_relationship.adoc, \
-subscriptions/events/update.adoc
+[[filtering]]
+:description: This page covers how to apply filters to subscriptions in the Neo4j GraphQL Library.
+= Filtering
 
-This page covers a variety of subscription options offered by the Neo4j GraphQL Library.
+This page covers how to apply filters to subscriptions in the Neo4j GraphQL Library.
+Note, however, that:
+
+* Filtering can only be applied at the root of the subscription operation.
+* Aggregations are not supported on subscription types and there is currently no available method.
+
+A subscription can be created to target the changes to a node (`create`/`update`/`delete``) or to a relationship (`create`/`delete``).  
+
+While the format slightly differs depending on whether the subscription targets a node or a relationship, providing a `where` argument allows for filtering on the events that are returned to the subscription.
+
+== Operators
+
+When creating a subscription, a number of operators are available for different types in the `where` argument.
+
+=== Equality operators
+
+All types can be tested for either equality or non-equality. 
+For the `Boolean` type, these are the only available comparison operators.
+
+[[filtering-numerical-operators]]
+=== Numerical operators
+
+The following comparison operators are available for numeric types (`Int`, `Float`, xref::type-definitions/types/index.adoc[`BigInt`]):
+
+* `_LT`
+* `_LTE`
+* `_GTE`
+* `_GT`
 
 [NOTE]
-===
-Only changes made through `@neo4j/graphql` should trigger the events here described. 
-Changes made directly to the database or using the xref::type-definitions/directives/cypher.adoc[`@cypher` directive] will **not** trigger any event.
-===
+====
+Filtering on xref::type-definitions/types/temporal.adoc[Temporal types] and xref::type-definitions/types/spatial.adoc[Spatial types] is not currently supported.
+====
 
-== `CREATE`
+=== String comparison
 
-Subscriptions to `CREATE` events listen *only* to newly created nodes, not new relationships.
-In this occasion, a new event is triggered for each new node, containing its properties.
+The following case-sensitive comparison operators are only available for use on `String` and `ID` types:
 
-This action is performed with the top-level subscription `[type]Created`, which contains the following fields:
+* `_STARTS_WITH`
+* `_ENDS_WITH`
+* `_CONTAINS`
 
-* `event`: the event triggering this subscription (in this case, `CREATE`).
-* `created<typename>`: top-level properties of the newly created node, without relationships.
-* `timestamp`: the timestamp in which the mutation was made.
-If a same query triggers multiple events, they should have the same timestamp.
+=== Array comparison
+
+The following operator is available on non-array fields, and accepts an array argument:
+
+* `_IN`
+
+Conversely, the following operator is available on array fields, and accepts a single argument:
+
+* `_INCLUDES`
+
+These operators are available for all types apart from `Boolean`.
+
+=== `AND`/`OR` operators
+
+Complex combinations of operators are possible using the `AND`/ `OR` operators. 
+They accept as argument an array of items of the same format as the `where` argument.
+
+Check xref:subscriptions/filtering.adoc#combining-operators[Combining operators] for an example.
+
+[[node-events-usage]]
+== Subscribing to node events
+
+The `where` argument allows specifying filters on top-level properties of the targeted nodes.
+Only events matching these properties and type are returned to the subscription.
 
 As an example, consider the following type definitions:
 
-[source,graphql,indent=0]
+[source, graphql, indent=0]
 ----
 type Movie {
     title: String
     genre: String
+    averageRating: Float
+    releasedIn: Int
 }
 ----
 
-A subscription to any newly created node of the `Movie` type should look like this:
+Now, here is how filtering can be applied when creating a subscription:
 
-[source,graphql,indent=0]
+=== `CREATE`
+
+To filter subscriptions to `create` operations for movies by their genre, here is how to do it:
+
+[source, graphql, indent=0]
 ----
 subscription {
-    movieCreated {
+    movieCreated(where: {genre: "Drama"}) {
         createdMovie {
             title
-            genre
         }
-        event
-        timestamp
     }
 }
 ----
 
-[[update]]
-== `UPDATE`
+This way, only newly created movies with the genre `"Drama"` trigger events to this subscription.
 
-Subscriptions to `UPDATE` events listen *only* to node properties changes, not updates to other fields.
-In this occasion, a new event is triggered for each mutation that modifies the node top-level properties.
+[NOTE]
+====
+The `where` argument only filters by properties set at the moment of creation.
+====
 
-This action is performed with the top-level subscription `[type]Updated`, which contains the following fields:
+=== `UPDATE`
 
-* `event`: the event triggering this subscription (in this case, `UPDATE`).
-* `updated<typename>`: top-level properties of the updated node, without relationships.
-* `previousState`: the previous top-level properties of the node, before the `UPDATE` event.
-* `timestamp`: the timestamp in which the mutation was made.
-If a same query triggers multiple events, they should have the same timestamp.
+Here is how to filter subscription to `update` operations in movies with average rating bigger than 8:
 
-As an example, consider the following type definitions:
-
-[source,graphql,indent=0]
+[source, graphql, indent=0]
 ----
-type Movie {
-    title: String
-    genre: String
-}
-----
-
-A subscription to any node of the `Movie` type with its properties recently updated should look like this:
-
-[source,graphql,indent=0]
-----
-subscription MovieUpdated {
-    movieUpdated {
-        event
-        previousState {
-            title
-            genre
-        }
+subscription {
+    movieUpdate(where: {averageRating_GT: 8}) {
         updatedMovie {
             title
         }
-        timestamp
     }
 }
 ----
 
-== `DELETE`
+This way, you should only receive events triggered by movies with the average rating bigger than 8 when they are modified.
 
-Subscriptions to `DELETE` events listen *only* to nodes being deleted, not deleted relationships.
-This action is performed with the top-level subscription `[type]Deleted`, which contains the following fields:
+[NOTE]
+====
+The `where` argument only filters properties that already existed *before* the update.
+====
 
-* `event`: the event triggering this subscription (in this case, `DELETE`).
-* `deleted<typename>`: top-level properties of the deleted node, without relationships.
-* `timestamp`: the timestamp in which the mutation was made.
-If a same query triggers multiple events, they should have the same timestamp.
+This is how these events may look like:
 
-As an example, consider the following type definitions:
-
-[source,graphql,indent=0]
+[source, graphql, indent=0]
 ----
-type Movie {
-    title: String
-    genre: String
+mutation {
+    makeTheMatrix: createMovies(input: {title: "The Matrix", averageRating: 8.7}) {
+        title
+        averageRating
+    },
+    makeResurrections: createMovies(input: {title: "The Matrix Resurrections", averageRating: 5.7}) {
+        title
+        averageRating
+    },
+}
+
+mutation {
+    updateTheMatrix: updateMovie(
+        where: {title: "The Matrix"}
+        update: {averageRating: 7.9}
+    ) {
+        title
+    },
+    updateResurrections: updateMovie(
+        where: {title: "The Matrix Resurrections"}
+        update: {averageRating: 8.9}
+    ) {
+        title
+    }
 }
 ----
 
-A subscription to any deleted nodes of the `Movie` type should look like this:
+Therefore, given the previously described subscription, these GraphQL operations should only triggered for `"The Matrix"` movie.
 
-[source,graphql,indent=0]
+=== `DELETE`
+
+Here is how to filter subscription to `delete` operations in movies by their genre, using the `NOT` filter:
+
+[source, graphql, indent=0]
 ----
 subscription {
-    movieDeleted {
+    movieDeleted(where: { NOT: { genre: "Comedy" } }) {
         deletedMovie {
             title
         }
-        event
-        timestamp
     }
 }
 ----
 
-[[create_relationship]]
-== `CREATE_RELATIONSHIP`
-
-Subscriptions to `CREATE_RELATIONSHIP` events listen to new relationships being created and contain information about the connected nodes.
-These events:
-
-* Are only available for types that define relationship fields.
-* Contain relationship-specific information, such as the relationship field name and the object containing all relationship field names of the specified type.
-* Trigger an equivalent number of events compared to the relationships created, in case a new relationship is created following a mutation and the type targeted is responsible for defining two or more relationships in the schema.
-* Contain the relationships object populated with the newly created relationship properties for one single relationship name only (all other relationship names should have a null value).
-* Contain the properties of the nodes connected through the relationship, as well as the properties of the new relationship, if any.
+This way, only deleted movies of all genres except for `"Comedy"` should trigger events to this subscription.
 
 [NOTE]
 ====
-Connected nodes that may or may not have previously existed are not covered by this subscription. 
-To subscribe to these nodes' updates, use the xref:subscriptions/events.adoc#_create[`CREATE`] or the xref:subscriptions/events.adoc#_update[`UPDATE`] subscription.
+The `where` argument only filters properties that already existed before the deletion process.
 ====
 
-Subscriptions to `CREATE_RELATIONSHIP` events can be made with the top-level subscription `[type]RelationshipCreated`, which contains the following fields:
+[[combining-operators]]
+=== Combining operators
 
-* `event`: the event triggering this subscription (in this case, `CREATE_RELATIONSHIP`).
-* `timestamp`: the timestamp in which the mutation was made. 
-If a same query triggers multiple events, they should have the same timestamp.
-* `<typename>`: top-level properties of the targeted nodes, without relationships, before the `CREATE_RELATIONSHIP` operation was triggered.
-* `relationshipFieldName`: the field name of the newly created relationship.
-* `createdRelationship`: an object having all field names of the nodes affected by the newly created relationships.
-While any event unrelated to `relationshipFieldName` should be `null`, the ones which are related should contain the relationship properties, if defined, and a `node` key containing the properties of the node on the other side of the relationship. 
-Only top-level properties, without relationships, are available and they are the properties that already existed before the `CREATE_RELATIONSHIP` operation took place.
+All previously mentioned operators can be combined using the `AND`, `OR`, and `NOT` operators. 
+They accept an array argument with items of the same format as the `where` argument, which means they can also be nested to form complex combinations.
 
-[NOTE]
-====
-Irrespective of the relationship direction in the database, the `CREATE_RELATIONSHIP` event is bound to the type targeted for the subscription.
-Consequently, if types A and B have xref:subscriptions/events.adoc#create-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation creates a relationship between them (despite being already previously connected in the database), the `CREATE_RELATIONSHIP` event should only return the subscription to the type A.
-====
+As an example, consider a user who likes comedy movies, but not romantic comedies from early 2000, and who has the Matrix Trilogy as their favorite titles.
+They could subscribe to any updates that cover this particular set of interests as follows:
 
-As an example, consider the following type definitions:
-
-[source,graphql,indent=0]
-----
-type Movie {
-    title: String
-    genre: String
-    actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
-    reviewers: [Reviewer] @relationship(type: "REVIEWED", direction: IN, properties: "Reviewed")
-}
-
-type Actor {
-    name: String
-}
-
-type ActedIn @relationshipProperties {
-    screenTime: Int!
-}
-
-type Reviewer {
-    name: String
-    reputation: Int
-}
-
-type Reviewed @relationshipProperties {
-    score: Int!
-}
-----
-
-Now consider a mutation creating an `Actor` named `Tom Hardy` and a `Reviewer` named `Jane` is connected through a relationship to a `Movie` titled `Inception`.
-A `CREATE_RELATIONSHIP` subscription in this case should receive the following events:
-
-[source,graphql,indent=0]
-----
-{
-    # 1  - relationship type `ACTED_IN`
-    event: "CREATE_RELATIONSHIP",
-    timestamp,
-    movie: {
-        title: "Inception",
-        genre: "Adventure"
-    },
-    relationshipFieldName: "actors", # notice the field name specified here is populated below in the `createdRelationship` object
-    createdRelationship: {
-        actors: {
-            screenTime: 1000, # relationship properties for the relationship type `ACTED_IN`
-            node: { # top-level properties of the node at the other end of the relationship, in this case `Actor` type
-                name: "Tom Hardy"
-            }
-        },
-        reviewers: null # relationship declared by this field name is not covered by this event, check out the following...
-    }
-}
-{
-    # 2 - relationship type `REVIEWED`
-    event: "CREATE_RELATIONSHIP",
-    timestamp,
-    movie: {
-        title: "Inception",
-        genre: "Adventure"
-    },
-    relationshipFieldName: "reviewers", # this event covers the relationship declared by this field name
-    createdRelationship: {
-        actors: null, # relationship declared by this field name is not covered by this event
-        reviewers: { # field name equal to `relationshipFieldName`
-            score: 8, 
-            node: { 
-                name: "Jane",
-                reputation: 9
-            }
-        }
-    }
-}
-----
-
-=== Standard types
-
-For another example, this time creating a relationship with standard types, consider the following type definitions:
-
-[source,graphql,indent=0]
-----
-type Movie {
-    title: String
-    genre: String
-    actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
-}
-
-type Actor {
-    name: String
-}
-
-type ActedIn @relationshipProperties {
-    screenTime: Int!
-}
-----
-
-A subscription to any `Movie` with newly created relationships should look like this:
-
-[source,graphql,indent=0]
+[source, graphql, indent=0]
 ----
 subscription {
-    movieRelationshipCreated {
-        event
-        timestamp
+    movieUpdated(where: {
+        OR: [
+            { title_CONTAINS: "Matrix" },
+            { genre: "comedy" },
+            { AND: [ 
+                { NOT: { genre: "romantic comedy" } },
+                { releasedIn_GT: 2000 },
+                { releasedIn_LTE: 2005 }
+            ] },
+        ]
+    }) {
+        updatedMovie {
+            title
+        }
+    }
+}
+----
+
+
+== Subscribing to relationship events
+
+When subscribing to relationship events, the `where` argument still allows specifying filters on the top-level properties of the targeted nodes.
+It also supports specifying filters on the relationship properties (`edge`) and on the top-level properties (`node`) of the nodes at the other end of the relationship. 
+This is done by using the operators previously described, and the usage is very similar to xref:subscriptions/filtering.adoc#node-events-usage[subscribing to node events].
+
+However, filtering by relationship events is an even more powerful logic.
+This is because these filters can also express the expected relationship field, or the expected concrete type at the other end of the relationship, provided that they are connected to abstract types. 
+
+Note that each relationship field specified is combined with the others using a xref:subscriptions/filtering.adoc#filter-logical-or[logical `OR`]. 
+Only events matching these relationship field names are returned in the subscription.
+
+You can further filter each relationship field by node and relationship properties. 
+These fields are combined in the resulting filter with a xref:subscriptions/filtering.adoc#filter-logical-and[logical `AND`].
+
+As an example, in the following type definitions:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String
+    genre: String
+    actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
+}
+
+interface ActedIn @relationshipProperties {
+    screenTime: Int!
+}
+
+type Actor {
+    name: String
+}
+----
+
+The format of the `where` argument is:
+
+[source, graphql, indent=0]
+----
+{
+    movie: {
+        # top-level properties of the node targeted for the subscription operation, supports operators
+        title_IN: ["The Matrix", "Fight Club"]
+    },
+    createdRelationship: {
+        actors: { # field name corresponding to a relationship in the type definition of the node targeted for the subscription operation
+            edge: {
+                 # properties of the relationship, supports operators
+                screenTime_GT: 10,
+            },
+            node: {
+                # top-level properties of the node on the other end of the relationship, supports operators
+                name_STARTS_WITH: "Brad"
+            }
+        }
+    }
+}
+----
+
+The following sections feature examples of how filtering can be applied when creating a subscription to relationship events.
+
+=== Newly created relationship
+
+The following example filters the subscriptions to newly created relationships that are connecting a `Movie` from genres other than "Drama", and to an `Actor` with a screen time bigger than 10 minutes:
+
+[source, graphql, indent=0]
+----
+subscription {
+    movieRelationshipCreated(where: { movie: { NOT: { genre: "Drama" } }, createdRelationship: { actors: { edge: { screenTime_GT: 10 } } } }) {
         movie {
             title
-            genre
         }
-        relationshipFieldName
         createdRelationship {
-            actors {
+            actors { 
                 screenTime
-                node {
+                node { 
                     name
                 }
             }
@@ -284,1546 +295,558 @@ subscription {
     }
 }
 ----
+
+[NOTE]
+====
+The `where` argument only filters already existing properties at the moment of the relationship creation.
+====
+
+=== Newly deleted relationship
+
+The following example filters the subscriptions to deleted relationships that were connecting a `Movie` of the genre `"Comedy"` or `"Adventure"` to an `Actor` named `"Jim Carrey"`:
+
+[source, graphql, indent=0]
+----
+subscription {
+    movieRelationshipDeleted(where: { movie: { genre_IN: ["Comedy", "Adventure"] }, createdRelationship: { actors: { node: { name: "Jim Carrey" } } } }) {
+        movie {
+            title
+        }
+        deletedRelationship {
+            actors { 
+                screenTime
+                node { 
+                    name
+                }
+            }
+        }
+    }
+}
+----
+
+[NOTE]
+====
+The `where` argument only filters properties that already existed before the relationship deletion.
+====
+
+=== Relationship-related filters
+
+In addition to filtering node or relationship properties, the relationship-related filtering logic is even more powerful.
+This is because these filters can also express the expected relationship field, or the expected concrete type at the other end of the relationship, provided that they are connected to abstract types.
+
+The following examples are valid for both `CREATE_RELATIONSHIP` and `DELETE_RELATIONSHIP` events. 
+Their purpose is to illustrate the various ways in which a subscription to a relationship event can be filtered.
+
+Considering the following type definitions:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String
+    genre: String
+    actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
+    directors: [Director!]! @relationship(type: "DIRECTED", properties: "Directed", direction: IN)
+    reviewers: [Reviewer!]! @relationship(type: "REVIEWED", properties: "Review", direction: IN)
+}
+
+interface ActedIn @relationshipProperties {
+    screenTime: Int!
+}
+
+type Actor {
+    name: String
+}
+
+type Person implements Reviewer {
+    name: String
+    reputation: Int
+}
+
+union Director = Person | Actor
+
+interface Directed @relationshipProperties {
+    year: Int!
+}
+
+interface Reviewer {
+    reputation: Int!
+}
+
+type Magazine implements Reviewer {
+    title: String
+    reputation: Int!
+}
+
+interface Review @relationshipProperties {
+    score: Int!
+}
+----
+
+And the base subscription operation:
+
+[source, graphql, indent=0]
+----
+subscription MovieRelationshipDeleted($where: MovieRelationshipDeletedSubscriptionWhere) {
+    movieRelationshipDeleted(where: $where) {
+        movie {
+            title
+        }
+        deletedRelationship {
+            actors { 
+                screenTime
+                node { 
+                    name
+                }
+            }
+            directors {
+                year
+                node {
+                    ... on PersonEventPayload { # generated type
+                        name
+                        reputation
+                    }
+                    ... on ActorEventPayload { # generated type
+                        name
+                    }
+                }
+            }
+            reviewers {
+                score
+                node {
+                    reputation
+                    ... on MagazineEventPayload { # generated type
+                        title
+                        reputation
+                    }
+                    ... on PersonEventPayload { # generated type
+                        name
+                        reputation
+                    }
+                }
+            }
+        }
+    }
+}
+----
+
+You can use the following `where` inputs in the GraphQL variable values to get different results:
+
+==== Filtering via implicit/explicit declaration 
+
+Implicit or explicit declaration is used to filter specific relationship types that are expected to be returned to a subscription.
+
+For example, when subscribing to created or deleted relationships to a `Movie`, a user might only be interested in the relationship of type `ACTED_IN`, but indifferent to the properties of the `Actor` node or the other relationships connected to it. 
+In this case, the corresponding field name of this relationship is `actors`.
+
+By explicitly specifying the `actors` field name, you can filter-out events to other relationship properties:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            actors: {} # no properties specified here, therefore all relationships to this field name will be returned
+        }
+    }
+}
+----
+
+In case you are interested in `Actor` nodes conforming to some filters, for example with the name starting with the letter "A", the procedure is no different than xref:subscriptions/filtering.adoc#node-events-usage[subscribing to node events]:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            actors: {
+                node: { # use operations to specify filers on the top-level properties of the node at the other end of the relationship
+                    name_STARTS_WITH: "A"
+                }
+            } 
+        }
+    }
+}
+----
+
+If you are also interested in the relationship itself conforming to some filters, such as the `Actor` having spent no more than 40 minutes in the `Movie`, this is how the query may look:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            actors: {
+                edge: { # use operations to specify filers on the top-level properties of the relationship
+                    screenTime_LT: 40, 
+                }
+                node: { 
+                    name: "Alvin"
+                }
+            } 
+        }
+    }
+}
+----
+
+Multiple relationship types can also be included in the returned subscriptions by explicitly specifying the corresponding field names.
+For instance:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            actors: {}, # include all relationships corresponding of type `ACTED_IN` 
+            directors: {} # include all relationships corresponding of type `DIRECTED` 
+            # exclude relationships of type `REVIEWED`
+        }
+    }
+}
+----
+
+Now, if you are interested in all relationship types, you can either express this implicitly by not specifying any:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {} # include all relationships of all types
+    }
+}
+----
+
+Or explicitly by specifying the field names of all the relationships connected to the type targeted for the subscription:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            # include all relationships of all types
+            # subscription target type is `Movie`, which has the following relationship field names:
+            actors: {}, 
+            directors: {}, 
+            reviewers: {}
+        }
+    }
+}
+----
+
+Note, however, that as **any** filters are applied to **any** of the relationships, explicitly including those that you are interested in subscribing to is a **mandatory** step.
+
+For example, if all relationships should be returned, but you want to filter-out the `REVIEWED` ones which have a score lower than 7, this is how your query may look like:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            actors: {}, # include all relationships of type `ACTED_IN` 
+            directors: {}, # include all relationships of type `DIRECTED` 
+            reviewers: { # include all relationships of type `REVIEWED`, with the score property greater than 7
+                edge: {
+                    score_GT: 7
+                }
+            } 
+        }
+    }
+}
+----
+
+Different filters can also be applied to different relationships without any constraints.
+For example:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            actors: { # include some relationships of type `ACTED_IN`, filtered by relationship property `screenTime` and node property `name`
+                edge: { 
+                    screenTime_LT: 60,
+                },
+                node: {
+                    name_IN: ["Tom Hardy", "George Clooney"]
+                }
+            }, 
+            directors: {}, # include all relationships of type `DIRECTED` 
+            reviewers: { # include some relationships of type `REVIEWED`, filtered by relationship property `score` only
+                edge: {
+                    score_GT: 7
+                }
+            } 
+        }
+    }
+}
+----
+
+[[filter-logical-or]]
+
+[NOTE]
+====
+In the previous example, there is an implicit logical `OR` between the `actors`, `directors`, and `reviewers` relationship fields. 
+This is to say that a relationship of **either** type `ACTED_IN` **or** of type `DIRECTED` **or** of type `REVIEWED` should trigger the previously described subscription.
+====
+
+[[filter-logical-and]]
+[NOTE]
+====
+There is an implicit logical `AND` between the `edge` and `node` fields inside of the `actors` relationship field.
+In other words, the relationship of type `ACTED_IN` with the property `screenTime` less than 60 **and** a target node with name in `["Tom Hardy", "George Clooney"]` should trigger the subscription.
+====
 
 === Abstract types
 
-When using abstract types with relationships, you need to specify one or more of the corresponding concrete types when performing the subscription operation.
+The following sections describe how to filter subscriptions using abstract types.
 
-These types are generated by the library and conform to the format `[type]EventPayload`, where `[type]` is a concrete type. 
+==== Union type
 
-As an example, consider the following type definitions:
+This example illustrates how to filter the node at the other end of the relationship when it is of a union type:
 
-[source,graphql,indent=0]
+[source, graphql, indent=0]
 ----
-type Movie {
-    title: String
-    genre: String
-    directors: [Director!]! @relationship(type: "DIRECTED", properties: "Directed", direction: IN)
-}
-
-union Director = Person | Actor
-
-type Actor {
-    name: String
-}
-
-type Person {
-    name: String
-    reputation: Int
-}
-
-type Directed @relationshipProperties {
-    year: Int!
-}
-----
-
-A subscription to any `Movie` newly created relationships should look like this:
-
-[source,graphql,indent=0]
-----
-subscription {
-    movieRelationshipCreated {
-        event
-        timestamp
-        movie {
-            title
-            genre
-        }
-        relationshipFieldName
-        createdRelationship {
-           directors {
-                year
-                node {
-                    ... on PersonEventPayload { # generated type
-                        name
-                        reputation
-                    }
-                    ... on ActorEventPayload { # generated type
-                        name
-                    }
-                }
-            }
-        }
-    }
-}
-----
-
-=== Interface
-
-For an example in which a relationship is created with an interface, consider the following type definitions:
-
-[source,graphql,indent=0]
-----
-type Movie {
-    title: String
-    genre: String
-    reviewers: [Reviewer!]! @relationship(type: "REVIEWED", properties: "Review", direction: IN)
-}
-
-interface Reviewer {
-    reputation: Int!
-}
-
-type Magazine implements Reviewer {
-    title: String
-    reputation: Int!
-}
-
-type Influencer implements Reviewer {
-    name: String
-    reputation: Int!
-}
-
-type Review @relationshipProperties {
-    score: Int!
-}
-----
-
-A subscription to any `Movie` newly created relationships should look like this:
-
-[source,graphql,indent=0]
-----
-subscription {
-    movieRelationshipCreated {
-        event
-        timestamp
-        movie {
-            title
-            genre
-        }
-        relationshipFieldName
-        createdRelationship {
-            reviewers {
-                score
-                node {
-                    reputation
-                    ... on MagazineEventPayload { # generated type
-                        title
-                        reputation
-                    }
-                    ... on InfluencerEventPayload { # generated type
-                        name
-                        reputation
-                    }
-                }
-            }
-        }
-    }
-}
-----
-
-=== Non-reciprocal relationships
-
-Non-reciprocal relationships can be described, for example, as when a type A and a type B hold a relationship, but, in the GraphQL schema, type A is the one defining the relationship to B, while B does not define a relationship to A.
-
-To illustrate that, consider the following type definitions:
-
-[source,graphql,indent=0]
-----
-type Movie {
-    title: String
-    genre: String
-    actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
-    directors: [Director!]! @relationship(type: "DIRECTED", properties: "Directed", direction: IN)
-}
-
-type Actor {
-    name: String
-    movies: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
-}
-
-type Person {
-    name: String
-    reputation: Int
-}
-
-union Director = Person | Actor
-
-type ActedIn @relationshipProperties {
-    screenTime: Int!
-}
-
-type Directed @relationshipProperties {
-    year: Int!
-}
-----
-
-Note that the type definitions contain two relationships: 
-
-* `ACTED_IN`, which has a corresponding field defined in both the `Movie` and `Actor` types and, as such, can be considered a reciprocal relationship.
-* `DIRECTED`, which is only defined in the `Movie` type. 
-The `Director` type does not define a matching field and, as such, it can be considered a non-reciprocal relationship.
-
-Considering the three types previously described (`Movie`, `Actor`, and `Person`), subscribing to `CREATE_RELATIONSHIP` is *not* possible only in the case of the `Person` type, for it does not define any relationships.
-For the other two types, here is how to subscribe:
-
-.`Movie` type
-[source,graphql,indent=0]
-----
-subscription {
-    movieRelationshipCreated {
-        event
-        timestamp
-        movie {
-            title
-            genre
-        }
-        relationshipFieldName
-        createdRelationship {
-           actors { # corresponds to the `ACTED_IN` relationship type
-                screenTime
-                node {
-                    name
-                }
-           }
-           directors { # corresponds to the `DIRECTED` relationship type
-                year
-                node {
-                    ... on PersonEventPayload { 
-                        name
-                        reputation
-                    }
-                    ... on ActorEventPayload {
-                        name
-                    }
-                }
-            }
-        }
-    }
-}
-----
-
-.`Actor` type
-[source,graphql,indent=0]
-----
-subscription {
-    actorRelationshipCreated {
-        event
-        timestamp
-        actor {
-            name
-        }
-        relationshipFieldName
-        createdRelationship {
-           movies { # corresponds to the `ACTED_IN` relationship type
-                screenTime
-                node {
-                    title
-                    genre
-                }
-           }
-           # no other field corresponding to the `DIRECTED` relationship type
-        }
-    }
-}
-----
-
-The presence of the `Movie` field inside of `createdRelationship` for the `actorRelationshipCreated` subscription reflects the fact that the `ACTED_IN`-typed relationship is reciprocal.
-
-Therefore, when a new relationship of this type is created, such as by running this mutation:
-
-[source,graphql,indent=0]
-----
-mutation {
-    createMovies(
-        input: [
-            {
-                actors: {
-                    create: [
-                        {
-                            node: {
-                                name: "Keanu Reeves"
-                            },
-                            edge: {
-                                screenTime: 420
-                            }
-                        }
-                    ]
-                },
-                title: "John Wick",
-                genre: "Action"
-            }
-        ]
-    ) {
-        movies {
-            title
-            genre
-        }
-    }
-}
-----
-
-Should prompt two events, in case you have subscribed to `CREATE_RELATIONSHIP` events on both types:
-
-[source,graphql,indent=0]
-----
-{ 
-    # from `movieRelationshipCreated`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "John Wick",
-        genre: "Action"
-    }
-    relationshipFieldName: "actors",
-    createdRelationship {
-        actors: {
-            screenTime: 420,
-            node: {
-                name: "Keanu Reeves"
-            }
-        },
-        directors: null
-    }
-},
 {
-    # from `actorRelationshipCreated`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    actor {
-        name: "Keanu Reeves"
-    }
-    relationshipFieldName: "movies",
-    createdRelationship {
-        movies: {
-            screenTime: 420,
-            node: {
-                title: "John Wick",
-                genre: "Action"
-            }
-        }
-    }
-}
-----
-
-Now, since the `DIRECTED` relationship between types `Movie` and `Director` is *not* reciprocal, executing this mutation:
-
-[source,graphql,indent=0]
-----
-mutation {
-    createMovies(
-        input: [
-            {
-                directors: {
-                    Actor: { # relationship 1
-                        create: [
-                            {
-                                node: {
-                                    name: "Woody Allen"
-                                },
-                                edge: {
-                                    year: 1989
-                                }
-                            }
-                        ]
+    where: {
+        deletedRelationship: {
+            directors: { # relationship to a union type
+                Person: { # concrete type that makes up the union type
+                    edge: {
+                        year_GT: 2010
                     },
-                    Person: { # relationship 2
-                        create: [
-                            {
-                                node: {
-                                    name: "Francis Ford Coppola",
-                                    reputation: 100
-                                },
-                                edge: {
-                                    year: 1989
-                                }
-                            }
-                        ]
-                    }   
+                    node: {
+                        name: "John Doe",
+                        reputation: 10
+                    }
                 },
-                title: "New York Stories",
-                genre: "Comedy"
-            }
-        ]
-    ) {
-        movies {
-            title
-            genre
+                Actor: { # concrete type that makes up the union type
+                    edge: {
+                        year_LT: 2005
+                    },
+                    node: {
+                        name: "Tom Hardy"
+                    }
+                }
+            }, 
         }
     }
 }
 ----
 
-Should prompt two events, in case you have subscribed to `CREATE_RELATIONSHIP` events on the `Movie` type:
+The result is that only relationships of type `DIRECTED` are returned to the subscription, where the `Director` is a `Person` named `"John Doe"`, who directed the movie after 2010, **or** where the `Director` is an `Actor` named `"Tom Hardy"` who directed the movie before 2005.
 
-[source,graphql,indent=0]
+Note that the relationship field name is split into multiple sections, one for each of the concrete types that make up the union type.
+The relationship properties do not exist outside the confines of one of these sections, even though the properties are the same.
+
+Now, take the other example that did not explicitly specify the concrete types:
+
+[source, graphql, indent=0]
 ----
-{ 
-    # relationship 1 - from `movieRelationshipCreated`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "New York Stories",
-        genre: "Comedy"
-    }
-    relationshipFieldName: "directors",
-    createdRelationship {
-        actors: null,
-        directors: {
-            year: 1989,
-            node: {
-                name: "Woody Allen"
-            }
+{
+    where: {
+        deletedRelationship: {
+            directors: {}, # include all relationships of type `DIRECTED`
         }
     }
-},
-{ 
-    # relationship 2 - from `movieRelationshipCreated`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "New York Stories",
-        genre: "Comedy"
-    }
-    relationshipFieldName: "directors",
-    createdRelationship {
-        actors: null,
-        directors: {
-            year: 1989,
-            node: {
-                 name: "Francis Ford Coppola",
-                reputation: 100
+}
+----
+
+Following the same logic as for the relationship field names: when nothing is explicitly provided, then all is accepted. 
+Thus relationships of type `DIRECTED`, established between a `Movie` and any of the concrete types that make up the union type `Director` are returned to the subscription.
+
+It is equivalent to the following:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            directors: { # include all relationships of type `DIRECTED`
+                Actor: {},
+                Person: {}
             }
         }
     }
 }
 ----
 
-=== Types using the same Neo4j label
+Note that explicitly specifying a concrete type excludes the others from the returned events:
 
-One scenario to be considered is when Neo4j labels are overriden by a specific GraphQL type.
-This can be achieved using the `@node` directive, by specifying the `label` argument.
-However, in the majority of cases, this is *not* the recommended approach to design your API.
-
-As an example, consider these type definitions:
-
-[source,graphql,indent=0]
+[source, graphql, indent=0]
 ----
-type Actor @node(label: "Person") {
-    name: String
-    movies: [Movie!]! @relationship(type: "PART_OF", direction: OUT)
-}
-
-typePerson {
-    name: String
-    movies: [Movie!]! @relationship(type: "PART_OF", direction: OUT)
-}
-
-type Movie {
-    title: String
-    genre: String
-    people: [Person!]!  @relationship(type: "PART_OF", direction: IN)
-    actors: [Actor!]!  @relationship(type: "PART_OF", direction: IN)
-}
-----
-
-Although the example features 3 GraphQL types, in Neo4j there should only ever be 2 types of nodes: labeled `Movie` or labeled `Person`.
-
-At the database level there is no distinction between `Actor` and `Person`. 
-Therefore, when creating a new relationship of type `PART_OF`, there should be one event for each of the 2 types.
-
-Considering the following subscriptions:
-
-[source,graphql,indent=0]
-----
-subscription {
-    movieRelationshipCreated {
-        event
-        timestamp
-        movie {
-            title
-            genre
-        }
-        relationshipFieldName
-        createdRelationship {
-           people { # corresponds to the `PART_OF` relationship type
-                node {
-                    name
-                }
-           }
-           actors { # corresponds to the `PART_OF` relationship type
-                node {
-                    name
-                }
-           }
-        }
-    }
-}
-
-subscription {
-    actorRelationshipCreated {
-        event
-        timestamp
-        actor {
-            name
-        }
-        relationshipFieldName
-        createdRelationship {
-           movies { # corresponds to the `PART_OF` relationship type
-                node {
-                    title
-                    genre
-                }
-           }
+{
+    where: {
+        deletedRelationship: {
+            directors: { 
+                Actor: {} # include all relationships of type `DIRECTED` to an `Actor` type 
+            }
         }
     }
 }
 ----
 
-Running a mutation such as:
+In this case, only relationships of type `DIRECTED` between a `Movie` and an `Actor` are returned to the subscription.
+Those between a `Movie` and a `Person` are filtered out.
 
-[source,graphql,indent=0]
+One reason why this might be done is to include some filters on the `Actor` type:
+
+[source, graphql, indent=0]
 ----
-mutation {
-    createMovies(
-        input: [
-            {
-                people: { # relationship 1
-                    create: [
-                        {
-                            node: {
-                                name: "John Logan"
-                            }
+{
+    where: {
+        deletedRelationship: {
+            directors: { 
+                Actor: { # include some relationships of type `DIRECTED` to an `Actor` type, that conform to the filters
+                    node: {
+                        NOT: { name: "Tom Hardy" }
+                    }
+                }
+            }
+        }
+    }
+}
+----
+
+To include filters on the `Actor` type, but also include the `Person` type in the result, you need to make the intent explicit:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            directors: { 
+                Actor: { # include some relationships of type `DIRECTED` to an `Actor` type, that conform to the filters
+                    node: {
+                        NOT: { name: "Tom Hardy" }
+                    }
+                },
+                Person: {} # include all relationships of type `DIRECTED` to a `Person` type
+            }
+        }
+    }
+}
+----
+
+
+==== Interface type
+
+The following example illustrates how to filter the node at the other end of the relationship when it is of an interface type:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            reviewers: { # relationship to an interface type
+                edge: {
+                    # relationship properties of a relationship of type `REVIEWED`
+                    score_GT: 7
+                },
+                node: {
+                    # common fields declared by the interface
+                    reputation_GTE: 8 
+                    _on: { # specific fields depending on the concrete type
+                        Person: { # concrete type that makes up the interface type
+                            name: "Jane Doe",
+                            reputation_GTE: 7
+                        },
+                        Magazine: { # concrete type that makes up the interface type
+                            title_IN: ["Sight and Sound", "Total Film"],
+                            reputation_LT: 9
                         }
-                    ]
-                },
-                actors: {  # relationship 2
-                    create: [
-                        {
-                            node: {
-                                name: "Johnny Depp"
-                            }
-                        }
-                    ]
-                },
-                title: "Sweeney Todd",
-                genre: "Horror"
-            }
-        ]
-    ) {
-        movies {
-            title
-            genre
+                    }
+                }
+            }, 
         }
     }
 }
 ----
 
-Should result in this:
-
-[source,graphql,indent=0]
-----
-{ 
-    # relationship 1 `people` - for GraphQL types `Movie`, `Person`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "Sweeney Todd",
-        genre: "Horror"
-    }
-    relationshipFieldName: "people",
-    createdRelationship {
-        people: {
-            node: {
-                name: "John Logan"
-            }
-        },
-        actors: null
-    }
-},
-{ 
-    # relationship 1 `people` - for GraphQL types `Movie`, `Actor`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "Sweeney Todd",
-        genre: "Horror"
-    }
-    relationshipFieldName: "actors",
-    createdRelationship {
-        people: null,
-        actors: {
-            node: {
-                name: "John Logan"
-            }
-        }
-    }
-},
-{ 
-    # relationship 1 `movies` - for GraphQL types `Actor`, `Movie`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    actor {
-        name: "John Logan"
-    }
-    relationshipFieldName: "movies",
-    createdRelationship {
-        movies: {
-            node: {
-                title: "Sweeney Todd",
-                genre: "Horror"
-            }
-        }
-    }
-},
-{ 
-    # relationship 2 `actors` - for GraphQL types `Movie`,`Person`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "Sweeney Todd",
-        genre: "Horror"
-    }
-    relationshipFieldName: "people",
-    createdRelationship {
-        people: {
-            node: {
-                name: "Johnny Depp"
-            }
-        },
-        actors: null
-    }
-},
-{ 
-    # relationship 2 `actors` - for GraphQL types `Movie`, `Actor`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "Sweeney Todd",
-        genre: "Horror"
-    }
-    relationshipFieldName: "actors",
-    createdRelationship {
-        people: null,
-        actors: {
-            node: {
-                name: "Johnny Depp"
-            }
-        }
-    }
-},
-{ 
-    # relationship 2 `movies` - for GraphQL types `Actor`, `Movie`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    actor {
-        name: "Johnny Depp"
-    }
-    relationshipFieldName: "movies",
-    createdRelationship {
-        movies: {
-            node: {
-                title: "Sweeney Todd",
-                genre: "Horror"
-            }
-        }
-    }
-},
-----
-
-In case you have subscribed to `Person` as well, you should receive two more events:
-
-[source,graphql,indent=0]
-----
-{ 
-    # relationship 1 `movies` - for GraphQL types `Person`, `Movie`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    actor {
-        name: "John Logan"
-    }
-    relationshipFieldName: "movies",
-    createdRelationship {
-        movies: {
-            node: {
-                title: "Sweeney Todd",
-                genre: "Horror"
-            }
-        }
-    }
-},
-{ 
-    # relationship 2 `movies` - for GraphQL types `Person`, `Movie`
-    event: "CREATE_RELATIONSHIP"
-    timestamp
-    actor {
-        name: "Johnny Depp"
-    }
-    relationshipFieldName: "movies",
-    createdRelationship {
-        movies: {
-            node: {
-                title: "Sweeney Todd",
-                genre: "Horror"
-            }
-        }
-    }
-},
-----
-
-== `DELETE_RELATIONSHIP`
-
-Subscriptions to `DELETE_RELATIONSHIP` events listen to relationships being deleted and contain information about the previously connected nodes of a specified type.
-This kind of subscription:
-
-* Is only available for types that define relationship fields.
-* Contains relationship-specific information, such as the relationship field name and the object containing all relationship field names of the specified type.
-This object should be populated with properties according to the deleted relationship.
-* Triggers an equivalent number of events compared to relationships deleted, in case a relationship is deleted following a mutation and the type targeted is responsible for defining two or more relationships in the schema.
-* Contains the relationships object populated with the newly deleted relationship properties for one single relationship name only (all other relationship names should have a null value).
-* Contains the properties of the nodes connected through the relationship, as well as the properties of the newly deleted relationship, if any.
+This example returns events for relationships between the type `Movie` and `Reviewer`, where the score is higher than 7, and the `Reviewer` is a `Person` named "Jane Doe", with a reputation greater or equal to 7, or the `Reviewer` is a `Magazine` with the reputation of 8.
 
 [NOTE]
 ====
-Disconnected nodes that may or may not have been deleted in the process are not covered by this subscription. 
-To subscribe to these nodes' updates, use the `DELETE` subscriptions.
+Note how the reputation field is part of the interface type, and can thus be specified in 3 ways: inside the `node` key, inside each concrete type, or in both places. +
+When specified in both places, however, the filter is composed with a logical `AND`.
+Type `Person` then overrides the `reputation_GTE` operator, so the final filter is `reputation_GTE: 7`.
+Likewise, type `Magazine` composes the original operator so the final filter is the interval `reputation_GTE: 8 && reputation_LT: 9`.
 ====
 
-Subscriptions to `DELETE_RELATIONSHIP` events can be made with the top-level subscription `[type]RelationshipDeleted`, which contains the following fields:
+To get all relationships of type `REVIEWED` with a certain score returned, you can use implicit filtering, such as:
 
-* `event`: the event triggering this subscription (in this case, `DELETE_RELATIONSHIP`).
-* `timestamp`: the timestamp in which the mutation was made.  If a same query triggers multiple events, they should have the same timestamp.
-* `<typename>`:  top-level properties of the targeted nodes, without relationships, before the `DELETE_RELATIONSHIP` operation was triggered.
-* `relationshipFieldName`: the field name of the newly deleted relationship.
-* `deletedRelationship`: an object having all field names of the nodes affected by the newly deleted relationships. 
-While any event unrelated to `relationshipFieldName` should be `null`, the ones which are related should contain the relationship properties, if defined, and a node key containing the properties of the node on the other side of the relationship. 
-Only top-level properties, without relationships, are available and they are the properties that already existed before the `DELETE_RELATIONSHIP` operation took place.
-
-[NOTE]
-====
-Irrespective of the relationship direction in the database, the `DELETE_RELATIONSHIP` event is bound to the type targeted for the subscription. 
-Consequently, if types A and B have xref:subscriptions/events.adoc#delete-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation deletes a relationship between them (despite being already previously disconnected in the database), the `DELETE_RELATIONSHIP` event should only return the subscription to the type A.
-====
-
-As an example, consider these type definitions:
-
-[source,graphql,indent=0]
-----
-type Movie {
-    title: String
-    genre: String
-    actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
-    reviewers: [Reviewer] @relationship(type: "REVIEWED", direction: IN, properties: "Reviewed")
-}
-
-type Actor {s
-    name: String
-}
-
-type ActedIn @relationshipProperties {
-    screenTime: Int!
-}
-
-type Reviewer {
-    name: String
-    reputation: Int
-}
-
-type Reviewed @relationshipProperties {
-    score: Int!
-}
-----
-
-Now consider a mutation deleting the `Actor` named `Tom Hardy` and the `Reviewer` named `Jane`, which are connected through a relationship to a `Movie` titled `Inception`. 
-A `DELETE_RELATIONSHIP` subscription in this case should receive the following events:
-
-[source,graphql,indent=0]
+[source, graphql, indent=0]
 ----
 {
-    # 1  - relationship type `ACTED_IN`
-    event: "DELETE_RELATIONSHIP",
-    timestamp,
-    movie: {
-        title: "Inception",
-        genre: "Adventure"
-    },
-    relationshipFieldName: "actors", # notice the field name specified here is populated below in the `createdRelationship` object
-    deletedRelationship: {
-        actors: {
-            screenTime: 1000, # relationship properties for the relationship type `ACTED_IN` that was deleted
-            node: { # top-level properties of the node at the other end of the relationship, in this case `Actor` type, before the delete occurred
-                name: "Tom Hardy"
-            }
-        },
-        reviewers: null # relationship declared by this field name is not covered by this event, check out the following...
-    }
+    where: {
+        deletedRelationship: {
+            reviewers: {
+                edge: { # include some relationships of type `REVIEWED` to both `Person` and `Magazine` Concrete types, that conform to the filters
+                    score: 10
+                },
+            }, 
+        }   
+    }   
 }
+----
+
+Implicit filtering can still be used, even for relationships of type `REVIEWED` to a `Reviewer` of a specific reputation:
+
+[source, graphql, indent=0]
+----
 {
-    # 2 - relationship type `REVIEWED`
-    event: "DELETE_RELATIONSHIP",
-    timestamp,
-    movie: {
-        title: "Inception",
-        genre: "Adventure"
-    },
-    relationshipFieldName: "reviewers", # this event covers the relationship declared by this field name
-    deletedRelationship: {
-        actors: null, # relationship declared by this field name is not covered by this event
-        reviewers: { # field name equal to `relationshipFieldName`
-            score: 8, 
-            node: { 
-                name: "Jane",
-                reputation: 9
-            }
-        }
-    }
-}
-----
-
-=== Standard types
-
-As an example, consider these type definitions:
-
-[source,graphql,indent=0]
-----
-type Movie {
-    title: String
-    genre: String
-    actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
-}
-
-type Actor {
-    name: String
-}
-
-type ActedIn @relationshipProperties {
-    screenTime: Int!
-}
-----
-
-A subscription to any `Movie` deleted relationships would look like:
-
-[source, graphql]
-----
-subscription {
-    movieRelationshipDeleted {
-        event
-        timestamp
-        movie {
-            title
-            genre
-        }
-        relationshipFieldName
-        deletedRelationship {
-            actors {
-                screenTime
-                node {
-                    name
+    where: {
+        deletedRelationship: {
+            reviewers: { 
+                node: { # include some relationships of type `REVIEWED` to both `Person` and `Magazine` Concrete types, that conform to the filters
+                    reputation: 9 
                 }
-            }
+            }, 
         }
     }
 }
 ----
 
-==== Delete Relationship with Abstract Types
+It is only when a specific concrete type needs to be filtered that you need to be explicit in the concrete types that you are interested in:
 
-When using Abstract Types with relationships, you will need to specify one or more of the corresponding Concrete Types when performing the subscription operation.
-
-These types are generated by the library and conform to the format `[type]EventPayload`, where `[type]` is a **Concrete Type**. 
-
-===== Union Example
-Considering the following type definitions:
-
-[source, graphql]
+[source, graphql, indent=0]
 ----
-type Movie {
-    title: String
-    genre: String
-    directors: [Director!]! @relationship(type: "DIRECTED", properties: "Directed", direction: IN)
-}
-
-union Director = Person | Actor
-
-type Actor {
-    name: String
-}
-
-type Person {
-    name: String
-    reputation: Int
-}
-
-type Directed @relationshipProperties {
-    year: Int!
-}
-----
-
-A subscription to `Movie` deleted relationships would look like:
-
-[source, graphql]
-----
-subscription {
-    movieRelationshipDeleted {
-        event
-        timestamp
-        movie {
-            title
-            genre
-        }
-        relationshipFieldName
-        deletedRelationship {
-           directors {
-                year
-                node {
-                    ... on PersonEventPayload { # generated type
-                        name
-                        reputation
-                    }
-                    ... on ActorEventPayload { # generated type
-                        name
-                    }
-                }
-            }
-        }
-    }
-}
-----
-
-===== Interface Example
-Considering the following type definitions:
-
-[source, graphql]
-----
-type Movie {
-    title: String
-    genre: String
-    reviewers: [Reviewer!]! @relationship(type: "REVIEWED", properties: "Review", direction: IN)
-}
-
-interface Reviewer {
-    reputation: Int!
-}
-
-type Magazine implements Reviewer {
-    title: String
-    reputation: Int!
-}
-
-type Influencer implements Reviewer {
-    name: String
-    reputation: Int!
-}
-
-type Review @relationshipProperties {
-    score: Int!
-}
-----
-
-A subscription to `Movie` deleted relationships would look like:
-
-[source, graphql]
-----
-subscription {
-    movieRelationshipDeleted {
-        event
-        timestamp
-        movie {
-            title
-            genre
-        }
-        relationshipFieldName
-        deletedRelationship {
-            reviewers {
-                score
-                node {
-                    reputation
-                    ... on MagazineEventPayload { # generated type
-                        title
-                        reputation
-                    }
-                    ... on InfluencerEventPayload { # generated type
-                        name
-                        reputation
-                    }
-                }
-            }
-        }
-    }
-}
-----
-
-[[delete-non-reciprocal-relationships]]
-==== Non-reciprocal relationships
-
-Considering the following type definitions:
-
-[source, graphql]
-----
-type Movie {
-    title: String
-    genre: String
-    actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
-    directors: [Director!]! @relationship(type: "DIRECTED", properties: "Directed", direction: IN)
-}
-
-type Actor {
-    name: String
-    movies: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
-}
-
-type Person {
-    name: String
-    reputation: Int
-}
-
-union Director = Person | Actor
-
-type ActedIn @relationshipProperties {
-    screenTime: Int!
-}
-
-type Directed @relationshipProperties {
-    year: Int!
-}
-----
-
-The type definitions contain 2 relationships: types `ACTED_IN` and `DIRECTED`.
-
-It can be observed that the `ACTED_IN` relationship has a corresponding field defined in both the `Movie` and `Actor` types. As such, we can say that `ACTED_IN` is a reciprocal relationship.
-
-`DIRECTED` on the other hand is only defined in the `Movie` type. The `Director` type does not define a matching field. As such, we can say `DIRECTED` is **not** a reciprocal relationship.
-
-Let us now take a look at how we can subscribe to deleted relationships for the 3 types defined above:
-
-===== Movie
-
-[source, graphql]
-----
-subscription {
-    movieRelationshipDeleted {
-        event
-        timestamp
-        movie {
-            title
-            genre
-        }
-        relationshipFieldName
-        deletedRelationship {
-           actors { # corresponds to the `ACTED_IN` relationship type
-                screenTime
-                node {
-                    name
-                }
-           }
-           directors { # corresponds to the `DIRECTED` relationship type
-                year
-                node {
-                    ... on PersonEventPayload { 
-                        name
-                        reputation
-                    }
-                    ... on ActorEventPayload {
-                        name
-                    }
-                }
-            }
-        }
-    }
-}
-----
-
-===== Person
-
-As the `Person` type does not define any relationships, it is **not** possible to subscribe to `DELETE_RELATIONSHIP` events for this type.
-
-===== Actor
-
-[source, graphql]
-----
-subscription {
-    actorRelationshipDeleted {
-        event
-        timestamp
-        actor {
-            name
-        }
-        relationshipFieldName
-        deletedRelationship {
-           movies { # corresponds to the `ACTED_IN` relationship type
-                screenTime
-                node {
-                    title
-                    genre
-                }
-           }
-           # no other field corresponding to the `DIRECTED` relationship type
-        }
-    }
-}
-----
-
-The presence of the `movie` field inside of `deletedRelationship` for the `actorRelationshipDeleted` subscription reflects the fact that the `ACTED_IN` typed relationship is reciprocal.
-
-Therefore, when a relationship of this type is deleted, such as by running the following mutations:
-
-[source, graphql]
-----
-mutation { 
-    createMovies(
-        input: [
-            {
-                actors: {
-                    create: [
-                        {
-                            node: {
-                                name: "Keanu Reeves"
-                            },
-                            edge: {
-                                screenTime: 420
-                            }
-                        }
-                    ]
-                },
-                title: "John Wick",
-                genre: "Action"
-            }
-        ]
-    ) {
-        movies {
-            title
-            genre
-        }
-    }
-}
-
-mutation { 
-    deleteMovies(
-        where: {
-            title: "John Wick"
-        }
-    ) {
-        nodesDeleted
-    }
-}
-----
-
-Two events will be published (given that we subscribed to `DELETE_RELATIONSHIP` events on both types):
-
-[source, graphql]
-----
-{ 
-    # from `movieRelationshipDeleted`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "John Wick",
-        genre: "Action"
-    }
-    relationshipFieldName: "actors",
-    deletedRelationship {
-        actors: {
-            screenTime: 420,
-            node: {
-                name: "Keanu Reeves"
-            }
-        },
-        directors: null
-    }
-},
 {
-    # from `actorRelationshipDeleted`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    actor {
-        name: "Keanu Reeves"
-    }
-    relationshipFieldName: "movies",
-    deletedRelationship {
-        movies: {
-            screenTime: 420,
-            node: {
-                title: "John Wick",
-                genre: "Action"
-            }
-        }
-    }
-}
-----
-
-Since the `DIRECTED` relationship between types `Movie` and `Director` is **not** reciprocal, executing the following mutations:
-
-[source, graphql]
-----
-mutation {
-    createMovies(
-        input: [
-            {
-                directors: {
-                    Actor: { # relationship 1
-                        create: [
-                            {
-                                node: {
-                                    name: "Woody Allen"
-                                },
-                                edge: {
-                                    year: 1989
-                                }
-                            }
-                        ]
-                    },
-                    Person: { # relationship 2
-                        create: [
-                            {
-                                node: {
-                                    name: "Francis Ford Coppola",
-                                    reputation: 100
-                                },
-                                edge: {
-                                    year: 1989
-                                }
-                            }
-                        ]
-                    }   
-                },
-                title: "New York Stories",
-                genre: "Comedy"
-            }
-        ]
-    ) {
-        movies {
-            title
-            genre
-        }
-    }
-}
-
-mutation { 
-    deleteMovies(
-        where: {
-            title: "New York Stories"
-        }
-    ) {
-        nodesDeleted
-    }
-}
-----
-
-Two events will be published (given that we subscribed to `DELETE_RELATIONSHIP` events on the `Movie` type):
-
-[source, graphql]
-----
-{ 
-    # relationship 1 - from `movieRelationshipDeleted`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "New York Stories",
-        genre: "Comedy"
-    }
-    relationshipFieldName: "directors",
-    deletedRelationship {
-        actors: null,
-        directors: {
-            year: 1989,
-            node: {
-                name: "Woody Allen"
-            }
-        }
-    }
-},
-{ 
-    # relationship 2 - from `movieRelationshipDeleted`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "New York Stories",
-        genre: "Comedy"
-    }
-    relationshipFieldName: "directors",
-    deletedRelationship {
-        actors: null,
-        directors: {
-            year: 1989,
-            node: {
-                 name: "Francis Ford Coppola",
-                reputation: 100
-            }
-        }
-    }
-}
-----
-
-=== Special Considerations
-
-==== Types using the same Neo4j label
-
-One case that deserves special consideration is overriding the label in Neo4j for a specific GraphQL type. 
-This can be achieved using the `@node` directive, by specifying the `label` argument.
-
-NOTE: While this section serves an informative purpose, it should be mentioned that, in the majority of cases, this is not the recommended approach of designing your API.
-
-Consider the following type definitions:
-
-[source, graphql]
-----
-type Actor @node(label: "Person") {
-    name: String
-    movies: [Movie!]! @relationship(type: "PART_OF", direction: OUT)
-}
-
-typePerson {
-    name: String
-    movies: [Movie!]! @relationship(type: "PART_OF", direction: OUT)
-}
-
-type Movie {
-    title: String
-    genre: String
-    people: [Person!]!  @relationship(type: "PART_OF", direction: IN)
-    actors: [Actor!]!  @relationship(type: "PART_OF", direction: IN)
-}
-----
-
-Although we have 3 GraphQL types, in Neo4j there will only ever be 2 types of nodes: labeled `Movie` or labeled `Person`. 
-
-At the database level there is no distinction between `Actor` and `Person`. Therefore, when deleting a relationship of type `PART_OF`, there will be one event for each of the 2 types.
-
-Considering the following subscriptions:
-
-[source, graphql]
-----
-subscription {
-    movieRelationshipDeleted {
-        event
-        timestamp
-        movie {
-            title
-            genre
-        }
-        relationshipFieldName
-        deletedRelationship {
-           people { # corresponds to the `PART_OF` relationship type
-                node {
-                    name
+    where: {
+        deletedRelationship: {
+            reviewers: { 
+                node: {
+                    _on: { 
+                        Person: { # include some relationships of type `REVIEWED` to Concrete type `Person`, that conform to the filters
+                            name: "Jane Doe",
+                            reputation_GTE: 9
+                        },
+                    }
                 }
-           }
-           actors { # corresponds to the `PART_OF` relationship type
-                node {
-                    name
+            }, 
+        }
+    }
+}
+----
+
+This example does not include relationships of type `REVIEWED` to the `Magazine` type. 
+You can do that by making them explicit:
+
+[source, graphql, indent=0]
+----
+{
+    where: {
+        deletedRelationship: {
+            reviewers: { 
+                node: {
+                    _on: {  
+                        Person: { # include some relationships of type `REVIEWED` to Concrete type `Person`, that conform to the filters
+                            name: "Jane Doe",
+                            reputation_GTE: 9
+                        },
+                        Magazine: {} # include all relationships of type `REVIEWED` to Concrete type `Magazine` 
+                    }
                 }
-           }
+            }, 
         }
     }
 }
-
-subscription {
-    actorRelationshipDeleted {
-        event
-        timestamp
-        actor {
-            name
-        }
-        relationshipFieldName
-        deletedRelationship {
-           movies { # corresponds to the `PART_OF` relationship type
-                node {
-                    title
-                    genre
-                }
-           }
-        }
-    }
-}
-----
-
-Running the following mutations:
-
-[source, graphql]
-----
-mutation {
-    createMovies(
-        input: [
-            {
-                people: { # relationship 1
-                    create: [
-                        {
-                            node: {
-                                name: "John Logan"
-                            }
-                        }
-                    ]
-                },
-                actors: {  # relationship 2
-                    create: [
-                        {
-                            node: {
-                                name: "Johnny Depp"
-                            }
-                        }
-                    ]
-                },
-                title: "Sweeney Todd",
-                genre: "Horror"
-            }
-        ]
-    ) {
-        movies {
-            title
-            genre
-        }
-    }
-}
-
-mutation { 
-    deleteMovies(
-        where: {
-            title: "Sweeney Todd"
-        }
-    ) {
-        nodesDeleted
-    }
-}
-----
-
-Result in the following events:
-
-[source, graphql]
-----
-{ 
-    # relationship 1 `people` - for GraphQL types `Movie`, `Person`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "Sweeney Todd",
-        genre: "Horror"
-    }
-    relationshipFieldName: "people",
-    deletedRelationship {
-        people: {
-            node: {
-                name: "John Logan"
-            }
-        },
-        actors: null
-    }
-},
-{ 
-    # relationship 1 `people` - for GraphQL types `Movie`, `Actor`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "Sweeney Todd",
-        genre: "Horror"
-    }
-    relationshipFieldName: "actors",
-    deletedRelationship {
-        people: null,
-        actors: {
-            node: {
-                name: "John Logan"
-            }
-        }
-    }
-},
-{ 
-    # relationship 1 `movies` - for GraphQL types `Actor`, `Movie`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    actor {
-        name: "John Logan"
-    }
-    relationshipFieldName: "movies",
-    deletedRelationship {
-        movies: {
-            node: {
-                title: "Sweeney Todd",
-                genre: "Horror"
-            }
-        }
-    }
-},
-{ 
-    # relationship 2 `actors` - for GraphQL types `Movie`,`Person`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "Sweeney Todd",
-        genre: "Horror"
-    }
-    relationshipFieldName: "people",
-    deletedRelationship {
-        people: {
-            node: {
-                name: "Johnny Depp"
-            }
-        },
-        actors: null
-    }
-},
-{ 
-    # relationship 2 `actors` - for GraphQL types `Movie`, `Actor`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    movie {
-        title: "Sweeney Todd",
-        genre: "Horror"
-    }
-    relationshipFieldName: "actors",
-    deletedRelationship {
-        people: null,
-        actors: {
-            node: {
-                name: "Johnny Depp"
-            }
-        }
-    }
-},
-{ 
-    # relationship 2 `movies` - for GraphQL types `Actor`, `Movie`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    actor {
-        name: "Johnny Depp"
-    }
-    relationshipFieldName: "movies",
-    deletedRelationship {
-        movies: {
-            node: {
-                title: "Sweeney Todd",
-                genre: "Horror"
-            }
-        }
-    }
-},
-----
-
-Had we subscribed to `Person` as well, we would have received two more events:
-
-[source, graphql]
-----
-{ 
-    # relationship 1 `movies` - for GraphQL types `Person`, `Movie`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    actor {
-        name: "John Logan"
-    }
-    relationshipFieldName: "movies",
-    deletedRelationship {
-        movies: {
-            node: {
-                title: "Sweeney Todd",
-                genre: "Horror"
-            }
-        }
-    }
-},
-{ 
-    # relationship 2 `movies` - for GraphQL types `Person`, `Movie`
-    event: "DELETE_RELATIONSHIP"
-    timestamp
-    actor {
-        name: "Johnny Depp"
-    }
-    relationshipFieldName: "movies",
-    deletedRelationship {
-        movies: {
-            node: {
-                title: "Sweeney Todd",
-                genre: "Horror"
-            }
-        }
-    }
-},
 ----
