@@ -238,7 +238,7 @@ type Movie {
     actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
 }
 
-interface ActedIn @relationshipProperties {
+type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
@@ -349,7 +349,7 @@ type Movie {
     reviewers: [Reviewer!]! @relationship(type: "REVIEWED", properties: "Review", direction: IN)
 }
 
-interface ActedIn @relationshipProperties {
+type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
@@ -364,7 +364,7 @@ type Person implements Reviewer {
 
 union Director = Person | Actor
 
-interface Directed @relationshipProperties {
+type Directed @relationshipProperties {
     year: Int!
 }
 
@@ -377,7 +377,7 @@ type Magazine implements Reviewer {
     reputation: Int!
 }
 
-interface Review @relationshipProperties {
+type Review @relationshipProperties {
     score: Int!
 }
 ----
@@ -744,16 +744,6 @@ The following example illustrates how to filter the node at the other end of the
                 node: {
                     # common fields declared by the interface
                     reputation_GTE: 8 
-                    _on: { # specific fields depending on the concrete type
-                        Person: { # concrete type that makes up the interface type
-                            name: "Jane Doe",
-                            reputation_GTE: 7
-                        },
-                        Magazine: { # concrete type that makes up the interface type
-                            title_IN: ["Sight and Sound", "Total Film"],
-                            reputation_LT: 9
-                        }
-                    }
                 }
             }, 
         }
@@ -761,92 +751,4 @@ The following example illustrates how to filter the node at the other end of the
 }
 ----
 
-This example returns events for relationships between the type `Movie` and `Reviewer`, where the score is higher than 7, and the `Reviewer` is a `Person` named "Jane Doe", with a reputation greater or equal to 7, or the `Reviewer` is a `Magazine` with the reputation of 8.
-
-[NOTE]
-====
-Note how the reputation field is part of the interface type, and can thus be specified in 3 ways: inside the `node` key, inside each concrete type, or in both places. +
-When specified in both places, however, the filter is composed with a logical `AND`.
-Type `Person` then overrides the `reputation_GTE` operator, so the final filter is `reputation_GTE: 7`.
-Likewise, type `Magazine` composes the original operator so the final filter is the interval `reputation_GTE: 8 && reputation_LT: 9`.
-====
-
-To get all relationships of type `REVIEWED` with a certain score returned, you can use implicit filtering, such as:
-
-[source, graphql, indent=0]
-----
-{
-    where: {
-        deletedRelationship: {
-            reviewers: {
-                edge: { # include some relationships of type `REVIEWED` to both `Person` and `Magazine` Concrete types, that conform to the filters
-                    score: 10
-                },
-            }, 
-        }   
-    }   
-}
-----
-
-Implicit filtering can still be used, even for relationships of type `REVIEWED` to a `Reviewer` of a specific reputation:
-
-[source, graphql, indent=0]
-----
-{
-    where: {
-        deletedRelationship: {
-            reviewers: { 
-                node: { # include some relationships of type `REVIEWED` to both `Person` and `Magazine` Concrete types, that conform to the filters
-                    reputation: 9 
-                }
-            }, 
-        }
-    }
-}
-----
-
-It is only when a specific concrete type needs to be filtered that you need to be explicit in the concrete types that you are interested in:
-
-[source, graphql, indent=0]
-----
-{
-    where: {
-        deletedRelationship: {
-            reviewers: { 
-                node: {
-                    _on: { 
-                        Person: { # include some relationships of type `REVIEWED` to Concrete type `Person`, that conform to the filters
-                            name: "Jane Doe",
-                            reputation_GTE: 9
-                        },
-                    }
-                }
-            }, 
-        }
-    }
-}
-----
-
-This example does not include relationships of type `REVIEWED` to the `Magazine` type. 
-You can do that by making them explicit:
-
-[source, graphql, indent=0]
-----
-{
-    where: {
-        deletedRelationship: {
-            reviewers: { 
-                node: {
-                    _on: {  
-                        Person: { # include some relationships of type `REVIEWED` to Concrete type `Person`, that conform to the filters
-                            name: "Jane Doe",
-                            reputation_GTE: 9
-                        },
-                        Magazine: {} # include all relationships of type `REVIEWED` to Concrete type `Magazine` 
-                    }
-                }
-            }, 
-        }
-    }
-}
-----
+This example returns events for relationships between the type `Movie` and `Reviewer`, where the score is higher than 7, and the `Reviewer` has a reputation greater or equal to 7.
