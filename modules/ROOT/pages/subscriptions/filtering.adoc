@@ -238,7 +238,7 @@ type Movie {
     actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
 }
 
-type ActedIn @relationshipProperties {
+interface ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
@@ -349,7 +349,7 @@ type Movie {
     reviewers: [Reviewer!]! @relationship(type: "REVIEWED", properties: "Review", direction: IN)
 }
 
-type ActedIn @relationshipProperties {
+interface ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
@@ -364,7 +364,7 @@ type Person implements Reviewer {
 
 union Director = Person | Actor
 
-type Directed @relationshipProperties {
+interface Directed @relationshipProperties {
     year: Int!
 }
 
@@ -377,7 +377,7 @@ type Magazine implements Reviewer {
     reputation: Int!
 }
 
-type Review @relationshipProperties {
+interface Review @relationshipProperties {
     score: Int!
 }
 ----
@@ -744,6 +744,16 @@ The following example illustrates how to filter the node at the other end of the
                 node: {
                     # common fields declared by the interface
                     reputation_GTE: 8 
+                    _on: { # specific fields depending on the concrete type
+                        Person: { # concrete type that makes up the interface type
+                            name: "Jane Doe",
+                            reputation_GTE: 7
+                        },
+                        Magazine: { # concrete type that makes up the interface type
+                            title_IN: ["Sight and Sound", "Total Film"],
+                            reputation_LT: 9
+                        }
+                    }
                 }
             }, 
         }
@@ -751,9 +761,6 @@ The following example illustrates how to filter the node at the other end of the
 }
 ----
 
-<<<<<<< HEAD
-This example returns events for relationships between the type `Movie` and `Reviewer`, where the score is higher than 7, and the `Reviewer` has a reputation greater or equal to 7.
-=======
 This example returns events for relationships between the type `Movie` and `Reviewer`, where the score is higher than 7, and the `Reviewer` is a `Person` named "Jane Doe", with a reputation greater or equal to 7, or the `Reviewer` is a `Magazine` with the reputation of 8.
 
 [NOTE]
@@ -843,4 +850,3 @@ You can do that by making them explicit:
     }
 }
 ----
->>>>>>> 4ceb2f7 (Standardise auth variables #93 (#95))
