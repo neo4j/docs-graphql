@@ -7,7 +7,7 @@ site:
 content:
   sources:
   - url: https://github.com/neo4j/docs-graphql.git
-    branches: ['4.x', '3.x']
+    branches: ['5.x', '4.x', '3.x']
     exclude:
     - '!**/_includes/*'
     - '!**/readme.adoc'
