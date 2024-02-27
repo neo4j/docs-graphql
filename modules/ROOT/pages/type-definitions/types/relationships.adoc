@@ -103,13 +103,13 @@ type Actor {
     actedInMovies: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
 }
 
-type Movie {
+type Movie implements Production {
     title: String!
     released: Int!
     actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
 }
 
-type Series {
+type Series implements Production {
     title: String!
     released: Int!
     episodes: Int!
