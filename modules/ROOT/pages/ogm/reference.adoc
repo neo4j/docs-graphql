@@ -16,7 +16,7 @@ The following sections work as a reference guide to all functionalities in OGM a
 
 |`constructor`
 |Returns an `OGM` instance.
-Takes an `input` object as a parameter, which is then passed to the `Neo4jGraphQL` constructor. Supported options are listed in the documentation for xref::reference/api-reference/neo4jgraphql.adoc[`Neo4jGraphQL`].
+Takes an `input` object as a parameter, which is then passed to the `Neo4jGraphQL` constructor.
 a|
 [source, javascript, indent=0]
 ----
@@ -27,7 +27,7 @@ const ogm = new OGM({
 
 |`init`
 |Asynchronous method to initialize the OGM. 
-Internally, calls xref::reference/api-reference/neo4jgraphql.adoc#api-reference-getschema[`Neo4jGraphQL.getSchema()`] to generate a GraphQL schema, and stores the result. 
+Internally, calls `Neo4jGraphQL.getSchema()` to generate a GraphQL schema, and stores the result. 
 Initializes any models which have been created before this execution, and will throw an error if any of them are invalid.
 a|
 [source, javascript, indent=0]
