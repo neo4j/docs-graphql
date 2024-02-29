@@ -58,9 +58,6 @@
 ** xref:introspector.adoc[Introspector]
 
 ** xref:migration/index.adoc[Migration guide]
-*** xref:migration/4.0.0/index.adoc[4.0.0 Guide]
-**** xref:migration/4.0.0/authorization.adoc[]
-**** xref:migration/4.0.0/ogm.adoc[]
 
 ** xref:ogm/index.adoc[]
 *** xref:ogm/installation.adoc[]
