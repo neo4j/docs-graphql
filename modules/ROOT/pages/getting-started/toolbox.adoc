@@ -21,7 +21,7 @@ You can use https://neo4j.com/docs/desktop-manual/current/[Neo4j Desktop] or htt
 
 . Set your type definitions directly in the Toolbox editor or introspect the Neo4j database you connected to.
 +
-If you followed the xref:getting-started/index.adoc[Getting started tutorial], you should see  the following type definitions in GraphQL Toolbox:
+If you followed the xref:getting-started/index.adoc[Getting started tutorial], you should see these type definitions in the GraphQL Toolbox:
 +
 [source, graphql, indent=0]
 ----
