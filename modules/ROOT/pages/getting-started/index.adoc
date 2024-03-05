@@ -105,13 +105,13 @@ image::neo4j-aura-dashboard.png[width=500]
 
 === Using a Neo4j database
 
-For a database located at the default "neo4j://localhost:7687" (see more about https://neo4j.com/docs/operations-manual/current/configuration/ports[port configuration]), with the username "neo4j" and the password "password", add the following to the bottom of your `index.js` file:
+For a database located at the default "neo4j://localhost:7687" (see more about https://neo4j.com/docs/operations-manual/current/configuration/ports[port configuration]), with the username "username" and the password "password", add the following to the bottom of your `index.js` file:
 
 [source, javascript, indent=0]
 ----
 const driver = neo4j.driver(
     "neo4j://localhost:7687",
-    neo4j.auth.basic("neo4j", "password")
+    neo4j.auth.basic("username", "password")
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
@@ -287,7 +287,7 @@ Since you only created one "Movie" node and one "Actor", the Response panel show
 == Conclusion
 
 This concludes the tutorial.
-By now, you have a GraphQL API connected to a Neo4j database, to which you added two nodes. 
+By now, you should have a GraphQL API connected to a Neo4j database, to which you added two nodes. 
 
 To learn more, keep reading the documentation about xref:queries-aggregations/index.adoc[Queries and aggregations] or alternatively learn how to use the xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox].
 For more advanced database settings, refer to the xref:driver-configuration.adoc[Driver configuration] page.
