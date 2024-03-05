@@ -160,4 +160,3 @@ type Journal implements Publication {
     author: [Author!]! @relationship(type: "WROTE", direction: IN)
 }
 ----
-
