@@ -227,7 +227,7 @@ mutation {
 ----
 
 . Click the "Run" button on the top right. 
-You get the following confirmation that the data has been created in the database in the Response panel:
+You should get the following confirmation that the data has been created in the database in the Response panel:
 +
 [source, json, indent=0]
 ----
@@ -249,7 +249,8 @@ You get the following confirmation that the data has been created in the databas
 }
 ----
 
-. Query the data which you just added. Copy and paste the following query to the Operations panel:
+. Query the data which you just added. 
+Copy and paste the following query to the Operations panel:
 +
 [source, graphql, indent=0]
 ----
