@@ -14,7 +14,7 @@ This tutorial shows you how to:
 - Start an instance of the library to generate a GraphQL schema.
 - Run an instance of a server to execute queries and mutations against your schema.
 
-This tutorial assumes familiarity with command line and JavaScript, and also that you have a recent version of Node.js installed. 
+The tutorial assumes familiarity with command line and JavaScript, and also that you have a recent version of Node.js installed. 
 The examples use the default `npm` package manager, but you can use another one of choice.
 
 == Create a new project
@@ -34,7 +34,7 @@ cd neo4j-graphql-example
 npm init es6 --yes
 ----
 +
-. Create an empty `index.js` file which will contain all of the code for this example:
+. Create an empty `index.js` file which will contain all of the code for this tutorial:
 +
 [source, bash, indent=0]
 ----
@@ -108,7 +108,7 @@ image::neo4j-aura-dashboard.png[width=500]
 
 === Using a Neo4j database
 
-For a database located at the default "neo4j://localhost:7687" (see more about https://neo4j.com/docs/operations-manual/current/configuration/ports[port configuration]), with the username "neo4j" and the password "password", add the following to the bottom of your `index.js` file:
+For a database located at the default "neo4j://localhost:7687" (see more about https://neo4j.com/docs/operations-manual/current/configuration/ports[port configuration]), with the username "username" and the password "password", add the following to the bottom of your `index.js` file:
 
 [source, javascript, indent=0]
 ----
@@ -139,24 +139,8 @@ console.log(`🚀 Server ready at ${url}`);
 
 == Start the server
 
-Finally, you are ready to start up your GraphQL server. 
-Back in the command line, run:
 
-[source, bash, indent=0]
-----
-node index.js
-----
-
-If successful, you should see the following output:
-
-[source, bash, indent=0]
-----
-🚀 Server ready at http://localhost:4000/
-----
-
-The address http://localhost:4000/ is the default URL in which Apollo Server starts at.
-
-This is how your `index.js` file should look after following the previous steps:
+Make sure that your `index.js` file looks like this:
 
 [source, javascript]
 ----
@@ -196,6 +180,24 @@ const { url } = await startStandaloneServer(server, {
 console.log(`🚀 Server ready at ${url}`);
 ----
 
+You are ready to start up your GraphQL server. 
+Back in the command line, run:
+
+[source, bash, indent=0]
+----
+node index.js
+----
+
+If successful, you should see the following output:
+
+[source, bash, indent=0]
+----
+🚀 Server ready at http://localhost:4000/
+----
+
+The address http://localhost:4000/ is the URL where the Apollo Server starts.
+
+
 == Create nodes in the database
 
 . Visit http://localhost:4000/ in your web browser. 
@@ -204,7 +206,7 @@ You should get redirected to the Apollo Sandbox:
 image::apollo-server-landing-page.png[]
 
 . At the moment your database is empty. 
-To start adding data, create a movie and an actor in that movie, all in one mutation to be added into the Operations panel:
+To start adding data, copy and paste the following mutation to the Operation panel to create a movie and an actor in that movie:
 +
 [source, graphql, indent=0]
 ----
@@ -228,7 +230,7 @@ mutation {
 ----
 
 . Click the "Run" button on the top right. 
-If successful, you get the following confirmation that the data has been created in the database:
+You should get the following confirmation that the data has been created in the database in the Response panel:
 +
 [source, json, indent=0]
 ----
@@ -250,7 +252,8 @@ If successful, you get the following confirmation that the data has been created
 }
 ----
 
-. Now go back and query the data which you just added:
+. Query the data which you just added. 
+Copy and paste the following query to the Operations panel:
 +
 [source, graphql, indent=0]
 ----
@@ -264,7 +267,7 @@ query {
 }
 ----
 +
-Since only one "Movie" and one "Actor" were added, this is the result you should get:
+Since you only created one "Movie" node and one "Actor", the Response panel shows the following:
 +
 [source, json, indent=0]
 ----
