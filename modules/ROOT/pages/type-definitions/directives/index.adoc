@@ -42,6 +42,9 @@ of any required fields that is passed as arguments to the custom resolver.
 | xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`]
 | Marks a field as the unique ID for an object type, and allows for autogeneration of IDs.
 
+| xref::/authentication-and-authorization/configuration.adoc#authentication-and-authorization-jwt[`@jwtClaim`]
+| Marks a field as the unique ID for an object type, and allows for autogeneration of IDs.
+
 | xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
 | Used on nodes to inject values into Cypher `LIMIT` clauses.
 

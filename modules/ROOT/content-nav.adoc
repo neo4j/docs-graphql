@@ -64,6 +64,7 @@
 *** xref:ogm/directives.adoc[]
 *** xref:ogm/selection-set.adoc[]
 *** xref:ogm/type-generation.adoc[]
+*** xref:ogm/subscriptions.adoc[]
 *** xref:ogm/reference.adoc[]
 
 ** xref:driver-configuration.adoc[]

@@ -33,6 +33,7 @@ Then, the next step is to install the following dependencies:
 npm i --save ws graphql-ws neo4j-driver @neo4j/graphql express @apollo/server body-parser cors
 ----
 
+[setting-up-server]
 == Set up an `@apollo/server` server
 
 Add the following code to your `index.js` file to implement a simple `@apollo/server` server with subscriptions (for more options, see link:https://www.apollographql.com/docs/apollo-server/data/subscriptions/[Apollo's documentation]):
