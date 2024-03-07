@@ -36,6 +36,31 @@ type Post @authorization(filter: [
 }
 ----
 
+==== Operations
+
+Filtering can be configured to only be performed on certain operations:
+
+* `READ`
+* `AGGREGATE`
+* `UPDATE`
+* `DELETE`
+* `CREATE_RELATIONSHIP`
+* `DELETE_RELATIONSHIP`
+
+For instance, to only require filtering for the reading and aggregating posts:
+
+[source, graphql, indent=0]
+----
+type Post @authorization(filter: [
+    { operations: [READ, AGGREGATE] where: { node: { author: { id: "$jwt.sub" } } } }
+]) {
+    title: String!
+    content: String!
+    author: User! @relationship(type: "AUTHORED", direction: IN)
+}
+----
+
+
 === Validating
 
 Validating rules throw an error if a query is executed against data which users do not have access to. 
@@ -57,6 +82,33 @@ type User @authorization(validate: [
     id: ID!
 }
 ----
+
+==== Operations
+
+Validation can be configured to only be performed on certain operations:
+
+* `READ`
+* `AGGREGATE`
+* `CREATE`
+* `UPDATE`
+* `DELETE`
+* `CREATE_RELATIONSHIP`
+* `DELETE_RELATIONSHIP`
+
+For instance, to only require validation for the update or deletion of a post:
+
+
+[source, graphql, indent=0]
+----
+type Post @authorization(validate: [
+    { operations: [UPDATE, DELETE] where: { node: { author: { id: "$jwt.sub" } } } }
+]) {
+    title: String!
+    content: String!
+    author: User! @relationship(type: "AUTHORED", direction: IN)
+}
+----
+
 
 == Authorization without authentication
 

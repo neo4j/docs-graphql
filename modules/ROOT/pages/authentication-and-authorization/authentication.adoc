@@ -50,6 +50,7 @@ Authentication can be configured to only be validated on certain operations:
 
 * `CREATE`
 * `READ`
+* `AGGREGATE`
 * `UPDATE`
 * `DELETE`
 * `CREATE_RELATIONSHIP`
