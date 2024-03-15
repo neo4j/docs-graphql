@@ -1,6 +1,8 @@
 [[types]]
 :description: This page lists all types available in the Neo4j GraphQL Library.
+
 = Types
+:page-aliases: type-definitions/types.adoc
 
 The Neo4j GraphQL Library provides the following types:
 

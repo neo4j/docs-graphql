@@ -1,5 +1,6 @@
 [[ogm]]
 :description: This section describes how to use the OGM functionality in Neo4j GraphQL.
+:page-aliases: ogm/examples.adoc
 = OGM
 
 Most applications don't only expose a single GraphQL API -- there may also be scheduled jobs, authentication, and migrations keeping an application on.
