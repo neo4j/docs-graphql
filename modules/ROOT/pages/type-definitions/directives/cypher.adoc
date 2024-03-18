@@ -1,6 +1,6 @@
 [[type-definitions-cypher]]
 :description: This page describes how to use the @cypher directive in the Neo4j GraphQL Library.
-= `@cypher` 
+= `@cypher`
 :page-aliases: type-definitions/cypher.adoc
 
 The `@cypher` directive binds a GraphQL field to the results of a Cypher query.

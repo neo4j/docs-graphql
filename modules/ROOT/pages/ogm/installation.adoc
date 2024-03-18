@@ -1,6 +1,7 @@
 [[ogm-installation]]
 :description: This page describes how to install the OGM in Neo4j GraphQL and includes examples of how to use it.
 = Installation
+:page-aliases: ogm/examples/index.adoc, omg/examples/rest-api.adoc, omg/examples/custom-resolvers.adoc
 
 The OGM can be installed into a new or existing Node.js project in a similar way to the installation of the Neo4j GraphQL Library.
 As such, it requires some dependencies to be included:
