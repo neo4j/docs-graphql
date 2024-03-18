@@ -71,13 +71,13 @@ to populate fields which have not been provided within the input.
 | xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
 | Configure  xref::/type-definitions/types/relationships.adoc[relationships] between object types.
 
-| *`@relationshipProperties`*
+| xref::/type-definitions/types/relationships.adoc#_relationship_properties[`@relationshipProperties`]
 a| Required to help you distinguish between interfaces which are used for relationship properties, and otherwise.
 Can only be used on interfaces, as per its definition:
 [source, graphql, indent=0]
 ----
 """Required to differentiate between interfaces for relationship properties, and otherwise."""
-directive @relationshipProperties on INTERFACE
+directive @relationshipProperties on OBJECT
 ----
 
 | xref:/integrations/relay-compatibility.adoc[`@relayId`]
