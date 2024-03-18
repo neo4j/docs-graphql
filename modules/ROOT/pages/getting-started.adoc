@@ -1,5 +1,6 @@
 [[getting-started]]
 = Getting Started
+:page-aliases: getting-started/index.adoc
 
 This tutorial walks you through creating a new project with the Neo4j GraphQL Library.
 

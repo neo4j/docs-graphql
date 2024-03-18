@@ -1,5 +1,7 @@
 [[type-definitions-types]]
 = Types
+:page-aliases: type-definitions/types/index.adoc, type-definitions/types/scalar.adoc, type-definitions/types/temporal.adoc, \
+type-definitions/types/spatial.adoc
 
 Neo4j GraphQL supports all of the default GraphQL https://graphql.org/learn/schema/#scalar-types[scalar types] as well as additional scalar and object types specific to the Neo4j database.
 
