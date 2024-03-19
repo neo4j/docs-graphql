@@ -232,7 +232,7 @@ This creates two constraints, one for each field decorated with `@id` and `@uniq
 [source, javascript, indent=0]
 ----
 const typeDefs = `#graphql
-    type Colour {
+    type Color {
         id: ID! @id
         hexadecimal: String! @unique
     }
@@ -244,6 +244,8 @@ const typeDefs = `#graphql
 `;
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
+
+const schema = await neoSchema.getSchema();
 
 await neoSchema.assertIndexesAndConstraints({ options: { create: true }});
 ----
