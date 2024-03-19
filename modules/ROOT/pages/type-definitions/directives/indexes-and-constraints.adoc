@@ -232,7 +232,7 @@ This creates two constraints, one for each field decorated with `@id` and `@uniq
 [source, javascript, indent=0]
 ----
 const typeDefs = `#graphql
-    type Colour {
+    type Color {
         id: ID! @id
         hexadecimal: String! @unique
     }
