@@ -3,7 +3,6 @@
 :page-aliases: guides/index.adoc, guides/migration-guide/index.adoc, guides/migration-guide/server.adoc, \
 guides/migration-guide/queries.adoc, guides/migration-guide/type-definitions.adoc, guides/migration-guide/mutations.adoc
 
-:page-aliases: 
 = Migration to 5.0.0
 
 This page lists all breaking changes from the Neo4j GraphQL Library version 4.x to 5.x and how to update it.
