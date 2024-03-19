@@ -1,5 +1,6 @@
 [[ogm-api-reference]]
 = API Reference
+:page-aliases: ogm/reference.adoc
 
 - xref::ogm/api-reference/ogm.adoc[`OGM`]
 - xref::ogm/api-reference/model/index.adoc[`Model`]

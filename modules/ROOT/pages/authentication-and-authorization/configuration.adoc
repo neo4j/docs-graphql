@@ -1,4 +1,5 @@
 = Configuration
+:page-aliases: authentication-and-authorization/index.adoc
 
 == Instantiation
 

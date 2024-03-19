@@ -1,6 +1,6 @@
 [[directives]]
 = Directives
-:page-aliases: type-definitions/types/index.adoc
+:page-aliases: type-definitions/directives/index.adoc
 
 == `@alias`
 
