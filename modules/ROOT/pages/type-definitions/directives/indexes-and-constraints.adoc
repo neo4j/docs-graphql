@@ -245,5 +245,7 @@ const typeDefs = `#graphql
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
 
+const schema = await neoSchema.getSchema();
+
 await neoSchema.assertIndexesAndConstraints({ options: { create: true }});
 ----
