@@ -154,6 +154,26 @@ type Query {
 
 The downside of the latter approach is that you need to adjust the return object as you change your object type definition.
 
+== Input arguments
+The `@cypher` statement can access the query parameters by prepending `$` to the parameter name. For example:
+
+[source, graphql, indent=0]
+----
+type Query {
+    name(value: String): String @cypher(statement: "RETURN $value AS res", columnName: "res")
+}
+----
+
+The following GraphQL query will return the parameter  `value`:
+
+[source, graphql, indent=0]
+----
+query {
+  name(value: "aca")
+}
+----
+
+
 == Usage examples
 
 The `@cypher` directive can be used in different contexts, such as the ones described in this section.
