@@ -1,7 +1,8 @@
 [[migration-guide]]
 :description: This page lists the breaking changes from version 3.0.0 to 4.0.0 and describes how to update.
 = Migration to 4.0.0
-:page-aliases: guides/index.adoc, guides/migration-guide/index.adoc, guides/migration-guide/server.adoc, guides/migration-guide/type-definitions.adoc, guides/migration-guide/mutations.adoc
+:page-aliases: guides/index.adoc, guides/migration-guide/index.adoc, guides/migration-guide/server.adoc, \
+guides/migration-guide/queries.adoc, guides/migration-guide/type-definitions.adoc, guides/migration-guide/mutations.adoc
 
 This page lists all breaking changes from the Neo4j GraphQL Library version 3.x to 4.x and how to update it.
 

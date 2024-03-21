@@ -1,6 +1,5 @@
 [[queries]]
 = Queries
-:page-aliases: guides/migration-guide/queries.adoc
 :description: This page describes how to read or fetch values in the Neo4j GraphQL Library.
 
 

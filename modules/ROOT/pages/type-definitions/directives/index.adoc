@@ -1,6 +1,7 @@
 [[directives]]
 :description: This page lists all directives available in the Neo4j GraphQL Library.
 = Directives
+:page-aliases: directives.adoc
 
 The Neo4j GraphQL Library provides the following directives to be used whilst defining types:
 
