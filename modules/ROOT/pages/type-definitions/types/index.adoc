@@ -28,22 +28,22 @@ The Neo4j GraphQL Library provides the following types:
 | The `BigInt` scalar type represents a signed 64-bit numeric non-fractional value.
 
 | xref:/type-definitions/types/temporal.adoc[`Date`]
-| The `Date` temporal type is a ISO 8601 date mapping to the Neo4j `DATE` type.
+| The `Date` temporal scalar type is a ISO 8601 date mapping to the Neo4j `DATE` type.
 
 | xref::/type-definitions/types/temporal.adoc[`Time`]
-| The `Time` temporal type is a ISO 8601 time of day and timezone mapping to the Neo4j `ZONED TIME` type.
+| The `Time` temporal scalar type is a ISO 8601 time of day and timezone mapping to the Neo4j `ZONED TIME` type.
 
 | xref::/type-definitions/types/temporal.adoc[`LocalTime`]
-| The `LocalTime` temporal type is a ISO 8601 time of day mapping to the Neo4j `LOCAL TIME` type.
+| The `LocalTime` temporal scalar type is a ISO 8601 time of day mapping to the Neo4j `LOCAL TIME` type.
 
 | xref::/type-definitions/types/temporal.adoc[`DateTime`]
-| The `DateTime` temporal type is a ISO 8601 date, time of day and timezone mapping to the Neo4j `ZONED DATETIME` type.
+| The `DateTime` temporal scalar type is a ISO 8601 date, time of day and timezone mapping to the Neo4j `ZONED DATETIME` type.
 
 | xref:/type-definitions/types/temporal.adoc[`LocalDateTime`]
-| The `LocalDateTime` temporal type is a ISO 8601 date and time of day mapping to the Neo4j `LOCAL DATETIME` type.
+| The `LocalDateTime` temporal scalar type is an ISO 8601 date and time of day mapping to the Neo4j `LOCAL DATETIME` type.
 
 | xref::/type-definitions/types/temporal.adoc[`Duration`]
-| The `Duration` temporal type is a ISO 8601 duration mapping to the Neo4j `DURATION` type.
+| The `Duration` temporal scalar type is an ISO 8601 duration mapping to the Neo4j `DURATION` type.
 
 | xref::/type-definitions/types/spatial.adoc#point[`Point`]
 | The `Point` spatial object type is a WGS 84 3D geographic point.

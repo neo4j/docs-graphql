@@ -2,8 +2,6 @@
 :description: This page lists the temporal types available in the Neo4j GraphQL Library.
 = Temporal types
 
-== Temporal types
-
 [cols="1,2,2"]
 |===
 | Type | Description | Example
