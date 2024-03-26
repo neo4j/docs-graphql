@@ -2,7 +2,6 @@
 :description: This page lists all types available in the Neo4j GraphQL Library.
 
 = Types
-:page-aliases: type-definitions/types.adoc
 
 The Neo4j GraphQL Library provides the following types:
 
@@ -17,7 +16,7 @@ The Neo4j GraphQL Library provides the following types:
 | The `Float` scalar type represents a signed double-precision fractional value.
 
 | xref::/type-definitions/types/scalar.adoc[`String`]
-| The `String` scalar type represents textual data, represented as UTF-8 character sequences.
+| The `String` scalar type represents textual data and consists of UTF-8 characters.
 
 | xref::/type-definitions/types/scalar.adoc[`Boolean`]
 | The `Boolean` scalar type represents `true` or `false`.
@@ -29,27 +28,27 @@ The Neo4j GraphQL Library provides the following types:
 | The `BigInt` scalar type represents a signed 64-bit numeric non-fractional value.
 
 | xref:/type-definitions/types/temporal.adoc[`Date`]
-| The `Date` scalar type is a ISO 8601 date mapping to the Neo4j `DATE` type.
+| The `Date` temporal scalar type is a ISO 8601 date mapping to the Neo4j `DATE` type.
 
 | xref::/type-definitions/types/temporal.adoc[`Time`]
-| The `Time` scalar type is a ISO 8601 time of day and timezone mapping to the Neo4j `ZONED TIME` type.
+| The `Time` temporal scalar type is a ISO 8601 time of day and timezone mapping to the Neo4j `ZONED TIME` type.
 
 | xref::/type-definitions/types/temporal.adoc[`LocalTime`]
-| The `LocalTime` scalar type is a ISO 8601 time of day mapping to the Neo4j `LOCAL TIME` type.
+| The `LocalTime` temporal scalar type is a ISO 8601 time of day mapping to the Neo4j `LOCAL TIME` type.
 
 | xref::/type-definitions/types/temporal.adoc[`DateTime`]
-| The `DateTime` scalar type is a ISO 8601 date, time of day and timezone mapping to the Neo4j `ZONED DATETIME` type.
+| The `DateTime` temporal scalar type is a ISO 8601 date, time of day and timezone mapping to the Neo4j `ZONED DATETIME` type.
 
 | xref:/type-definitions/types/temporal.adoc[`LocalDateTime`]
-| The `LocalDateTime` scalar type is a ISO 8601 date and time of day mapping to the Neo4j `LOCAL DATETIME` type.
+| The `LocalDateTime` temporal scalar type is an ISO 8601 date and time of day mapping to the Neo4j `LOCAL DATETIME` type.
 
 | xref::/type-definitions/types/temporal.adoc[`Duration`]
-| The `Duration` scalar type is a ISO 8601 duration mapping to the Neo4j `DURATION` type.
+| The `Duration` temporal scalar type is an ISO 8601 duration mapping to the Neo4j `DURATION` type.
 
 | xref::/type-definitions/types/spatial.adoc#point[`Point`]
-| The `Point` object type is a WGS 84 3D geographic point.
+| The `Point` spatial object type is a WGS 84 3D geographic point.
 
 | xref::/type-definitions/types/spatial.adoc#cartesian-point[`CartesianPoint`]
-| The `CartesianPoint` object type is a Cartesian 3D point.
+| The `CartesianPoint` spatial object type is a Cartesian 3D point.
 
 |===
