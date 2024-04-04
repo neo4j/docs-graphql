@@ -178,10 +178,10 @@ Conversely, the following operator is available on array fields, and accepts a s
 
 These operators are available for all types apart from `Boolean`.
 
-== Combining operators
+== Logical operators
 
-All operators can be combined using the `AND`, `OR`, and `NOT` operators.
-They can also be stand-alone operators, which means that they can be used as such and not be appended to field names.
+All operators can be combined using the logical operators `AND`, `OR`, and `NOT`.
+They can also be standalone operators, which means that they can be used as such and not be appended to field names.
 
 These operators accept an array argument with items of the same format as the `where` argument, which means they can also be nested to form complex combinations.
 
