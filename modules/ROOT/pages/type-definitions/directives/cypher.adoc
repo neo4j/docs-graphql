@@ -169,7 +169,7 @@ The following GraphQL query returns the parameter `value`:
 [source, graphql, indent=0]
 ----
 query {
-  name(value: "Arthur")
+  name(value: "Jane Smith")
 }
 ----
 
