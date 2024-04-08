@@ -8,7 +8,7 @@ This page describes the configuration of the Neo4j GraphQL Library driver.
 
 For the Neo4j GraphQL Library to work, either an instance of the https://github.com/neo4j/neo4j-javascript-driver[Neo4j JavaScript driver] must be passed in on construction of your `Neo4jGraphQL` instance (or alternatively, `OGM`), or a driver, session or transaction passed into the `context.executionContext` per request.
 
-The examples in this page assume a Neo4j database running at "bolt://localhost:7687" with a username of "neo4j" and a password of "password".
+The examples in this page assume a Neo4j database running at "bolt://localhost:7687" with a username of "username" and a password of "password".
 
 === Neo4j GraphQL Library
 
