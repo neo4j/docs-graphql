@@ -1,5 +1,5 @@
 [[index]]
-= Neo4j GraphQL Library
+= Introduction
 :page-aliases: introduction.adoc
 :description: This section describes the Neo4j GraphQL Library.
 

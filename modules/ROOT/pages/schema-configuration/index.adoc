@@ -10,6 +10,6 @@ However, in some cases, it may be advisable to reduce the scope of the API produ
 
 This section provides information on how to limit access to unwanted operations and reduce the size of the schema which can improve the performance:
 
-- xref::schema-configuration/field-configuration.adoc[Field configuration] - How to remove fields from a GraphQL Object Type or a GraphQL Input Object Type.
-- xref::schema-configuration/global-configuration.adoc[Global configuration] - How to globally disable specific types of operation.
 - xref::schema-configuration/type-configuration.adoc[Type configuration] - How to set up `Query`, `Mutation`, and `Subscription` types.
+- xref::schema-configuration/global-configuration.adoc[Global configuration] - How to globally disable specific types of operation.
+- xref::schema-configuration/field-configuration.adoc[Field configuration] - How to remove fields from a GraphQL Object Type or a GraphQL Input Object Type.

@@ -2,7 +2,48 @@
 :description: This page describes aggregations supported by Neo4j GraphQL.
 = Aggregations
 
-Based on the given <<queries-aggregations/index.adoc#examples-reference, type definitions>>, here is a list of fields that accept aggregations supported by Neo4j GraphQL:
+== Type definitions
+
+Quries on this page assume the following type definitions:
+
+[source, graphql, indent=0]
+----
+type Post {
+    id: ID! @id
+    content: String!
+    creator: User! @relationship(type: "HAS_POST", direction: IN, properties: "PostedAt")
+    createdAt: DateTime!
+}
+
+type User {
+    id: ID! @id
+    name: String!
+    age: Int!
+    posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT, properties: "PostedAt")
+    friends: [User!]! @relationship(type: "FRIENDS_WITH", direction: OUT)
+}
+
+type PostedAt @relationshipProperties {
+    date: DateTime
+}
+----
+
+For which the following query fields are generated:
+
+[source, graphql, indent=0]
+----
+type Query {
+    posts(where: PostWhere, options: PostOptions): [Post!]!
+    postsAggregate(where: PostWhere): PostAggregationSelection!
+
+    users(where: UserWhere, options: UserOptions): [User!]!
+    usersAggregate(where: UserWhere): UserAggregationSelection!
+}
+----
+
+== Aggregation fields
+
+Based on the type definitions, here is a list of fields that accept aggregations supported by Neo4j GraphQL:
 
 [cols="1,1,2"]
 |===

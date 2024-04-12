@@ -1,6 +1,6 @@
 [[troubleshooting]]
 = Troubleshooting
-:page-aliases: troubleshooting/index.adoc, troubleshooting/faqs.adoc, troubleshooting/security.adoc, \
+:page-aliases: troubleshooting/faqs.adoc, troubleshooting/security.adoc, \
 troubleshooting/optimizing-create-operations.adoc, appendix/preventing-overfetching.adoc, appendix/index.adoc
 
 
