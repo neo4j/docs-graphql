@@ -28,6 +28,7 @@ From these type definitions, the library generates the following operation field
     * `createMovies`
     * `deleteMovies`
     * `updateMovies`
+    * `upsertMovies`
 
 **Subscription**:
 
@@ -86,15 +87,16 @@ This directive is used to limit the availability of mutation operations in the l
 enum MutationFields {
     CREATE
     UPDATE
+    UPSERT
     DELETE
 }
 
-directive @mutation(operations: [MutationFields!]! = [CREATE, UPDATE, DELETE]) on OBJECT | SCHEMA
+directive @mutation(operations: [MutationFields!]! = [CREATE, UPDATE, UPSERT, DELETE]) on OBJECT | SCHEMA
 ----
 
 === Usage
 
-.Disable Create, Delete, and Update operations for _Movie_
+.Disable Create, Update, Upsert and Delete operations for _Movie_
 [source, graphql, indent=0]
 ----
 type Movie @mutation(operations: []) { 
