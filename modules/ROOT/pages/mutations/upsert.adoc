@@ -1,0 +1,64 @@
+[[mutations-upsert]]
+:description: This page describes how to upsert nodes through mutations.
+= `upsert`
+
+Upsert (update or insert) mutations update an existing object or create the object if it doesn't exist.
+Upsert is GraphQL's version of a https://neo4j.com/docs/cypher-manual/current/clauses/merge/[`MERGE` clause] in Cypher. 
+
+Consider the following type definition:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String
+    stars: Int
+    released: Int
+    id: ID! @id @unique
+}
+----
+
+The `upsert` mutation and response are generated:
+
+[source, graphql, indent=0]
+----
+type UpsertMoviesMutationResponse {
+    movies: [Movie!]!
+}
+
+type Mutation {
+    upsertMovies(input: [MoviesUpsertInput!]!): UpsertMoviesMutationResponse!
+}
+----
+
+The following mutation either matches an existing movie with title "The Matrix" and updates it with its release year of "1999" or, if there is no movie by that name, it creates a new movie node and gives it a star rating of "5":
+
+[source, graphql, indent=0]
+----
+mutation {
+  upsertMovies(input: [{
+    node: {
+      title: "The Matrix"
+    },
+    onCreate: {
+      stars: 5
+    },
+    onUpdate: {
+      released: 1999
+    }
+  }]) { title }
+}
+----
+
+The equivalent Cypher statement is:
+
+.Query
+[source, cypher]
+----
+MERGE (m:Movie {title: "The Matrix"})
+ON CREATE SET
+  m.stars = 5
+ON MATCH SET
+  m.released = 1999
+RETURN m
+----
+

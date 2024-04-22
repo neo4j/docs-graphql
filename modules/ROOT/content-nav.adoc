@@ -48,6 +48,7 @@
 * xref:mutations/index.adoc[]
 ** xref:mutations/create.adoc[]
 ** xref:mutations/update.adoc[]
+** xref:mutations/upsert.adoc[]
 ** xref:mutations/delete.adoc[]
 
 * xref:subscriptions/index.adoc[]
