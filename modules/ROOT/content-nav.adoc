@@ -30,6 +30,7 @@
 *** xref:type-definitions/directives/default-values.adoc[]
 *** xref:type-definitions/directives/database-mapping.adoc[]
 *** xref:type-definitions/directives/indexes-and-constraints.adoc[]
+*** xref:type-definitions/directives/genai.adoc[]
 
 * xref:schema-configuration/index.adoc[Schema configuration]
 ** xref:schema-configuration/type-configuration.adoc[]
