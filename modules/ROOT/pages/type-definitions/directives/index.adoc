@@ -7,9 +7,39 @@
 
 The Neo4j GraphQL Library provides the following directives to be used whilst defining types:
 
+//== Database mapping
+
+.Database mapping directives
+[cols="2,5"]
+|===
+| Directive | Description
+
+| xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
+| Configure  xref::/type-definitions/types/relationships.adoc[relationships] between object types.
+
+| xref::/type-definitions/types/relationships.adoc#_relationship_properties[`@relationshipProperties`]
+a| Required to help you distinguish between interfaces which are used for relationship properties, and otherwise.
+Can only be used on interfaces, as per its definition:
+[source, graphql, indent=0]
+----
+"""Required to differentiate between interfaces for relationship properties, and otherwise."""
+directive @relationshipProperties on OBJECT
+----
+
+| xref::/type-definitions/directives/database-mapping.adoc#type-definitions-node[`@node`]
+| Specifies the configuration of a GraphQL object type which represents a Neo4j node.
+
+| xref::/type-definitions/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
+| Maps a GraphQL schema field to a Neo4j property on a node or relationship.
+
+| xref::/schema-configuration/field-configuration.adoc#_relationship[`@declareRelationship`]
+| Configure xref::/type-definitions/types/relationships.adoc[relationships] to be implemented on object types.
+
+|===
+
 //== Authentication and authorization
 
-.Authentication and authorization directives
+.Security directives
 [cols="2,5"]
 |===
 | Directive | Description
@@ -25,6 +55,12 @@ The Neo4j GraphQL Library provides the following directives to be used whilst de
 
 | xref::/authentication-and-authorization/configuration.adoc#authentication-and-authorization-jwt[`@jwt`]
 | Description for `@jwt`.
+
+| xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
+| Used on nodes to inject values into Cypher `LIMIT` clauses.
+
+| `@subscriptionsAuthorization`
+| Specifies authorization rules for subscriptions on the type.
 
 |===
 
@@ -45,41 +81,6 @@ to populate fields which have not been provided within the input.
 
 |===
 
-.Default values directives
-[cols="2,5"]
-|===
-| Directive | Description
-
-| xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-coalesce[`@coalesce`]
-| Exposes a mechanism for querying against non-existent, `null` values on a node.
-
-| xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-default[`@default`]
-| Allows for the setting of a default value for a field on object creation.
-
-| xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
-| Used on nodes to inject values into Cypher `LIMIT` clauses.
-
-|===
-
-//== Database mapping
-
-.Database mapping directives
-[cols="2,5"]
-|===
-| Directive | Description
-
-| xref::/type-definitions/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
-| Maps a GraphQL schema field to a Neo4j property on a node or relationship.
-
-
-| xref::/type-definitions/directives/database-mapping.adoc#type-definitions-plural[`@plural`]
-| Redefines how to compose the plural of the type for the generated operations.
-This is particularly useful for types that are not correctly pluralized or are non-English words.
-
-| xref::/type-definitions/directives/database-mapping.adoc#type-definitions-node[`@node`]
-| Specifies the configuration of a GraphQL object type which represents a Neo4j node.
-
-|===
 
 .Indexes and constraints directives
 [cols="2,5"]
@@ -100,45 +101,26 @@ This is particularly useful for types that are not correctly pluralized or are n
 
 |===
 
-.Type configuration directives
+.Schema customization directives
 [cols="2,5"]
 |===
 | Directive | Description
 
+| xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-default[`@default`]
+| Allows for the setting of a default value for a field on object creation.
+
 | xref:/schema-configuration/type-configuration.adoc#_mutation[`@mutation`]
 | Limits the availability of Mutation operations in the library.
+
+| xref::/type-definitions/directives/database-mapping.adoc#type-definitions-plural[`@plural`]
+| Redefines how to compose the plural of the type for the generated operations.
+This is particularly useful for types that are not correctly pluralized or are non-English words.
 
 | xref:/schema-configuration/type-configuration.adoc#_query[`@query`]
 | Limits the availability of Query operations in the library.
 
 | xref:/schema-configuration/type-configuration.adoc#_subscription[`@subscription`]
 | Limits subscription operations in the library.
-
-| `@subscriptionsAuthorization`
-| Specifies authorization rules for subscriptions on the type.
-
-|===
-
-
-.Field configuration directives
-[cols="2,5"]
-|===
-| Directive | Description
-
-| xref::/schema-configuration/field-configuration.adoc#_relationship[`@declareRelationship`]
-| Configure xref::/type-definitions/types/relationships.adoc[relationships] to be implemented on object types.
-
-| xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
-| Configure  xref::/type-definitions/types/relationships.adoc[relationships] between object types.
-
-| xref::/type-definitions/types/relationships.adoc#_relationship_properties[`@relationshipProperties`]
-a| Required to help you distinguish between interfaces which are used for relationship properties, and otherwise.
-Can only be used on interfaces, as per its definition:
-[source, graphql, indent=0]
-----
-"""Required to differentiate between interfaces for relationship properties, and otherwise."""
-directive @relationshipProperties on OBJECT
-----
 
 | xref:/schema-configuration/field-configuration.adoc#_selectable[`@selectable`]
 | Sets the availability of fields on queries and aggregations.
@@ -151,7 +133,7 @@ directive @relationshipProperties on OBJECT
 
 |===
 
-.Special directives
+.Custom logic directives
 [cols="2,5"]
 |===
 | Directive | Description
@@ -159,17 +141,35 @@ directive @relationshipProperties on OBJECT
 | xref::/type-definitions/directives/cypher.adoc[`@cypher`]
 | Overrides field resolution (including `Query` and `Mutation` fields), instead resolving with the specified Cypher.
 
+| xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-coalesce[`@coalesce`]
+| Exposes a mechanism for querying against non-existent, `null` values on a node.
+
 | xref::custom-resolvers.adoc#custom-resolver-directive[`@customResolver`]
 | Specifies that a field is resolved by a custom resolver, and allows the specification
 of any required fields that is passed as arguments to the custom resolver.
 
+|===
+
+.OGM directives
+[cols="2,5"]
+|===
+| Directive | Description
+
 | xref::ogm/directives.adoc#_private[`@private`]
 | Protects fields which should only be available through the xref::ogm/index.adoc[OGM].
+
+|===
+
+.Relay directives
+[cols="2,5"]
+|===
+| Directive | Description
 
 | xref:/integrations/relay-compatibility.adoc[`@relayId`]
 | Specifies that the field should be used as the global node identifier for Relay.
 
 |===
+
 
 ////
 [cols="2,5"]
