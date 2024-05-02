@@ -8,8 +8,8 @@ Queries are either performed by the vector index of a specific node or by a quer
 
 A query by vector index finds nodes with a vector embedding similar to that index, which is also referred to as nearest neighbor search.
 
-In contrast, a query by phrase (a string of text) passes the phrase to the link::https://neo4j.com/docs/cypher-manual/current/genai-integrations/[Neo4j GenAI plugin] and the plugin generates a vector embedding for it.
-This embedding is then compared to the node vector embeddings in the database and the result set 
+In contrast, a query by phrase (a string of text) passes the phrase to the link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/[Neo4j GenAI plugin] and the plugin generates a vector embedding for it.
+This embedding is then compared to the node vector embeddings in the database and the result set.
 
 [NOTE] 
 .Prerequisites
@@ -62,8 +62,8 @@ type Product @vector(
 }
 ----
 
-Adding the vector directive to the `Product` type creates a a top-level query named `productsInterestingVector`.
-The name is a combination of the plural form of the type name, the index name and `Vector`:
+Adding the vector directive to the `Product` type creates a top-level query named `productsInterestingVector`.
+The name is a combination of the plural form of the type name, the index name, and `Vector`:
 
 .Query schema
 [source, graphql]
@@ -115,7 +115,7 @@ query {
 
 == `@genAI`
 
-Perform a query which utilizes the link::https://neo4j.com/docs/cypher-manual/current/genai-integrations/[Neo4j GenAI plugin] to create a vector embedding for a search phrase and then compares it to existing vector embeddings on nodes in the database.
+Perform a query which utilizes the link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/[Neo4j GenAI plugin] to create a vector embedding for a search phrase and then compares it to existing vector embeddings on nodes in the database.
 Requires credentials for the plugin.
 
 === Definition
