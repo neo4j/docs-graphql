@@ -14,10 +14,10 @@ This embedding is then compared to the node vector embeddings in the database an
 [NOTE] 
 .Prerequisites
 ==== 
-* The node vector embeddings already exist
-* The embeddings must have been created using the same model
-* Queries by vector index cannot be performed across multiple labels
-* Queries by phrase require credentials for the Neo4j GenAI plugin
+* The node vector embeddings already exist.
+* The embeddings must have been created using the same method.
+* Queries by vector index cannot be performed across multiple labels.
+* Queries by phrase require credentials for the Neo4j GenAI plugin.
 ====
 
 == `@vector`
@@ -116,7 +116,11 @@ query {
 == `@genAI`
 
 Perform a query which utilizes the link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/[Neo4j GenAI plugin] to create a vector embedding for a search phrase and then compares it to existing vector embeddings on nodes in the database.
+
+[NOTE]
+====
 Requires credentials for the plugin.
+====
 
 === Definition
 
