@@ -52,10 +52,11 @@ Assuming a running Neo4j database at "bolt://localhost:7687" with username "neo4
 
 [source, javascript, indent=0]
 ----
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { Neo4jGraphQLAuthJWTPlugin } from "@neo4j/graphql-plugin-auth";
 import { Neo4jGraphQL } from "@neo4j/graphql";
 import { OGM } from "@neo4j/graphql-ogm";
-import { Neo4jGraphQLAuthJWTPlugin } from "@neo4j/graphql-plugin-auth";
-import { ApolloServer } from "apollo-server";
 import neo4j from "neo4j-driver";
 
 import { createJWT, comparePassword } from "./utils"; // example util function, more information below
@@ -156,8 +157,8 @@ It's important to note the JWT secret being passed into the `Neo4jGraphQL` const
 Additionally, an example implementation for the util functions `createJWT` and `comparePassword` is provided in this code snippet:
 [source, javascript, indent=0]
 ----
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export function createJWT(data) {
     return new Promise((resolve, reject) => {
@@ -232,9 +233,9 @@ Assuming a running Neo4j database at "bolt://localhost:7687" with username "neo4
 
 [source, javascript, indent=0]
 ----
-const express = require("express");
-const { OGM } = require("@neo4j/graphql-ogm");
-const neo4j = require("neo4j-driver");
+import express from "express";
+import { OGM } from "@neo4j/graphql-ogm";
+import neo4j from "neo4j-driver";
 
 const driver = neo4j.driver(
     "bolt://localhost:7687",
