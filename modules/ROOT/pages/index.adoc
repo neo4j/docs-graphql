@@ -30,7 +30,7 @@ For every query and mutation that is executed against this generated schema, the
 - Extensive xref::queries-aggregations/filtering.adoc[Filtering] and xref::queries-aggregations/sorting.adoc[Sorting] options.
 - Options for value xref::/type-definitions/directives/autogeneration.adoc[Autogeneration] and xref::/type-definitions/directives/default-values.adoc[Default Values].
 - xref::/queries-aggregations/pagination/index.adoc[Pagination] options.
-- xref::authentication-and-authorization/index.adoc[Authentication and authorization options] and additional xref::schema-configuration/index.adoc[Schema Configuration].
+- xref::security/index.adoc[Security options] and additional xref::schema-configuration/index.adoc[Schema Configuration].
 - An xref::ogm/index.adoc[OGM] (Object Graph Mapper) for programmatic interaction with your GraphQL API.
 - A xref::getting-started/toolbox.adoc[Toolbox] (UI) to experiment with your Neo4j GraphQL API on Neo4j Desktop.
 

@@ -1,5 +1,5 @@
 = Operations
-:page-aliases: /authentication-and-authorization/reference/operations.adoc
+:page-aliases: /authentication-and-authorization/reference/operations.adoc, /security/reference/operations.adoc
 :description: This page describes how to set up authorization operations in the Neo4j GraphQL Library.
 
 This reference runs through a number of worked GraphQL queries and how each location in each query triggers the evaluation of different authentication/authorization rules.
