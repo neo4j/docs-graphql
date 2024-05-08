@@ -25,7 +25,7 @@ Alternatively, if you are debugging a particular functionality, you can specify 
 1. `@neo4j/graphql:*` - Logs all
 2. `@neo4j/graphql:auth` - Logs the status of authorization header and token extraction, and decoding of JWT
 3. `@neo4j/graphql:graphql` - Logs the GraphQL query and variables
-4. `@neo4j/graphql:execute` - Logs the Cypher and Cypher paramaters before execution, and summary of execution
+4. `@neo4j/graphql:execution` - Logs the Cypher and Cypher parameters before execution, and summary of execution
 
 ==== Constructor
 
