@@ -75,31 +75,8 @@ directive @relationshipProperties on OBJECT
 | xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-timestamp[`@timestamp`]
 | Flags fields to be used to store timestamps on create/update events.
 
-| xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-populated-by[`@populatedBy`]
-| Specifies a callback function that gets executed during GraphQL query parsing,
-to populate fields which have not been provided within the input.
-
 |===
 
-
-.Indexes and constraints directives
-[cols="2,5"]
-|===
-| Directive | Description
-
-| xref::/type-definitions/directives/indexes-and-constraints.adoc#type-definitions-indexes-fulltext[`@fulltext`]
-| Indicates that there should be a fulltext index inserted into the database for the specified Node and its properties.
-
-| xref::/type-definitions/directives/indexes-and-constraints.adoc#type-definitions-constraints-unique[`@unique`]
-| Indicates that there should be a uniqueness constraint in the database for the fields that it is applied to.
-
-| *`@genAI`*
-| Description for `@genAI`.
-
-| *`@vector`*
-| Description for `@vector`.
-
-|===
 
 .Schema customization directives
 [cols="2,5"]
@@ -133,6 +110,26 @@ This is particularly useful for types that are not correctly pluralized or are n
 
 |===
 
+
+.Indexes and constraints directives
+[cols="2,5"]
+|===
+| Directive | Description
+
+| xref::/type-definitions/directives/indexes-and-constraints.adoc#type-definitions-indexes-fulltext[`@fulltext`]
+| Indicates that there should be a fulltext index inserted into the database for the specified Node and its properties.
+
+| xref::/type-definitions/directives/indexes-and-constraints.adoc#type-definitions-constraints-unique[`@unique`]
+| Indicates that there should be a uniqueness constraint in the database for the fields that it is applied to.
+
+| *`@genAI`*
+| Description for `@genAI`.
+
+| *`@vector`*
+| Description for `@vector`.
+
+|===
+
 .Custom logic directives
 [cols="2,5"]
 |===
@@ -147,6 +144,10 @@ This is particularly useful for types that are not correctly pluralized or are n
 | xref::custom-resolvers.adoc#custom-resolver-directive[`@customResolver`]
 | Specifies that a field is resolved by a custom resolver, and allows the specification
 of any required fields that is passed as arguments to the custom resolver.
+
+| xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-populated-by[`@populatedBy`]
+| Specifies a callback function that gets executed during GraphQL query parsing,
+to populate fields which have not been provided within the input.
 
 |===
 
