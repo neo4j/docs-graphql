@@ -83,4 +83,5 @@
 
 * xref:migration/index.adoc[Migration guide]
 * xref:deprecations.adoc[Deprecations]
+* xref:optimization.adoc[]
 * xref:troubleshooting.adoc[]

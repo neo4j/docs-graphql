@@ -1,0 +1,35 @@
+[[optimization]]
+= Optimization
+
+
+This chapter contains some optimizations to improve the performance of a production system using `@neo4j/graphql`.
+
+== Schema Optimisations
+This section covers improvements to reduce the size of the generated schema. Reducing the schema size has the following performance benefits:
+
+* Reduce the startup time of the server.
+* Reduce memory footprint.
+
+=== Exclude `@deprecated` fields
+The `@neo4j/graphql` library generates some GraphQL fields and operations marked as `@deprecated`. These exists to keep compatibility with previous versions of the library.
+
+If you are not using these deprecated fields, you can disable generation for these with the `excludeDeprecatedFields` flag in the library setup. 
+
+The following example disables all deprecated fields that are generated in the library:
+
+```js
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    features: {
+        excludeDeprecatedFields: {
+            bookmark: true,
+            negationFilters: true,
+            arrayFilters: true,
+            stringAggregation: true,
+            aggregationFilters: true,
+        },
+    },
+});
+```
+
