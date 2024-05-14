@@ -1,13 +1,12 @@
 [[directives]]
 :description: This page lists all directives available in the Neo4j GraphQL Library.
-:table-caption!:
 
 = Directives
 :page-aliases: directives.adoc
 
 The Neo4j GraphQL Library provides the following directives to be used whilst defining types:
 
-//== Database mapping
+== Database mapping
 
 .Database mapping directives
 [cols="2,5"]
@@ -37,7 +36,7 @@ directive @relationshipProperties on OBJECT
 
 |===
 
-//== Authentication and authorization
+== Security
 
 .Security directives
 [cols="2,5"]
@@ -64,6 +63,8 @@ directive @relationshipProperties on OBJECT
 
 |===
 
+== Autogeneration
+
 .Autogeneration directives
 [cols="2,5"]
 |===
@@ -77,6 +78,7 @@ directive @relationshipProperties on OBJECT
 
 |===
 
+== Schema customization
 
 .Schema customization directives
 [cols="2,5"]
@@ -110,6 +112,7 @@ This is particularly useful for types that are not correctly pluralized or are n
 
 |===
 
+== Indexes and constraints
 
 .Indexes and constraints directives
 [cols="2,5"]
@@ -129,6 +132,8 @@ This is particularly useful for types that are not correctly pluralized or are n
 | Description for `@vector`.
 
 |===
+
+== Custom logic
 
 .Custom logic directives
 [cols="2,5"]
@@ -151,6 +156,8 @@ to populate fields which have not been provided within the input.
 
 |===
 
+== OGM
+
 .OGM directives
 [cols="2,5"]
 |===
@@ -160,6 +167,8 @@ to populate fields which have not been provided within the input.
 | Protects fields which should only be available through the xref::ogm/index.adoc[OGM].
 
 |===
+
+== Relay
 
 .Relay directives
 [cols="2,5"]
