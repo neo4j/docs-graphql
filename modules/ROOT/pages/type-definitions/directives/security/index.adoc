@@ -3,7 +3,8 @@
 :page-aliases: auth/index.adoc, auth/setup.adoc, auth/authentication.adoc, \
 auth/authorization.adoc, auth/auth-directive.adoc, auth/subscriptions.adoc, \
 auth/authorization/allow.adoc, auth/authorization/bind.adoc, auth/authorization/roles.adoc, \
-auth/authorization/where.adoc, authentication-and-authorization/index.adoc
+auth/authorization/where.adoc, authentication-and-authorization/index.adoc, \
+security/index.adoc
 
 
 * xref::security/authentication.adoc[Authentication] - Explicit authentication, configured using the `@authentication` directive.

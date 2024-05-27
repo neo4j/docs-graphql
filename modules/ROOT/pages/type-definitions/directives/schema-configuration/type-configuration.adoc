@@ -1,6 +1,6 @@
 [[schema-configuration-type-configuration]]
 = Type configuration
-//:page-aliases: type-definitions/schema-configuration/type-configuration.adoc, schema-configuration/type-configuration.adoc
+:page-aliases: type-definitions/schema-configuration/type-configuration.adoc, schema-configuration/type-configuration.adoc
 :description: This page describes how to reduce the operation fields produced using the directives @query, @mutation, and @subscription.
 
 

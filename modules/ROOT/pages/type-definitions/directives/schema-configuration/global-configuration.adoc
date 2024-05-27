@@ -1,6 +1,6 @@
 [[schema-configuration-global-configuration]]
 = Global configuration
-:page-aliases: type-definitions/schema-configuration/global-configuration.adoc
+:page-aliases: type-definitions/schema-configuration/global-configuration.adoc, schema-configuration/global-configuration.adoc
 :description: This page describes how to globally disable specific types of operations.
 
 

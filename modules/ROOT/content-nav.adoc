@@ -7,13 +7,6 @@
 
 * *Reference*
 
-* xref:security/index.adoc[]
-** xref:security/configuration.adoc[]
-** xref:security/authentication.adoc[]
-** xref:security/authorization.adoc[]
-** xref:security/impersonation-and-user-switching.adoc[]
-** xref:security/operations.adoc[]
-
 * xref:type-definitions/types/index.adoc[]
 ** xref:type-definitions/types/scalar.adoc[Scalar]
 ** xref:type-definitions/types/temporal.adoc[Temporal]
@@ -22,34 +15,21 @@
 ** xref:type-definitions/types/unions.adoc[Union]
 ** xref:type-definitions/types/relationships.adoc[]
 * xref:type-definitions/directives/index.adoc[]
-** xref:type-definitions/directives/basics.adoc[]
 ** xref:type-definitions/directives/database-mapping.adoc[]
+** xref:type-definitions/directives/security/index.adoc[]
+*** xref:type-definitions/directives/security/configuration.adoc[]
+*** xref:type-definitions/directives/security/authentication.adoc[]
+*** xref:type-definitions/directives/security/authorization.adoc[]
+*** xref:type-definitions/directives/security/impersonation-and-user-switching.adoc[]
+*** xref:type-definitions/directives/security/operations.adoc[]
 ** xref:type-definitions/directives/autogeneration.adoc[]
+** xref:type-definitions/directives/schema-configuration/index.adoc[]
+*** xref:type-definitions/directives/schema-configuration/global-configuration.adoc[]
+*** xref:type-definitions/directives/schema-configuration/type-configuration.adoc[]
+*** xref:type-definitions/directives/schema-configuration/field-configuration.adoc[]
 ** xref:type-definitions/directives/indexes-and-constraints.adoc[]
-** xref:type-definitions/directives/default-values.adoc[]
-** xref:type-definitions/directives/cypher.adoc[]
-* xref:type-definitions/directives-new/index.adoc[]
-** xref:type-definitions/directives-new/database-mapping.adoc[]
-** xref:type-definitions/directives-new/security/index.adoc[]
-*** xref:type-definitions/directives-new/security/configuration.adoc[]
-*** xref:type-definitions/directives-new/security/authentication.adoc[]
-*** xref:type-definitions/directives-new/security/authorization.adoc[]
-*** xref:type-definitions/directives-new/security/impersonation-and-user-switching.adoc[]
-*** xref:type-definitions/directives-new/security/operations.adoc[]
-
-** xref:type-definitions/directives-new/autogeneration.adoc[]
-** xref:type-definitions/directives-new/schema-configuration/index.adoc[]
-*** xref:type-definitions/directives-new/schema-configuration/global-configuration.adoc[]
-*** xref:type-definitions/directives-new/schema-configuration/type-configuration.adoc[]
-*** xref:type-definitions/directives-new/schema-configuration/field-configuration.adoc[]
-** xref:type-definitions/directives-new/indexes-and-constraints.adoc[]
-** xref:type-definitions/directives-new/custom-logic.adoc[]
-** xref:type-definitions/directives-new/custom-directives.adoc[]
-
-* xref:schema-configuration/index.adoc[Schema configuration]
-** xref:schema-configuration/type-configuration.adoc[]
-** xref:schema-configuration/global-configuration.adoc[]
-** xref:schema-configuration/field-configuration.adoc[]
+** xref:type-definitions/directives/custom-logic.adoc[]
+** xref:type-definitions/directives/custom-directives.adoc[]
 
 * xref:queries-aggregations/index.adoc[Queries and aggregations]
 ** xref:queries-aggregations/queries.adoc[]
@@ -74,7 +54,6 @@
 
 * *How-To*
 
-* xref:custom-resolvers.adoc[]
 * xref:driver-configuration.adoc[]
 
 * *Products*

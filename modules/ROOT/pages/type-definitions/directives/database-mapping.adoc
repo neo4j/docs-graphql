@@ -1,79 +1,79 @@
 [[type-definitions-database-mapping]]
 = Database mapping
-:page-aliases: type-definitions/database-mapping.adoc
+:page-aliases: type-definitions/database-mapping.adoc, type-definitions/basics.adoc, type-definitions/index.adoc
 :description: This page describes how to use directives for database mapping.
 
 
 This page describes how to use directives for database mapping.
+Each type in your GraphQL type definitions can be mapped to an entity in your Neo4j database, such as nodes, relationships, and relationship properties.
 
-[[type-definitions-alias]]
-== `@alias`
 
-This directive maps a GraphQL field to a Neo4j property on a node or relationship.
-It can be used on any fields that are not `@cypher` or `@relationship` fields.
+== `@relationship`
 
-For example:
+Relationships are represented by marking particular fields with a directive -- in this case, `@relationship`. 
+It defines the relationship type in the database, as well as which direction that relationship goes in.
 
-[source, graphql, indent=0]
-----
-type User {
-    id: ID! @id @alias(property: "dbId")
-    username: String!
-}
-----
+To add a second node type, "Actor", and connect the two together, you should do the following:
 
 [source, graphql, indent=0]
 ----
-type User {
-    id: ID! @id
-    username: String! @alias(property: "dbUserName")
-    livesIn: [City!]! @relationship(direction: OUT, type: "LIVES_IN", properties: "UserLivesInProperties")
+type Movie {
+    title: String
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
-type City {
+type Actor {
     name: String
-}
-
-type UserLivesInProperties @relationshipProperties {
-    since: DateTime @alias(property: "moveInDate")
+    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
 }
 ----
 
-Note that the property in aliases are automatically escaped (wrapped with backticks ``), so there is no need to add escape characters around them.
+Note that, in this case, there is a directive on each "end" of the relationship, but it is not essential.
 
-[[type-definitions-plural]]
-== `@plural`
 
-This directive redefines how to compose the plural of the type for the generated operations.
-This is particularly useful for types that are not correctly pluralized or are non-English words.
-Take this type definition as an example:
+== `@relationshipProperties`
+
+In order to add properties to a relationship, you need to add a new type to your type definitions decorated with the `@relationshipProperties` directive.
+
+For example, for the "ACTED_IN" relationship, add a property "roles":
 
 [source, graphql, indent=0]
 ----
-type Tech @plural(value: "Techs") {
-  name: String
+type Movie {
+    title: String
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
+}
+
+type Actor {
+    name: String
+    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedIn")
+}
+
+type ActedIn @relationshipProperties {
+    roles: [String]
 }
 ----
 
-This way, instead of the wrongly generated `teches`, the type is properly written as `techs`:
+Note that in addition to this type, there is an added a key `properties` in the existing `@relationship` directives.
+For more information, see xref::/type-definitions/types/relationships.adoc[Type definitions -> Relationships].
 
-[source, graphql, indent=0]
-----
-{
-  techs {
-    title
-  }
-}
-----
-
-The same is applied to other operations such as `createTechs`. 
-However, keep in mind that database labels are not changed with this directive.
 
 [[type-definitions-node]]
 == `@node`
 
-This directive is used to specify the configuration of a GraphQL object type which represents a Neo4j node.
+The most basic mapping uses GraphQL type names to map to a Neo4j node label.
+For example, to represent a node with label "Movie" and a single property "title" of type string:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String
+}
+----
+
+With the `@node` directive, you have more control over this mapping and you can specify the configuration of a GraphQL object type which represents a Neo4j node.
 It can be appended with the following optional parameters:
+
 
 [discrete]
 === `labels`
@@ -149,6 +149,7 @@ type Dog @node(labels: ["K9", "Dog"]) {
 }
 ----
 
+
 [discrete]
 === Using `$jwt` and `$context`
 
@@ -202,3 +203,44 @@ await startStandaloneServer(server, {
     context: async ({ req }) => ({ req, appId: "myApp" }),
 });
 ----
+
+
+[[type-definitions-alias]]
+== `@alias`
+
+This directive maps a GraphQL field to a Neo4j property on a node or relationship.
+It can be used on any fields that are not `@cypher` or `@relationship` fields.
+
+For example:
+
+[source, graphql, indent=0]
+----
+type User {
+    id: ID! @id @alias(property: "dbId")
+    username: String!
+}
+----
+
+[source, graphql, indent=0]
+----
+type User {
+    id: ID! @id
+    username: String! @alias(property: "dbUserName")
+    livesIn: [City!]! @relationship(direction: OUT, type: "LIVES_IN", properties: "UserLivesInProperties")
+}
+
+type City {
+    name: String
+}
+
+type UserLivesInProperties @relationshipProperties {
+    since: DateTime @alias(property: "moveInDate")
+}
+----
+
+Note that the property in aliases are automatically escaped (wrapped with backticks ``), so there is no need to add escape characters around them.
+
+
+== `@declareRelationship`
+
+// TODO

@@ -1,6 +1,6 @@
 [[schema-configuration-field-configuration]]
 = Field configuration
-:page-aliases: type-definitions/schema-configuration/field-configuration.adoc
+:page-aliases: type-definitions/schema-configuration/field-configuration.adoc, schema-configuration/field-configuration.adoc
 :description: This page describes how to use the directives @selectable, @settable, @filterable and `@relationship` to control how fields are exposed.
 
 

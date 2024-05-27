@@ -13,10 +13,10 @@ The Neo4j GraphQL Library provides the following directives to be used whilst de
 |===
 | Directive | Description
 
-| xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`]
+| xref::/type-definitions/directives/database-mapping.adoc#_relationship[`@relationship`]
 | Configure  xref::/type-definitions/types/relationships.adoc[relationships] between object types.
 
-| xref::/type-definitions/types/relationships.adoc#_relationship_properties[`@relationshipProperties`]
+| xref::/type-definitions/directives/database-mapping.adoc#_relationship_properties[`@relationshipProperties`]
 a| Required to help you distinguish between interfaces which are used for relationship properties, and otherwise.
 Can only be used on interfaces, as per its definition:
 [source, graphql, indent=0]
@@ -31,7 +31,7 @@ directive @relationshipProperties on OBJECT
 | xref::/type-definitions/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
 | Maps a GraphQL schema field to a Neo4j property on a node or relationship.
 
-| xref::/schema-configuration/field-configuration.adoc#_relationship[`@declareRelationship`]
+| xref::/type-definitions/directives/database-mapping.adoc#_declarerelationship[`@declareRelationship`]
 | Configure xref::/type-definitions/types/relationships.adoc[relationships] to be implemented on object types.
 
 |===
@@ -43,20 +43,17 @@ directive @relationshipProperties on OBJECT
 |===
 | Directive | Description
 
-| xref::/security/authentication.adoc[`@authentication`]
+| xref::/type-definitions/directives/security/authentication.adoc[`@authentication`]
 | Requires authentication checks when accessing the type.
 
-| xref::/security/authorization.adoc[`@authorization`]
+| xref::/type-definitions/directives/security/authorization.adoc[`@authorization`]
 | Specifies authorization rules for queries and mutations on the type.
 
-| xref::/security/configuration.adoc#authentication-and-authorization-jwt[`@jwtClaim`]
-| Marks a field as the unique ID for an object type, and allows for autogeneration of IDs.
+| xref::/type-definitions/directives/security/configuration.adoc#authentication-and-authorization-jwt[`@jwt`]
+| Configure the JWT authentication filter to include an additional JWT claim.
 
-| xref::/security/configuration.adoc#authentication-and-authorization-jwt[`@jwt`]
-| Description for `@jwt`.
-
-| xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
-| Used on nodes to inject values into Cypher `LIMIT` clauses.
+| xref::/type-definitions/directives/security/configuration.adoc#_nested_claims[`@jwtClaim`]
+| Use in combination with `@jwt`. Configure the JWT authentication filter to include an additional nested JWT claim.
 
 | `@subscriptionsAuthorization`
 | Specifies authorization rules for subscriptions on the type.
@@ -78,36 +75,36 @@ directive @relationshipProperties on OBJECT
 
 |===
 
-== Schema customization
+== Schema configuration
 
-.Schema customization directives
+.Schema configuration directives
 [cols="2,5"]
 |===
 | Directive | Description
 
-| xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-default[`@default`]
-| Allows for the setting of a default value for a field on object creation.
+| xref:/type-definitions/directives/schema-configuration/type-configuration.adoc#_query[`@query`]
+| Limits the availability of Query operations in the library.
 
-| xref:/schema-configuration/type-configuration.adoc#_mutation[`@mutation`]
+| xref:/type-definitions/directives/schema-configuration/type-configuration.adoc#_mutation[`@mutation`]
 | Limits the availability of Mutation operations in the library.
 
-| xref::/type-definitions/directives/database-mapping.adoc#type-definitions-plural[`@plural`]
+| xref:/type-definitions/directives/schema-configuration/type-configuration.adoc#_subscription[`@subscription`]
+| Limits subscription operations in the library.
+
+| xref::/type-definitions/directives/schema-configuration/type-configuration.adoc#type-definitions-default-values-default[`@default`]
+| Allows for the setting of a default value for a field on object creation.
+
+| xref::/type-definitions/directives/schema-configuration/type-configuration.adoc#type-definitions-plural[`@plural`]
 | Redefines how to compose the plural of the type for the generated operations.
 This is particularly useful for types that are not correctly pluralized or are non-English words.
 
-| xref:/schema-configuration/type-configuration.adoc#_query[`@query`]
-| Limits the availability of Query operations in the library.
-
-| xref:/schema-configuration/type-configuration.adoc#_subscription[`@subscription`]
-| Limits subscription operations in the library.
-
-| xref:/schema-configuration/field-configuration.adoc#_selectable[`@selectable`]
+| xref:/type-definitions/directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`]
 | Sets the availability of fields on queries and aggregations.
 
-| xref:/schema-configuration/field-configuration.adoc#_settable[`@settable`]
+| xref:/type-definitions/directives/schema-configuration/field-configuration.adoc#_settable[`@settable`]
 | Sets the availability of fields on the create and update inputs.
 
-| xref:/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
+| xref:/type-definitions/directives/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
 | Defines the filters generated for a field.
 
 |===
@@ -125,12 +122,6 @@ This is particularly useful for types that are not correctly pluralized or are n
 | xref::/type-definitions/directives/indexes-and-constraints.adoc#type-definitions-constraints-unique[`@unique`]
 | Indicates that there should be a uniqueness constraint in the database for the fields that it is applied to.
 
-| *`@genAI`*
-| Description for `@genAI`.
-
-| *`@vector`*
-| Description for `@vector`.
-
 |===
 
 == Custom logic
@@ -140,17 +131,20 @@ This is particularly useful for types that are not correctly pluralized or are n
 |===
 | Directive | Description
 
-| xref::/type-definitions/directives/cypher.adoc[`@cypher`]
+| xref::/type-definitions/directives/custom-logic.adoc#_cypher[`@cypher`]
 | Overrides field resolution (including `Query` and `Mutation` fields), instead resolving with the specified Cypher.
 
-| xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-coalesce[`@coalesce`]
+| xref::/type-definitions/directives/custom-logic.adoc#_coalesce[`@coalesce`]
 | Exposes a mechanism for querying against non-existent, `null` values on a node.
 
-| xref::custom-resolvers.adoc#custom-resolver-directive[`@customResolver`]
+| xref::/type-definitions/directives/custom-logic.adoc#_limit[`@limit`]
+| Used on nodes to inject values into Cypher `LIMIT` clauses.
+
+| xref::/type-definitions/directives/custom-logic.adoc#_customresolver[`@customResolver`]
 | Specifies that a field is resolved by a custom resolver, and allows the specification
 of any required fields that is passed as arguments to the custom resolver.
 
-| xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-populated-by[`@populatedBy`]
+| xref::/type-definitions/directives/custom-logic.adoc#_populatedby[`@populatedBy`]
 | Specifies a callback function that gets executed during GraphQL query parsing,
 to populate fields which have not been provided within the input.
 
