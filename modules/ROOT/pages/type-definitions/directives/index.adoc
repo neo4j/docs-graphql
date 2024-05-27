@@ -47,7 +47,7 @@ of any required fields that is passed as arguments to the custom resolver.
 | Configure the JWT authentication filter to include an additional JWT claim.
 
 | xref::/authentication-and-authorization/configuration.adoc#_nested_claims[`@jwtClaim`]
-| Configure the JWT authentication filter to include an additional nested JWT claim.
+| Use in combination with `@jwt`. Configure the JWT authentication filter to include an additional nested JWT claim.
 
 | xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
 | Used on nodes to inject values into Cypher `LIMIT` clauses.
