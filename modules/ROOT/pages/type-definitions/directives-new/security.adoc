@@ -1,1 +1,26 @@
+:description: This page describes how to use directives for security.
 = Security
+
+== `@authentication`
+
+//TODO
+
+== `@authorization`
+
+//TODO
+
+== `@jwtClaim`
+
+//TODO
+
+== `@jwt`
+
+//TODO
+
+== `@limit`
+
+//TODO
+
+== `@subscriptionsAuthorization`
+
+//TODO

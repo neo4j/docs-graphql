@@ -1,0 +1,539 @@
+[[schema-configuration-field-configuration]]
+= Field configuration
+//:page-aliases: type-definitions/schema-configuration/field-configuration.adoc, schema-configuration/field-configuration.adoc
+:description: This page describes how to use the directives @selectable, @settable, @filterable and `@relationship` to control how fields are exposed.
+
+
+In case you need to remove fields from a GraphQL Object Type or a GraphQL Input Object Type, consider the following type definitions:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String
+}
+
+type Actor {
+    name: String!
+    age: Int
+    actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+}
+----
+
+It generates the type `Actor`:
+
+[source, graphql, indent=0]
+----
+type Actor {
+  name: String!
+  age: Int
+  actedIn(where: MovieWhere, options: MovieOptions, directed: Boolean = true): [Movie!]!
+  actedInAggregate(where: MovieWhere, directed: Boolean = true): ActorMovieActedInAggregationSelection
+  actedInConnection(where: ActorActedInConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ActorActedInConnectionSort!]): ActorActedInConnection!
+}
+----
+
+By using the directives `@selectable`, `@settable`, `@filterable`, and `@relationship` it is possible to control how these fields are exposed.
+For instance, to hide the field `age` in the Selection Set, you can use the `@selectable` directive:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String
+}
+
+type Actor {
+    name: String!
+    age: Int @selectable(onRead: false, onAggregate: false)
+    actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+}
+----
+
+Now the type `Actor` looks like this:
+
+[source, graphql, indent=0]
+----
+type Actor {
+  name: String!
+  actedIn(where: MovieWhere, options: MovieOptions, directed: Boolean = true): [Movie!]!
+  actedInAggregate(where: MovieWhere, directed: Boolean = true): ActorMovieActedInAggregationSelection
+  actedInConnection(where: ActorActedInConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ActorActedInConnectionSort!]): ActorActedInConnection!
+}
+----
+
+== `@relationship`
+
+There are several nested operations available for every field created using the `@relationship` directive. These are `create`, `connect`, `disconnect`, `connectOrCreate`, and `delete`. 
+
+However, these operations are not always needed. 
+The `@relationship` directive allows you to define which operations should be available for a relationship by using the argument `nestedOperations`.
+
+Additionally, the `@relationship` directive causes fields to be added for nested aggregations. 
+These can be disabled using the `aggregate` argument.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+enum NestedOperations {
+    CREATE
+    UPDATE
+    DELETE
+    CONNECT
+    DISCONNECT
+    CONNECT_OR_CREATE
+}
+
+directive @relationship(
+    type: String!
+    queryDirection: RelationshipQueryDirection! = DEFAULT_DIRECTED
+    direction: RelationshipDirection!
+    properties: String
+    nestedOperations: [NestedOperations!]! = [CREATE, UPDATE, DELETE, CONNECT, DISCONNECT, CONNECT_OR_CREATE]
+    aggregate: Boolean! = true
+) on FIELD_DEFINITION
+----
+
+=== Usage
+
+*Configure aggregation*
+
+From the previous type definitions, the type `Actor` produced is:
+
+[source, graphql, indent=0]
+----
+type Actor {
+  name: String!
+  actedIn(where: MovieWhere, options: MovieOptions, directed: Boolean = true): [Movie!]!
+  actedInAggregate(where: MovieWhere, directed: Boolean = true): ActorMovieActedInAggregationSelection
+  actedInConnection(where: ActorActedInConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ActorActedInConnectionSort!]): ActorActedInConnection!
+}
+----
+
+Note that the relationship field `actedIn` produces the operation field `actedInAggregate`, which allows aggregations on that relationship. 
+It is possible to configure this behavior by passing the argument aggregate on the `@relationship` directive:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String
+}
+
+type Actor {
+    name: String!
+    age: Int
+    actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, aggregate: false)
+}
+----
+
+In this case, as the argument `aggregate` was passed as false, the type `Actor` produced is:
+
+[source, graphql, indent=0]
+----
+type Actor {
+  name: String!
+  age: Int
+  actedIn(where: MovieWhere, options: MovieOptions, directed: Boolean = true): [Movie!]!
+  actedInConnection(where: ActorActedInConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ActorActedInConnectionSort!]): ActorActedInConnection!
+}
+----
+
+*Configure nested operations*
+
+A large part of the schema produced by the library is needed to support nested operations. 
+These are enabled by the directive `@relationship` as described in xref::/type-definitions/types/relationships.adoc#_inserting_data[`@relationship` -> Inserting data].
+
+The nested operations available are:
+
+[source, graphql, indent=0]
+----
+enum NestedOperations {
+    CREATE
+    UPDATE
+    DELETE
+    CONNECT
+    DISCONNECT
+    CONNECT_OR_CREATE
+}
+----
+
+By default, `@relationship` enables all of them when defined. 
+To enable only some of them, you have to pass the argument `nestedOperations` specifying the operations required.
+
+*Disable nested create*
+
+To disable the nested `CREATE` operation, change the initial type definitions to:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String
+}
+
+type Actor {
+    name: String!
+    age: Int
+    actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, nestedOperations: [UPDATE, DELETE, CONNECT, DISCONNECT, CONNECT_OR_CREATE])
+}
+----
+
+As the `CREATE` operation is not present in the `nestedOperations` argument array, it is no longer possible to create movies starting from the `Actor` type.
+
+*Disable all nested operations*
+
+If instead, no nested operations are required, it is possible to disable all the nested operations by passing an empty array:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String
+}
+
+type Actor {
+    name: String!
+    age: Int
+    actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, nestedOperations: [])
+}
+----
+
+== `@selectable`
+
+This directive sets the availability of fields on queries and aggregations. 
+It has two arguments:
+
+* **onRead**: if disabled, this field is not available on queries and subscriptions.
+* **onAggregate**: if disabled, aggregations is not available for this field.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Instructs @neo4j/graphql to generate this field for selectable fields."""
+directive @selectable(onRead: Boolean! = true, onAggregate: Boolean! = true) on FIELD_DEFINITION
+----
+
+=== Usage
+
+With the following definition:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String @selectable(onRead: false, onAggregate: true)
+}
+----
+
+The type `Movie` in the resulting schema looks like this:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+}
+----
+
+This means that descriptions cannot be queried, either on top or on nested levels. 
+Aggregations, however, are available on both:
+
+[source, graphql, indent=0]
+----
+type MovieAggregateSelection {
+    count: Int!
+    description: StringAggregateSelectionNullable!
+    title: StringAggregateSelectionNonNullable!
+}
+----
+
+In case you want to remove the `description` field from `MovieAggregateSelection`, you need to change the `onAggregate` value to `false`:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String @selectable(onRead: false, onAggregate: false)
+}
+----
+
+*`@selectable` with relationships*
+
+This directive can be used along with relationship fields. 
+
+From the previous type definitions, the type `Actor` produced is:
+
+[source, graphql, indent=0]
+----
+type Actor {
+  name: String!
+  actedIn(where: MovieWhere, options: MovieOptions, directed: Boolean = true): [Movie!]!
+  actedInAggregate(where: MovieWhere, directed: Boolean = true): ActorMovieActedInAggregationSelection
+  actedInConnection(where: ActorActedInConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ActorActedInConnectionSort!]): ActorActedInConnection!
+}
+----
+
+This means that the `actedIn` field can be queried from the homonymous generated field `actedIn` and the field `actedInConnection`.
+To avoid that, it is required to use the directive `@selectable`.
+For instance, these type definitions:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String
+}
+
+type Actor {
+    name: String!
+    actedIn: [Movie!]!
+        @relationship(type: "ACTED_IN", direction: OUT)
+        @selectable(onRead: false, onAggregate: false)
+}
+----
+
+Generate the type `Actor`:
+
+[source, graphql, indent=0]
+----
+type Actor {
+  name: String!
+  actedInAggregate(where: MovieWhere, directed: Boolean = true): ActorMovieActedInAggregationSelection
+}
+----
+
+Note how `actedInAggregate` is not affected by the argument `onAggregate`. 
+To disable the generation of `actedInAggregate`, see the `aggregate` argument of the directive xref::/schema-configuration/field-configuration.adoc#_relationship[`@relationship`].
+
+== `@settable`
+
+This directive sets the availability of the input field on creation and update mutations.
+It has two arguments:
+
+* **onCreate**: if disabled, this field is not available on creation operations.
+* **onUpdate**: if disabled, this field is not available on update operations.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Instructs @neo4j/graphql to generate this input field for mutation."""
+directive @settable(onCreate: Boolean! = true, onUpdate: Boolean! = true) on FIELD_DEFINITION
+----
+
+=== Usage
+
+With this definition:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String @settable(onCreate: true, onUpdate: false)
+}
+
+type Actor {
+    name: String!
+    actedIn: [Movie!]!
+        @relationship(type: "ACTED_IN", direction: OUT)
+}
+----
+
+The following input fields are generated:
+
+[source, graphql, indent=0]
+----
+input MovieCreateInput {
+    description: String
+    title: String!
+}
+
+input MovieUpdateInput {
+    title: String
+}
+----
+
+This means the description can be set on creation, but it is not available on update operations.
+
+*`@settable` with relationships*
+
+This directive can be used along with relationship fields. 
+When an operation on a field is disabled this way, that relationship is no longer available on top-level operations. 
+For example:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String
+}
+
+type Actor {
+    name: String!
+    actedIn: [Movie!]!
+        @relationship(type: "ACTED_IN", direction: OUT)
+        @settable(onCreate: false, onUpdate: true)
+}
+----
+
+The following input fields are generated:
+
+[source, graphql, indent=0]
+----
+input ActorCreateInput {
+  name: String!
+}
+
+input ActorUpdateInput {
+  name: String
+  actedIn: [ActorActedInUpdateFieldInput!]
+}
+----
+
+This means `actedIn` can be updated on an update, but it is no longer available on `create`` operations.
+
+== `@filterable`
+
+This directive defines the filters generated for the field to which this directive is applied.
+It has two arguments:
+
+* **byValue**: if disabled, this field does not generate value filters.
+* **byAggregate**: if disabled, this field does not generate aggregation filters.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Instructs @neo4j/graphql to generate filters for this field."""
+directive @filterable(byValue: Boolean! = true, byAggregate: Boolean! = true) on FIELD_DEFINITION
+----
+
+=== Usage
+
+With this definition:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String @filterable(byValue: false, byAggregate: false)
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
+}
+
+type Actor {
+    name: String!
+    actedIn: [Movie!]!
+        @relationship(type: "ACTED_IN", direction: OUT)
+}
+----
+
+The following input fields are generated:
+
+[source, graphql, indent=0]
+----
+input MovieWhere {
+  OR: [MovieWhere!]
+  AND: [MovieWhere!]
+  NOT: MovieWhere
+  title: String
+  title_IN: [String!]
+  title_CONTAINS: String
+  title_STARTS_WITH: String
+  title_ENDS_WITH: String
+  actorsAggregate: MovieActorsAggregateInput
+  actors_ALL: ActorWhere
+  actors_NONE: ActorWhere
+  actors_SINGLE: ActorWhere
+  actors_SOME: ActorWhere
+  actorsConnection_ALL: MovieActorsConnectionWhere
+  actorsConnection_NONE: MovieActorsConnectionWhere
+  actorsConnection_SINGLE: MovieActorsConnectionWhere
+  actorsConnection_SOME: MovieActorsConnectionWhere
+}
+
+input ActorActedInNodeAggregationWhereInput {
+  AND: [ActorActedInNodeAggregationWhereInput!]
+  OR: [ActorActedInNodeAggregationWhereInput!]
+  NOT: ActorActedInNodeAggregationWhereInput
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_AVERAGE_LENGTH_GT: Float
+  title_LONGEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_AVERAGE_LENGTH_GTE: Float
+  title_LONGEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_AVERAGE_LENGTH_LT: Float
+  title_LONGEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_AVERAGE_LENGTH_LTE: Float
+  title_LONGEST_LENGTH_LTE: Int
+  title_SHORTEST_LENGTH_LTE: Int
+}
+----
+
+As shown by the generated input fields, the `description` field is not available for filtering on both value and aggregation filters.
+
+*`@filterable` with relationships*
+
+This directive can be used along with relationship fields. 
+When an operation on a field is disabled this way, that relationship is no longer available on top-level operations. 
+For example:
+
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String!
+    description: String @filterable(byValue: false, byAggregate: false)
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN) @filterable(byValue: false, byAggregate: false)
+}
+
+type Actor {
+    name: String!
+    actedIn: [Movie!]!
+        @relationship(type: "ACTED_IN", direction: OUT)
+        
+}
+----
+
+The following input fields are generated:
+
+[source, graphql, indent=0]
+----
+input MovieWhere {
+  OR: [MovieWhere!]
+  AND: [MovieWhere!]
+  NOT: MovieWhere
+  title: String
+  title_IN: [String!]
+  title_CONTAINS: String
+  title_STARTS_WITH: String
+  title_ENDS_WITH: String
+}
+
+input ActorActedInNodeAggregationWhereInput {
+  AND: [ActorActedInNodeAggregationWhereInput!]
+  OR: [ActorActedInNodeAggregationWhereInput!]
+  NOT: ActorActedInNodeAggregationWhereInput
+  title_AVERAGE_LENGTH_EQUAL: Float
+  title_LONGEST_LENGTH_EQUAL: Int
+  title_SHORTEST_LENGTH_EQUAL: Int
+  title_AVERAGE_LENGTH_GT: Float
+  title_LONGEST_LENGTH_GT: Int
+  title_SHORTEST_LENGTH_GT: Int
+  title_AVERAGE_LENGTH_GTE: Float
+  title_LONGEST_LENGTH_GTE: Int
+  title_SHORTEST_LENGTH_GTE: Int
+  title_AVERAGE_LENGTH_LT: Float
+  title_LONGEST_LENGTH_LT: Int
+  title_SHORTEST_LENGTH_LT: Int
+  title_AVERAGE_LENGTH_LTE: Float
+  title_LONGEST_LENGTH_LTE: Int
+  title_SHORTEST_LENGTH_LTE: Int
+}
+----
+
+As shown by the previous inputs fields, the `actors` field is not available for filtering on both value and aggregation filters.

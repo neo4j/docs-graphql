@@ -1,6 +1,6 @@
 [[type-definitions-database-mapping]]
 = Database mapping
-//:page-aliases: type-definitions/database-mapping.adoc
+//:page-aliases: type-definitions/database-mapping.adoc, type-definitions/basics.adoc, type-definitions/index.adoc
 :description: This page describes how to use directives for database mapping.
 
 

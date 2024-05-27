@@ -1,6 +1,0 @@
-[[type-definitions-basics]]
-= Basics
-//:page-aliases: type-definitions/basics.adoc, type-definitions/index.adoc
-:description: This page describes basic notions about how to use directives with the Neo4j GraphQL Library.
-
-
