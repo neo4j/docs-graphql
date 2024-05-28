@@ -148,7 +148,7 @@ type Movie @subscription(operations: [CREATE]) {
 [[type-definitions-default-values-default]]
 == `@default`
 
-When generating the input type for the `create` mutation, the value specified in this directive is used as the default value for this field.
+When generating the input type for the `create` mutation, the value specified in this directive is used as the default for the field.
 
 === Definition
 

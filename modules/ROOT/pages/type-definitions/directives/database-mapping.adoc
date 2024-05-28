@@ -62,7 +62,7 @@ For more information, see xref::/type-definitions/types/relationships.adoc[Type 
 == `@node`
 
 The most basic mapping uses GraphQL type names to map to a Neo4j node label.
-For example, to represent a node with label "Movie" and a single property "title" of type string:
+For example, to represent a node with the label "Movie" and a single property "title" of type string:
 
 [source, graphql, indent=0]
 ----
@@ -71,7 +71,7 @@ type Movie {
 }
 ----
 
-With the `@node` directive, you have more control over this mapping and you can specify the configuration of a GraphQL object type which represents a Neo4j node.
+With the `@node` directive, you have more control over this mapping, and you can specify the configuration of a GraphQL object type which represents a Neo4j node.
 It can be appended with the following optional parameters:
 
 

@@ -17,7 +17,7 @@ The Neo4j GraphQL Library provides the following directives to be used whilst de
 | Configure  xref::/type-definitions/types/relationships.adoc[relationships] between object types.
 
 | xref::/type-definitions/directives/database-mapping.adoc#_relationship_properties[`@relationshipProperties`]
-a| Required to help you distinguish between interfaces which are used for relationship properties, and otherwise.
+a| Required to differentiate interfaces that are used for relationship properties, and otherwise.
 Can only be used on interfaces, as per its definition:
 [source, graphql, indent=0]
 ----
@@ -53,7 +53,8 @@ directive @relationshipProperties on OBJECT
 | Configure the JWT authentication filter to include an additional JWT claim.
 
 | xref::/type-definitions/directives/security/configuration.adoc#_nested_claims[`@jwtClaim`]
-| Use in combination with `@jwt`. Configure the JWT authentication filter to include an additional nested JWT claim.
+| Use in combination with `@jwt`. 
+Configure the JWT authentication filter to include an additional nested JWT claim.
 
 | `@subscriptionsAuthorization`
 | Specifies authorization rules for subscriptions on the type.
@@ -71,7 +72,7 @@ directive @relationshipProperties on OBJECT
 | Marks a field as the unique ID for an object type, and allows for autogeneration of IDs.
 
 | xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-timestamp[`@timestamp`]
-| Flags fields to be used to store timestamps on create/update events.
+| Flags fields to be used to store timestamps on `create` and `update` events.
 
 |===
 
@@ -96,13 +97,13 @@ directive @relationshipProperties on OBJECT
 
 | xref::/type-definitions/directives/schema-configuration/type-configuration.adoc#type-definitions-plural[`@plural`]
 | Redefines how to compose the plural of the type for the generated operations.
-This is particularly useful for types that are not correctly pluralized or are non-English words.
+Particularly useful for types that are not correctly pluralized or are non-English words.
 
 | xref:/type-definitions/directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`]
 | Sets the availability of fields on queries and aggregations.
 
 | xref:/type-definitions/directives/schema-configuration/field-configuration.adoc#_settable[`@settable`]
-| Sets the availability of fields on the create and update inputs.
+| Sets the availability of fields on the `create` and `update` inputs.
 
 | xref:/type-definitions/directives/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
 | Defines the filters generated for a field.
@@ -145,8 +146,7 @@ This is particularly useful for types that are not correctly pluralized or are n
 of any required fields that is passed as arguments to the custom resolver.
 
 | xref::/type-definitions/directives/custom-logic.adoc#_populatedby[`@populatedBy`]
-| Specifies a callback function that gets executed during GraphQL query parsing,
-to populate fields which have not been provided within the input.
+| Specifies a callback function (executed during GraphQL query parsing) to populate fields which have not been provided within the input.
 
 |===
 
