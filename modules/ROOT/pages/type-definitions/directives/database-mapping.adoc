@@ -33,7 +33,19 @@ Note that, in this case, there is a directive on each "end" of the relationship,
 
 == `@relationshipProperties`
 
-In order to add properties to a relationship, you need to add a new type to your type definitions decorated with the `@relationshipProperties` directive.
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Required to differentiate between interfaces for relationship properties, and otherwise."""
+directive @relationshipProperties on OBJECT
+----
+
+`@relationshipProperties` can only be used on interfaces.
+
+=== Usage
+
+In order to add properties to a relationship, add a new type to your type definitions decorated with the `@relationshipProperties` directive.
 
 For example, for the "ACTED_IN" relationship, add a property "roles":
 
@@ -54,7 +66,7 @@ type ActedIn @relationshipProperties {
 }
 ----
 
-Note that in addition to this type, there is an added a key `properties` in the existing `@relationship` directives.
+Note that in addition to this type, there is an added key `properties` in the existing `@relationship` directives.
 For more information, see xref::/type-definitions/types/relationships.adoc[Type definitions -> Relationships].
 
 
@@ -238,7 +250,8 @@ type UserLivesInProperties @relationshipProperties {
 }
 ----
 
-Note that the property in aliases are automatically escaped (wrapped with backticks ``), so there is no need to add escape characters around them.
+[NOTE]
+The property in aliases are automatically escaped (wrapped with backticks ``), so there is no need to add escape characters around them.
 
 
 == `@declareRelationship`

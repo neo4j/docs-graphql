@@ -4,7 +4,7 @@
 :description: This page describes how to reduce the operation fields produced using the directives @query, @mutation, and @subscription.
 
 
-When representing a Neo4j node, a GraphQL Object Type produces multiple operation fields in the `Query`, `Mutation`, and `Subscription` types.
+When representing a Neo4j node, a GraphQL Object Type produces multiple operation fields in the query, mutation, and subscription types.
 For example:
 
 [source, graphql, indent=0]

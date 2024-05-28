@@ -117,7 +117,7 @@ type Query {
 
 When returning an object type, all fields of the type must be available in the Cypher return value. 
 This can be achieved by either returning the entire object from the Cypher query, or returning a map of the fields which are required for the object type. 
-Both approaches are demonstrated below:
+Both approaches are demonstrated here:
 
 [source, graphql, indent=0]
 ----
@@ -263,7 +263,8 @@ type Mutation {
 
 == `@coalesce`
 
-When translating from GraphQL to Cypher, any instances of fields to which this directive is applied will be wrapped in a `coalesce()` function in the WHERE clause (see https://neo4j.com/developer/kb/understanding-non-existent-properties-and-null-values/#_use_coalesce_to_use_a_default_for_a_null_value).
+When translating from GraphQL to Cypher, any instances of fields to which this directive is applied will be wrapped in a `coalesce()` function in the WHERE clause.
+For more information, see link:https://neo4j.com/developer/kb/understanding-non-existent-properties-and-null-values/#_use_coalesce_to_use_a_default_for_a_null_value[Understanding non-existent properties and working with nulls].
 
 This directive helps querying against non-existent properties in a database. 
 However, it is encouraged to populate these properties with meaningful values if it becomes the norm. 
@@ -323,6 +324,8 @@ The directive has two arguments:
 The query may still pass a higher or lower `limit`.
 * `max` - defines the maximum limit to be passed to the query. 
 If a higher value is passed, it is used instead. 
+
+[NOTE]
 If no `default` value is set, `max` is used for queries without limit.
 
 [source, graphql, indent=0]

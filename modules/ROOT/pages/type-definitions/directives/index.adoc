@@ -8,22 +8,15 @@ The Neo4j GraphQL Library provides the following directives to be used whilst de
 
 == Database mapping
 
-.Database mapping directives
 [cols="2,5"]
 |===
 | Directive | Description
 
 | xref::/type-definitions/directives/database-mapping.adoc#_relationship[`@relationship`]
-| Configure  xref::/type-definitions/types/relationships.adoc[relationships] between object types.
+| Configures xref::/type-definitions/types/relationships.adoc[relationships] between object types.
 
 | xref::/type-definitions/directives/database-mapping.adoc#_relationship_properties[`@relationshipProperties`]
 a| Required to differentiate interfaces that are used for relationship properties, and otherwise.
-Can only be used on interfaces, as per its definition:
-[source, graphql, indent=0]
-----
-"""Required to differentiate between interfaces for relationship properties, and otherwise."""
-directive @relationshipProperties on OBJECT
-----
 
 | xref::/type-definitions/directives/database-mapping.adoc#type-definitions-node[`@node`]
 | Specifies the configuration of a GraphQL object type which represents a Neo4j node.
@@ -38,7 +31,6 @@ directive @relationshipProperties on OBJECT
 
 == Security
 
-.Security directives
 [cols="2,5"]
 |===
 | Directive | Description
@@ -54,7 +46,7 @@ directive @relationshipProperties on OBJECT
 
 | xref::/type-definitions/directives/security/configuration.adoc#_nested_claims[`@jwtClaim`]
 | Use in combination with `@jwt`. 
-Configure the JWT authentication filter to include an additional nested JWT claim.
+Configures the JWT authentication filter to include an additional nested JWT claim.
 
 | `@subscriptionsAuthorization`
 | Specifies authorization rules for subscriptions on the type.
@@ -63,7 +55,6 @@ Configure the JWT authentication filter to include an additional nested JWT clai
 
 == Autogeneration
 
-.Autogeneration directives
 [cols="2,5"]
 |===
 | Directive | Description
@@ -78,13 +69,12 @@ Configure the JWT authentication filter to include an additional nested JWT clai
 
 == Schema configuration
 
-.Schema configuration directives
 [cols="2,5"]
 |===
 | Directive | Description
 
 | xref:/type-definitions/directives/schema-configuration/type-configuration.adoc#_query[`@query`]
-| Limits the availability of Query operations in the library.
+| Limits the availability of query operations in the library.
 
 | xref:/type-definitions/directives/schema-configuration/type-configuration.adoc#_mutation[`@mutation`]
 | Limits the availability of Mutation operations in the library.
@@ -93,7 +83,7 @@ Configure the JWT authentication filter to include an additional nested JWT clai
 | Limits subscription operations in the library.
 
 | xref::/type-definitions/directives/schema-configuration/type-configuration.adoc#type-definitions-default-values-default[`@default`]
-| Allows for the setting of a default value for a field on object creation.
+| Allows the setting of a default value for a field during object creation.
 
 | xref::/type-definitions/directives/schema-configuration/type-configuration.adoc#type-definitions-plural[`@plural`]
 | Redefines how to compose the plural of the type for the generated operations.
@@ -112,7 +102,6 @@ Particularly useful for types that are not correctly pluralized or are non-Engli
 
 == Indexes and constraints
 
-.Indexes and constraints directives
 [cols="2,5"]
 |===
 | Directive | Description
@@ -127,13 +116,12 @@ Particularly useful for types that are not correctly pluralized or are non-Engli
 
 == Custom logic
 
-.Custom logic directives
 [cols="2,5"]
 |===
 | Directive | Description
 
 | xref::/type-definitions/directives/custom-logic.adoc#_cypher[`@cypher`]
-| Overrides field resolution (including `Query` and `Mutation` fields), instead resolving with the specified Cypher.
+| Overrides field resolution (including query and mutation fields), instead resolving with the specified Cypher.
 
 | xref::/type-definitions/directives/custom-logic.adoc#_coalesce[`@coalesce`]
 | Exposes a mechanism for querying against non-existent, `null` values on a node.
@@ -152,7 +140,6 @@ of any required fields that is passed as arguments to the custom resolver.
 
 == OGM
 
-.OGM directives
 [cols="2,5"]
 |===
 | Directive | Description
@@ -164,7 +151,6 @@ of any required fields that is passed as arguments to the custom resolver.
 
 == Relay
 
-.Relay directives
 [cols="2,5"]
 |===
 | Directive | Description

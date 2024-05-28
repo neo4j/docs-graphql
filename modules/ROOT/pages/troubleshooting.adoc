@@ -67,7 +67,7 @@ DEBUG=@neo4j/introspector node src/index.js
 Read more about the xref::introspector.adoc[introspector].
 
 [[troubleshooting-query-tuning]]
-== Query Tuning
+== Query tuning
 
 Hopefully you won't need to perform any query tuning, but if you do, the Neo4j GraphQL Library allows you to set the full array of query options in the request context.
 
