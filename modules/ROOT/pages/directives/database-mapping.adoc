@@ -1,6 +1,6 @@
 [[type-definitions-database-mapping]]
 = Database mapping
-:page-aliases: type-definitions/database-mapping.adoc, type-definitions/basics.adoc, type-definitions/index.adoc
+:page-aliases: type-definitions/database-mapping.adoc, type-definitions/basics.adoc, type-definitions/index.adoc, type-definitions/directives/database-mapping.adoc
 :description: This page describes how to use directives for database mapping.
 
 
@@ -67,7 +67,7 @@ type ActedIn @relationshipProperties {
 ----
 
 Note that in addition to this type, there is an added key `properties` in the existing `@relationship` directives.
-For more information, see xref::/type-definitions/types/relationships.adoc[Type definitions -> Relationships].
+For more information, see xref::/types/relationships.adoc[Type definitions -> Relationships].
 
 
 [[type-definitions-node]]

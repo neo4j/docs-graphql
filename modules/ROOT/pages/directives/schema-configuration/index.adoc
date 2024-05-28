@@ -1,6 +1,6 @@
 [[type-definitions-schema-configuration]]
 = Schema configuration
-:page-aliases: type-definitions/schema-configuration/index.adoc, schema-configuration/index.adoc
+:page-aliases: type-definitions/schema-configuration/index.adoc, schema-configuration/index.adoc, type-definitions/directives/schema-configuration/index.adoc
 :description: This section describes configurations that can be set to a schema in Neo4j GraphQL.
 
 
