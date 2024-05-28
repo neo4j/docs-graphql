@@ -183,21 +183,7 @@ The following query yields a different Cypher query depending on the user JWT:
   users {
     name
   }
-}
-----
-
-Assuming there is a user with the value `"username": "arthur"` in JWT, the Cypher query looks like:
-
-[source, cypher, indent=0]
-----
-MATCH (this:arthur)
-RETURN this { .name } as this
-----
-
-Similarly, context values can be passed directly:
-
-[source, graphql, indent=0]
-----
+}ref::/directives/database-mapping.adoc#_declarerelationship[
 type User @node(label: ["$context.appId"]) {
     name: String!
 }
@@ -252,8 +238,3 @@ type UserLivesInProperties @relationshipProperties {
 
 [NOTE]
 The property in aliases are automatically escaped (wrapped with backticks ``), so there is no need to add escape characters around them.
-
-
-== `@declareRelationship`
-
-// TODO
