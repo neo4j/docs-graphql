@@ -372,7 +372,7 @@ const neoSchema = new Neo4jGraphQL({
 ----
 
 Here `fullName` is a value that is resolved from the fields `firstName` and `lastName`. 
-Specifying the `@customResolver` directive on the field definition keeps `fullName` from being included in any `Query` or `Mutation` fields and hence as a property on the `:User` node in the database.
+Specifying the `@customResolver` directive on the field definition keeps `fullName` from being included in any query or mutation fields and hence as a property on the `:User` node in the database.
 
 The inclusion of the fields `firstName` and `lastName` in the `requires` argument means that, in the definition of the resolver, the properties `firstName` and `lastName` will always be defined on the `source` object. 
 If these fields are not specified, this cannot be guaranteed.
