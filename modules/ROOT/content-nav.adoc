@@ -6,7 +6,12 @@
 * xref:getting-started/toolbox.adoc[]
 
 * *Reference*
-
+* xref:security/index.adoc[]
+** xref:security/configuration.adoc[]
+** xref:security/authentication.adoc[]
+** xref:security/authorization.adoc[]
+** xref:security/impersonation-and-user-switching.adoc[]
+** xref:security/operations.adoc[]
 * xref:types/index.adoc[]
 ** xref:types/scalar.adoc[Scalar]
 ** xref:types/temporal.adoc[Temporal]
@@ -16,12 +21,7 @@
 ** xref:types/relationships.adoc[]
 * xref:directives/index.adoc[]
 ** xref:directives/database-mapping.adoc[]
-** xref:directives/security/index.adoc[]
-*** xref:directives/security/configuration.adoc[]
-*** xref:directives/security/authentication.adoc[]
-*** xref:directives/security/authorization.adoc[]
-*** xref:directives/security/impersonation-and-user-switching.adoc[]
-*** xref:directives/security/operations.adoc[]
+
 ** xref:directives/autogeneration.adoc[]
 ** xref:directives/schema-configuration/index.adoc[]
 *** xref:directives/schema-configuration/global-configuration.adoc[]

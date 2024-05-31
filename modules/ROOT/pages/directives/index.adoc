@@ -34,18 +34,18 @@ a| Required to differentiate interfaces that are used for relationship propertie
 |===
 | Directive | Description
 
-| xref::/directives/security/authentication.adoc[`@authentication`]
+| xref::/security/authentication.adoc[`@authentication`]
 | Requires authentication checks when accessing the type.
 
-| xref::/directives/security/authorization.adoc[`@authorization`]
+| xref::/security/authorization.adoc[`@authorization`]
 | Specifies authorization rules for queries and mutations on the type.
 
-| xref::/directives/security/configuration.adoc#authentication-and-authorization-jwt[`@jwt`]
-| Configure the JWT authentication filter to include an additional JWT claim.
+| xref::/security/configuration.adoc#authentication-and-authorization-jwt[`@jwt`]
+| Configures the JWT authentication and authorization filters to include additional JWT claims.
 
-| xref::/directives/security/configuration.adoc#_nested_claims[`@jwtClaim`]
-| Use in combination with `@jwt`. 
-Configures the JWT authentication filter to include an additional nested JWT claim.
+| xref::/security/configuration.adoc#_nested_claims[`@jwtClaim`]
+| Used in combination with `@jwt`.
+Configures the JWT authentication and authorization filters to include an additional JWT claim which is either nested or using special characters not supported by GraphQL.
 
 | `@subscriptionsAuthorization`
 | Specifies authorization rules for subscriptions on the type.
