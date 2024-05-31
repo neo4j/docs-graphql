@@ -44,10 +44,10 @@ of any required fields that is passed as arguments to the custom resolver.
 | Marks a field as the unique ID for an object type, and allows for autogeneration of IDs.
 
 | xref::/authentication-and-authorization/configuration.adoc#authentication-and-authorization-jwt[`@jwt`]
-| Configure the JWT authentication and authorization filters to include additional JWT claims.
+| Configures the JWT authentication and authorization filters to include additional JWT claims.
 
 | xref::/authentication-and-authorization/configuration.adoc#_nested_claims[`@jwtClaim`]
-| Use in combination with `@jwt`. Configure the JWT authentication and authorization filters to include an additional JWT claim which is either nested or using special characters not supported by GraphQL.
+| Used in combination with `@jwt`. Configures the JWT authentication and authorization filters to include an additional JWT claim which is either nested or using special characters not supported by GraphQL.
 
 | xref::/type-definitions/directives/default-values.adoc#type-definitions-default-values-limit[`@limit`]
 | Used on nodes to inject values into Cypher `LIMIT` clauses.
