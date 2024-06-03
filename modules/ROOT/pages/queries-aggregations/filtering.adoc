@@ -28,7 +28,7 @@ For the `Boolean` type, equality operators are the only ones available.
 
 == Numerical operators
 
-These are the operators available for numeric (`Int`, `Float`, xref::/type-definitions/types/scalar.adoc[`BigInt`]), xref::/type-definitions/types/temporal.adoc[temporal] and xref::/type-definitions/types/spatial.adoc[spatial] types:
+These are the operators available for numeric (`Int`, `Float`, xref::/types/scalar.adoc[`BigInt`]), xref::/types/temporal.adoc[temporal] and xref::/types/spatial.adoc[spatial] types:
 
 * `_LT`
 * `_LTE`
@@ -50,7 +50,7 @@ query {
 ----
 
 Spatial types use numerical filtering differently and they also have additional options. 
-See xref::/type-definitions/types/spatial.adoc#_filtering[Spatial types filtering] for more information.
+See xref::/types/spatial.adoc#_filtering[Spatial types filtering] for more information.
 
 These same operators are disabled by default in the case of String comparisons.
 To enable, explicitly add them in the features options:
@@ -214,7 +214,7 @@ query {
 == Querying an interface
 
 You can use the `typename_IN` filter to filter interfaces.
-Refer to xref:type-definitions/types/interfaces.adoc#type-definitions-interfaced-types-querying[Type definitions -> Type -> Interface] for more details and an example.
+Refer to xref:types/interfaces.adoc#type-definitions-interfaced-types-querying[Type definitions -> Type -> Interface] for more details and an example.
 
 == Relationship filtering
 

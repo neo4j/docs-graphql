@@ -72,5 +72,5 @@ Also, the `Book` type is now refetchable via the `node` query field, and is read
 [WARNING]
 ====
 The `@relayId` directive does not guarantee uniqueness.
-You should configure a unique node property constraint using xref:type-definitions/directives/indexes-and-constraints.adoc[the `@unique` directive].
+You should configure a unique node property constraint using xref:directives/indexes-and-constraints.adoc[the `@unique` directive].
 ====

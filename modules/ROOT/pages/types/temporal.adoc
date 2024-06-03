@@ -1,6 +1,7 @@
 [[type-definitions-temporal-types]]
-:description: This page lists the temporal types available in the Neo4j GraphQL Library.
 = Temporal types
+:page-aliases: type-definitions/types/temporal.adoc
+:description: This page lists the temporal types available in the Neo4j GraphQL Library.
 
 [cols="1,2,2"]
 |===

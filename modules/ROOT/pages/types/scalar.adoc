@@ -1,6 +1,7 @@
 [[type-definitions-types]]
-:description: This page lists the default types available in the Neo4j GraphQL Library.
 = Scalar types
+:page-aliases: type-definitions/types/scalar.adoc
+:description: This page lists the default types available in the Neo4j GraphQL Library.
 
 Neo4j GraphQL supports all of the built-in GraphQL https://graphql.org/learn/schema/#scalar-types[scalar types].
 The `BigInt` scalar type is an addition specific to the Neo4j database.
