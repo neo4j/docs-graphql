@@ -1,0 +1,13 @@
+= Security
+:description: This section covers security features in the Neo4j GraphQL Library.
+:page-aliases: auth/index.adoc, auth/setup.adoc, auth/authentication.adoc, \
+auth/authorization.adoc, auth/auth-directive.adoc, auth/subscriptions.adoc, \
+auth/authorization/allow.adoc, auth/authorization/bind.adoc, auth/authorization/roles.adoc, \
+auth/authorization/where.adoc, authentication-and-authorization/index.adoc
+
+
+* xref::/security/authentication.adoc[Authentication] - Explicit authentication, configured using the `@authentication` directive.
+* xref::/security/authorization.adoc[Authorization] - Authorization rules set using the `@authorization` directive. 
+* xref::/security/configuration.adoc[Configuration] - Instructions to set up instantiation. 
+* xref::/security/impersonation-and-user-switching.adoc[Impersonation and user switching] - How to set up impersonation and user switching features.
+* xref::/security/operations.adoc[Operations] - Reference on GraphQL queries and how each location in each query triggers the evaluation of different authentication/authorization rules.

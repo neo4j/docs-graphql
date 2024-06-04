@@ -1,6 +1,6 @@
 [[schema-configuration-field-configuration]]
 = Field configuration
-:page-aliases: type-definitions/schema-configuration/field-configuration.adoc
+:page-aliases: type-definitions/schema-configuration/field-configuration.adoc, schema-configuration/field-configuration.adoc
 :description: This page describes how to use the directives @selectable, @settable, @filterable and `@relationship` to control how fields are exposed.
 
 
@@ -143,7 +143,7 @@ type Actor {
 *Configure nested operations*
 
 A large part of the schema produced by the library is needed to support nested operations. 
-These are enabled by the directive `@relationship` as described in xref::/type-definitions/types/relationships.adoc#_inserting_data[`@relationship` -> Inserting data].
+These are enabled by the directive `@relationship` as described in xref::/types/relationships.adoc#_inserting_data[`@relationship` -> Inserting data].
 
 The nested operations available are:
 

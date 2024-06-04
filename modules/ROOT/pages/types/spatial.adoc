@@ -1,7 +1,8 @@
 
 [[type-definitions-spatial-types]]
+= Spatial types
+:page-aliases: type-definitions/types/spatial.adoc
 :description: This page lists the spatial types available in the Neo4j GraphQL Library.
-= Temporal types
 
 == Spatial Types
 

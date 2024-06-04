@@ -72,7 +72,7 @@ query {
 
 == Undirected queries
 
-All xref::/type-definitions/types/relationships.adoc[relationships] are created with a direction from one node to another.
+All xref::/types/relationships.adoc[relationships] are created with a direction from one node to another.
 By default, all queries follow the direction defined in the relationship. 
 However, in some cases it is necessary to query for all related nodes, regardless of the direction of the relationship. 
 This can be achieved with the argument `directed: false`.
@@ -110,4 +110,4 @@ query Query {
 ----
 
 Keep in mind that *undirected relationships are only supported in queries*.
-The xref::/type-definitions/types/relationships.adoc#_querydirection[type definitions] for a relationship may define a different behavior, so the `directed` option may not be available in some cases.
+The xref::/types/relationships.adoc#_querydirection[type definitions] for a relationship may define a different behavior, so the `directed` option may not be available in some cases.
