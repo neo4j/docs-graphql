@@ -122,7 +122,7 @@ enum SubscriptionFields {
     DELETE_RELATIONSHIP
 }
 
-directive @subscription(events: [SubscriptionFields!]! = [CREATE, UPDATE, DELETE, CREATE_RELATIONSHIP, DELETE_RELATIONSHIP]) on OBJECT | SCHEMA
+directive @subscription(events: [SubscriptionFields!]! = [CREATED, UPDATED, DELETED, RELATIONSHIP_CREATED, RELATIONSHIP_DELETED]) on OBJECT | SCHEMA
 ----
 
 === Usage
@@ -139,7 +139,7 @@ type Movie @subscription(events: [])  {
 .Enable only _movieCreated_ subscription for _Movie_
 [source, graphql, indent=0]
 ----
-type Movie @subscription(events: [CREATE]) { 
+type Movie @subscription(events: [CREATED]) { 
     title: String 
     length: Int
 }
