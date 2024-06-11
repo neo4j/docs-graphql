@@ -504,6 +504,8 @@ to populate fields which have not been provided within the input.
 
 For non-required values, callbacks may return `undefined` (meaning that nothing is changed or added to the property) or `null` (meaning that the property will be removed).
 
+The `@populatedBy` directive can only be used on scalar fields. 
+
 === Definition
 
 [source, graphql, indent=0]
@@ -555,7 +557,7 @@ new Neo4jGraphQL({
 })
 ----
 
-== Context values
+=== Context values
 
 The GraphQL context for the request is available as the third argument in a callback. 
 This maps to the argument pattern for GraphQL resolvers.
@@ -592,54 +594,3 @@ new Neo4jGraphQL({
 ----
 
 Note that the second positional argument, in this case `_args`, has a type of `Record<string, never>`, and as such it will always be an empty object.
-
-=== Definition
-
-[source, graphql, indent=0]
-----
-enum CallbackOperation {
-    CREATE
-    UPDATE
-}
-
-"""Instructs @neo4j/graphql to invoke the specified callback function when updating or creating the properties on a node or relationship."""
-directive @callback(
-    """Which events to invoke the callback on."""
-    operations: [CallbackOperation!]! = [CREATE, UPDATE]
-    """The name of the callback function."""
-    name: String!
-) on FIELD_DEFINITION
-----
-
-=== Usage
-
-Type definitions:
-
-[source, graphql, indent=0]
-----
-type Product {
-    name: String!
-    slug: String! @callback(operations: [CREATE, UPDATE], name: "slug")
-}
-----
-
-Schema construction (note that the callback is asynchronous):
-
-[source, javascript, indent=0]
-----
-const slugCallback = async (root) => {
-    return `${root.name}_slug`
-}
-
-new Neo4jGraphQL({
-    typeDefs,
-    driver,
-    features: {
-        populatedBy: {
-            callbacks: {
-                slug: slugCallback
-            } 
-        }
-    }
-})
-----
