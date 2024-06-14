@@ -8,7 +8,10 @@ The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript
 With Neo4j as the graph database, the GraphQL Library makes it simple for applications to have data treated as a graph natively from the frontend all the way to storage.
 This avoids duplicate schema work and ensures flawless integration between frontend and backend developers.
 
+[.promo.promo-graphacademy]
+====
 *If you are new to Neo4j and GraphQL*, take the course link:https://graphacademy.neo4j.com/courses/graphql-basics/?ref=docs[Introduction to Neo4j & GraphQL] in GraphAcademy to learn the fundamentals, how to use the xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox] and the Neo4j GraphQL Library to create GraphQL APIs backed by a Neo4j graph database.
+====
 
 [NOTE]
 ====
