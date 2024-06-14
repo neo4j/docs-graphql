@@ -4,3 +4,13 @@ version: '5'
 start_page: ROOT:index.adoc
 nav:
 - modules/ROOT/content-nav.adoc
+asciidoc:
+  attributes:
+    ga-courses-uri: https://raw.githubusercontent.com/neo4j-graphacademy/courses/main/asciidoc/courses
+    ga-course: graphql-basics
+    page-ad-icon: mortarboard
+    page-ad-title: Learn Neo4j & GraphQL with GraphAcademy
+    page-ad-description: Learn how to create GraphQL APIs using the Neo4j GraphQL Library and GraphQL Toolbox.
+    page-ad-link: https://graphacademy.neo4j.com/courses/graphql-basics/?ref=docs-ad-graphql-basics
+    page-ad-underline-role: button
+    page-ad-underline: Enroll now
