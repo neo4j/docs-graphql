@@ -88,6 +88,8 @@ type ActedIn @relationshipProperties {
 }
 ----
 
+=== `@declareRelationship`
+
 If you need a relationship to be available on interfaces, you need to use the new `@declareRelationship` directive instead, as well as define the relationships in the concrete type:
 
 [source, graphql, indent=0]

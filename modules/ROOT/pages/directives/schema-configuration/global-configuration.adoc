@@ -35,7 +35,7 @@ extend schema @query(read: true, aggregate: false)
 
 **Invalid schema usage**
 
-The same schema configuration directive cannot be applied to both Schema and Object.
+The same schema configuration directive cannot be applied to both schema and object.
 Take the following type definitions as example:
 
 [source, graphql, indent=0]

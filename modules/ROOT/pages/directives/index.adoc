@@ -23,8 +23,8 @@ a| Required to differentiate interfaces that are used for relationship propertie
 | xref::/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
 | Maps a GraphQL schema field to a Neo4j property on a node or relationship.
 
-| `@declareRelationship`
-| Configure xref::/types/relationships.adoc[relationships] to be implemented on object types.
+| xref::/types/relationships.adoc#_declarerelationship[`@declareRelationship`]
+| Configure relationships to be implemented on object types.
 
 |===
 
