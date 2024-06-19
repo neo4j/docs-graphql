@@ -268,7 +268,7 @@ For more information, see link:https://neo4j.com/developer/kb/understanding-non-
 
 This directive helps querying against non-existent properties in a database. 
 However, it is encouraged to populate these properties with meaningful values if it becomes the norm. 
-The `@coalesce`directive is a primitive implementation of the function which only takes a static default value as opposed to using another property in a node or a Cypher expression.
+The `@coalesce` directive is a primitive implementation of the function which only takes a static default value as opposed to using another property in a node or a Cypher expression.
 
 === Definition
 
