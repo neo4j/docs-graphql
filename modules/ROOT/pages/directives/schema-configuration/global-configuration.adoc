@@ -1,6 +1,6 @@
 [[schema-configuration-global-configuration]]
 = Global configuration
-:page-aliases: type-definitions/schema-configuration/global-configuration.adoc
+:page-aliases: type-definitions/schema-configuration/global-configuration.adoc, schema-configuration/global-configuration.adoc
 :description: This page describes how to globally disable specific types of operations.
 
 
@@ -35,7 +35,7 @@ extend schema @query(read: true, aggregate: false)
 
 **Invalid schema usage**
 
-The same schema configuration directive cannot be applied to both Schema and Object.
+The same schema configuration directive cannot be applied to both schema and object.
 Take the following type definitions as example:
 
 [source, graphql, indent=0]

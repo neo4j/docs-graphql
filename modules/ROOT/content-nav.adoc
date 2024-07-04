@@ -6,36 +6,31 @@
 * xref:getting-started/toolbox.adoc[]
 
 * *Reference*
+* xref:security/index.adoc[]
+** xref:security/configuration.adoc[]
+** xref:security/authentication.adoc[]
+** xref:security/authorization.adoc[]
+** xref:security/impersonation-and-user-switching.adoc[]
+** xref:security/operations.adoc[]
+* xref:types/index.adoc[]
+** xref:types/scalar.adoc[Scalar]
+** xref:types/temporal.adoc[Temporal]
+** xref:types/spatial.adoc[Spatial]
+** xref:types/interfaces.adoc[Interfaces]
+** xref:types/unions.adoc[Union]
+** xref:types/relationships.adoc[]
+* xref:directives/index.adoc[]
+** xref:directives/database-mapping.adoc[]
 
-* xref:authentication-and-authorization/index.adoc[]
-** xref:authentication-and-authorization/configuration.adoc[]
-** xref:authentication-and-authorization/authentication.adoc[]
-** xref:authentication-and-authorization/authorization.adoc[]
-** xref:authentication-and-authorization/impersonation-and-user-switching.adoc[]
-** xref:authentication-and-authorization/operations.adoc[]
-
-* Type definitions
-** xref:type-definitions/types/index.adoc[]
-*** xref:type-definitions/types/scalar.adoc[Scalar]
-*** xref:type-definitions/types/temporal.adoc[Temporal]
-*** xref:type-definitions/types/spatial.adoc[Spatial]
-*** xref:type-definitions/types/interfaces.adoc[Interfaces]
-*** xref:type-definitions/types/unions.adoc[Union]
-*** xref:type-definitions/types/relationships.adoc[]
-** xref:type-definitions/directives/index.adoc[]
-*** xref:type-definitions/directives/basics.adoc[]
-*** xref:type-definitions/directives/autogeneration.adoc[]
-*** xref:type-definitions/directives/custom-directives.adoc[]
-*** xref:type-definitions/directives/cypher.adoc[]
-*** xref:type-definitions/directives/default-values.adoc[]
-*** xref:type-definitions/directives/database-mapping.adoc[]
-*** xref:type-definitions/directives/indexes-and-constraints.adoc[]
-*** xref:type-definitions/directives/genai.adoc[]
-
-* xref:schema-configuration/index.adoc[Schema configuration]
-** xref:schema-configuration/type-configuration.adoc[]
-** xref:schema-configuration/global-configuration.adoc[]
-** xref:schema-configuration/field-configuration.adoc[]
+** xref:directives/autogeneration.adoc[]
+** xref:directives/schema-configuration/index.adoc[]
+*** xref:directives/schema-configuration/global-configuration.adoc[]
+*** xref:directives/schema-configuration/type-configuration.adoc[]
+*** xref:directives/schema-configuration/field-configuration.adoc[]
+** xref:directives/indexes-and-constraints.adoc[]
+** xref:directives/custom-logic.adoc[]
+** xref:directives/genai.adoc[]
+** xref:directives/custom-directives.adoc[]
 
 * xref:queries-aggregations/index.adoc[Queries and aggregations]
 ** xref:queries-aggregations/queries.adoc[]
@@ -60,7 +55,6 @@
 
 * *How-To*
 
-* xref:custom-resolvers.adoc[]
 * xref:driver-configuration.adoc[]
 
 * *Products*
@@ -84,4 +78,5 @@
 
 * xref:migration/index.adoc[Migration guide]
 * xref:deprecations.adoc[Deprecations]
+* xref:optimization.adoc[]
 * xref:troubleshooting.adoc[]

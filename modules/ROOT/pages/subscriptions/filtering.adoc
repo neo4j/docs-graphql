@@ -24,7 +24,7 @@ For the `Boolean` type, these are the only available comparison operators.
 [[filtering-numerical-operators]]
 === Numerical operators
 
-The following comparison operators are available for numeric types (`Int`, `Float`, xref::type-definitions/types/index.adoc[`BigInt`]):
+The following comparison operators are available for numeric types (`Int`, `Float`, xref::types/index.adoc[`BigInt`]):
 
 * `_LT`
 * `_LTE`
@@ -33,7 +33,7 @@ The following comparison operators are available for numeric types (`Int`, `Floa
 
 [NOTE]
 ====
-Filtering on xref::type-definitions/types/temporal.adoc[Temporal types] and xref::type-definitions/types/spatial.adoc[Spatial types] is not currently supported.
+Filtering on xref::types/temporal.adoc[Temporal types] and xref::types/spatial.adoc[Spatial types] is not currently supported.
 ====
 
 === String comparison

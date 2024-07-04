@@ -1,6 +1,6 @@
 [[type-definitions-relationships]]
 = Relationships
-:page-aliases: type-definitions/relationships.adoc
+:page-aliases: type-definitions/relationships.adoc, type-definitions/types/relationships.adoc
 :description: This page describes how to write type definitions for a simple connected model, inserting data through the schema, and then querying it.
 
 
@@ -87,6 +87,8 @@ type ActedIn @relationshipProperties {
     roles: [String!]
 }
 ----
+
+=== `@declareRelationship`
 
 If you need a relationship to be available on interfaces, you need to use the new `@declareRelationship` directive instead, as well as define the relationships in the concrete type:
 

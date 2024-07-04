@@ -1,0 +1,596 @@
+= Custom logic
+:page-aliases: type-definitions/cypher.adoc, type-definitions/default-values.adoc, ogm/examples/custom-resolvers.adoc, custom-resolvers.adoc
+:description: This page describes how to use directives for custom logic.
+
+== `@cypher`
+
+The `@cypher` directive binds a GraphQL field to the results of a Cypher query.
+This directive can be used both for properties in a type or as top level queries.
+
+=== Global variables
+
+Global variables are available for use within the Cypher statement, and can be applied to the `@cypher` directive.
+
+[cols="1,2,2"]
+|===
+| Variable | Description | Example
+
+| `this`
+| Refers to the currently resolved node, and can be used to traverse the graph.
+a| 
+[source, graphql, indent=0]
+----
+{
+  Movie {
+    title
+    actors: ACTED_IN @this {
+      role
+      actor {
+        name
+      }
+    }
+    directors: DIRECTED @this {
+      director {
+        name
+      }
+    }
+  }
+}
+----
+
+| `auth`
+a| This value is represented by the following TypeScript interface definition:
+[source, typescript, indent=0]
+----
+interface Auth {
+    isAuthenticated: boolean;
+    roles?: string[];
+    jwt: any;
+}
+----
+a| You can use the JWT in the request to return the value of the currently logged in User:
+[source, graphql, indent=0]
+----
+type User {
+    id: String
+}
+
+type Query {
+    me: User @cypher(
+        statement: """
+        MATCH (user:User {id: $jwt.sub})
+        RETURN user
+        """,
+        columnName: "user"
+    )
+}
+----
+
+| `cypherParams`
+| Use it to inject values into the Cypher query from the GraphQL context function.
+a| Inject into context:
+[source, typescript, indent=0]
+----
+const server = new ApolloServer({
+    typeDefs,
+});
+
+await startStandaloneServer(server, {
+    context: async ({ req }) => ({ cypherParams: { userId: "user-id-01" } }),
+});
+----
+
+Use in Cypher query:
+
+[source, graphql, indent=0]
+----
+type Query {
+    userPosts: [Post] @cypher(statement: """
+        MATCH (:User {id: $userId})-[:POSTED]->(p:Post)
+        RETURN p
+    """, columnName: "p")
+}
+----
+|===
+
+
+=== Return values
+
+The return value of Cypher statements must always be of the same type to which the directive is applied.
+
+The variable must also be aliased with a name that is the same as the one passed to `columnName`.
+This can be the name of a node, relationship query, or an alias in the `RETURN` statement of the Cypher statement.
+
+==== Scalar values
+
+Cypher statements must return a value which matches the scalar type to which the directive was applied.
+For example:
+
+[source, graphql, indent=0]
+----
+type Query {
+    randomNumber: Int @cypher(statement: "RETURN rand() as result", columnName: "result")
+}
+----
+
+==== Object types
+
+When returning an object type, all fields of the type must be available in the Cypher return value. 
+This can be achieved by either returning the entire object from the Cypher query, or returning a map of the fields which are required for the object type. 
+Both approaches are demonstrated here:
+
+[source, graphql, indent=0]
+----
+type User {
+    id
+}
+
+type Query {
+    users: [User]
+        @cypher(
+            statement: """
+            MATCH (u:User)
+            RETURN u
+            """,
+            columnName: "u"
+        )
+}
+----
+
+[source, graphql, indent=0]
+----
+type User {
+    id
+}
+
+type Query {
+    users: [User] @cypher(statement: """
+        MATCH (u:User)
+        RETURN {
+            id: u.id
+        } as result
+    """, columnName: "result")
+}
+----
+
+The downside of the latter approach is that you need to adjust the return object as you change your object type definition.
+
+
+=== Input arguments
+
+The `@cypher` statement can access the query parameters by prepending `$` to the parameter name. 
+For example:
+
+[source, graphql, indent=0]
+----
+type Query {
+    name(value: String): String @cypher(statement: "RETURN $value AS res", columnName: "res")
+}
+----
+
+The following GraphQL query returns the parameter `value`:
+
+[source, graphql, indent=0]
+----
+query {
+  name(value: "Jane Smith")
+}
+----
+
+
+=== Usage examples
+
+The `@cypher` directive can be used in different contexts, such as the ones described in this section.
+
+[[type-definitions-cypher-object-usage]]
+==== On an object type field
+
+In the following example, the field `similarMovies` is bound to the `Movie` type for finding other movies with an overlap of actors:
+
+[source, graphql, indent=0]
+----
+type Actor {
+    actorId: ID!
+    name: String
+    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+}
+
+type Movie {
+    movieId: ID!
+    title: String
+    description: String
+    year: Int
+    actors(limit: Int = 10): [Actor!]!
+        @relationship(type: "ACTED_IN", direction: IN)
+    similarMovies(limit: Int = 10): [Movie]
+        @cypher(
+            statement: """
+            MATCH (this)<-[:ACTED_IN]-(:Actor)-[:ACTED_IN]->(rec:Movie)
+            WITH rec, COUNT(*) AS score ORDER BY score DESC
+            RETURN rec LIMIT $limit
+            """,
+            columnName: "rec"
+        )
+}
+----
+
+==== On a query type field
+
+The following example demonstrates a query to return all of the actors in the database:
+
+[source, graphql, indent=0]
+----
+type Actor {
+    actorId: ID!
+    name: String
+}
+
+type Query {
+    allActors: [Actor]
+        @cypher(
+            statement: """
+            MATCH (a:Actor)
+            RETURN a
+            """,
+            columnName: "a"
+        )
+}
+----
+
+==== On a mutation type field
+
+The following example demonstrates a mutation using a Cypher query to insert a single actor with the specified name argument:
+
+[source, graphql, indent=0]
+----
+type Actor {
+    actorId: ID!
+    name: String
+}
+
+type Mutation {
+    createActor(name: String!): Actor
+        @cypher(
+            statement: """
+            CREATE (a:Actor {name: $name})
+            RETURN a
+            """,
+            columnName: "a"
+        )
+}
+----
+
+
+== `@coalesce`
+
+When translating from GraphQL to Cypher, any instances of fields to which this directive is applied will be wrapped in a `coalesce()` function in the WHERE clause.
+For more information, see link:https://neo4j.com/developer/kb/understanding-non-existent-properties-and-null-values/#_use_coalesce_to_use_a_default_for_a_null_value[Understanding non-existent properties and working with nulls].
+
+This directive helps querying against non-existent properties in a database. 
+However, it is encouraged to populate these properties with meaningful values if it becomes the norm. 
+The `@coalesce` directive is a primitive implementation of the function which only takes a static default value as opposed to using another property in a node or a Cypher expression.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Int | Float | String | Boolean | ID | DateTime | Enum"""
+scalar ScalarOrEnum
+
+"""Instructs @neo4j/graphql to wrap the property in a coalesce() function during queries, using the single value specified."""
+directive @coalesce(
+    """The value to use in the coalesce() function. Must be a scalar type and must match the type of the field with which this directive decorates."""
+    value: Scalar!,
+) on FIELD_DEFINITION
+----
+
+=== Usage
+
+`@coalesce` may be used with enums. 
+When setting the default value for an enum field, it must be one of the enumerated enum values:
+
+[source, graphql, indent=0]
+----
+enum Status {
+    ACTIVE
+    INACTIVE
+}
+type Movie {
+    status: Status @coalesce(value: ACTIVE)
+}
+----
+
+[[type-definitions-default-values-limit]]
+== `@limit`
+
+Available on nodes, this directive injects values into a query such as the `limit`.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""The `@limit` is to be used on nodes, where applied will inject values into a query such as the `limit`."""
+directive @limit(
+    default: Int
+    max: Int
+) on OBJECT
+----
+
+=== Usage
+
+The directive has two arguments:
+
+* `default` - if no `limit` argument is passed to the query, the default limit is used. 
+The query may still pass a higher or lower `limit`.
+* `max` - defines the maximum limit to be passed to the query. 
+If a higher value is passed, it is used instead. 
+
+[NOTE]
+If no `default` value is set, `max` is used for queries without limit.
+
+[source, graphql, indent=0]
+----
+{
+  Movie @limit(amount: 5) {
+    title
+    year
+  }
+}
+----
+
+== `@customResolver`
+
+The Neo4j GraphQL Library generates query and mutation resolvers, so you don't need to implement them yourself.
+However, if you need additional behaviors besides the autogenerated CRUD operations, you can specify custom resolvers for these scenarios.
+
+To add a field to an object type which is resolved from existing values in the type, rather than storing new values, you should mark it with the `@customResolver` directive, and define a custom resolver for it.
+
+Take, for instance, this schema:
+
+[source, javascript, indent=0]
+----
+const typeDefs = `
+    type User {
+        firstName: String!
+        lastName: String!
+        fullName: String! @customResolver(requires: "firstName lastName")
+    }
+`;
+
+const resolvers = {
+    User: {
+        fullName(source) {
+            return `${source.firstName} ${source.lastName}`;
+        },
+    },
+};
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    resolvers,
+});
+----
+
+Here `fullName` is a value that is resolved from the fields `firstName` and `lastName`. 
+Specifying the `@customResolver` directive on the field definition keeps `fullName` from being included in any query or mutation fields and hence as a property on the `:User` node in the database.
+
+The inclusion of the fields `firstName` and `lastName` in the `requires` argument means that, in the definition of the resolver, the properties `firstName` and `lastName` will always be defined on the `source` object. 
+If these fields are not specified, this cannot be guaranteed.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Informs @neo4j/graphql that a field will be resolved by a custom resolver, and allows specification of any field dependencies."""
+directive @customResolver(
+    """Selection set of the fields that the custom resolver will depend on. These fields are passed as an object to the first argument of the custom resolver."""
+    requires: SelectionSet
+) on FIELD_DEFINITION
+----
+
+=== The `requires` argument
+
+The `requires` argument can be used:
+
+* For a selection set string.
+* In any field, as long as it is not another `@customResolver` field.
+* In case the custom resolver depends on any fields.
+This ensures that, during the Cypher generation process, these properties are selected from the database.
+
+Using a selection set string makes it possible to select fields from related types, as shown in the following example:
+
+[source, javascript, indent=0]
+----
+const typeDefs = `
+    type Address {
+        houseNumber: Int!
+        street: String!
+        city: String!
+    }
+
+    type User {
+        id: ID!
+        firstName: String!
+        lastName: String!
+        address: Address! @relationship(type: "LIVES_AT", direction: OUT)
+        fullName: String
+            @customResolver(requires: "firstName lastName address { city street }")
+    }
+`;
+
+const resolvers = {
+    User: {
+        fullName({ firstName, lastName, address }) {
+            return `${firstName} ${lastName} from ${address.street} in ${address.city}`;
+        },
+    },
+};
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    resolvers,
+});
+----
+
+Here the `firstName`, `lastName`, `address.street`, and `address.city` fields are always selected from the database if the `fullName` field is selected, and is available to the custom resolver.
+
+It is also possible to inline fragments to conditionally select fields from interface/union types:
+
+[source, graphql, indent=0]
+----
+interface Publication {
+    publicationYear: Int!
+}
+
+type Author {
+    name: String!
+    publications: [Publication!]! @relationship(type: "WROTE", direction: OUT)
+    publicationsWithAuthor: [String!]!
+        @customResolver(
+            requires: "name publications { publicationYear ...on Book { title } ... on Journal { subject } }"
+        )
+}
+
+type Book implements Publication {
+    title: String!
+    publicationYear: Int!
+    author: [Author!]! @relationship(type: "WROTE", direction: IN)
+}
+
+type Journal implements Publication {
+    subject: String!
+    publicationYear: Int!
+    author: [Author!]! @relationship(type: "WROTE", direction: IN)
+}
+----
+
+However, it is **not** possible to require extra fields generated by the library such as aggregations and connections.
+For example, the following type definitions would throw an error since they attempt to require the `publicationsAggregate`:
+
+[source, graphql, indent=0]
+----
+interface Publication {
+    publicationYear: Int!
+}
+
+type Author {
+    name: String!
+    publications: [Publication!]! @relationship(type: "WROTE", direction: OUT)
+    publicationsWithAuthor: [String!]!
+        @customResolver(
+            requires: "name publicationsAggregate { count }"
+        )
+}
+
+type Book implements Publication {
+    title: String!
+    publicationYear: Int!
+    author: [Author!]! @relationship(type: "WROTE", direction: IN)
+}
+
+type Journal implements Publication {
+    subject: String!
+    publicationYear: Int!
+    author: [Author!]! @relationship(type: "WROTE", direction: IN)
+}
+----
+
+
+
+== `@populatedBy`
+
+This directive is used to specify a callback function, which is executed during GraphQL query parsing,
+to populate fields which have not been provided within the input.
+
+For non-required values, callbacks may return `undefined` (meaning that nothing is changed or added to the property) or `null` (meaning that the property will be removed).
+
+The `@populatedBy` directive can only be used on scalar fields. 
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+enum PopulatedByOperation {
+    CREATE
+    UPDATE
+}
+
+"""Instructs @neo4j/graphql to invoke the specified callback function to populate the field when updating or creating the properties on a node or relationship."""
+directive @populatedBy(
+    """The name of the callback function."""
+    callback: String!
+    """Which events to invoke the callback on."""
+    operations: [PopulatedByOperation!]! = [CREATE, UPDATE]
+) on FIELD_DEFINITION
+----
+
+=== Usage
+
+Type definitions:
+
+[source, graphql, indent=0]
+----
+type Product {
+    name: String!
+    slug: String! @populatedBy(callback: "slug", operations: [CREATE, UPDATE])
+}
+----
+
+Schema construction (note that the callback is asynchronous):
+
+[source, javascript, indent=0]
+----
+const slugCallback = async (root) => {
+    return `${root.name}_slug`
+}
+
+new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    features: { 
+        populatedBy: {
+            callbacks: {
+                slug: slugCallback
+            } 
+        }
+    }
+})
+----
+
+=== Context values
+
+The GraphQL context for the request is available as the third argument in a callback. 
+This maps to the argument pattern for GraphQL resolvers.
+
+For example, if you want a field `modifiedBy`:
+
+[source, graphql, indent=0]
+----
+type Record {
+    content: String!
+    modifiedBy: @populatedBy(callback: "modifiedBy", operations: [CREATE, UPDATE])
+}
+----
+
+And if the username is located in `context.username`, you could define a callback such as:
+
+[source, javascript, indent=0]
+----
+const modifiedByCallback = async (_parent, _args, context) => {
+    return context.username;
+}
+
+new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    features: { 
+        populatedBy: {
+            callbacks: {
+                modifiedBy: modifiedByCallback
+            } 
+        }
+    }
+})
+----
+
+Note that the second positional argument, in this case `_args`, has a type of `Record<string, never>`, and as such it will always be an empty object.

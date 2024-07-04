@@ -18,10 +18,8 @@ directive @unique(
 ) on FIELD_DEFINITION
 ----
 
-Additionally, the usage of the xref::/type-definitions/directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] directive by default implies that there should be a unique node property constraint in the database for that property.
-
 Using this directive does not automatically ensure the existence of these constraints, and you will need to run a function on server startup. 
-See the section xref::/type-definitions/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
+See the section xref::/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
 
 === Usage
 
@@ -85,7 +83,7 @@ directive @fulltext(indexes: [FullTextInput]!) on OBJECT
 
 Using this directive does not automatically ensure the existence of these indexes.
 You need to run a function on server startup. 
-See the section xref::/type-definitions/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
+See the section xref::/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
 
 === Specifying
 
@@ -100,7 +98,7 @@ type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]
 }
 ----
 
-When you run xref::/type-definitions/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints], they create the index like so:
+When you run xref::/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints], they create the index like so:
 
 [source, cypher, indent=0]
 ----

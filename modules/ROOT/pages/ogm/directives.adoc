@@ -82,4 +82,4 @@ The following directives are excluded from the OGM's schema:
 - `@settable`
 
 The reason is that the OGM is only ever used programmatically, as opposed to an exposed API which needs these security measures.
-See the page on xref:type-definitions/directives/index.adoc[Neo4j GraphQL directives] for more information.
+See the page on xref:directives/index.adoc[Neo4j GraphQL directives] for more information.
