@@ -29,7 +29,6 @@
 *** xref:directives/schema-configuration/field-configuration.adoc[]
 ** xref:directives/indexes-and-constraints.adoc[]
 ** xref:directives/custom-logic.adoc[]
-** xref:directives/genai.adoc[]
 ** xref:directives/custom-directives.adoc[]
 
 * xref:queries-aggregations/index.adoc[Queries and aggregations]
