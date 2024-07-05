@@ -90,3 +90,6 @@ ifdef::backend-pdf[]
 Documentation license: <<license, Creative Commons 4.0>>
 endif::[]
 Source: https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0]
+
+// Edit at: https://github.com/neo4j-graphacademy/courses/blob/main/asciidoc/courses/graphql-basics/promo.adoc
+include::https://raw.githubusercontent.com/neo4j-graphacademy/courses/main/asciidoc/courses/graphql-basics/promo.adoc[]
