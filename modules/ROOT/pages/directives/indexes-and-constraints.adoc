@@ -276,7 +276,7 @@ This embedding is then compared to the node vector embeddings in the database.
 
 [NOTE]
 ====
-Vector index searches are _read-only_ in the sense that no data is persisted in the database.
+Vector index searches are _read-only_ in the sense that the data which the queries operate on are retrieved from the database but not altered or written back to the database.
 ====
 
 
@@ -304,7 +304,7 @@ input VectorIndexInput {
 }
 ----
 
-If the optional field `provider` is set, the type is used for a query by phrase, otherwise for a query by vector index.
+If the optional field `provider` is set, the type is used for a query by phrase, otherwise for a query by vector.
 Allowed values for the `provider` field are defined by the available link:https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/[GenAI providers].
 
 === Usage
