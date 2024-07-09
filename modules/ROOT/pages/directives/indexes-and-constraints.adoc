@@ -259,7 +259,6 @@ Queries are performed by passing in either a vector index or a query phrase.
 
 A query by vector index finds nodes with a vector embedding similar to that index.
 That is, the query performs a nearest neighbor search.
-Refer to link:https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#query-vector-index[Query vector indexes] for the 
 
 In contrast, a query by phrase (a string of text) forwards the phrase to the link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/[Neo4j GenAI plugin] and the plugin generates a vector embedding for it.
 This embedding is then compared to the node vector embeddings in the database.
@@ -269,7 +268,7 @@ This embedding is then compared to the node vector embeddings in the database.
 ==== 
 * The database must be Neo4j version 5.15 or higher.
 * The node vector embeddings already exist in the database. See link:https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/[Vector indexes] to learn more about vector indexes in Cypher and Neo4j.
-* The embeddings must have been created using the same method, that is, the same provider and model.
+* The embeddings must have been created using the same method, that is, the same provider and model. See link:https://neo4j.com/docs/genai/tutorials/embeddings-vector-indexes/[Embeddings & Vector Indexes Tutorial] to learn about vector embeddings in Cypher and Neo4j.
 * Queries by vector index cannot be performed across multiple labels.
 * Queries by phrase require credentials for the Neo4j GenAI plugin.
 ====
