@@ -296,7 +296,7 @@ input VectorIndexInput {
   """(Required) The name of the vector index."""
   indexName: String!
   """(Required) The name of the embedding property on the node."""
-  property: String!
+  embeddingProperty: String!
   """(Required) The name of the query."""
   queryName: String
   """(Optional) The name of the provider."""
@@ -318,7 +318,7 @@ Perform a nearest neighbor search by passing a vector to find nodes with a vecto
 ----
 type Product @vector(indexes: [{
   indexName: "productDescriptionIndex",
-  property: "descriptionVector",
+  embeddingProperty: "descriptionVector",
   queryName: "searchByDescription"
 }]) {
   id: ID!
@@ -379,7 +379,7 @@ Requires credentials for the plugin.
 ----
 type Product @vector(indexes: [{
   indexName: "productDescriptionIndex",
-  property: "descriptionVector",
+  embeddingProperty: "descriptionVector",
   provider: OpenAI,  # Assuming this is configured in the server
   queryName: "searchByPhrase"
 }]) {
