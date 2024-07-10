@@ -115,11 +115,11 @@ This directive is used to limit subscription operations in the library.
 [source, graphql, indent=0]
 ----
 enum SubscriptionFields {
-    CREATE
-    UPDATE
-    DELETE
-    CREATE_RELATIONSHIP
-    DELETE_RELATIONSHIP
+    CREATED
+    UPDATED
+    DELETED
+    RELATIONSHIP_CREATED
+    RELATIONSHIP_DELETED
 }
 
 directive @subscription(events: [SubscriptionFields!]! = [CREATED, UPDATED, DELETED, RELATIONSHIP_CREATED, RELATIONSHIP_DELETED]) on OBJECT | SCHEMA
