@@ -251,7 +251,7 @@ await neoSchema.assertIndexesAndConstraints({ options: { create: true }});
 
 :description: Directives related to generative AI in the Neo4j GraphQL Library.
 
-
+[role=label--beta]
 == Vector index search
 
 With the `@vector` GraphQL directive you can query your database to perform a vector index search.
@@ -374,7 +374,7 @@ Perform a query which utilizes the link:https://neo4j.com/docs/cypher-manual/cur
 Requires credentials for the plugin.
 ====
 
-Add the following feature configuration to your instance of Neo4j GraphQL:
+Ensure your provider credentials are set in the call to Neo4jGraphQL, for example:
 
 .Feature configuration
 [source, graphql]
