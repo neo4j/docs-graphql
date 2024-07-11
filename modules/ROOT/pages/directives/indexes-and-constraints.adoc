@@ -306,6 +306,25 @@ input VectorIndexInput {
 If the optional field `provider` is set, the type is used for a query by phrase, otherwise for a query by vector.
 Allowed values for the `provider` field are defined by the available link:https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/[GenAI providers].
 
+Additionally, add the following feature configuration when you are using queries by phrase and the GenAI plugin:
+
+[source, graphql]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    features: {
+        vector: {
+            OpenAI: {
+                token: "my-open-ai-token",
+                model: "text-embedding-3-small",
+            },
+        },
+    },
+});
+----
+
+
 === Usage
 
 ==== Query by vector index
