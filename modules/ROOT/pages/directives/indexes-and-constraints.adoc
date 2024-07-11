@@ -304,7 +304,7 @@ input VectorIndexInput {
 ----
 
 If the optional field `provider` is set, the type is used for a query by phrase, otherwise for a query by vector.
-Allowed values for the `provider` field are defined by the available link:https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/[GenAI providers].
+Allowed values for the `provider` field are defined by the available link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/#ai-providers[GenAI providers].
 
 Additionally, add the following feature configuration when you are using queries by phrase and the GenAI plugin:
 
@@ -324,8 +324,7 @@ const neoSchema = new Neo4jGraphQL({
 });
 ----
 
-Note that `OpenAI` is one of multiple GenAI providers for generating vector embeddings.
-See link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/#ai-providers[GenAI providers] for the full list of available providers and their respective identifiers.
+Again, `OpenAI` is one of the GenAI providers for generating vector embeddings.
 
 
 === Usage
