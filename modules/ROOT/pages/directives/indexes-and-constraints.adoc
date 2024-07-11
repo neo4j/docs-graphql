@@ -379,7 +379,7 @@ Requires credentials for the plugin.
 type Product @vector(indexes: [{
   indexName: "productDescriptionIndex",
   embeddingProperty: "descriptionVector",
-  provider: OpenAI,  # Assuming this is configured in the server
+  provider: OPEN_AI,  # Assuming this is configured in the server
   queryName: "searchByPhrase"
 }]) {
   id: ID!
