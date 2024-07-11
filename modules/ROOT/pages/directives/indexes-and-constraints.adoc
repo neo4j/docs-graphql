@@ -324,6 +324,9 @@ const neoSchema = new Neo4jGraphQL({
 });
 ----
 
+Note that `OpenAI` is one of multiple GenAI providers for generating vector embeddings.
+See link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/#ai-providers[GenAI providers] for the full list of available providers and their respective identifiers.
+
 
 === Usage
 
