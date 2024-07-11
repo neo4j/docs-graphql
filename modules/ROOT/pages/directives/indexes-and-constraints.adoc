@@ -306,26 +306,6 @@ input VectorIndexInput {
 If the optional field `provider` is set, the type is used for a query by phrase, otherwise for a query by vector.
 Allowed values for the `provider` field are defined by the available link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/#ai-providers[GenAI providers].
 
-Additionally, add the following feature configuration when you are using queries by phrase and the GenAI plugin:
-
-[source, graphql]
-----
-const neoSchema = new Neo4jGraphQL({
-    typeDefs,
-    driver,
-    features: {
-        vector: {
-            OpenAI: {
-                token: "my-open-ai-token",
-                model: "text-embedding-3-small",
-            },
-        },
-    },
-});
-----
-
-Again, `OpenAI` is one of the GenAI providers for generating vector embeddings.
-
 
 === Usage
 
@@ -393,6 +373,28 @@ Perform a query which utilizes the link:https://neo4j.com/docs/cypher-manual/cur
 ====
 Requires credentials for the plugin.
 ====
+
+Add the following feature configuration to your instance of Neo4j GraphQL:
+
+.Feature configuration
+[source, graphql]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    features: {
+        vector: {
+            OpenAI: {
+                token: "my-open-ai-token",
+                model: "text-embedding-3-small",
+            },
+        },
+    },
+});
+----
+
+`OpenAI` is one of the GenAI providers for generating vector embeddings.
+See link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/#ai-providers[GenAI providers] for the full list of providers and their respective identifiers.
 
 .Type definition
 [source, graphql]
