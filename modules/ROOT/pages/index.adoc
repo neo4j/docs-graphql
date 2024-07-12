@@ -69,7 +69,8 @@ Additionally, prerelease version numbers may have additional suffixes, for examp
 
 == Requirements
 
-. https://neo4j.com/[Neo4j Database] version 4.4 and newer with https://neo4j.com/docs/apoc/current/[APOC] plugin.
+. https://neo4j.com/[Neo4j Database] version 4.4 or newer with https://neo4j.com/docs/apoc/current/[APOC] plugin.
+. Neo4j version 5.15 or newer when you are using the xref:/directives/indexes-and-constraints.adoc#_vector_index_search[`@vector` directive].
 . https://nodejs.org/en/[Node.js] 16+.
 
 == Resources

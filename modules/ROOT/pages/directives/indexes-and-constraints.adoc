@@ -247,3 +247,191 @@ const schema = await neoSchema.getSchema();
 
 await neoSchema.assertIndexesAndConstraints({ options: { create: true }});
 ----
+
+
+:description: Directives related to generative AI in the Neo4j GraphQL Library.
+
+[role=label--beta]
+== Vector index search
+
+With the `@vector` GraphQL directive you can query your database to perform a vector index search.
+Queries are performed by passing in either a vector index or a query phrase.
+
+A query by vector index finds nodes with a vector embedding similar to that index.
+That is, the query performs a nearest neighbor search.
+
+In contrast, a query by phrase (a string of text) forwards the phrase to the link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/[Neo4j GenAI plugin] and the plugin generates a vector embedding for it.
+This embedding is then compared to the node vector embeddings in the database.
+
+[NOTE] 
+.Prerequisites
+==== 
+* The database must be Neo4j version 5.15 or higher.
+* The node vector embeddings already exist in the database. See link:https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/[Vector indexes] to learn more about vector indexes in Cypher and Neo4j.
+* The embeddings must have been created using the same method, that is, the same provider and model. See link:https://neo4j.com/docs/genai/tutorials/embeddings-vector-indexes/[Embeddings & Vector Indexes Tutorial] to learn about vector embeddings in Cypher and Neo4j.
+* Queries by vector index cannot be performed across multiple labels.
+* Queries by phrase require credentials for the Neo4j GenAI plugin.
+====
+
+[NOTE]
+====
+Vector index searches are _read-only_ in the sense that the data which the queries operate on are retrieved from the database but not altered or written back to the database.
+====
+
+
+=== Definition
+
+[source, graphql]
+----
+"""Informs @neo4j/graphql that there should be a vector index in the database, allows users to search by the index in the generated schema."""
+directive @vector(indexes: [VectorIndexInput]!) on OBJECT
+----
+
+`VectorIndexInput` is defined as follows:
+
+[source, graphql]
+----
+input VectorIndexInput {
+  """(Required) The name of the vector index."""
+  indexName: String!
+  """(Required) The name of the embedding property on the node."""
+  embeddingProperty: String!
+  """(Required) The name of the query."""
+  queryName: String
+  """(Optional) The name of the provider."""
+  provider: String
+}
+----
+
+If the optional field `provider` is set, the type is used for a query by phrase, otherwise for a query by vector.
+Allowed values for the `provider` field are defined by the available link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/#ai-providers[GenAI providers].
+
+
+=== Usage
+
+==== Query by vector index
+
+Perform a nearest neighbor search by passing a vector to find nodes with a vector embedding similar to that vector.
+
+.Type definition
+[source, graphql]
+----
+type Product @vector(indexes: [{
+  indexName: "productDescriptionIndex",
+  embeddingProperty: "descriptionVector",
+  queryName: "searchByDescription"
+}]) {
+  id: ID!
+  name: String!
+  description: String!
+}
+----
+
+This defines the query to be performed on all `Product` nodes which have a vector index named `productDescriptionIndex` for the property `descriptionVector`, implying that a vector embedding has been created for the `description` property of each node. 
+
+.Example query
+[source, graphql]
+----
+query FindSimilarProducts($vector: [Float]!) {
+  searchByDescription(vector: $vector) {
+    productsConnection {
+      edges {
+        cursor
+        score
+        node {
+            id
+            name
+            description
+        }
+      }
+    }
+  }
+}
+----
+
+The input `$vector` is a list of `FLOAT` values and should look similar to this:
+
+.An example vector
+[source, graphql]
+----
+{
+  "vector": [
+    0.123456,
+    ...,
+    0.654321,
+  ]
+}
+----
+
+The query returns all `Product` nodes with a vector embedding on their `descriptionVector` property which is similar to the query argument `$vector`.
+
+==== Query by phrase
+
+Perform a query which utilizes the link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/[Neo4j GenAI plugin] to create a vector embedding for a search phrase and then compare it to existing vector embeddings on nodes in the database.
+
+[NOTE]
+====
+Requires credentials for the plugin.
+====
+
+Ensure your provider credentials are set in the call to Neo4jGraphQL, for example:
+
+.Feature configuration
+[source, graphql]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    features: {
+        vector: {
+            OpenAI: {
+                token: "my-open-ai-token",
+                model: "text-embedding-3-small",
+            },
+        },
+    },
+});
+----
+
+`OpenAI` is one of the GenAI providers for generating vector embeddings.
+See link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/#ai-providers[GenAI providers] for the full list of providers and their respective identifiers.
+
+.Type definition
+[source, graphql]
+----
+type Product @vector(indexes: [{
+  indexName: "productDescriptionIndex",
+  embeddingProperty: "descriptionVector",
+  provider: OPEN_AI,  # Assuming this is configured in the server
+  queryName: "searchByPhrase"
+}]) {
+  id: ID!
+  name: String!
+  description: String!
+}
+----
+
+This defines the query to be performed on all `Product` nodes which have a vector index named `productDescriptionIndex` for the property `descriptionVector`, implying that a vector embedding has been created for the `description` property of each node. 
+
+.Example query
+[source, graphql]
+----
+query SearchProductsByPhrase($phrase: String!) {
+  searchByPhrase(phrase: $phrase) {
+    productsConnection {
+      edges {
+        cursor
+        score
+        node {
+            id
+            name
+            description
+        }
+      }
+    }
+  }
+}
+----
+
+First, the query passes the query phrase argument `$phrase` to the GenAI plugin and lets it generate a vector embedding for the phrase.
+Then it returns all `Product` nodes with a vector embedding on their `descriptionVector` property which are similar to the vector embedding generated by the plugin.
