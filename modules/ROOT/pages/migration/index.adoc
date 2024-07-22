@@ -1,11 +1,11 @@
-[[v5-migration]]
-:description: This page lists the breaking changes from version 4.0.0 to 5.0.0 and describes how to update.
+[[v6-migration]]
+:description: This page lists the breaking changes from version 5.0.0 to 6.0.0 and describes how to update.
 :page-aliases: guides/index.adoc, guides/migration-guide/index.adoc, guides/migration-guide/server.adoc, \
 guides/migration-guide/queries.adoc, guides/migration-guide/type-definitions.adoc, guides/migration-guide/mutations.adoc
 
-= Migration to 5.0.0
+= Migration to 6.0.0
 
-This page lists all breaking changes from the Neo4j GraphQL Library version 4.x to 5.x and how to update it.
+This page lists all breaking changes from the Neo4j GraphQL Library version 5.x to 6.x and how to update it.
 
 == How to update
 
@@ -16,137 +16,408 @@ To update your Neo4j GraphQL Library, use npm or the package manager of choice:
 npm update @neo4j/graphql
 ----
 
+== What's new
+
+Until version 5 of the Library, we tried to limit, as much as possible, the number of breaking changes and related migration pain. In the meantime, we introduced new features such as Aggregation, Fulltext search, Vector search, Connection API, and Interfaces&Union support, to name a few! This approach led to an inconsistent user-facing API with room for ambiguous behaviors.
+
+Several moons ago, we introduced support for the GraphQL Cursor Connections Specification https://relay.dev/graphql/connections.htm / https://relay.dev/docs/tutorial/connections-pagination/.
+This was a great addition, not only added the Cursor-based pagination in the Library but also gave us the space to support relationship properties.
+
+However, it created a diverse experience between the Connection API and the normal one, in some cases, even within the same query.
+
+=== New Connection API 
+
+To support relationship properties and Relay compatibility the new API is built on top of the Relay "GraphQL Cursor Connections Specification".
+
+In version 5, you can get all the movies with all the related actors by executing one of the below queries:
+
+```graphql
+query {
+  movies {
+    title
+    actors {
+      name
+    }
+  }
+}
+```
+
+Or with the previous Connection API:
+
+```graphql
+query {
+  moviesConnection {
+    edges {
+      node {
+        actorsConnection {
+          edges {
+            node {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+To achieve the above in version 6:
+
+```graphql
+query {
+    movies {
+        connection {
+            edges {
+                node {
+                    title
+                    actors {
+                        connection {
+                            edges {
+                                node {
+                                    name
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+Note how the `connection` field is now a nested field in the `movies` field.
+
+=== Pagination and Sorting
+
+Pagination and sorting also changed in version 6.
+
+*Top-level field pagination and sorting*
+
+Version 5:
+```graphql
+query {
+  moviesConnection(first: 10, after: "opaqueCursor", sort: [{ title: ASC }]) {
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+    edges {
+      cursor
+      node {
+        title
+      }
+    }
+  }
+}
+```
+Version 6:
+```graphql
+query {
+  movies {
+    connection(
+      first: 10
+      after: "opaqueCursor"
+      sort: [{ node: { title: ASC } }]
+    ) {
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      edges {
+        cursor
+        node {
+          title
+        }
+      }
+    }
+  }
+}
+```
+
+Note how in version 6, the sort field `title` is now nested in the `node` field.
+
+*Nested field pagination and sorting*
+
+Version 5:
+```graphql
+query {
+  moviesConnection {
+    edges {
+      node {
+        title
+        actorsConnection(
+          first: 10
+          after: "opaqueCursor"
+          sort: [{ edge: { year: ASC } }, { node: { name: ASC } }]
+        ) {
+          edges {
+            cursor
+            node {
+              name
+            }
+            properties {
+              year
+            }
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
+            hasPreviousPage
+            startCursor
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Version 6:
+
+```graphql
+query {
+  movies {
+    connection {
+      edges {
+        node {
+          title
+          actors {
+            connection(
+              sort: [
+                { edges: { properties: { year: ASC } } }
+                { edges: { node: { name: ASC } } }
+              ]
+            ) {
+              pageInfo {
+                endCursor
+                hasNextPage
+                hasPreviousPage
+                startCursor
+              }
+              edges {
+                cursor
+                node {
+                  name
+                }
+                properties {
+                  year
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Note how in version 6, the sort field `year` is now nested in the `properties` field while the field `name` is nested in the `node` field, and they are both part of the `edges` field.
+
+=== Filtering 
+
+Filtering came with a lot of changes. 
+In version 5, we used to define new filters by appending the name of the filter to the name of the field, like: `title_CONTAINS` or `title_STARTS_WITH`. 
+In the past, that has meant that every new field added in a GraphQL type by the user is reflected in the creation of several input fields by the Library.  In version 6 property filters are generated to be shared across different fields of the same type.
+Here an examples of some of the new filters available:
+
+```graphql
+input StringWhere {
+  AND: [StringWhere!]
+  NOT: StringWhere
+  OR: [StringWhere!]
+  contains: String
+  endsWith: String
+  equals: String
+  in: [String!]
+  startsWith: String
+}
+
+input BooleanWhere {
+  AND: [BooleanWhere!]
+  NOT: BooleanWhere
+  OR: [BooleanWhere!]
+  equals: Boolean
+}
+
+input FloatWhere {
+  AND: [FloatWhere!]
+  NOT: FloatWhere
+  OR: [FloatWhere!]
+  equals: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+}
+```
+
+*Property filters*
+
+In version 5, you could filter by a field like this:
+
+```graphql
+query {
+  moviesConnection(where: { title_CONTAINS: "The Matrix" }) {
+    edges {
+      node {
+        title
+      }
+    }
+  }
+}
+```
+
+With the new filters in version 6, you can filter like this:
+
+```graphql
+query {
+  movies(
+    where: {
+      node: {
+        title: { contains: "The Matrix" }
+      }
+    }
+  ) {
+    connection {
+      edges {
+        node {
+          title
+        }
+      }
+    }
+  }
+}
+```
+
+Note that in version 5, the equality operator came without any suffixes, and to filter `title` you would have done by the filter `{ title: "The Matrix" }` while in version 6 the filter is moved in the nested input under the operator `equals` as: `{ title: { equals: "The Matrix" } }`.
+
+*Relationship filters*
+
+The same approach is also embraced by relationship filters.
+
+Filter all the movies that have at least one actor with the name "Keanu Reeves":
+
+Version 5:
+
+```graphql
+{
+  moviesConnection(
+    where: { actorsConnection_SOME: { node: { name: "Keanu Reeves" } } }
+  ) {
+    edges {
+      node {
+        title
+      }
+    }
+  }
+}
+```
+
+Version 6: 
+
+```graphql
+query {
+  movies(
+    where: {
+      node: {
+        actors: { edges: { some: { node: { name: { equals: "Keanu Reeves" } } } } }
+      }
+    }
+  ) {
+    connection {
+      edges {
+        node {
+          title
+        }
+      }
+    }
+  }
+}
+```
+
+Note how in version 6, the filter `some` is not a suffix anymore but a nested field under the `edges` field.
+
+*Relationship properties filters*
+
+Filter all the movies where some actors have a screen time greater than 100 minutes:
+
+Version 5:
+
+```graphql
+{
+  moviesConnection(
+    where: { actorsConnection_SOME: { edge: { screenTime_GT: 10 } } }
+  ) {
+    edges {
+      node {
+        title
+      }
+    }
+  }
+}
+```
+Version 6:
+
+```graphql
+query {
+  movies(
+    where: {
+      node: {
+        actors: {
+          edges: { some: { properties: { screenTime: { gt: 1999 } } } }
+        }
+      }
+    }
+  ) {
+    connection {
+      edges {
+        node {
+          title
+        }
+      }
+    }
+  }
+}
+```
+
+Note that in version 5, you had available two ways to filter relationships, one input that mimics the Connection API and the other that mimics the normal API without having access to the properties of the relationship. 
+In version 6, the filters are unified, and the relationship properties are nested under the `properties` field. If before you had `actors_SOME` and `actorsConnection_SOME`, now you have only `actors` with the nested field `edges`.
+
+
 == Breaking changes
 
-Here is a list of all the breaking changes from version 4.0.0 to 5.0.0.
+Here is a list of all the breaking changes from version 5.0.0 to 6.0.0.
 
-=== `@relationshipProperties`
+=== Connection fields are now a nested field
 
-The directive `@relationshipProperties` should now be used on types rather than interfaces.
-For example:
-
-[cols="1,1"]
-|===
-|Before | Now
-
-a|
-[source, graphql, indent=0]
-----
-interface ActedIn @relationshipProperties {
-    screenTime: Int
-}
-
-type Movie {
-    title: String
-    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
-}
-
-type Person {
-    name: String
-}
-----
-a|
-[source, graphql, indent=0]
-----
-type ActedIn @relationshipProperties {
-    screenTime: Int
-}
-
-type Movie {
-    title: String
-    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
-}
-
-type Person {
-    name: String
-}
-----
-|===
-
-=== Interface directives
-
-To better match the default behavior of GraphQL, library directives used in interfaces will not cascade to the implementing types anymore. 
-This means that most directives are no longer valid in interfaces and have to be defined in the implementing types. 
-This also applies to custom directives.
-
-
-
-=== `@declareRelationship`
-
-The `@relationship` directive is no longer available in interfaces. 
-If you need a relationship to be available on interfaces, you need to use the new `@declareRelationship` directive instead, as well as define the relationships in the concrete type.
-
-This change is due to directives no longer cascading from interfaces to types.
-However, now it is possible for a relationship to have different properties and labels in each type.
-For example:
+In version 6 the connection fields as `movieConnection` are moved to a nested field.
 
 [cols="1,1"]
 |===
 |Before | Now
+
 a|
 [source, graphql, indent=0]
 ----
-interface Production {
-    title: String!
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-}
-
-type Movie implements Production {
-    title: String!
-    actors: [Actor!]!
-}
-
-type Series implements Production {
-    title: String!
-    episodes: Int!
-    actors: [Actor!]! 
-}
-
-type Actor {
-    name: String!
-}
-----
-a|
-[source, graphql, indent=0]
-----
-interface Production {
-    title: String!
-    actors: [Actor!]! @declareRelationship
-}
-
-type Movie implements Production {
-    title: String!
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-}
-
-type Series implements Production {
-    title: String!
-    episodes: Int!
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-}
-
-type Actor {
-    name: String!
-}
-----
-|===
-
-
-=== Edge properties
-
-Edge properties in connections now exist within the field `properties` in `edges`:
-
-[cols="1,1"]
-|===
-|Before | Now
-a|
-[source, graphql, indent=0]
-----
-query ActedInConnection {
-  actors {
-    actedInConnection {
-      edges {
-          screenTime
+query {
+  moviesConnection {
+    edges {
+      node {
+        actorsConnection {
+          edges {
+            node {
+              name
+            }
+          }
+        }
       }
     }
   }
@@ -155,12 +426,111 @@ query ActedInConnection {
 a|
 [source, graphql, indent=0]
 ----
-query ActedInConnection {
-  actors {
-    actedInConnection {
+query {
+    movies {
+        connection {
+            edges {
+                node {
+                    title
+                    actors {
+                        connection {
+                            edges {
+                                node {
+                                    name
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+----
+|===
+
+=== Top-level Query fields have changed
+
+In version 5, it was supported two ways to return `movies`, one with the Connection API with the operation field `moviesConnection` and the other with the normal API with the operation field `movies`.
+In version 6, the operation field `movies`  is used to wrap the new Connection API.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies {
+    title
+    actors {
+      name
+    }
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+    movies {
+        connection {
+            edges {
+                node {
+                    title
+                    actors {
+                        connection {
+                            edges {
+                                node {
+                                    name
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+----
+|===
+
+=== Shareable property filters
+
+In version 6, property filters are moved to a shared input type.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { title_CONTAINS: "The Matrix" }) {
+    title
+    actors {
+      name
+    }
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies(
+    where: {
+      node: {
+        title: { contains: "The Matrix" }
+      }
+    }
+  ) {
+    connection {
       edges {
-        properties {
-          screenTime
+        node {
+          title
         }
       }
     }
@@ -170,52 +540,490 @@ query ActedInConnection {
 |===
 
 
-=== `_on` filters deprecated
+=== Top-level node filters are moved to the `node` field
 
-`_on` filters for interfaces are no longer available in `where` and mutations. To filter by an implementing type, you need to use the new filter `typename_IN`: 
-
+In version 6, Top-level node filters are moved inside the input named `node`.
 
 [cols="1,1"]
 |===
 |Before | Now
+
 a|
 [source, graphql, indent=0]
 ----
-query MyQuery {
-  actors(
-    where: {
-      actedInConnection_SINGLE: { node: { _on: { Movie: { } } } }
+query {
+  movies(where: { title: "The Matrix" }) {
+    title
+    actors {
+      name
     }
-  ) {
-    name
   }
 }
 ----
 a|
 [source, graphql, indent=0]
 ----
-query MyQuery {
- actors(
+query {
+  movies(
     where: {
-      actedInConnection_SINGLE: { node: { typename_IN: [Movie] } }
+      node: {
+        title: { equals: "The Matrix" }
+      }
     }
   ) {
-    name
+    connection {
+      edges {
+        node {
+          title
+        }
+      }
+    }
+  }
+}
+----
+|===
+
+=== Nested filters are moved to the `edges` field
+
+In version 6, nested filters are moved inside the input named `edges`.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  moviesConnection {
+    edges {
+      node {
+        title
+        actorsConnection(where: { node: { name: "Keanu" } }) {
+          edges {
+            node {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+
+query {
+  movies {
+    connection {
+      edges {
+        node {
+          title
+          actors(where: { edges: { node: { name: { equals: "Keanu" } } } }) {
+            connection {
+              edges {
+                node {
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+----
+|===
+
+=== Relationship properties filters are moved to the `properties` input part of the `edges` field
+
+In version 6, relationship properties filters are moved inside the input named `properties`.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  moviesConnection {
+    edges {
+      node {
+        title
+        actorsConnection(where: { edge: { screenTime: 130 } }) {
+          edges {
+            node {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies {
+    connection {
+      edges {
+        node {
+          title
+          actors(where: { edges: { properties: { screenTime: { equals: 130 } } } }) {
+            connection {
+              edges {
+                node {
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+----
+|===
+
+=== Filter by relationship is changed
+
+In version 6, the syntax to filter by relationship has changed.
+from `actors_SOME` and `actorsConnection_SOME`, where `_SOME` could be any of the following operators `_SOME` / `_NONE` / `_ALL` / `_SINGLE`,
+to `actors` followed by the operator `some` / `none` / `all` / `single` nested under the `edges` field.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  moviesConnection(
+    where: { actorsConnection_SOME: { node: { name: "Keanu Reeves" } } }
+  ) {
+    edges {
+      node {
+        title
+      }
+    }
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies(
+    where: {
+      node: {
+        actors: { edges: { some: { node: { name: { equals: "Keanu Reeves" } } } } }
+      }
+    }
+  ) {
+    connection {
+      edges {
+        node {
+          title
+        }
+      }
+    }
+  }
+}
+----
+|===
+
+=== `_NOT` operator is no longer supported
+
+In version 5, you can use a deprecated syntax sugar to negate the filter by adding the suffix `_NOT`.
+In version 6 this syntax is no longer supported, and instead, it has moved completely to the logical operator `NOT`.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  moviesConnection(
+    where: { actorsConnection_SOME: { node: { name_NOT_CONTAINS: "Keanu Reeves" } } }
+  ) {
+    edges {
+      node {
+        title
+      }
+    }
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies(
+    where: {
+      node: {
+        actors: { edges: { some: { node: { name: { NOT: { contains: "Keanu Reeves" } } } } } }
+      }
+    }
+  ) {
+    connection {
+      edges {
+        node {
+          title
+        }
+      }
+    }
+  }
+}
+----
+|===
+
+=== Top-Level sort fields are now nested under the `node` field
+
+In version 6, the sort fields are now nested under the `node` field.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+query {
+  moviesConnection(first: 10, after: "opaqueCursor", sort: [{ title: ASC }]) {
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+    edges {
+      cursor
+      node {
+        title
+      }
+    }
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies {
+    connection(
+      first: 10
+      after: "opaqueCursor"
+      sort: [{ node: { title: ASC } }]
+    ) {
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      edges {
+        cursor
+        node {
+          title
+        }
+      }
+    }
   }
 }
 ----
 |===
 
 
-[NOTE]
-====
-Using fields of a type in an interface operation is no longer supported.
-====
 
-==== Minimum NodeJS version
+=== Nested field sort fields are now nested under the `edges` field
 
-With the deprecation of Node 16, the minimum supported NodeJS version is `18.0.0`.
+In version 6, the sort fields are now nested under the `edges` field.
+Relationship properties are moved then inside `properties`.
 
-==== `experimental` flag
+[cols="1,1"]
+|===
+|Before | Now
 
-The `experimental` flag is no longer available in the options of the `Neo4jGraphQL` class.
+a|
+[source, graphql, indent=0]
+----
+query {
+  moviesConnection {
+    edges {
+      node {
+        title
+        actorsConnection(
+          first: 10
+          after: "opaqueCursor"
+          sort: [{ edge: { year: ASC } }, { node: { name: ASC } }]
+        ) {
+          edges {
+            cursor
+            node {
+              name
+            }
+            properties {
+              year
+            }
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
+            hasPreviousPage
+            startCursor
+          }
+        }
+      }
+    }
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies {
+    connection {
+      edges {
+        node {
+          title
+          actors {
+            connection(
+              sort: [
+                { edges: { properties: { year: ASC } } }
+                { edges: { node: { name: ASC } } }
+              ]
+            ) {
+              pageInfo {
+                endCursor
+                hasNextPage
+                hasPreviousPage
+                startCursor
+              }
+              edges {
+                cursor
+                node {
+                  name
+                }
+                properties {
+                  year
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+----
+|===
+
+=== `@node`
+
+The directive `@node` is now required to define a Neo4j node, all the types that are not annotated with the `@node` directive will not be considered to be a Neo4j node.
+For example:
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String
+    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+}
+
+type Person {
+    name: String
+}
+----
+a|
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String
+    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+}
+
+type Person @node {
+    name: String
+}
+----
+|===
+
+=== `@relationship` can only describe n to n relationships
+
+The directive `@relationship` cannot anymore describe a 1 to 1 relationship as it was in version 5.0.0. 
+This is due to a Neo4j limitation that does not support cardinality enforcement.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+type Movie {
+    title: String
+    director: Person! @relationship(type: "DIRECTED", direction: IN)
+}
+
+type Person {
+    name: String
+}
+----
+a|
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String
+    director: [Person!]! @relationship(type: "DIRECTED", direction: IN)
+}
+
+type Person @node {
+    name: String
+}
+----
+|===
+
+=== The `@unique` argument `constraintName` is now required
+
+In version 5, the library inferred the constraint name by the type of type and field where the `@unique` directive was applied.
+In version 6, the constraint name has to be specified.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+type Movie {
+   id: ID @unique
+   title: String
+}
+----
+a|
+[source, graphql, indent=0]
+----
+type Movie @node {
+   id: ID @unique(constraintName: "MOVIE_ID_UNIQUE")
+   title: String
+}
+----
+|===
+
+
