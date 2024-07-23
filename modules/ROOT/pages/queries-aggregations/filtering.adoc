@@ -104,7 +104,7 @@ As an example, take these type definitions:
 type User @node {
     id: ID!
     name: String
-    posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)
+    posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT, properties: "Posted")
 }
 
 type Post @node {
@@ -112,6 +112,10 @@ type Post @node {
     content: String
     likes: [User!]! @relationship(type: "LIKES", direction: IN)
     authors: [User!]! @relationship(type: "AUTHORED", direction: IN)
+}
+
+type Posted @relationshipProperties {
+    createdAt: DateTime
 }
 ----
 
@@ -183,7 +187,22 @@ query {
 }
 ----
 
-
+.Find all users where only one of their posts contain search term: `"graph"` and the post was created after a specific date
+[source, graphql, indent=0]
+----
+query {
+  users(where: { node: { posts: { edges: { single: { AND: [ { node: { content: { contains: "graph" } }  }, { properties: { createdAt: { gt: "2015-06-24T12:50:35" } }  } ]} } } } }) {
+    connection {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+----
 
 == Logical operators
 
@@ -204,7 +223,7 @@ query {
           {
             OR: [
               { name: { contains: "Keanu" } }
-              { NOT: { name: { endsWith: "Pantoliano" } } }
+              { name: { NOT: { endsWith: "Pantoliano" } } }
             ]
           }
           {
