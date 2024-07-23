@@ -20,9 +20,12 @@ npm update @neo4j/graphql
 
 To support relationship properties and Relay compatibility the API is built on top of the Relay link:https://relay.dev/graphql/connections.htm[GraphQL Cursor Connections Specification] .
 
+=== Queries
+
 In version 5, you can get all the movies with all the related actors by executing one of the below queries:
 
-```graphql
+[source, graphql, indent=0]
+----
 query {
   movies {
     title
@@ -31,11 +34,12 @@ query {
     }
   }
 }
-```
+----
 
 Or with the connection fields:
 
-```graphql
+[source, graphql, indent=0]
+----
 query {
   moviesConnection {
     edges {
@@ -51,32 +55,33 @@ query {
     }
   }
 }
-```
+----
 
-To achieve the above in version 6:
+In version 6, there is only one way to get all the movies with all the related actors:
 
-```graphql
+[source, graphql, indent=0]
+----
 query {
-    movies {
-        connection {
-            edges {
+  movies {
+    connection {
+      edges {
+        node {
+          title
+          actors {
+            connection {
+              edges {
                 node {
-                    title
-                    actors {
-                        connection {
-                            edges {
-                                node {
-                                    name
-                                }
-                            }
-                        }
-                    }
+                  name
                 }
+              }
             }
+          }
         }
+      }
     }
+  }
 }
-```
+----
 
 Note how the `connection` field is now a nested field in the `movies` field.
 
@@ -87,7 +92,8 @@ Pagination and sorting also changed in version 6.
 *Top-level field pagination and sorting*
 
 Version 5:
-```graphql
+[source, graphql, indent=0]
+----
 query {
   moviesConnection(first: 10, after: "opaqueCursor", sort: [{ title: ASC }]) {
     pageInfo {
@@ -104,9 +110,11 @@ query {
     }
   }
 }
-```
+----
+
 Version 6:
-```graphql
+[source, graphql, indent=0]
+----
 query {
   movies {
     connection(
@@ -129,14 +137,15 @@ query {
     }
   }
 }
-```
+----
 
 Note how in version 6, the sort field `title` is now nested in the `node` field.
 
 *Nested field pagination and sorting*
 
 Version 5:
-```graphql
+[source, graphql, indent=0]
+----
 query {
   moviesConnection {
     edges {
@@ -167,11 +176,12 @@ query {
     }
   }
 }
-```
+----
 
 Version 6:
 
-```graphql
+[source, graphql, indent=0]
+----
 query {
   movies {
     connection {
@@ -207,18 +217,18 @@ query {
     }
   }
 }
-```
+----
 
 Note how in version 6, the sort field `year` is now nested in the `properties` field while the field `name` is nested in the `node` field, and they are both part of the `edges` field.
 
 === Filtering 
 
-Filtering comes with a lot of changes. 
-In version 5, we used to define new filters by appending the name of the filter to the name of the field, like: `title_CONTAINS` or `title_STARTS_WITH`. 
-In the past, that has meant that every new field added in a GraphQL type by the user is reflected in the creation of several input fields by the Library.  In version 6 property filters are generated to be shared across different fields of the same type.
+In version 5, we used to define new filters by appending the name of the filter to the name of the field, like: `title_CONTAINS` or `title_STARTS_WITH`. +
+In version 6 property filters are generated to be shared across different fields of the same type. +
 Here an examples of some of the new filters available:
 
-```graphql
+[source, graphql, indent=0]
+----
 input StringWhere {
   AND: [StringWhere!]
   NOT: StringWhere
@@ -248,13 +258,14 @@ input FloatWhere {
   lt: Float
   lte: Float
 }
-```
+----
 
 *Property filters*
 
 In version 5, you could filter by a field like this:
 
-```graphql
+[source, graphql, indent=0]
+----
 query {
   moviesConnection(where: { title_CONTAINS: "The Matrix" }) {
     edges {
@@ -264,11 +275,12 @@ query {
     }
   }
 }
-```
+----
 
 With the new filters in version 6, you can filter like this:
 
-```graphql
+[source, graphql, indent=0]
+----
 query {
   movies(
     where: {
@@ -286,7 +298,7 @@ query {
     }
   }
 }
-```
+----
 
 Note that in version 5, the equality operator came without any suffixes, and to filter `title` you would have done by the filter `{ title: "The Matrix" }` while in version 6 the filter is moved in the nested input under the operator `equals` as: `{ title: { equals: "The Matrix" } }`.
 
@@ -298,7 +310,8 @@ Filter all the movies that have at least one actor with the name "Keanu Reeves":
 
 Version 5:
 
-```graphql
+[source, graphql, indent=0]
+----
 {
   moviesConnection(
     where: { actorsConnection_SOME: { node: { name: "Keanu Reeves" } } }
@@ -310,11 +323,13 @@ Version 5:
     }
   }
 }
-```
+----
+
 
 Version 6: 
 
-```graphql
+[source, graphql, indent=0]
+----
 query {
   movies(
     where: {
@@ -332,7 +347,8 @@ query {
     }
   }
 }
-```
+----
+
 
 Note how in version 6, the filter `some` is not a suffix anymore but a nested field under the `edges` field.
 
@@ -342,7 +358,8 @@ Filter all the movies where some actors have a screen time greater than 100 minu
 
 Version 5:
 
-```graphql
+[source, graphql, indent=0]
+----
 {
   moviesConnection(
     where: { actorsConnection_SOME: { edge: { screenTime_GT: 10 } } }
@@ -354,10 +371,12 @@ Version 5:
     }
   }
 }
-```
+----
+
 Version 6:
 
-```graphql
+[source, graphql, indent=0]
+----
 query {
   movies(
     where: {
@@ -377,7 +396,7 @@ query {
     }
   }
 }
-```
+----
 
 Note that in version 5, you had available two ways to filter relationships, one input that mimics the Connection API and the other that mimics the normal API without having access to the properties of the relationship. 
 In version 6, the filters are unified, and the relationship properties are nested under the `properties` field. If before you had `actors_SOME` and `actorsConnection_SOME`, now you have only `actors` with the nested field `edges`.
@@ -418,24 +437,24 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-    movies {
-        connection {
-            edges {
+  movies {
+    connection {
+      edges {
+        node {
+          title
+          actors {
+            connection {
+              edges {
                 node {
-                    title
-                    actors {
-                        connection {
-                            edges {
-                                node {
-                                    name
-                                }
-                            }
-                        }
-                    }
+                  name
                 }
+              }
             }
+          }
         }
+      }
     }
+  }
 }
 ----
 |===
@@ -465,24 +484,24 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-    movies {
-        connection {
-            edges {
+  movies {
+    connection {
+      edges {
+        node {
+          title
+          actors {
+            connection {
+              edges {
                 node {
-                    title
-                    actors {
-                        connection {
-                            edges {
-                                node {
-                                    name
-                                }
-                            }
-                        }
-                    }
+                  name
                 }
+              }
             }
+          }
         }
+      }
     }
+  }
 }
 ----
 |===
@@ -834,8 +853,6 @@ query {
 ----
 |===
 
-
-
 === Nested field sort fields are now nested under the `edges` field
 
 In version 6, the sort fields are now nested under the `edges` field.
@@ -933,25 +950,26 @@ a|
 [source, graphql, indent=0]
 ----
 type Movie {
-    title: String
-    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+  title: String
+  actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
 type Person {
-    name: String
+  name: String
 }
 ----
 a|
 [source, graphql, indent=0]
 ----
 type Movie @node {
-    title: String
-    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+  title: String
+  actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
 type Person @node {
-    name: String
+  name: String
 }
+
 ----
 |===
 
@@ -968,25 +986,26 @@ a|
 [source, graphql, indent=0]
 ----
 type Movie {
-    title: String
-    director: Person! @relationship(type: "DIRECTED", direction: IN)
+  title: String
+  director: Person! @relationship(type: "DIRECTED", direction: IN)
 }
 
 type Person {
-    name: String
+  name: String
 }
 ----
 a|
 [source, graphql, indent=0]
 ----
 type Movie @node {
-    title: String
-    director: [Person!]! @relationship(type: "DIRECTED", direction: IN)
+  title: String
+  director: [Person!]! @relationship(type: "DIRECTED", direction: IN)
 }
 
 type Person @node {
-    name: String
+  name: String
 }
+
 ----
 |===
 
@@ -1003,16 +1022,16 @@ a|
 [source, graphql, indent=0]
 ----
 type Movie {
-   id: ID @unique
-   title: String
+  id: ID @unique
+  title: String
 }
 ----
 a|
 [source, graphql, indent=0]
 ----
 type Movie @node {
-   id: ID @unique(constraintName: "MOVIE_ID_UNIQUE")
-   title: String
+  id: ID @unique(constraintName: "MOVIE_ID_UNIQUE")
+  title: String
 }
 ----
 |===
