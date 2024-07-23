@@ -16,18 +16,9 @@ To update your Neo4j GraphQL Library, use npm or the package manager of choice:
 npm update @neo4j/graphql
 ----
 
-== What's new
+== API changes
 
-Until version 5 of the Library, we tried to limit, as much as possible, the number of breaking changes and related migration pain. In the meantime, we introduced new features such as Aggregation, Fulltext search, Vector search, Connection API, and Interfaces&Union support, to name a few! This approach led to an inconsistent user-facing API with room for ambiguous behaviors.
-
-Several moons ago, we introduced support for the GraphQL Cursor Connections Specification https://relay.dev/graphql/connections.htm / https://relay.dev/docs/tutorial/connections-pagination/.
-This was a great addition, not only added the Cursor-based pagination in the Library but also gave us the space to support relationship properties.
-
-However, it created a diverse experience between the Connection API and the normal one, in some cases, even within the same query.
-
-=== New Connection API 
-
-To support relationship properties and Relay compatibility the new API is built on top of the Relay "GraphQL Cursor Connections Specification".
+To support relationship properties and Relay compatibility the API is built on top of the Relay link:https://relay.dev/graphql/connections.htm[GraphQL Cursor Connections Specification] .
 
 In version 5, you can get all the movies with all the related actors by executing one of the below queries:
 
@@ -42,7 +33,7 @@ query {
 }
 ```
 
-Or with the previous Connection API:
+Or with the connection fields:
 
 ```graphql
 query {
@@ -222,7 +213,7 @@ Note how in version 6, the sort field `year` is now nested in the `properties` f
 
 === Filtering 
 
-Filtering came with a lot of changes. 
+Filtering comes with a lot of changes. 
 In version 5, we used to define new filters by appending the name of the filter to the name of the field, like: `title_CONTAINS` or `title_STARTS_WITH`. 
 In the past, that has meant that every new field added in a GraphQL type by the user is reflected in the creation of several input fields by the Library.  In version 6 property filters are generated to be shared across different fields of the same type.
 Here an examples of some of the new filters available:
