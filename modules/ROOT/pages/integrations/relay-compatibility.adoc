@@ -26,7 +26,7 @@ So for example, a type `Book` might have the definition:
 
 [source, graphql]
 ----
-type Book implements Node {
+type Book implements Node @node {
   id: ID!
   isbn: String!
 }
@@ -51,7 +51,7 @@ You can configure this like so:
 
 [source, graphql]
 ----
-type Book {
+type Book @node {
   isbn: String! @relayId
 }
 ----

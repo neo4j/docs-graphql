@@ -15,10 +15,17 @@ For example:
 [source, graphql, indent=0]
 ----
 query {
-  users(where: {name: "John" })
-    id
-    name
+  users(where: { node: { name: { equals: "John" } } }) {
+    connection {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
+}
 ----
 
 [NOTE]
@@ -30,10 +37,10 @@ For the `Boolean` type, equality operators are the only ones available.
 
 These are the operators available for numeric (`Int`, `Float`, xref::/types/scalar.adoc[`BigInt`]), xref::/types/temporal.adoc[temporal] and xref::/types/spatial.adoc[spatial] types:
 
-* `_LT`
-* `_LTE`
-* `_GT`
-* `_GTE`
+* `lt`
+* `lte`
+* `gt`
+* `gte`
 
 Here is an example of how to use them:
 
@@ -41,58 +48,27 @@ Here is an example of how to use them:
 [source, graphql, indent=0]
 ----
 query {
-  users(where: {age_LT: 50 }) {
-    id
-    name
-    age
+  users(where: { node: { age: { lt: 50 } } }) {
+    connection {
+      edges {
+        node {
+          id
+          name
+          age
+        }
+      }
+    }
   }
 }
 ----
-
-Spatial types use numerical filtering differently and they also have additional options. 
-See xref::/types/spatial.adoc#_filtering[Spatial types filtering] for more information.
-
-These same operators are disabled by default in the case of String comparisons.
-To enable, explicitly add them in the features options:
-
-[source, javascript, indent=0]
-----
-const { Neo4jGraphQL } = require("@neo4j/graphql");
-const neo4j = require("neo4j-driver");
-
-const typeDefs = `
-    type User {
-        name: String
-    }
-`;
-
-const driver = neo4j.driver(
-    "bolt://localhost:7687",
-    neo4j.auth.basic("username", "password")
-);
-
-const features = {
-    filters: {
-        String: {
-            LT: true,
-            GT: true,
-            LTE: true,
-            GTE: true
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
 
 == String comparison
 
 The following case-sensitive comparison operators are only available for use on `String` and `ID` types:
 
-* `_STARTS_WITH`
-* `_ENDS_WITH`
-* `_CONTAINS`
+* `startsWith`
+* `endsWith`
+* `contains`
 
 Here is an example of how to use them:
 
@@ -100,188 +76,58 @@ Here is an example of how to use them:
 [source, graphql, indent=0]
 ----
 query {
-  users(where: { name_STARTS_WITH: "J" }) {
-    id
-    name
+  users(where: { node: { name: { startsWith: "J" } } }) {
+    connection {
+      edges {
+        node {
+         id
+         name
+        }
+      }
+    }
   }
 }
 ----
-
-== RegEx matching
-
-The filter `_MATCHES` is also available for comparison of `String` and `ID` types.
-It accepts RegEx strings as an argument and returns any matches.
-
-
-Note that RegEx matching filters are **disabled by default**.
-This is because, on an unprotected API, they could potentially be used to execute a https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS[ReDoS attack^] against the backing Neo4j database.
-
-If you want to enable them, set the features configuration object for each:
-
-[source, javascript, indent=0]
-----
-const features = {
-    filters: {
-        String: {
-            MATCHES: true,
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-For `ID`:
-
-
-[source, javascript, indent=0]
-----
-const features = {
-    filters: {
-        String: {
-            ID: true,
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-For both `String` and `ID`:
-
-
-[source, javascript, indent=0]
-----
-const features = {
-    filters: {
-        String: {
-            MATCHES: true,
-        },
-        ID: {
-            MATCHES: true,
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-== Array comparison
-
-The following operator is available on non-array fields, and accepts an array argument:
-
-* `_IN`
-
-Conversely, the following operator is available on array fields, and accepts a single argument:
-
-* `_INCLUDES`
-
-These operators are available for all types apart from `Boolean`.
-
-== Logical operators
-
-All operators can be combined using the logical operators `AND`, `OR`, and `NOT`.
-They can also be standalone operators, which means that they can be used as such and not be appended to field names.
-
-These operators accept an array argument with items of the same format as the `where` argument, which means they can also be nested to form complex combinations.
-
-For example, if you want to match all actors by the name of either "Keanu" or not belonging to the "Pantoliano" family, that played in "The Matrix" movie, here is how you can query that:
-
-[source, graphql, indent=0]
-----
-query {
-    actors(where: { 
-        AND: [
-            { 
-                OR: [
-                    { name_CONTAINS: "Keanu" },
-                    { NOT: { name_ENDS_WITH: "Pantoliano" } }
-                ]
-            },
-            {
-                movies_SOME: { title: "The Matrix" }
-            }
-        ]}
-    ) {
-        name
-        movies {
-            title
-        }
-    }
-}
-----
-
-== Querying an interface
-
-You can use the `typename_IN` filter to filter interfaces.
-Refer to xref:types/interfaces.adoc#type-definitions-interfaced-types-querying[Type definitions -> Type -> Interface] for more details and an example.
-
 == Relationship filtering
 
-Relationship filtering depends on the type of relationship that you have:
-
-* `n..1`: filtering done on equality or inequality of the related nodes by specifying a filter on `field`.
-* `n..m`: filtering is done on the list of related nodes and is based on the https://neo4j.com/docs/cypher-manual/current/functions/predicate/[list predicates] available in Cypher:
-** `field_ALL` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-all[all]
-** `field_NONE` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-none[none]
-** `field_SOME` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-any[any]
-** `field_SINGLE` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-single[single]
+Filtering is done on the list of related nodes and is based on the https://neo4j.com/docs/cypher-manual/current/functions/predicate/[list predicates] available in Cypher:
+** `all` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-all[all]
+** `some` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-any[any]
+** `none` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-none[none]
+** `single` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-single[single]
 
 As an example, take these type definitions:
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID!
     name: String
     posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)
 }
 
-type Post {
+type Post @node {
     id: ID!
     content: String
-    author: User! @relationship(type: "HAS_POST", direction: IN)
     likes: [User!]! @relationship(type: "LIKES", direction: IN)
+    authors: [User!]! @relationship(type: "AUTHORED", direction: IN)
 }
 ----
-=== In the case of `n..1` relationships
-
-An `author` represents an `n..1` relationship on `Post`, where a given `Post` is authored by one, and only one, `author`. 
-The available filters here will be `author`.
-For example:
-
-.Find all posts by a desired author
-[source, graphql, indent=0]
-----
-query {
-    posts(where: { author: { id: "7CF1D9D6-E527-4ACD-9C2A-207AE0F5CB8C" } }) {
-        content
-    }
-}
-----
-
-.Find all posts `NOT` by an undesired author
-[source, graphql, indent=0]
-----
-query {
-    posts(where: { NOT: { author: { id: "7CF1D9D6-E527-4ACD-9C2A-207AE0F5CB8C" } } }) {
-        content
-    }
-}
-----
-
-=== In the case of `n..m` relationships
-
-In the previous example, `posts` represents a `n..m` relationship on `User`, where a given `User` can have any number of `posts`.
-Here are some query examples:
 
 .Find all Users where all of their posts contain search term: `"neo4j"`
 [source, graphql, indent=0]
 ----
 query {
-    users(where: { posts_ALL: { content_CONTAINS: "neo4j" } }) {
-        name
+  users(where: { node: { posts: { all: { content: { contains: "neo4j" } } } } }) {
+    connection {
+      edges {
+        node {
+          id
+          name
+        }
+      }
     }
+  }
 }
 ----
 
@@ -289,9 +135,16 @@ query {
 [source, graphql, indent=0]
 ----
 query {
-    users(where: { posts_NONE: { content_CONTAINS: "cypher" } }) {
-        name
+  users(where: { node: { posts: { none: { content: { contains: "cypher" } } } } }) {
+    connection {
+      edges {
+        node {
+          id
+          name
+        }
+      }
     }
+  }
 }
 ----
 
@@ -299,9 +152,16 @@ query {
 [source, graphql, indent=0]
 ----
 query {
-    users(where: { posts_SOME: { content_CONTAINS: "graphql" } }) {
-        name
+  users(where: { node: { posts: { some: { content: { contains: "graphql" } } } } }) {
+    connection {
+      edges {
+        node {
+          id
+          name
+        }
+      }
     }
+  }
 }
 ----
 
@@ -309,196 +169,16 @@ query {
 [source, graphql, indent=0]
 ----
 query {
-    users(where: { posts_SINGLE: { content_CONTAINS: "graph" } }) {
-        name
+  users(where: { node: { posts: { single: { content: { contains: "graph" } } } } }) {
+    connection {
+      edges {
+        node {
+          id
+          name
+        }
+      }
     }
+  }
 }
 ----
 
-== Aggregation filtering
-
-This library offers, for each relationship, an aggregation key inside the `where` argument. 
-It can be used both on the `node` and `edge` of a relationship.
-
-Here are some examples on how to apply this kind of filtering:
-
-. *Find posts where the number of likes are greater than 5*
-+
-.Schema example
-[source, graphql, indent=0]
-----
-type User {
-    name: String
-}
-
-type Post {
-    content: String
-    likes: [User!]! @relationship(type: "LIKES", direction: IN)
-}
-----
-+ 
-.Query
-[source, graphql, indent=0]
-----
-query {
-    posts(where: { likesAggregate: { count_GT: 5 } }) {
-        content
-    }
-}
-----
-
-. *Find flights where the average age of passengers is greater than or equal to 18*
-+
-.Schema example
-[source, graphql, indent=0]
-----
-type Passenger {
-    name: String
-    age: Int
-}
-
-type Flight {
-    code: String
-    passengers: [Passenger!]! @relationship(type: "FLYING_ON", direction: IN)
-}
-----
-+
-.Query
-[source, graphql, indent=0]
-----
-query {
-    flights(where: { passengersAggregate: { node: { age_AVERAGE_GTE: 18 } } }) {
-        code
-    }
-}
-----
-
-. *Find movies where the shortest actor screen time is less than 10 minutes*
-+
-.Schema example
-[source, graphql, indent=0]
-----
-type Movie {
-    title: String
-    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
-}
-
-type Person {
-    name: String
-}
-
-type ActedIn @relationshipProperties {
-    screenTime: Int
-}
-----
-+
-.Query
-[source, graphql, indent=0]
-----
-query {
-    movies(where: { actorsAggregate: { edge: { screenTime_MIN_LT: 10 } } }) {
-        title
-    }
-}
-----
-
-=== Operators
-
-Aggregation filtering can also be done with operators.
-They provide autogenerated filters available for each type on the `node` and `edge` of the specified relationship.
-
-[cols="1,2,2,2"]
-|===
-| Field type | Description | Operators | Example
-
-| `count`
-| A special 'top level' key inside the `where` aggregation and will be available for all relationships. This is used to count the amount of relationships the parent node is connected to.
-| `count_EQUAL`, `count_GT`, `count_GTE`, `count_LT`, `count_LTE`
-a|
-[source, graphql, indent=0]
-----
-query {
-    posts(where: { likesAggregate: { count_GT: 5 } }) {
-        content
-    }
-}
-----
-
-| `String`
-| These operators are calculated against the length of each string.
-| `_AVERAGE_LENGTH_EQUAL` `_AVERAGE_LENGTH_GT` `_AVERAGE_LENGTH_GTE` `_AVERAGE_LENGTH_LT` `_AVERAGE_LENGTH_LTE` `_SHORTEST_LENGTH_EQUAL` `_SHORTEST_LENGTH_GT` `_SHORTEST_LENGTH_GTE` `_SHORTEST_LENGTH_LT` `_SHORTEST_LENGTH_LTE` `_LONGEST_LENGTH_EQUAL` `_LONGEST_LENGTH_GT` `_LONGEST_LENGTH_GTE` `_LONGEST_LENGTH_LT` `_LONGEST_LENGTH_LTE`
-a|
-[source, graphql, indent=0]
-----
-query {
-    posts(where: { likesAggregate: { node: { name_LONGEST_LENGTH_GT: 5 } } }) {
-        content
-    }
-}
-----
-
-| `Numerical` 
-| Used in the case of `Int`, `Float`, and `BigInt`.
-| `_AVERAGE_EQUAL`, `_AVERAGE_GT`, `_AVERAGE_GTE`, `_AVERAGE_LT`, `_AVERAGE_LTE`, `_SUM_EQUAL`, `_SUM_GT`, `_SUM_GTE`, `_SUM_LT`, `_SUM_LTE`, `_MIN_EQUAL`, `_MIN_GT`, `_MIN_GTE`, `_MIN_LT`, `_MIN_LTE`, `_MAX_EQUAL`, `_MAX_GT`, `_MAX_GTE`, `_MAX_LT`, `_MAX_LTE`
-a|
-[source, graphql, indent=0]
-----
-query {
-    movies(where: { actorsAggregate: { edge: { screenTime_MIN_LT: 10 } } }) {
-        title
-    }
-}
-----
-
-| `Temporal`
-| Used in the case of `DateTime`, `LocalDateTime`, `LocalTime`, `Time`, and `Duration`.
-| `_MIN_EQUAL`, `_MIN_GT`, `_MIN_GTE`, `_MIN_LT`, `_MIN_LTE`, `_MAX_EQUAL`, `_MAX_GT`, `_MAX_GTE`, `_MAX_LT`, `_MAX_LTE`
-a|
-.Type definitions
-[source, graphql, indent=0]
-----
-type Event {
-    title: String!
-    startTime: DateTime!
-}
-----
-
-.Query
-[source, graphql, indent=0]
-----
-query EventsAggregate {
-    users(where: { eventsAggregate: { node: { startTime_GT: "2022-08-14T15:00:00Z" } } }) {
-        name
-    }
-}
-----
-
-| `Duration`
-| Description.
-| `_AVERAGE_EQUAL`, `_AVERAGE_GT`, `_AVERAGE_GTE`, `_AVERAGE_LT`, `_AVERAGE_LTE`
-a|
-.Type definitions
-[source, graphql, indent=0]
-----
-type Event {
-    title: String!
-    duration: Duration!
-}
-----
-
-.Query
-[source, graphql, indent=0]
-----
-query EventsAggregate {
-    users(where: { eventsAggregate: { node: { duration_AVERAGE_LT: "PT2H" } } }) {
-        name
-    }
-}
-----
-
-| `ID`
-| No aggregation filters are available for ID.
-| -
-| -
-
-|===

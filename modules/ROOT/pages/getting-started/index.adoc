@@ -2,10 +2,7 @@
 = Creating a new project
 :description: This section describes how to get started with the Neo4j GraphQL Library.
 
-
 This tutorial walks you through creating a new project with the Neo4j GraphQL Library.
-
-If you are not familiar with Neo4j and GraphQL, you can alternatively take the course https://graphacademy.neo4j.com/courses/graphql-basics/?ref=docs[Introduction to Neo4j & GraphQL] in GraphAcademy to learn the fundamentals, how to use the xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox] and the Neo4j GraphQL Library to create GraphQL APIs backed by a Neo4j graph database.
 
 This tutorial shows you how to:
 
@@ -77,22 +74,21 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type Movie {
+    type Movie @node {
         title: String
         actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
     }
 
-    type Actor {
+    type Actor @node {
         name: String
         movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
     }
 `;
 ----
-+
-Note that these type definitions only *define* the node labels "Actor" and "Movie", and a relationship "ACTED_IN" between the two. 
-When the schema is generated, you can then execute queries for `actors` and `movies` to read data from the database.
 
-. Alternatively, you can also automatically generate type definitions from an existing database by xref::introspector.adoc[introspecting the schema].
+Note that these type definitions only *define* the node labels "Actor" and "Movie", and a relationship "ACTED_IN" between the two.
+Note also how the `@node` directive is present on both `Movie` and `Actor` this is necessary to define them as Neo4j nodes.
+When the schema is generated, you can then execute queries for `actors` and `movies` to read data from the database.
 
 == Create an instance of `Neo4jGraphQL`
 
@@ -150,12 +146,12 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type Movie {
+    type Movie @node {
         title: String
         actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
     }
 
-    type Actor {
+    type Actor @node {
         name: String
         movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
     }
@@ -200,89 +196,70 @@ The address http://localhost:4000/ is the URL where the Apollo Server starts.
 
 == Create nodes in the database
 
-. Visit http://localhost:4000/ in your web browser. 
-You should get redirected to the Apollo Sandbox:
-+
-image::apollo-server-landing-page.png[]
+In you Neo4j instance execute the following `Cypher`:
 
-. At the moment your database is empty. 
-To start adding data, copy and paste the following mutation to the Operation panel to create a movie and an actor in that movie:
-+
-[source, graphql, indent=0]
+
+[source, cypher, indent=0]
 ----
-mutation {
-  createMovies(
-    input: [
-      {
-        title: "Forrest Gump"
-        actors: { create: [{ node: { name: "Tom Hanks" } }] }
-      }
-    ]
-  ) {
-    movies {
-      title
-      actors {
-        name
-      }
-    }
-  }
-}
+CREATE (m:Movie {title: "Forrest Gump"})
+CREATE (a:Actor {name: "Tom Hanks"})
+CREATE (a)-[:ACTED_IN]->(m)
 ----
 
-. Click the "Run" button on the top right. 
-You should get the following confirmation that the data has been created in the database in the Response panel:
-+
-[source, json, indent=0]
-----
-{
-  "data": {
-    "createMovies": {
-      "movies": [
-        {
-          "title": "Forrest Gump",
-          "actors": [
-            {
-              "name": "Tom Hanks"
-            }
-          ]
-        }
-      ]
-    }
-  }
-}
-----
 
-. Query the data which you just added. 
+Query the data which you just added. 
 Copy and paste the following query to the Operations panel:
-+
+
 [source, graphql, indent=0]
 ----
 query {
   movies {
-    title
-    actors {
-      name
+    connection {
+      edges {
+        node {
+          title
+          actors {
+            connection {
+              edges {
+                node {
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
 ----
-+
+
 Since you only created one "Movie" node and one "Actor", the Response panel shows the following:
-+
+
 [source, json, indent=0]
 ----
 {
   "data": {
-    "movies": [
-      {
-        "title": "Forrest Gump",
-        "actors": [
+    "movies": {
+      "connection": {
+        "edges": [
           {
-            "name": "Tom Hanks"
+            "node": {
+              "title": "Forrest Gump",
+              "actors": {
+                "connection": {
+                  "edges": [
+                    {
+                      "node": { "name": "Tom Hanks" }
+                    }
+                  ]
+                }
+              }
+            }
           }
         ]
       }
-    ]
+    }
   }
 }
 ----

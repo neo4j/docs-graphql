@@ -18,7 +18,7 @@ In order to use it in your schema, you quite simply add a field with a type `Poi
 
 [source, graphql, indent=0]
 ----
-type TypeWithPoint {
+type TypeWithPoint @node {
     location: Point!
 }
 ----
@@ -38,87 +38,30 @@ type Point {
 }
 ----
 
-==== Queries and mutations
+==== Queries
 
-Due to the fact that `Point` is an object type, it has an additional type for input in queries and mutations. 
-However, this input type has the same shape as the object type:
-
-[source, graphql, indent=0]
-----
-input PointInput {
-    latitude: Float!
-    longitude: Float!
-    height: Float
-}
-----
-
-For example, you can query for a `User` with an exact location:
+You can query for users and their locations:
 
 [source, graphql, indent=0]
 ----
-query Users($longitude: Float!, $latitude: Float!) {
-    users(where: { location: { longitude: $longitude, latitude: $latitude } }) {
-        name
-        location {
+query Users {
+  users {
+    connection {
+      edges {
+        node {
+          name
+          location {
             longitude
             latitude
+            height
+          }
         }
+      }
     }
+  }
 }
 ----
 
-Or you can create a `User` with a location as follows:
-
-[source, graphql, indent=0]
-----
-mutation CreateUsers($name: String!, $longitude: Float!, $latitude: Float!) {
-    createUsers(input: [{ name: $name, location: { longitude: $longitude, latitude: $latitude } }]) {
-        users {
-            name
-            location {
-                longitude
-                latitude
-            }
-        }
-    }
-}
-----
-
-==== Filtering
-
-Besides the xref::queries-aggregations/filtering.adoc#filtering-numerical-operators[Numerical operators], the `Point` type has an additional `_DISTANCE` filter.
-Here is a list of what each filter does:
-
-* `_LT`: checks that the specified `Point` field is less than the `distance` away in meters from the `Point` being compared against.
-* `_LTE`: checks that the specified `Point` field is less than or equal to the `distance` away in meters from the `Point` being compared against.
-* `_DISTANCE`: checks that the specified `Point` field is the exact `distance` away in meters from the `Point` being compared against.
-* `_GTE`: checks that the specified `Point` field is greater than the `distance` away in meters from the `Point` being compared against.
-* `_GT`: checks that the specified `Point` field is greater than or equal to the `distance` away in meters from the `Point` being compared against.
-
-All of the filters take the following type as an argument:
-
-[source, graphql, indent=0]
-----
-input PointDistance {
-    point: Point!
-    distance: Float!
-}
-----
-
-In practice, you can construct queries such as the following which can find all users within a 5km (5000m) radius of a `Point`:
-
-[source, graphql, indent=0]
-----
-query CloseByUsers($longitude: Float!, $latitude: Float!) {
-    users(where: { location_LTE: { point: { longitude: $longitude, latitude: $latitude }, distance: 5000 } }) {
-        name
-        location {
-            longitude
-            latitude
-        }
-    }
-}
-----
 
 [[cartesian-point]]
 === `CartesianPoint`
@@ -129,7 +72,7 @@ To use it in the schema, add a field with a type `CartesianPoint` to any type or
 
 [source, graphql, indent=0]
 ----
-type TypeWithCartesianPoint {
+type TypeWithCartesianPoint @node {
     location: CartesianPoint!
 }
 ----
@@ -149,38 +92,27 @@ type CartesianPoint {
 }
 ----
 
-==== Queries and mutations
+==== Queries
 
-Due to the fact that `CartesianPoint` is an object type, it has an additional type for input in queries and mutations.
-However, this input type has the same shape as the object type:
-
-[source, graphql, indent=0]
-----
-input CartesianPointInput {
-    x: Float!
-    y: Float!
-    z: Float
-}
-----
-
-==== Filtering
-
-Besides the xref::queries-aggregations/filtering.adoc#filtering-numerical-operators[Numerical operators], the `CartesianPoint` type has an additional `_DISTANCE` filter. 
-
-Here is a list of what each filter does:
-
-* `_LT`: checks that the specified `Point` field is less than the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_LTE`: checks that the specified `Point` field is less than or equal to the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_DISTANCE`: checks that the specified `Point` field is the exact `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_GTE`: checks that the specified `Point` field is greater than the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_GT`: checks that the specified `Point` field is greater than or equal to the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-
-All of the filters take the following type as an argument:
+You can query for users and their locations:
 
 [source, graphql, indent=0]
 ----
-input CartesianPointDistance {
-    point: CartesianPoint!
-    distance: Float!
+query Users {
+  users {
+    connection {
+      edges {
+        node {
+          name
+          location {
+            x
+            y
+            z
+          }
+        }
+      }
+    }
+  }
 }
 ----
+

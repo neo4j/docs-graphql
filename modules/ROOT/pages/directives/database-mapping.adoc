@@ -17,19 +17,18 @@ To add a second node type, "Actor", and connect the two together, you should do 
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
-type Actor {
+type Actor @node {
     name: String
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
 }
 ----
 
 Note that, in this case, there is a directive on each "end" of the relationship, but it is not essential.
-
 
 == `@relationshipProperties`
 
@@ -51,12 +50,12 @@ For example, for the "ACTED_IN" relationship, add a property "roles":
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
 }
 
-type Actor {
+type Actor @node {
     name: String
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedIn")
 }
@@ -78,7 +77,7 @@ For example, to represent a node with the label "Movie" and a single property "t
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
 }
 ----
@@ -133,7 +132,13 @@ This way, the following query:
 ----
 {
   dogs {
-    name
+    connection {
+      edges {
+        node {
+          name
+        }
+      }
+    }
   }
 }
 ----
@@ -162,47 +167,6 @@ type Dog @node(labels: ["K9", "Dog"]) {
 ----
 
 
-[discrete]
-=== Using `$jwt` and `$context`
-
-In some cases, you may want to generate dynamic labels depending on the user requesting. 
-For that, you can use the variable `$jwt` to define a custom label in the JWT:
-
-[source, graphql, indent=0]
-----
-type User @node(labels: ["$jwt.username"]) {
-    name: String!
-}
-----
-
-The following query yields a different Cypher query depending on the user JWT:
-
-[source, graphql, indent=0]
-----
-{
-  users {
-    name
-  }
-}ref::/directives/database-mapping.adoc#_declarerelationship[
-type User @node(label: ["$context.appId"]) {
-    name: String!
-}
-----
-
-When running the server with Apollo:
-
-[source, js, indent=0]
-----
-const server = new ApolloServer({
-    schema: await neoSchema.getSchema(),
-});
-
-await startStandaloneServer(server, {
-    context: async ({ req }) => ({ req, appId: "myApp" }),
-});
-----
-
-
 [[type-definitions-alias]]
 == `@alias`
 
@@ -213,7 +177,7 @@ For example:
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID! @id @alias(property: "dbId")
     username: String!
 }
@@ -221,13 +185,13 @@ type User {
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID! @id
     username: String! @alias(property: "dbUserName")
     livesIn: [City!]! @relationship(direction: OUT, type: "LIVES_IN", properties: "UserLivesInProperties")
 }
 
-type City {
+type City @node {
     name: String
 }
 

@@ -8,14 +8,6 @@ The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript
 With Neo4j as the graph database, the GraphQL Library makes it simple for applications to have data treated as a graph natively from the frontend all the way to storage.
 This avoids duplicate schema work and ensures flawless integration between frontend and backend developers.
 
-*If you are new to Neo4j and GraphQL*, take the course link:https://graphacademy.neo4j.com/courses/graphql-basics/?ref=docs[Introduction to Neo4j & GraphQL] in GraphAcademy to learn the fundamentals, how to use the xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox] and the Neo4j GraphQL Library to create GraphQL APIs backed by a Neo4j graph database.
-
-[NOTE]
-====
-The GRANDstack starter app has been deprecated. 
-For more information, read the section on xref::deprecations.adoc[Deprecations].
-====
-
 == How it works
 
 The Neo4j GraphQL Library requires a set of type definitions that describes the shape of your graph data.
@@ -23,17 +15,12 @@ It can generate an entire executable schema with all of the additional types nee
 
 For every query and mutation that is executed against this generated schema, the Neo4j GraphQL Library generates a single Cypher query which is executed against the database. This eliminates the https://www.google.com/search?q=graphql+n%2B1[N+1 Problem], which can make GraphQL implementations slow and inefficient.
 
-- Automatic generation of xref::queries-aggregations/queries.adoc[Queries] and xref::mutations/index.adoc[Mutations] for CRUD interactions.
+- Automatic generation of xref::queries-aggregations/queries.adoc[Queries].
 - xref::/types/index.adoc[Types], including temporal and spatial.
 - Support for both node and relationship properties.
-- Extensibility through the xref::/directives/custom-logic.adoc#_cypher[`@cypher` directive] and/or xref::/directives/custom-logic.adoc#_custom-resolvers[Custom Resolvers].
 - Extensive xref::queries-aggregations/filtering.adoc[Filtering] and xref::queries-aggregations/sorting.adoc[Sorting] options.
-- Options for xref::/directives/database-mapping.adoc[Database mapping] and value xref::/directives/autogeneration.adoc[Autogeneration].
-- xref::/queries-aggregations/pagination/index.adoc[Pagination] options.
-- xref::/security/index.adoc[Security options] and additional xref::schema-configuration/index.adoc[Schema Configuration].
-- An xref::ogm/index.adoc[OGM] (Object Graph Mapper) for programmatic interaction with your GraphQL API.
-- A xref::getting-started/toolbox.adoc[Toolbox] (UI) to experiment with your Neo4j GraphQL API on Neo4j Desktop.
-
+- Options for xref::/directives/database-mapping.adoc[Database mapping].
+- xref::/queries-aggregations/pagination.adoc[Pagination] options.
 
 == Interaction
 
@@ -70,7 +57,7 @@ Additionally, prerelease version numbers may have additional suffixes, for examp
 == Requirements
 
 . https://neo4j.com/[Neo4j Database] version 4.4 and newer with https://neo4j.com/docs/apoc/current/[APOC] plugin.
-. https://nodejs.org/en/[Node.js] 16+.
+. https://nodejs.org/en/[Node.js] 18+.
 
 == Resources
 

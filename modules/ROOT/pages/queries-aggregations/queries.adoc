@@ -4,18 +4,18 @@
 
 == Type definitions
 
-Quries on this page assume the following type definitions:
+Queries on this page assume the following type definitions:
 
 [source, graphql, indent=0]
 ----
-type Post {
+type Post @node {
     id: ID! @id
     content: String!
-    creator: User! @relationship(type: "HAS_POST", direction: IN, properties: "PostedAt")
     createdAt: DateTime!
+    creator: [User!]! @relationship(type: "HAS_POST", direction: IN, properties: "PostedAt")
 }
 
-type User {
+type User @node {
     id: ID! @id
     name: String!
     age: Int!
@@ -33,11 +33,8 @@ For which the following query fields are generated:
 [source, graphql, indent=0]
 ----
 type Query {
-    posts(where: PostWhere, options: PostOptions): [Post!]!
-    postsAggregate(where: PostWhere): PostAggregationSelection!
-
-    users(where: UserWhere, options: UserOptions): [User!]!
-    usersAggregate(where: UserWhere): UserAggregationSelection!
+    posts(where: PostOperationWhere): PostOperation
+    movies(where: MovieOperationWhere): MovieOperation
 }
 ----
 
@@ -50,8 +47,14 @@ Based on the type definitions, here are two examples of how to write queries for
 ----
 query {
     users {
-        id
-        name
+        connection {
+            edges {
+                node {
+                    id
+                    name
+                }
+            }
+        }
     }
 }
 ----
@@ -60,54 +63,24 @@ query {
 [source, graphql, indent=0]
 ----
 query {
-    users(where: { name: "Jane Smith" }) {
-        id
-        name
-        posts {
-            content
+    users(where: { node: { name: { equals: "Jane Smith" } } }) {
+        connection {
+            edges {
+                node {
+                    id
+                    name
+                    posts {
+                        connection {
+                            edges {
+                                node {
+                                    content
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
 ----
-
-== Undirected queries
-
-All xref::/types/relationships.adoc[relationships] are created with a direction from one node to another.
-By default, all queries follow the direction defined in the relationship. 
-However, in some cases it is necessary to query for all related nodes, regardless of the direction of the relationship. 
-This can be achieved with the argument `directed: false`.
-
-For example, the following query should return all User friends, regardless of the direction of the relationship `"FRIENDS_WITH"`:
-
-[source, graphql, indent=0]
-----
-query {
-    users {
-        name
-        friends: friends(directed: false) {
-            name
-        }
-    }
-}
-----
-
-In addition, undirected relationships can also be used in the same fashion with connections.
-For instance, this query is asking for a list of users and their friends' names with an undirected friendship connection:
-
-[source, graphql, indent=0]
-----
-query Query {
-  users {
-    friendsConnection(directed: false) {
-      edges {
-        node {
-          name
-        }
-      }
-    }
-  }
-}
-----
-
-Keep in mind that *undirected relationships are only supported in queries*.
-The xref::/types/relationships.adoc#_querydirection[type definitions] for a relationship may define a different behavior, so the `directed` option may not be available in some cases.

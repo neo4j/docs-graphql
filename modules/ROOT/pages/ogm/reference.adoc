@@ -354,7 +354,7 @@ It returns a `Promise` which resolvers to an array of objects matching the type 
 
 |`options`
 |`GraphQLOptionsArg`
-|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination/index.adoc[Pagination].
+|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination.adoc[Pagination].
 
 |`selectionSet` 
 |`string` or `DocumentNode` or `SelectionSetNode`
@@ -428,7 +428,7 @@ It returns a `Promise` that resolves to the equivalent of the mutation response 
 
 |`options`
 |`GraphQLOptionsArg`
-|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination/index.adoc[Pagination].
+|A JavaScript object representation of the GraphQL `options` input type used for xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination.adoc[Pagination].
 
 |`selectionSet`
 |`string` or `DocumentNode` or `SelectionSetNode`

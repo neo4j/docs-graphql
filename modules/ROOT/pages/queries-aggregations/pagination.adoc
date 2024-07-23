@@ -1,0 +1,69 @@
+[[pagination]]
+= Cursor-based pagination
+:page-aliases: pagination.adoc
+
+On relationship fields, you are able to take advantage of cursor-based pagination, which is often associated with infinitely-scrolling applications.
+
+Using the following type definition:
+
+[source, graphql, indent=0]
+----
+type User @node {
+  name: String!
+  posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)
+}
+
+type Post @node {
+  content: String!
+}
+----
+
+If you wanted to fetch the posts of user "John Smith" 10 at a time, you would first fetch 10:
+
+[source, graphql, indent=0]
+----
+query {
+  users(where: { node: { name: { equals: "John Smith" } } }) {
+    name
+    posts {
+      connection(first: 10) {
+        edges {
+          node {
+            content
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+}
+----
+
+In the return value, if `hasNextPage` is `true`, you would pass `endCursor` into the next query of 10. You might do this using a variable as in the following example:
+
+[source, graphql, indent=0]
+----
+query {
+  users(where: { node: { name: { equals: "John Smith" } } }) {
+    name
+    posts {
+      connection(first: 10, after: "opaqueCursor") {
+        edges {
+          node {
+            content
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+}
+----
+
+You would continue doing this until `hasNextPage` if `false` - this is when you have reached the end of the data.

@@ -3,70 +3,30 @@
 * *Getting started*
 
 * xref:getting-started/index.adoc[]
-* xref:getting-started/toolbox.adoc[]
 
 * *Reference*
-* xref:security/index.adoc[]
-** xref:security/configuration.adoc[]
-** xref:security/authentication.adoc[]
-** xref:security/authorization.adoc[]
-** xref:security/impersonation-and-user-switching.adoc[]
-** xref:security/operations.adoc[]
 * xref:types/index.adoc[]
 ** xref:types/scalar.adoc[Scalar]
 ** xref:types/temporal.adoc[Temporal]
 ** xref:types/spatial.adoc[Spatial]
-** xref:types/interfaces.adoc[Interfaces]
-** xref:types/unions.adoc[Union]
 ** xref:types/relationships.adoc[]
 * xref:directives/index.adoc[]
 ** xref:directives/database-mapping.adoc[]
 
-** xref:directives/autogeneration.adoc[]
-** xref:directives/schema-configuration/index.adoc[]
-*** xref:directives/schema-configuration/global-configuration.adoc[]
-*** xref:directives/schema-configuration/type-configuration.adoc[]
-*** xref:directives/schema-configuration/field-configuration.adoc[]
 ** xref:directives/indexes-and-constraints.adoc[]
 ** xref:directives/custom-logic.adoc[]
 ** xref:directives/custom-directives.adoc[]
 
-* xref:queries-aggregations/index.adoc[Queries and aggregations]
+* xref:queries-aggregations/index.adoc[Queries]
 ** xref:queries-aggregations/queries.adoc[]
-** xref:queries-aggregations/aggregations.adoc[]
 ** xref:queries-aggregations/filtering.adoc[]
 ** xref:queries-aggregations/sorting.adoc[]
-** xref:queries-aggregations/pagination/index.adoc[]
-*** xref:queries-aggregations/pagination/offset-based.adoc[]
-*** xref:queries-aggregations/pagination/cursor-based.adoc[]
+** xref:queries-aggregations/pagination.adoc[]
 
-* xref:mutations/index.adoc[]
-** xref:mutations/create.adoc[]
-** xref:mutations/update.adoc[]
-** xref:mutations/delete.adoc[]
-
-* xref:subscriptions/index.adoc[]
-** xref:subscriptions/getting-started.adoc[Getting started]
-** xref:subscriptions/events.adoc[Events]
-** xref:subscriptions/filtering.adoc[]
-** xref:subscriptions/scaling.adoc[]
-** xref:subscriptions/engines.adoc[Engines]
 
 * *How-To*
 
 * xref:driver-configuration.adoc[]
-
-* *Products*
-
-* xref:introspector.adoc[Introspector]
-
-* xref:ogm/index.adoc[]
-** xref:ogm/installation.adoc[]
-** xref:ogm/directives.adoc[]
-** xref:ogm/selection-set.adoc[]
-** xref:ogm/type-generation.adoc[]
-** xref:ogm/subscriptions.adoc[]
-** xref:ogm/reference.adoc[]
 
 * *Frameworks and integrations*
 
