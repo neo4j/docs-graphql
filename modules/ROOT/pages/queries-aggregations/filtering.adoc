@@ -11,7 +11,7 @@ All types can be tested for either equality.
 For non-equality, you *must* use the xref:/queries-aggregations/filtering.adoc#_combining_operators[`NOT`] logical operator.
 For example:
 
-.Filtering all Users named John
+.Filtering all users named John
 [source, graphql, indent=0]
 ----
 query {
@@ -37,7 +37,7 @@ These are the operators available for numeric (`Int`, `Float`, xref::/types/scal
 
 Here is an example of how to use them:
 
-.Filtering Users younger than 50 years old
+.Filtering users younger than 50 years old
 [source, graphql, indent=0]
 ----
 query {
@@ -312,7 +312,7 @@ query {
 In the previous example, `posts` represents a `n..m` relationship on `User`, where a given `User` can have any number of `posts`.
 Here are some query examples:
 
-.Find all Users where all of their posts contain search term: `"neo4j"`
+.Find all users where all of their posts contain search term: `"neo4j"`
 [source, graphql, indent=0]
 ----
 query {
@@ -322,7 +322,7 @@ query {
 }
 ----
 
-.Find all Users where none of their posts contains search term: `"cypher"`
+.Find all users where none of their posts contains search term: `"cypher"`
 [source, graphql, indent=0]
 ----
 query {

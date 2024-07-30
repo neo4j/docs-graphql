@@ -12,7 +12,7 @@ The use of either of these types in a GraphQL schema automatically introduces th
 [[point]]
 === `Point`
 
-The `Point` type is used to describe the two https://neo4j.com/docs/cypher-manual/current/values-and-types/spatial/#spatial-values-crs-geographic[geographic coordinate reference systems] supported by Neo4j.
+The `Point` type is used to describe the two https://neo4j.com/docs/cypher-manual/current/values-and-types/spatial/#spatial-values-crs-geographic[Geographic coordinate reference systems] supported by Neo4j.
 
 In order to use it in your schema, add a field with a type `Point` to any type or types in your schema, like the following:
 
@@ -25,7 +25,7 @@ type TypeWithPoint {
 
 The `Point` type is automatically added to your schema, in addition to the input and output types you need to query and manipulate spatial types through your API.
 
-See xref::queries-aggregations/filtering.adoc#_filtering_spatial_types[filtering spatial types] for filter options. 
+See xref::queries-aggregations/filtering.adoc#_filtering_spatial_types[Filtering spatial types] for filter options. 
 
 ==== Type definition
 
@@ -84,10 +84,6 @@ mutation CreateUsers($name: String!, $longitude: Float!, $latitude: Float!) {
 }
 ----
 
-==== Filtering
-
-
-
 [[cartesian-point]]
 === `CartesianPoint`
 
@@ -104,7 +100,7 @@ type TypeWithCartesianPoint {
 
 The `CartesianPoint` type is automatically added to your schema, in addition to the input and output types you need to query and manipulate spatial types through your API.
 
-See xref::queries-aggregations/filtering.adoc#_filtering_spatial_types[filtering spatial types] for filter options.
+See xref::queries-aggregations/filtering.adoc#_filtering_spatial_types[Filtering spatial types] for filter options.
 
 ==== Type definition
 
@@ -128,27 +124,5 @@ input CartesianPointInput {
     x: Float!
     y: Float!
     z: Float
-}
-----
-
-==== Filtering
-
-Besides the xref::queries-aggregations/filtering.adoc#filtering-numerical-operators[Numerical operators], the `CartesianPoint` type has an additional `_DISTANCE` filter. 
-
-Here is a list of what each filter does:
-
-* `_LT`: checks that the specified `Point` field is less than the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_LTE`: checks that the specified `Point` field is less than or equal to the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_DISTANCE`: checks that the specified `Point` field is the exact `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_GTE`: checks that the specified `Point` field is greater than the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_GT`: checks that the specified `Point` field is greater than or equal to the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-
-All of the filters take the following type as an argument:
-
-[source, graphql, indent=0]
-----
-input CartesianPointDistance {
-    point: CartesianPoint!
-    distance: Float!
 }
 ----
