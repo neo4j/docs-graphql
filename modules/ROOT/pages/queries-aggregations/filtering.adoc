@@ -233,16 +233,6 @@ input PointDistance {
 }
 ----
 
-Similarly, for a `CartesianPoint` type, all filters take the following type as an argument:
-
-[source, graphql, indent=0]
-----
-input CartesianPointDistance {
-    point: CartesianPoint!
-    distance: Float!
-}
-----
-
 In practice, you can construct queries like the following which finds all users within a 5km (5000m) radius of a `Point`:
 
 [source, graphql, indent=0]
@@ -255,6 +245,31 @@ query CloseByUsers($longitude: Float!, $latitude: Float!) {
             latitude
         }
     }
+}
+----
+
+Similarly, for a `CartesianPoint` type, all filters take the following type as an argument:
+
+[source, graphql, indent=0]
+----
+input CartesianPointDistance {
+    point: CartesianPoint!
+    distance: Float!
+}
+----
+
+The same query for a `CartesianPoint`:
+
+[source, graphql, indent=0]
+----
+query CloseByUsers($x: Float!, $y: Float!) {
+  users(where: { location_LTE: { point: { x: $x, y: $y }, distance: 5000 } }) {
+    name
+    location {
+      x
+      y
+    }
+  }
 }
 ----
 
