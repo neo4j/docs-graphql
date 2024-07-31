@@ -214,7 +214,7 @@ These operators are available for all types apart from `Boolean`.
 
 == Filtering spatial types
 
-Both the `Point` and the `CartesianPoint` types use xref::queries-aggregations/filtering.adoc#_numerical_operators[numerical operators] and also have an additional `_DISTANCE` filter.
+Both the `Point` and the `CartesianPoint` types use xref::queries-aggregations/filtering.adoc#_numerical_operators[numerical operators] and have an additional `_DISTANCE` filter.
 Here is a list of what each filter does for the two types:
 
 * `_LT`: checks if a point is less than the distance in the `distance` field away (in meters) from the point specified by the `point` field.
@@ -233,7 +233,7 @@ input PointDistance {
 }
 ----
 
-In practice, you can construct queries like the following which finds all users within a 5km (5000m) radius of a `Point`:
+In practice, you can construct queries like the following, which finds all users within a 5km (5000m) radius of a `Point`:
 
 [source, graphql, indent=0]
 ----
