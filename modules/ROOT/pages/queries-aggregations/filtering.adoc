@@ -223,12 +223,22 @@ Here is a list of what each filter does for the two types:
 * `_GT`: checks if a point is greater than the distance in the `distance` field away (in meters) from the point specified by the `point` field.
 * `_GTE`: checks if a point is greater than or equal to the distance in the `distance` field away (in meters) from the point specified by the `point` field.
 
-All filters take the following type as an argument:
+For a `Point` type, all filters take the following type as an argument:
 
 [source, graphql, indent=0]
 ----
 input PointDistance {
     point: Point!
+    distance: Float!
+}
+----
+
+Similarly, for a `CartesianPoint` type, all filters take the following type as an argument:
+
+[source, graphql, indent=0]
+----
+input CartesianPointDistance {
+    point: CartesianPoint!
     distance: Float!
 }
 ----
