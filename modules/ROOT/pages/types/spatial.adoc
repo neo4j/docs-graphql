@@ -14,7 +14,7 @@ The use of either of these types in a GraphQL schema automatically introduces th
 
 The `Point` type is used to describe the two https://neo4j.com/docs/cypher-manual/current/values-and-types/spatial/#spatial-values-crs-geographic[Geographic coordinate reference systems] supported by Neo4j.
 
-In order to use it in your schema, you quite simply add a field with a type `Point` to any type or types in schema, like the following:
+In order to use it in your schema, add a field with a type `Point` to any other type(s) in your schema, like the following:
 
 [source, graphql, indent=0]
 ----
@@ -23,9 +23,9 @@ type TypeWithPoint {
 }
 ----
 
-Once this has been done, the `Point` type is automatically added to your schema, in addition to all of the input and output types you need to query and manipulate spatial types through your API.
+The `Point` type is automatically added to your schema, in addition to the input and output types that you need to query and manipulate spatial types through your API.
 
-These are the automatically generated types and how to use them:
+See xref::queries-aggregations/filtering.adoc#_filtering_spatial_types[Filtering spatial types] for filter options. 
 
 ==== Type definition
 
@@ -84,48 +84,12 @@ mutation CreateUsers($name: String!, $longitude: Float!, $latitude: Float!) {
 }
 ----
 
-==== Filtering
-
-Besides the xref::queries-aggregations/filtering.adoc#filtering-numerical-operators[Numerical operators], the `Point` type has an additional `_DISTANCE` filter.
-Here is a list of what each filter does:
-
-* `_LT`: checks that the specified `Point` field is less than the `distance` away in meters from the `Point` being compared against.
-* `_LTE`: checks that the specified `Point` field is less than or equal to the `distance` away in meters from the `Point` being compared against.
-* `_DISTANCE`: checks that the specified `Point` field is the exact `distance` away in meters from the `Point` being compared against.
-* `_GTE`: checks that the specified `Point` field is greater than the `distance` away in meters from the `Point` being compared against.
-* `_GT`: checks that the specified `Point` field is greater than or equal to the `distance` away in meters from the `Point` being compared against.
-
-All of the filters take the following type as an argument:
-
-[source, graphql, indent=0]
-----
-input PointDistance {
-    point: Point!
-    distance: Float!
-}
-----
-
-In practice, you can construct queries such as the following which can find all users within a 5km (5000m) radius of a `Point`:
-
-[source, graphql, indent=0]
-----
-query CloseByUsers($longitude: Float!, $latitude: Float!) {
-    users(where: { location_LTE: { point: { longitude: $longitude, latitude: $latitude }, distance: 5000 } }) {
-        name
-        location {
-            longitude
-            latitude
-        }
-    }
-}
-----
-
 [[cartesian-point]]
 === `CartesianPoint`
 
 The `CartesianPoint` type is used to describe the two https://neo4j.com/docs/cypher-manual/current/values-and-types/spatial/#spatial-values-crs-cartesian[Cartesian coordinate reference systems] supported by Neo4j.
 
-To use it in the schema, add a field with a type `CartesianPoint` to any type or types, such as in this example:
+To use it in your schema, add a field with a type `CartesianPoint` to any type(s), such as in this example:
 
 [source, graphql, indent=0]
 ----
@@ -134,9 +98,9 @@ type TypeWithCartesianPoint {
 }
 ----
 
-Once this has been done, the `CartesianPoint` type is automatically added to your schema, in addition to all of the input and output types you will need to query and manipulate spatial types through your API.
+The `CartesianPoint` type is automatically added to your schema, in addition to the input and output types that you need to query and manipulate spatial types through your API.
 
-These are the automatically generated types and how to use them:
+See xref::queries-aggregations/filtering.adoc#_filtering_spatial_types[Filtering spatial types] for filter options.
 
 ==== Type definition
 
@@ -160,27 +124,5 @@ input CartesianPointInput {
     x: Float!
     y: Float!
     z: Float
-}
-----
-
-==== Filtering
-
-Besides the xref::queries-aggregations/filtering.adoc#filtering-numerical-operators[Numerical operators], the `CartesianPoint` type has an additional `_DISTANCE` filter. 
-
-Here is a list of what each filter does:
-
-* `_LT`: checks that the specified `Point` field is less than the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_LTE`: checks that the specified `Point` field is less than or equal to the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_DISTANCE`: checks that the specified `Point` field is the exact `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_GTE`: checks that the specified `Point` field is greater than the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-* `_GT`: checks that the specified `Point` field is greater than or equal to the `distance` away from the `CartesianPoint` being compared against, in the units used to specify the points.
-
-All of the filters take the following type as an argument:
-
-[source, graphql, indent=0]
-----
-input CartesianPointDistance {
-    point: CartesianPoint!
-    distance: Float!
 }
 ----
