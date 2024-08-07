@@ -1,0 +1,64 @@
+[[subscriptions-authorization]]
+:description: This page describes how to set up authorization features for subscriptions in the Neo4j GraphQL Library.
+= Subscriptions authorization
+
+Subscriptions require their own authorization rules, which are configured with the `@subscriptionsAuthorization` directive. These rules are different to normal authorization rules because only filtering rules are available for subscriptions events and subscriptions events have more limitations in how they can be filtered.
+
+All subscriptions authorization rules have an implied requirement for authentication, given that the rules are normally evaluated against values in the JWT payload.
+
+== Rules
+
+=== Filtering
+
+Filtering rules will prevent events which contain information that users don't have access to from ever reaching them - they will receive no indication that this is the case.
+These rules are evaluated when the events are returned from the database, before they are broadcasted out to subscribing GraphQL clients.
+
+For instance, here is how to filter out `User` events which don't match the JWT of the user listening for events:
+
+[source, graphql, indent=0]
+----
+type User @subscriptionsAuthorization(filter: [
+    { where: { node: { id: "$jwt.sub" } } }
+]) {
+    id: ID!
+}
+----
+
+==== Events
+
+Filtering can be configured to only be performed on certain events:
+
+* `CREATED`
+* `UPDATED`
+* `DELETED`
+* `RELATIONSHIP_CREATED`
+* `RELATIONSHIP_DELETED`
+
+For instance, to only require filtering for mutations to a type itself and not its relationships:
+
+[source, graphql, indent=0]
+----
+type User @subscriptionsAuthorization(filter: [
+    { events: [CREATED, UPDATED, DELETED], where: { node: { id: "$jwt.sub" } } }
+]) {
+    id: ID!
+}
+----
+
+== Authorization without authentication
+
+Authentication is implicitly required for every authorization check by default, but this can be disabled on a per-rule basis.
+This could be the case, for instance, when a node has a property which flags whether the node should be public or not.
+
+For instance, in the case where some `Post` nodes are private whilst other `Post` nodes are public, here is how to set this up:
+
+[source, graphql, indent=0]
+----
+type Post @subscriptionsAuthorization(filter: [
+    { requireAuthentication: false, where: { node: { public: true } } }
+]) {
+    title: String!
+    content: String!
+    public: Boolean!
+}
+----

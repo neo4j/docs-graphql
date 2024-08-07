@@ -10,6 +10,12 @@ All authorization rules have an implied requirement for authentication, given th
 In the case of explicit authentication, configured using the `@authentication` directive, it is only ever evaluated during Cypher translation time.
 Unauthenticated requests with queries requiring authentication never reach the database.
 
+[WARNING]
+====
+The `@authorization` directive does apply to subscriptions, it only applies to queries and mutations.
+You should configure authorization for subscriptions using xref::/security/subscriptions-authorization.adoc[`@subscriptionsAuthorization`] if you intend to use subscriptions in your API and want the events protected.
+====
+
 == Rules
 
 === Filtering
