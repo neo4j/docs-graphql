@@ -3,7 +3,7 @@
 = Installation
 :page-aliases: ogm/examples/index.adoc
 
-The OGM can be installed into a new or existing Node.js project in a similar way to the installation of the Neo4j GraphQL Library.
+You can install the OGM into a new or existing Node.js project in a similar way to how you install the Neo4j GraphQL Library.
 It has the following dependencies:
 
 * `@neo4j/graphql-ogm`: the OGM package.
@@ -15,12 +15,6 @@ It has the following dependencies:
 npm install @neo4j/graphql-ogm graphql neo4j-driver
 ----
 
-To use the OGM, you must always import it:
-
-[source, javascript, indent=0]
-----
-import { OGM } from "@neo4j/graphql-ogm";
-----
 
 == Usage examples
 
@@ -55,12 +49,11 @@ Assuming a running Neo4j database at "neo4j://localhost:7687" with username "use
 ----
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import { Neo4jGraphQLAuthJWTPlugin } from "@neo4j/graphql-plugin-auth";
 import { Neo4jGraphQL } from "@neo4j/graphql";
-import { OGM } from "@neo4j/graphql-ogm";
+import OGM from "@neo4j/graphql-ogm";
 import neo4j from "neo4j-driver";
 
-import { createJWT, comparePassword } from "./utils"; // example util function, more information below
+import { createJWT, comparePassword } from "./utils.js"; // example util function, more information below
 
 const driver = neo4j.driver(
     "neo4j://localhost:7687",
@@ -80,7 +73,7 @@ const typeDefs = `#graphql
     }
 `;
 
-const ogm = new OGM({ typeDefs, driver });
+const ogm = new OGM.OGM({ typeDefs, driver });
 const User = ogm.model("User");
 
 const resolvers = {
@@ -107,13 +100,14 @@ const resolvers = {
 
             return createJWT({ sub: users[0].id });
         },
+
         signIn: async (_source, { username, password }) => {
             const [user] = await User.find({
                 where: {
                     username,
                 },
             });
-
+        
             if (!user) {
                 throw new Error(`User with username ${username} not found!`);
             }
@@ -121,7 +115,9 @@ const resolvers = {
             const correctPassword = await comparePassword(password, user.password);
 
             if (!correctPassword) {
-                throw new Error(`Incorrect password for user with username ${username}!`);
+                throw new Error(
+                    `Incorrect password for user with username ${username}!`
+                );
             }
 
             return createJWT({ sub: user.id });
@@ -129,33 +125,40 @@ const resolvers = {
     },
 };
 
+
 const neoSchema = new Neo4jGraphQL({
     typeDefs,
     driver,
     resolvers,
-    plugins: {
-        auth: new Neo4jGraphQLAuthJWTPlugin({
-            secret: "secret"
-        })
-    }
+    features: {
+        authorization: {
+            key: "secret",
+        },
+    },
 });
 
-Promise.all([neoSchema.getSchema(), ogm.init()]).then(([schema]) => {
+async function main() {
+    await ogm.init();
+
     const server = new ApolloServer({
-        schema,
+        schema: await neoSchema.getSchema(),
     });
 
-    startStandaloneServer(server, {
-        context: async ({ req }) => ({ req }),
-    }).then(({ url }) =>  {
-        console.log(`🚀 Server ready at ${url}`);
+    const { url } = await startStandaloneServer(server, {
+        listen: { port: 4000 },
+        context: async ({ req }) => ({
+            token: req.headers.authorization,
+        }),
     });
-});
+
+    console.log(`🚀 Server ready at ${url}`);
+}
+
+main();
 ----
 
-It's important to note the JWT secret being passed into the `Neo4jGraphQL` constructor in this example.
+Additionally, create a file `utils.js` in the same directory and add the following code to it:
 
-Additionally, the following code snippet provides an example implementation for the util functions `createJWT` and `comparePassword`:
 [source, javascript, indent=0]
 ----
 import bcrypt from "bcrypt";
@@ -188,9 +191,16 @@ export function comparePassword(plainText, hash) {
 
 [NOTE]
 ====
-This code for the util functions `createJWT` and `comparePassword` is an example. 
+The code for the util functions `createJWT` and `comparePassword` is an example. 
 Adjust it to suit your use case.
 ====
+
+Install the additional dependencies:
+
+[source, bash, indent=0]
+----
+npm install bcrypt jsonwebtoken
+----
 
 Back on the command line, run the following command to start your server:
 
@@ -211,7 +221,8 @@ You can execute the `signUp` mutation against the GraphQL API to sign up, but if
 [[ogm-examples-rest-api]]
 === REST API
 
-This example demonstrates how you might use the OGM without exposing a Neo4j GraphQL API endpoint. The example starts an https://expressjs.com/[Express] server and uses the OGM to interact with the Neo4j GraphQL Library, exposed via a REST endpoint.
+This example demonstrates how you can use the OGM without exposing a Neo4j GraphQL API endpoint.
+It starts an https://expressjs.com/[Express] server and uses the OGM to interact with the Neo4j GraphQL Library, exposed via a REST endpoint.
 
 Execute the following to create an example application directory and create a new project:
 
@@ -219,7 +230,7 @@ Execute the following to create an example application directory and create a ne
 ----
 mkdir ogm-rest-example
 cd ogm-rest-example
-npm init --yes
+npm init es6 --yes
 touch index.js
 ----
 
@@ -235,12 +246,12 @@ Assuming a running Neo4j database at "bolt://localhost:7687" with username "user
 [source, javascript, indent=0]
 ----
 import express from "express";
-import { OGM } from "@neo4j/graphql-ogm";
+import OGM from "@neo4j/graphql-ogm";
 import neo4j from "neo4j-driver";
 
 const driver = neo4j.driver(
-    "bolt://localhost:7687",
-    neo4j.auth.basic("username", "password")
+  "bolt://localhost:7687",
+  neo4j.auth.basic("username", "password")
 );
 
 const typeDefs = `
@@ -250,34 +261,39 @@ const typeDefs = `
     }
 `;
 
-const ogm = new OGM({ typeDefs, driver });
+const ogm = new OGM.OGM({
+  typeDefs,
+  driver,
+  features: { filters: { String: { MATCHES: true } } },
+});
+
 const User = ogm.model("User");
 
 const app = express();
 
 app.get("/users", async (req, res) => {
-    const { search, offset, limit, sort } = req.query;
+  const { search, offset, limit, sort } = req.query;
 
-    const regex = search ? `(?i).*${search}.*` : null;
+  const regex = search ? `(?i).*${search}.*` : null;
 
-    const users = await User.find({
-        where: { name_REGEX: regex },
-        options: {
-            offset,
-            limit,
-            sort
-        }
-    });
+  const users = await User.find({
+    where: { name_MATCHES: regex },
+    options: {
+      offset,
+      limit,
+      sort,
+    },
+  });
 
-    return res.json(users).end();
+  return res.json(users).end();
 });
 
 const port = 4000;
 
 ogm.init().then(() => {
-    app.listen(port, () => {
-        console.log("Example app listening at http://localhost:${port}")
-    });
+  app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}/users`);
+  });
 });
 ----
 
@@ -288,11 +304,11 @@ In your application directory, you can run this application:
 node index.js
 ----
 
-Which should output:
+You should see the following output:
 
 [source, bash, indent=0]
 ----
-Example app listening at http://localhost:4000
+Example app listening at http://localhost:4000/users
 ----
 
 The REST API should now be ready to accept requests at that URL.
