@@ -311,4 +311,4 @@ You should see the following output:
 Example app listening at http://localhost:4000/users
 ----
 
-The REST API should now be ready to accept requests at that URL.
+The REST API should now be available at `http://localhost:4000`, with  a single working route `/users`.
