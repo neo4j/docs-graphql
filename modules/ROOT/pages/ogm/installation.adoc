@@ -157,7 +157,15 @@ async function main() {
 main();
 ----
 
-Additionally, create a file `utils.js` in the same directory and add the following code to it:
+Additionally, create a file `utils.js` in the same directory.
+Install additional dependencies:
+
+[source, bash, indent=0]
+----
+npm install bcrypt jsonwebtoken
+----
+
+Add the following code to `utils.js`:
 
 [source, javascript, indent=0]
 ----
@@ -194,13 +202,6 @@ export function comparePassword(plainText, hash) {
 The code for the util functions `createJWT` and `comparePassword` is an example. 
 Adjust it to suit your use case.
 ====
-
-Install the additional dependencies:
-
-[source, bash, indent=0]
-----
-npm install bcrypt jsonwebtoken
-----
 
 Back on the command line, run the following command to start your server:
 
