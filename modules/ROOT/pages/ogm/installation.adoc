@@ -50,7 +50,7 @@ Assuming a running Neo4j database at "neo4j://localhost:7687" with username "use
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import { Neo4jGraphQL } from "@neo4j/graphql";
-import OGM from "@neo4j/graphql-ogm";
+import { OGM } from "@neo4j/graphql-ogm";
 import neo4j from "neo4j-driver";
 
 import { createJWT, comparePassword } from "./utils.js"; // example util function, more information below
@@ -73,7 +73,7 @@ const typeDefs = `#graphql
     }
 `;
 
-const ogm = new OGM.OGM({ typeDefs, driver });
+const ogm = new OGM({ typeDefs, driver });
 const User = ogm.model("User");
 
 const resolvers = {
@@ -247,7 +247,7 @@ Assuming a running Neo4j database at "bolt://localhost:7687" with username "user
 [source, javascript, indent=0]
 ----
 import express from "express";
-import OGM from "@neo4j/graphql-ogm";
+import { OGM } from "@neo4j/graphql-ogm";
 import neo4j from "neo4j-driver";
 
 const driver = neo4j.driver(
@@ -262,7 +262,7 @@ const typeDefs = `
     }
 `;
 
-const ogm = new OGM.OGM({
+const ogm = new OGM({
   typeDefs,
   driver,
   features: { filters: { String: { MATCHES: true } } },
