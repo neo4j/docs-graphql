@@ -47,7 +47,7 @@ a| Required to differentiate interfaces that are used for relationship propertie
 | Used in combination with `@jwt`.
 Configures the JWT authentication and authorization filters to include an additional JWT claim which is either nested or using special characters not supported by GraphQL.
 
-| `@subscriptionsAuthorization`
+| xref::/security/subscriptions-authorization.adoc[`@subscriptionsAuthorization`]
 | Specifies authorization rules for subscriptions on the type.
 
 |===
