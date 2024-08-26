@@ -18,7 +18,7 @@ npm install @neo4j/graphql-ogm graphql neo4j-driver
 
 == Usage examples
 
-Here are some examples of how you can take advantage of the OGM.
+Here are some examples of how you can use the OGM.
 
 [[ogm-examples-custom-resolvers]]
 === Custom Resolvers
@@ -225,7 +225,7 @@ You can execute the `signUp` mutation against the GraphQL API to sign up, but if
 This example demonstrates how you can use the OGM without exposing a Neo4j GraphQL API endpoint.
 It starts an https://expressjs.com/[Express] server and uses the OGM to interact with the Neo4j GraphQL Library, exposed via a REST endpoint.
 
-Execute the following to create an example application directory and create a new project:
+Execute the following to create an example application directory and a new project:
 
 [source, bash, indent=0]
 ----
@@ -242,7 +242,7 @@ Install the dependencies:
 npm install @neo4j/graphql-ogm graphql neo4j-driver express
 ----
 
-Assuming a running Neo4j database at "bolt://localhost:7687" with username "username" and password "password", in your empty `index.js` file, add the following code:
+Assuming a running Neo4j database at "neo4j://localhost:7687" with username "username" and password "password", in your empty `index.js` file, add the following code:
 
 [source, javascript, indent=0]
 ----
@@ -312,4 +312,4 @@ You should see the following output:
 Example app listening at http://localhost:4000/users
 ----
 
-The REST API should now be available at `http://localhost:4000`, with  a single working route `/users`.
+The REST API should now be available at `http://localhost:4000`, with a single working route `/users`.
