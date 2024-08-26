@@ -10,6 +10,7 @@
 ** xref:security/configuration.adoc[]
 ** xref:security/authentication.adoc[]
 ** xref:security/authorization.adoc[]
+** xref:security/subscriptions-authorization.adoc[]
 ** xref:security/impersonation-and-user-switching.adoc[]
 ** xref:security/operations.adoc[]
 * xref:types/index.adoc[]
