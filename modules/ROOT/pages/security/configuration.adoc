@@ -5,11 +5,8 @@ The Neo4j GraphQL Library uses JSON Web Token (JWT) authentication.
 JWTs are tokens containing claims or statements about the user or client making the request.
 These claims can include information such as the user's ID or roles.
 
-When a user or client logs in to the API, the API generates a JWT and returns it to the client.
-The client then includes the JWT with each subsequent request to the API.
+A JWT can be obtained from an authentication service and is then included in an API request.
 The API verifies the JWT and returns the requested data if the JWT is valid.
-
-// ^ is this paragraph accurate?
 
 == Instantiation
 
@@ -21,7 +18,6 @@ The Neo4j GraphQL Library can accept two types of JWTs:
 === Encoded JWTs
 
 To use encoded JWTs, the library must to be configured with a key to decode and verify the tokens.
-
 The following code block uses Apollo Server, extracts the `Authorization` header from the request and puts it in the appropriate context field:
 
 [source, typescript, indent=0]
@@ -46,8 +42,6 @@ Optionally, if a custom decoding mechanism is required, that same header can be 
 
 To configure the library with a symmetric secret (e.g. "secret"), the following instantiation is required:
 
-// ^ What is a symmetric secret? What is its purpose?
-
 [source, typescript, indent=0]
 ----
 new Neo4jGraphQL({
@@ -62,9 +56,7 @@ new Neo4jGraphQL({
 
 ==== JWKS endpoint
 
-To configure the library to verify tokens against a JWKS endpoint, for example "https://www.myapplication.com/.well-known/jwks.json", the following instantiation is required:
-
-// ^ What is the purpose?
+To configure the library to verify tokens against a JSON Web Key Set (JWKS) endpoint, for example "https://www.example.com/.well-known/jwks.json", the following instantiation is required:
 
 [source, typescript, indent=0]
 ----
@@ -82,7 +74,7 @@ new Neo4jGraphQL({
 
 ==== Passing in encoded JWTs
 
-// This was at the end of the file, I thought it could be moved here instead. What about decoded JWTs?
+// What about decoded JWTs?
 
 To pass in an encoded JWT, use the token field of the context.
 When using Apollo Server, extract the authorization header into the token property of the context:
@@ -153,7 +145,7 @@ You can use any name as long as it is decorated with the `@jwt` directive.
 
 === The `@jwtClaim` directive
 
-A `roles` claim is not necessarily located at the JWT payload root, but can instead be in a nested location, for example:
+A `roles` claim is not necessarily located at the JWT payload root, but can instead be in a nested location, for example under `myApplication`:
 
 [source, json, indent=0]
 ----
@@ -164,8 +156,6 @@ A `roles` claim is not necessarily located at the JWT payload root, but can inst
     }
 }
 ----
-
-// ^ why is this a nested location? can we show the nesting?
 
 In this case, use the `@jwtClaim` directive:
 
@@ -199,6 +189,6 @@ type JWT @jwt {
 
 [NOTE]
 ====
-This way of escaping is necessary to escape twice: once for GraphQL and once for `dot-prop`, which is used under the hood to resolve the path.
+The `path` must be escaped twice: once for GraphQL and once for `dot-prop`, which is used under the hood to resolve the path.
 ====
 
