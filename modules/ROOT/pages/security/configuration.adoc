@@ -140,6 +140,7 @@ type JWT @jwt {
 }
 ----
 
+[NOTE]
 Note that the type name `JWT` is not required.
 You can use any name as long as it is decorated with the `@jwt` directive.
 
@@ -157,7 +158,7 @@ A `roles` claim is not necessarily located at the JWT payload root, but can inst
 }
 ----
 
-In this case, use the `@jwtClaim` directive:
+In this case, use the `@jwtClaim` directive alongside the `@jwt` directive:
 
 [source, graphql, indent=0]
 ----
