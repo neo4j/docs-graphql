@@ -10,7 +10,7 @@ This section shows how to use subscriptions with the OGM inside custom resolvers
 
 === Prerequisites
 
-. Use the following type definitions:
+Use the following type definitions:
 [source, javascript, indent=0]
 ----
 const typeDefs = `#graphql
@@ -21,28 +21,32 @@ const typeDefs = `#graphql
 `;
 ----
 
-. Set up a subscriptions plugin instance to be shared between the Library and the OGM constructors:
-[source, javascript, indent=0]
-----
-const subscriptionsPlugin = new Neo4jGraphQLSubscriptionsSingleInstancePlugin();
-----
-
-. Set up a server that supports subscriptions.
-See more instructions in the xref:subscriptions/getting-started.adoc#setting-up-server[Getting started page].
-
+Set up a server that supports subscriptions. See more instructions in the xref:subscriptions/getting-started.adoc#_setting_up_an_apolloserver_server[Getting started] page.
 
 === Adding the OGM
 
-In order to utilize the `@private` marked field on the `User` type, you need to create the `User` model.
-Also, to use the subscriptions, you need to pass in the subscriptions plugin instance to the OGM constructor:
+Enable the subscriptions feature in the OGM constructor:
 
 [source, javascript, indent=0]
 ----
-const ogm = new OGM({ typeDefs, driver, plugins: { subscriptions: subscriptionsPlugin } });
-const Profile = ogm.model("Profile");
+const ogm = new OGM({
+    typeDefs,
+    driver,
+    features: {
+        subscriptions: true
+    },
+});
 ----
 
-Make sure you initialize the OGM instance before using it by adding the following line to the `main()` function:
+Create the `User` model, which utilizes the `@private` marked field on the `User` type in the type definitions.
+
+[source, javascript, indent=0]
+----
+const User = ogm.model("User");
+----
+
+Initialize the OGM instance before using it by adding the following line to the `main()` function:
+
 [source, javascript, indent=0]
 ----
 await ogm.init();
@@ -52,8 +56,7 @@ await ogm.init();
 
 xref:custom-resolvers/[Custom resolvers] can be used for multiple reasons such as performing data manipulation and checks, or interact with third party systems. 
 In this case, you only need to create a `User` node with the `password` field set.
-You can do that by adding a sign-up mutation.
-For example:
+You can do that by adding a sign-up mutation:
 
 [source, javascript, indent=0]
 ----
@@ -61,30 +64,31 @@ const resolvers = {
   Mutation: {
     signUp: async (_source, { username, password }) => {
       const [existing] = await User.find({
-          where: {
-              username,
-          },
+        where: {
+          username,
+        },
       });
       if (existing) {
-          throw new Error(`User with username ${username} already exists!`);
+        throw new Error(`User with username ${username} already exists!`);
       }
       const { users } = await User.create({
-          input: [
-              {
-                  username,
-                  password,
-              }
-          ]
+        input: [
+          {
+            username,
+            password,
+          },
+        ],
       });
       return createJWT({ sub: users[0].id });
     },
   },
 };
 const typeDefs = `
-   type Mutation {
+    type Mutation {
         signUp(username: String!, password: String!): String!
     }
-`
+`;
+
 ----
 
 [discrete]
@@ -94,7 +98,6 @@ Altogether, it should look like this:
 
 [source, javascript, indent=0]
 ----
-const subscriptionsPlugin = new Neo4jGraphQLSubscriptionsSingleInstancePlugin();
 const driver = neo4j.driver(
   "bolt://localhost:7687",
   neo4j.auth.basic("neo4j", "password")
@@ -131,17 +134,22 @@ const resolvers = {
     },
   },
 };
-// Share the subscriptions plugin instance across the Library and the OGM
 const neoSchema = new Neo4jGraphQL({
-  typeDefs,
-  driver,
-  resolvers,
-  plugins: {
-    subscriptions: subscriptionsPlugin,
-  },
+    typeDefs,
+    driver,
+    resolvers,
+    feature: {
+        subscriptions: true,
+    },
 });
-const ogm = new OGM({ typeDefs, driver, plugins: { subscriptions: subscriptionsPlugin } });
-const Profile = ogm.model("Profile");
+const ogm = new OGM({
+    typeDefs,
+    driver,
+    features: {
+        subscriptions: true
+    },
+});
+const User = ogm.model("User");
 
 async function main() {
   // initialize the OGM instance
