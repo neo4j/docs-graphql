@@ -21,10 +21,9 @@ const typeDefs = `#graphql
 `;
 ----
 
-Set up a server that supports subscriptions. See more instructions in the xref:subscriptions/getting-started.adoc#setting-up-server[Getting started page].
+Set up a server that supports subscriptions. See more instructions in the xref:subscriptions/getting-started.adoc#_setting_up_an_apolloserver_server[Getting started] page.
 
 === Adding the OGM
-
 
 Enable the subscriptions feature in the OGM constructor:
 
@@ -39,7 +38,7 @@ const ogm = new OGM({
 });
 ----
 
-Create the `User` model, which will utilize the `@private` marked field on the `User` type in the type definitions.
+Create the `User` model, which utilizes the `@private` marked field on the `User` type in the type definitions.
 
 [source, javascript, indent=0]
 ----
