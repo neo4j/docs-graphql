@@ -10,7 +10,7 @@ Impersonation still authenticates with the database as the original configured u
 When impersonating a user, the query is run within the complete security context of the impersonated user and not the authenticated user (home database, permissions etc).
 
 Consider the following an example of how to impersonate a different user per request.
-Here the user to impersonate is taken from a HTTP header `User`:
+Here the user to impersonate is taken from an HTTP header `User`:
 
 [.tabbed-example]
 ====

@@ -66,6 +66,9 @@ type Post @authorization(filter: [
 }
 ----
 
+[NOTE]
+If there is no `operations` argument with a list of operations, the GraphQL Library treats the authorization configuration as if the full list of operations had been provided.
+
 
 === Validating
 
@@ -114,6 +117,9 @@ type Post @authorization(validate: [
     author: User! @relationship(type: "AUTHORED", direction: IN)
 }
 ----
+
+[NOTE]
+If there is no `operations` argument with a list of operations, the GraphQL Library treats the authorization configuration as if the full list of operations had been provided.
 
 
 == Authorization without authentication
