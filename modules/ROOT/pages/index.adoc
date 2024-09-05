@@ -26,7 +26,7 @@ For every query and mutation that is executed against this generated schema, the
 - Automatic generation of xref::queries-aggregations/queries.adoc[Queries] and xref::mutations/index.adoc[Mutations] for CRUD interactions.
 - xref::/types/index.adoc[Types], including temporal and spatial.
 - Support for both node and relationship properties.
-- Extensibility through the xref::/directives/custom-logic.adoc#_cypher[`@cypher` directive] and/or xref::/directives/custom-logic.adoc#_custom-resolvers[Custom Resolvers].
+- Extensibility through the xref::/directives/custom-logic.adoc#_cypher[`@cypher` directive] and/or xref::/directives/custom-logic.adoc#_customresolver[Custom Resolvers].
 - Extensive xref::queries-aggregations/filtering.adoc[Filtering] and xref::queries-aggregations/sorting.adoc[Sorting] options.
 - Options for xref::/directives/database-mapping.adoc[Database mapping] and value xref::/directives/autogeneration.adoc[Autogeneration].
 - xref::/queries-aggregations/pagination/index.adoc[Pagination] options.

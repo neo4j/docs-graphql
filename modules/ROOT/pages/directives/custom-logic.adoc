@@ -300,7 +300,6 @@ type Movie {
 }
 ----
 
-[[type-definitions-default-values-limit]]
 == `@limit`
 
 Available on nodes, this directive injects values into a query such as the `limit`.
