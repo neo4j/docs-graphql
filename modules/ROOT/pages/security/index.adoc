@@ -5,12 +5,9 @@ auth/authorization.adoc, auth/auth-directive.adoc, auth/subscriptions.adoc, \
 auth/authorization/allow.adoc, auth/authorization/bind.adoc, auth/authorization/roles.adoc, \
 auth/authorization/where.adoc, authentication-and-authorization/index.adoc
 
-The Neo4j GraphQL Library offers the following security features:
-
-* xref::/security/configuration.adoc[Configuration] of JSON Web Token (JWT) authentication with encoded or decoded JWTs.
-* xref::/security/authentication.adoc[Authentication] for different operations on different parts of your schema with the `@authentication` directive.
-* Rule-based xref::/security/authorization.adoc[authorization] filtering and validation with the `@authorization` directive. 
-* Rule-based xref::/security/subscriptions-authorization.adoc[subscriptions authorization] for subscriptions with the `@subscriptionsAuthorization` directive.
-* xref::/security/impersonation-and-user-switching.adoc[User impersonation and switching].
-
-See xref::/security/operations.adoc[Operations] for GraphQL query examples on how to trigger the evaluation of different authentication and authorization rules.
+* xref::/security/configuration.adoc[Configuration] - Configuration of JSON Web Token (JWT) authentication with encoded or decoded JWTs.
+* xref::/security/authentication.adoc[Authentication] - Explicit authentication for different operations on different parts of your schema with the `@authentication` directive.
+* xref::/security/authorization.adoc[Authorization] - Rule-based authorization filtering and validation with the `@authorization` directive. 
+* xref::/security/subscriptions-authorization.adoc[Subscriptions authorization] - Rule-based authorization for subscriptions with the `@subscriptionsAuthorization` directive.
+* xref::/security/impersonation-and-user-switching.adoc[Impersonation and user switching] - How to set up impersonation and user switching features.
+* xref::/security/operations.adoc[Operations] - for GraphQL query examples on how to trigger the evaluation of different authentication and authorization rules.
