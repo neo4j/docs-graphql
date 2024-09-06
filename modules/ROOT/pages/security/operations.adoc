@@ -4,7 +4,7 @@
 
 This page showcases a number of GraphQL queries and how you can trigger the evaluation of different authentication and authorization rules.
 
-Each relevant line has a comment such as `CREATE ON OBJECT Movie`, which means an authentication directive like the following is be evaluated:
+Each relevant line has a comment such as `CREATE ON OBJECT Movie`, which means an authentication directive like the following is evaluated:
 
 [source, graphql, indent=0]
 ----
@@ -14,8 +14,10 @@ type Movie @authentication(operations: [CREATE]) {
 }
 ----
 
-[NOTE]
+[IMPORTANT]
+====
 This also applies if the directive has no arguments because `operations` defaults to _all_ operations.
+====
 
 The following examples apply to the `@authentication` directive, and also any rules within an `@authorization` directive.
 

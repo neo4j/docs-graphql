@@ -5,7 +5,7 @@ The Neo4j GraphQL Library uses JSON Web Token (JWT) authentication.
 JWTs are tokens containing claims or statements about the user or client making the request.
 These claims can include information such as the user's ID or roles.
 
-A JWT can be obtained from an authentication service and is then included in an API request.
+A JWT can be obtained from an authentication service and then be included in an API request.
 The API verifies the JWT and returns the requested data if the JWT is valid.
 
 == Instantiation
@@ -17,8 +17,9 @@ The Neo4j GraphQL Library can accept two types of JWTs:
 
 === Encoded JWTs
 
-To use encoded JWTs, the library can be configured with a key to decode and verify the tokens.
-The following code block uses Apollo Server, extracts the `Authorization` header from the request and puts it in the appropriate context field:
+In order to use encoded JWTs, configure the library with a key to decode and verify the tokens.
+The following code block uses Apollo Server. 
+It extracts the `Authorization` header from the request and puts it in the appropriate context field:
 
 [source, typescript, indent=0]
 ----
@@ -115,8 +116,9 @@ interface JwtPayload {
 ----
 
 [WARNING]
+====
 Do not pass in the header or the signature.
-
+====
 
 === Decoded JWTs
 
@@ -136,8 +138,7 @@ const { url } = await startStandaloneServer(server, {
 ----
 
 `customImplementation` is a placeholder for a function that provides a decoded JWT.
-Using `jwt` instead of `token` in the `context` informs the Neo4jGraphQL library that it doesn't need to decode it.
-
+Using `jwt` instead of `token` in the `context` informs the Neo4j GraphQL Library that it doesn't need to decode it.
 
 == Adding JWT claims
 
@@ -157,12 +158,15 @@ type JWT @jwt {
 ----
 
 [NOTE]
-Note that the type name `JWT` is not required.
+====
+The type name `JWT` is not mandatory.
 You can use any name as long as it is decorated with the `@jwt` directive.
+====
 
 === The `@jwtClaim` directive
 
-A `roles` claim is not necessarily located at the JWT payload root, but can instead be in a nested location, for example under `myApplication`:
+A `roles` claim is not necessarily located at the JWT payload root.
+It can instead be in a nested location, for example under `myApplication`:
 
 [source, json, indent=0]
 ----
@@ -195,7 +199,7 @@ Additionally, the nested location may contain `.` characters in the path, for ex
 }
 ----
 
-Escape these characters:
+These characters must be escaped:
 
 [source, graphql, indent=0]
 ----
