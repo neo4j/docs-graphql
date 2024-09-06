@@ -183,7 +183,21 @@ The following query yields a different Cypher query depending on the user JWT:
   users {
     name
   }
-}ref::/directives/database-mapping.adoc#_declarerelationship[
+}
+----
+
+Assuming there is a user with the value `"username": "arthur"` in JWT, the Cypher query looks like:
+
+[source, cypher, indent=0]
+----
+MATCH (this:arthur)
+RETURN this { .name } as this
+----
+
+Similarly, context values can be passed directly:
+
+[source, graphql, indent=0]
+----
 type User @node(label: ["$context.appId"]) {
     name: String!
 }
