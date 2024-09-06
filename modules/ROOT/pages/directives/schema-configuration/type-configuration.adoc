@@ -9,7 +9,7 @@ For example:
 
 [source, graphql, indent=0]
 ----
-type Movie { 
+type Movie @node { 
     title: String 
     length: Int
 }
@@ -54,7 +54,7 @@ directive @query(read: Boolean! = true, aggregate: Boolean! = false) on OBJECT |
 .Disable _movies_ and _moviesConnection_ operations
 [source, graphql, indent=0]
 ----
-type Movie @query(read: false, aggregate: true) { 
+type Movie @node @query(read: false, aggregate: true) { 
     title: String 
     length: Int
 }
@@ -63,7 +63,7 @@ type Movie @query(read: false, aggregate: true) {
 .Disable _moviesAggregate_ operations
 [source, graphql, indent=0]
 ----
-type Movie @query(read: true, aggregate: false)  { 
+type Movie @node @query(read: true, aggregate: false)  { 
     title: String 
     length: Int
 }
@@ -91,7 +91,7 @@ directive @mutation(operations: [MutationFields!]! = [CREATE, UPDATE, DELETE]) o
 .Disable Create, Delete, and Update operations for _Movie_
 [source, graphql, indent=0]
 ----
-type Movie @mutation(operations: []) { 
+type Movie @node @mutation(operations: []) { 
     title: String 
     length: Int
 }
@@ -100,7 +100,7 @@ type Movie @mutation(operations: []) {
 .Enable only Create operations for _Movie_
 [source, graphql, indent=0]
 ----
-type Movie @mutation(operations: [CREATE]) { 
+type Movie @node @mutation(operations: [CREATE]) { 
     title: String 
     length: Int
 }
@@ -130,7 +130,7 @@ directive @subscription(events: [SubscriptionFields!]! = [CREATED, UPDATED, DELE
 .Disable subscriptions for _Movie_
 [source, graphql, indent=0]
 ----
-type Movie @subscription(events: [])  { 
+type Movie @node @subscription(events: [])  { 
     title: String 
     length: Int
 }
@@ -139,7 +139,7 @@ type Movie @subscription(events: [])  {
 .Enable only _movieCreated_ subscription for _Movie_
 [source, graphql, indent=0]
 ----
-type Movie @subscription(events: [CREATED]) { 
+type Movie @node @subscription(events: [CREATED]) { 
     title: String 
     length: Int
 }
@@ -177,7 +177,7 @@ enum Location {
     EVERYWHERE
 }
 
-type SomeType {
+type SomeType @node {
     firstLocation: Location! @default(value: HERE) # valid usage
     secondLocation: Location! @default(value: ELSEWHERE) # invalid usage, will throw an error
 }
@@ -193,7 +193,7 @@ Take this type definition as an example:
 
 [source, graphql, indent=0]
 ----
-type Tech @plural(value: "Techs") {
+type Tech @plural(value: "Techs") @node {
   name: String
 }
 ----

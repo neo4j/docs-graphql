@@ -42,14 +42,14 @@ Given the following type definition:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     id: ID
     name: String
     genres: [Genre!]! @relationship(type: "IN_GENRE", direction: OUT)
     customCypher: String! @cypher(statement: "RETURN someCustomData")
 }
 
-type Genre {
+type Genre @node {
     name: String
 }
 ----
@@ -86,14 +86,14 @@ const driver = neo4j.driver(
 );
 
 const typeDefs = `
-    type Movie {
+    type Movie @node {
         id: ID
         name: String
         genres: [Genre!]! @relationship(type: "IN_GENRE", direction: OUT)
         customCypher: String! @cypher(statement: "RETURN someCustomData")
     }
 
-    type Genre {
+    type Genre @node {
         name: String
     }
 `;
@@ -139,14 +139,14 @@ const driver = neo4j.driver(
 );
 
 const typeDefs = `
-    type Movie {
+    type Movie @node {
         id: ID
         name: String
         genres: [Genre!]! @relationship(type: "IN_GENRE", direction: OUT)
         customCypher: String! @cypher(statement: "RETURN someCustomData")
     }
 
-    type Genre {
+    type Genre @node {
         name: String
     }
 `;

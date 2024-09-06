@@ -17,12 +17,12 @@ To add a second node type, "Actor", and connect the two together, you should do 
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
-type Actor {
+type Actor @node {
     name: String
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
 }
@@ -51,12 +51,12 @@ For example, for the "ACTED_IN" relationship, add a property "roles":
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
 }
 
-type Actor {
+type Actor @node {
     name: String
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedIn")
 }
@@ -78,7 +78,7 @@ For example, to represent a node with the label "Movie" and a single property "t
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
 }
 ----
@@ -227,7 +227,7 @@ For example:
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID! @id @alias(property: "dbId")
     username: String!
 }
@@ -235,13 +235,13 @@ type User {
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID! @id
     username: String! @alias(property: "dbUserName")
     livesIn: [City!]! @relationship(direction: OUT, type: "LIVES_IN", properties: "UserLivesInProperties")
 }
 
-type City {
+type City @node {
     name: String
 }
 

@@ -57,7 +57,7 @@ const neoSchema = new Neo4jGraphQL({
     typeDefs: [
         upperDirectiveTypeDefs,
         `#graphql
-            type Movie {
+            type Movie @node {
                 name: String @uppercase
             }
         `,

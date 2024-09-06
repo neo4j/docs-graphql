@@ -8,14 +8,14 @@ Quries on this page assume the following type definitions:
 
 [source, graphql, indent=0]
 ----
-type Post {
+type Post @node {
     id: ID! @id
     content: String!
     creator: User! @relationship(type: "HAS_POST", direction: IN, properties: "PostedAt")
     createdAt: DateTime!
 }
 
-type User {
+type User @node {
     id: ID! @id
     name: String!
     age: Int!

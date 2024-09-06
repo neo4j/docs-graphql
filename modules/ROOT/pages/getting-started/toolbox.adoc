@@ -25,12 +25,12 @@ If you followed the xref:getting-started/index.adoc[Getting started tutorial], y
 +
 [source, graphql, indent=0]
 ----
-type Actor {
+type Actor @node {
   actedInMovies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
   name: String!
 }
 
-type Movie {
+type Movie @node {
   actorsActedIn: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
   title: String!
 }

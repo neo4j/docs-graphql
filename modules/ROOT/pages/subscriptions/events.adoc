@@ -29,7 +29,7 @@ As an example, consider the following type definitions:
 
 [source,graphql,indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
 }
@@ -68,7 +68,7 @@ As an example, consider the following type definitions:
 
 [source,graphql,indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
 }
@@ -107,7 +107,7 @@ As an example, consider the following type definitions:
 
 [source,graphql,indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
 }
@@ -167,14 +167,14 @@ As an example, consider the following type definitions:
 
 [source,graphql,indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
     reviewers: [Reviewer] @relationship(type: "REVIEWED", direction: IN, properties: "Reviewed")
 }
 
-type Actor {
+type Actor @node {
     name: String
 }
 
@@ -182,7 +182,7 @@ type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
-type Reviewer {
+type Reviewer @node {
     name: String
     reputation: Int
 }
@@ -244,13 +244,13 @@ For another example, this time creating a relationship with standard types, cons
 
 [source,graphql,indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
 }
 
-type Actor {
+type Actor @node {
     name: String
 }
 
@@ -294,7 +294,7 @@ As an example, consider the following type definitions:
 
 [source,graphql,indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     directors: [Director!]! @relationship(type: "DIRECTED", properties: "Directed", direction: IN)
@@ -302,11 +302,11 @@ type Movie {
 
 union Director = Person | Actor
 
-type Actor {
+type Actor @node {
     name: String
 }
 
-type Person {
+type Person @node {
     name: String
     reputation: Int
 }
@@ -353,7 +353,7 @@ For an example in which a relationship is created with an interface, consider th
 
 [source,graphql,indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     reviewers: [Reviewer!]! @relationship(type: "REVIEWED", properties: "Review", direction: IN)
@@ -363,12 +363,12 @@ interface Reviewer {
     reputation: Int!
 }
 
-type Magazine implements Reviewer {
+type Magazine implements Reviewer @node {
     title: String
     reputation: Int!
 }
 
-type Influencer implements Reviewer {
+type Influencer implements Reviewer @node {
     name: String
     reputation: Int!
 }
@@ -419,19 +419,19 @@ To illustrate that, consider the following type definitions:
 
 [source,graphql,indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
     directors: [Director!]! @relationship(type: "DIRECTED", properties: "Directed", direction: IN)
 }
 
-type Actor {
+type Actor @node {
     name: String
     movies: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
 }
 
-type Person {
+type Person @node {
     name: String
     reputation: Int
 }
@@ -703,12 +703,12 @@ type Actor @node(label: "Person") {
     movies: [Movie!]! @relationship(type: "PART_OF", direction: OUT)
 }
 
-typePerson {
+type Person @node {
     name: String
     movies: [Movie!]! @relationship(type: "PART_OF", direction: OUT)
 }
 
-type Movie {
+type Movie @node {
     title: String
     genre: String
     people: [Person!]!  @relationship(type: "PART_OF", direction: IN)
@@ -746,7 +746,7 @@ subscription {
                 }
            }
         }
-    }
+    }As an example, consider these type definitions:
 }
 
 subscription {
@@ -998,14 +998,14 @@ As an example, consider these type definitions:
 
 [source,graphql,indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
     reviewers: [Reviewer] @relationship(type: "REVIEWED", direction: IN, properties: "Reviewed")
 }
 
-type Actor {s
+type Actor @node {
     name: String
 }
 
@@ -1013,7 +1013,7 @@ type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
-type Reviewer {
+type Reviewer @node {
     name: String
     reputation: Int
 }
@@ -1075,13 +1075,13 @@ As an example, consider these type definitions:
 
 [source,graphql,indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
 }
 
-type Actor {
+type Actor @node {
     name: String
 }
 
@@ -1126,7 +1126,7 @@ Considering the following type definitions:
 
 [source, graphql]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     directors: [Director!]! @relationship(type: "DIRECTED", properties: "Directed", direction: IN)
@@ -1134,11 +1134,11 @@ type Movie {
 
 union Director = Person | Actor
 
-type Actor {
+type Actor @node {
     name: String
 }
 
-type Person {
+type Person @node {
     name: String
     reputation: Int
 }
@@ -1184,7 +1184,7 @@ Considering the following type definitions:
 
 [source, graphql]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     reviewers: [Reviewer!]! @relationship(type: "REVIEWED", properties: "Review", direction: IN)
@@ -1194,12 +1194,12 @@ interface Reviewer {
     reputation: Int!
 }
 
-type Magazine implements Reviewer {
+type Magazine implements Reviewer @node {
     title: String
     reputation: Int!
 }
 
-type Influencer implements Reviewer {
+type Influencer implements Reviewer @node {
     name: String
     reputation: Int!
 }
@@ -1249,19 +1249,19 @@ Considering the following type definitions:
 
 [source, graphql]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     actors: [Actor] @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
     directors: [Director!]! @relationship(type: "DIRECTED", properties: "Directed", direction: IN)
 }
 
-type Actor {
+type Actor @node {
     name: String
     movies: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
 }
 
-type Person {
+type Person @node {
     name: String
     reputation: Int
 }
@@ -1561,12 +1561,12 @@ type Actor @node(label: "Person") {
     movies: [Movie!]! @relationship(type: "PART_OF", direction: OUT)
 }
 
-typePerson {
+typePerson @node {
     name: String
     movies: [Movie!]! @relationship(type: "PART_OF", direction: OUT)
 }
 
-type Movie {
+type Movie @node {
     title: String
     genre: String
     people: [Person!]!  @relationship(type: "PART_OF", direction: IN)
