@@ -10,4 +10,4 @@ auth/authorization/where.adoc, authentication-and-authorization/index.adoc
 * xref::/security/authorization.adoc[Authorization] - Rule-based authorization filtering and validation with the `@authorization` directive. 
 * xref::/security/subscriptions-authorization.adoc[Subscriptions authorization] - Rule-based authorization for subscriptions with the `@subscriptionsAuthorization` directive.
 * xref::/security/impersonation-and-user-switching.adoc[Impersonation and user switching] - How to set up impersonation and user switching features.
-* xref::/security/operations.adoc[Operations] - for GraphQL query examples on how to trigger the evaluation of different authentication and authorization rules.
+* xref::/security/operations.adoc[Operations] - GraphQL query examples on how to trigger the evaluation of different authentication and authorization rules.
