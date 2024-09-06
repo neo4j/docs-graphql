@@ -25,7 +25,7 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type Movie {
+    type Movie @node {
         title: String!
     }
 `;
@@ -69,7 +69,7 @@ import { Neo4jGraphQL, Neo4jGraphQLContext } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type Movie {
+    type Movie @node {
         title: String!
     }
 `;
@@ -123,7 +123,7 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type Movie {
+    type Movie @node {
         title: String!
     }
 `;
@@ -167,7 +167,7 @@ import { Neo4jGraphQL, Neo4jGraphQLContext } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type Movie {
+    type Movie @node {
         title: String!
     }
 `;

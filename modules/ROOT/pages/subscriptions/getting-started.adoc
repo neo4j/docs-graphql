@@ -55,11 +55,11 @@ import { useServer } from "graphql-ws/lib/use/ws";
 import express from 'express';
 
 const typeDefs = `
-    type Movie {
+    type Movie @node {
         title: String
     }
 
-    type Actor {
+    type Actor @node {
         name: String
     }
 `;

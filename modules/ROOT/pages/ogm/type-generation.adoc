@@ -24,7 +24,7 @@ import * as neo4j from "neo4j-driver"
 import * as path from "path"
 
 const typeDefs = `
-    type Movie {
+    type Movie @node {
         id: ID
         name: String
     }

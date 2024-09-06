@@ -73,7 +73,7 @@ As an example, consider the following type definitions:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     averageRating: Float
@@ -232,7 +232,7 @@ As an example, in the following type definitions:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
@@ -242,7 +242,7 @@ type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
-type Actor {
+type Actor @node {
     name: String
 }
 ----
@@ -341,7 +341,7 @@ Considering the following type definitions:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     genre: String
     actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
@@ -353,11 +353,11 @@ type ActedIn @relationshipProperties {
     screenTime: Int!
 }
 
-type Actor {
+type Actor @node {
     name: String
 }
 
-type Person implements Reviewer {
+type Person implements Reviewer @node {
     name: String
     reputation: Int
 }
@@ -372,12 +372,12 @@ interface Reviewer {
     reputation: Int!
 }
 
-type Magazine implements Reviewer {
+type Magazine implements Reviewer @node {
     title: String
     reputation: Int!
 }
 
-type Review @relationshipProperties {
+type Review @relationshipProperties @node {
     score: Int!
 }
 ----

@@ -18,7 +18,7 @@ In order to use it in your schema, add a field with a type `Point` to any other 
 
 [source, graphql, indent=0]
 ----
-type TypeWithPoint {
+type TypeWithPoint @node {
     location: Point!
 }
 ----
@@ -31,7 +31,7 @@ See xref::queries-aggregations/filtering.adoc#_filtering_spatial_types[Filtering
 
 [source, graphql, indent=0]
 ----
-type Point {
+type Point @node {
     latitude: Float!
     longitude: Float!
     height: Float
@@ -93,7 +93,7 @@ To use it in your schema, add a field with a type `CartesianPoint` to any type(s
 
 [source, graphql, indent=0]
 ----
-type TypeWithCartesianPoint {
+type TypeWithCartesianPoint @node {
     location: CartesianPoint!
 }
 ----
@@ -106,7 +106,7 @@ See xref::queries-aggregations/filtering.adoc#_filtering_spatial_types[Filtering
 
 [source, graphql, indent=0]
 ----
-type CartesianPoint {
+type CartesianPoint @node {
     x: Float!
     y: Float!
     z: Float

@@ -8,7 +8,7 @@ Each relevant location has a comment such as `CREATE ON OBJECT Movie`, which mea
 
 [source, graphql, indent=0]
 ----
-type Movie @authentication(operations: [CREATE]) {
+type Movie @authentication(operations: [CREATE]) @node {
     title: String!
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
 }

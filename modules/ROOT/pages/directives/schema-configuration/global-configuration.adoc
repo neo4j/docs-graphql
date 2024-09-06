@@ -11,12 +11,12 @@ For instance, if you want *to disable all top-level aggregation operations at on
 
 [source, graphql, indent=0]
 ----
-type Movie { 
+type Movie @node { 
     title: String 
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN) 
 } 
 
-type Actor { 
+type Actor @node { 
     name: String 
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT) 
 }
@@ -40,12 +40,12 @@ Take the following type definitions as example:
 
 [source, graphql, indent=0]
 ----
-type Movie { 
+type Movie @node { 
     title: String 
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN) 
 } 
 
-type Actor @query(read: false, aggregate: true) { 
+type Actor @node @query(read: false, aggregate: true) { 
     name: String 
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT) 
 }

@@ -11,7 +11,7 @@ Authentication can be configured for an entire type, for example, the type `User
 
 [source, graphql, indent=0]
 ----
-type User @authentication {
+type User @authentication @node {
     id: ID!
     name: String!
     password: String!
@@ -32,7 +32,7 @@ Additionally, the directive can be configured on a per-field basis, for example:
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID!
     name: String!
     password: String! @authentication
@@ -62,7 +62,7 @@ For instance, to only require authentication for the update or deletion of a use
 
 [source, graphql, indent=0]
 ----
-type User @authentication(operations: [UPDATE, DELETE]) {
+type User @authentication(operations: [UPDATE, DELETE]) @node {
     id: ID!
     name: String!
     password: String!
@@ -76,7 +76,7 @@ For instance, if it was a requirement that only users with the `admin` role can 
 
 [source, graphql, indent=0]
 ----
-type User @authentication(operations: [DELETE], jwt: { roles_INCLUDES: "admin" }) {
+type User @authentication(operations: [DELETE], jwt: { roles_INCLUDES: "admin" }) @node {
     id: ID!
     name: String!
     password: String!

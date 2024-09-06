@@ -14,7 +14,7 @@ Use the following type definitions:
 [source, javascript, indent=0]
 ----
 const typeDefs = `#graphql
-    type User {
+    type User @node {
       email: String!
       password: String! @private
     }
@@ -103,7 +103,7 @@ const driver = neo4j.driver(
   neo4j.auth.basic("neo4j", "password")
 );
 const typeDefs = `
-  type User {
+  type User @node {
    email: String!
    password: String! @private
   }

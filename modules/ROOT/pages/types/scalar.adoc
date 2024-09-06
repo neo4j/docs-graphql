@@ -17,7 +17,7 @@ The `BigInt` scalar type is an addition specific to the Neo4j database.
 a|
 [source, graphql, indent=0]
 ----
-type Person {
+type Person @node {
   age: Int!
 }
 ----
@@ -28,7 +28,7 @@ Shares the same xref::queries-aggregations/filtering.adoc#filtering-numerical-op
 a| 
 [source, graphql, indent=0]
 ----
-type File {
+type File @node {
   size: BigInt
 }
 ----
@@ -49,7 +49,7 @@ query {
 a|
 [source, graphql, indent=0]
 ----
-type Product {
+type Product @node {
   price: Float!
 }
 ----
@@ -59,7 +59,7 @@ type Product {
 a|
 [source, graphql, indent=0]
 ----
-type Product {
+type Product @node {
   name: String!
 }
 ----
@@ -69,7 +69,7 @@ type Product {
 a|
 [source, graphql, indent=0]
 ----
-type Product {
+type Product @node {
   inStock: Boolean!
 }
 ----
@@ -79,7 +79,7 @@ type Product {
 a|
 [source, graphql, indent=0]
 ----
-type Product {
+type Product @node {
   id: ID!
 }
 ----

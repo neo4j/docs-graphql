@@ -62,7 +62,7 @@ const driver = neo4j.driver(
 );
 
 const typeDefs = `#graphql
-    type User {
+    type User @node {
         id: ID @id
         username: String!
         password: String! @private
@@ -257,7 +257,7 @@ const driver = neo4j.driver(
 );
 
 const typeDefs = `
-    type User {
+    type User @node {
         id: ID
         name: String
     }
