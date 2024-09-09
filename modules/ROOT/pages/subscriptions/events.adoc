@@ -747,7 +747,7 @@ subscription {
                 }
            }
         }
-    }As an example, consider these type definitions:
+    }
 }
 
 subscription {
