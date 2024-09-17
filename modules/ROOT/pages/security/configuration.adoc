@@ -1,16 +1,25 @@
 = Configuration
 :description: This page describes how to configure authentication and authorization features in the Neo4j GraphQL Library.
 
+The Neo4j GraphQL Library uses JSON Web Token (JWT) authentication.
+JWTs are tokens containing claims or statements about the user or client making the request.
+These claims can include information such as the user's ID or roles.
+
+A JWT can be obtained from an authentication service and then be included in an API request.
+The API verifies the JWT and returns the requested data if the JWT is valid.
+
 == Instantiation
 
-The Neo4j GraphQL Library can accept JSON Web Tokens via two mechanisms:
+The Neo4j GraphQL Library can accept two types of JWTs:
 
 * Encoded JWTs in the `token` field of the request context.
 * Decoded JWTs in the `jwt` field of the request context.
 
-If using the former, the library will need to be configured with a key to decode and verify the token.
+=== Encoded JWTs
 
-The following code block demonstrates using Apollo Server, extracting the `Authorization` header from the request, and putting it into the appropriate context field:
+In order to use encoded JWTs, configure the library with a key to decode and verify the tokens.
+The following code block uses Apollo Server. 
+It extracts the `Authorization` header from the request and puts it in the appropriate context field:
 
 [source, typescript, indent=0]
 ----
@@ -28,7 +37,9 @@ const { url } = await startStandaloneServer(server, {
 
 Optionally, if a custom decoding mechanism is required, that same header can be decoded and the resulting JWT payload put into the `jwt` field of the context.
 
-=== Symmetric secret
+Alternatively, you can decode a token via a xref:#_jwks_endpoint[].
+
+==== Symmetric secret
 
 To configure the library with a symmetric secret (e.g. "secret"), the following instantiation is required:
 
@@ -44,9 +55,9 @@ new Neo4jGraphQL({
 });
 ----
 
-=== JWKS endpoint
+==== JWKS endpoint
 
-To configure the library to verify tokens against a JWKS endpoint, "https://www.myapplication.com/.well-known/jwks.json", the following instantiation is required:
+To configure the library to verify tokens against a JSON Web Key Set (JWKS) endpoint, for example "https://www.example.com/.well-known/jwks.json", the following instantiation is required:
 
 [source, typescript, indent=0]
 ----
@@ -62,77 +73,10 @@ new Neo4jGraphQL({
 });
 ----
 
-[[authentication-and-authorization-jwt]]
-== JWT
+==== Passing in encoded JWTs
 
-By default, filtering is available on https://www.rfc-editor.org/rfc/rfc7519#section-4.1[the registered claim names] in the JWT specification.
-
-Filtering can be configured for additional JWT claims using the `@jwt` directive and, in some circumstances, the `@jwtClaim` directive.
-
-If you configure an additional `roles` claim, which is an array of strings located at the root of the JWT payload, the following must be added to the type definitions:
-
-[source, graphql, indent=0]
-----
-type JWT @jwt {
-    roles: [String!]!
-}
-----
-
-Note that the type name here, `JWT`, is not required, and this can have any name as long as it is decorated with the `@jwt` directive.
-
-=== Nested claims
-
-If the previous `roles` claim is not located at the JWT payload root, but instead in a nested location, for example:
-
-[source, json, indent=0]
-----
-{
-    "sub": "user1234",
-    "myApplication": {
-        "roles": ["user", "admin"]
-    }
-}
-----
-
-This needs to be configured using the `@jwtClaim` directive:
-
-[source, graphql, indent=0]
-----
-type JWT @jwt {
-    roles: [String!]! @jwtClaim(path: "myApplication.roles")
-}
-----
-
-Additionally, if this nested location contains any `.` characters in the path, for example:
-
-[source, json, indent=0]
-----
-{
-    "sub": "user1234",
-    "http://www.myapplication.com": {
-        "roles": ["user", "admin"]
-    }
-}
-----
-
-These characters need to be escaped:
-
-[source, graphql, indent=0]
-----
-type JWT @jwt {
-    roles: [String!]! @jwtClaim(path: "http://www\\\\.myapplication\\\\.com.roles")
-}
-----
-
-[NOTE]
-====
-The seemingly excessive escaping is required to doubly escape: once for GraphQL and once for `dot-prop`, which is used under the hood to resolve the path.
-====
-
-== Passing in JWTs
-
-To pass in an encoded JWT, you must use the token field of the context.
-When using Apollo Server, extract the authorization header into the token property of the context as follows:
+To pass in an encoded JWT, use the token field of the context.
+When using Apollo Server, extract the authorization header into the token property of the context:
 
 [source, javascript, indent=0]
 ----
@@ -172,4 +116,100 @@ interface JwtPayload {
 ----
 
 [WARNING]
-_Do not_ pass in the header or the signature.
+====
+Do not pass in the header or the signature.
+====
+
+=== Decoded JWTs
+
+A decoded JWT is passed to the context in a similar way that an encoded JWT is.
+However, instead of using a token, it uses the `jwt` field:
+
+[source, typescript, indent=0]
+----
+const jwt = customImplementation();
+
+const { url } = await startStandaloneServer(server, {
+    listen: { port: 4000 },
+    context: async ({ req }) => ({
+        jwt: jwt,
+    }),
+});
+----
+
+`customImplementation` is a placeholder for a function that provides a decoded JWT.
+Using `jwt` instead of `token` in the `context` informs the Neo4j GraphQL Library that it doesn't need to decode it.
+
+== Adding JWT claims
+
+By default, filtering is available on https://www.rfc-editor.org/rfc/rfc7519#section-4.1[the registered claim names] in the JWT specification.
+
+Filtering can be configured for additional JWT claims using the `@jwt` directive and, in some circumstances, the `@jwtClaim` directive.
+
+=== The `@jwt` directive
+
+If you configure an additional `roles` claim, which is an array of strings located at the root of the JWT payload, add the following to the type definitions:
+
+[source, graphql, indent=0]
+----
+type JWT @jwt {
+    roles: [String!]!
+}
+----
+
+[NOTE]
+====
+The type name `JWT` is not mandatory.
+You can use any name as long as it is decorated with the `@jwt` directive.
+====
+
+=== The `@jwtClaim` directive
+
+A `roles` claim is not necessarily located at the JWT payload root.
+It can instead be in a nested location, for example under `myApplication`:
+
+[source, json, indent=0]
+----
+{
+    "sub": "user1234",
+    "myApplication": {
+        "roles": ["user", "admin"]
+    }
+}
+----
+
+In this case, use the `@jwtClaim` directive alongside the `@jwt` directive:
+
+[source, graphql, indent=0]
+----
+type JWT @jwt {
+    roles: [String!]! @jwtClaim(path: "myApplication.roles")
+}
+----
+
+Additionally, the nested location may contain `.` characters in the path, for example:
+
+[source, json, indent=0]
+----
+{
+    "sub": "user1234",
+    "http://www.myapplication.com": {
+        "roles": ["user", "admin"]
+    }
+}
+----
+
+These characters must be escaped:
+
+[source, graphql, indent=0]
+----
+type JWT @jwt {
+    roles: [String!]! @jwtClaim(path: "http://www\\\\.myapplication\\\\.com.roles")
+}
+----
+
+[NOTE]
+====
+The `path` must be escaped twice: once for GraphQL and once for `dot-prop`, which is used under the hood to resolve the path.
+====
+

@@ -40,10 +40,10 @@ a| Required to differentiate interfaces that are used for relationship propertie
 | xref::/security/authorization.adoc[`@authorization`]
 | Specifies authorization rules for queries and mutations on the type.
 
-| xref::/security/configuration.adoc#authentication-and-authorization-jwt[`@jwt`]
+| xref::/security/configuration.adoc#_the_jwt_directive[`@jwt`]
 | Configures the JWT authentication and authorization filters to include additional JWT claims.
 
-| xref::/security/configuration.adoc#_nested_claims[`@jwtClaim`]
+| xref::/security/configuration.adoc#_the_jwtclaim_directive[`@jwtClaim`]
 | Used in combination with `@jwt`.
 Configures the JWT authentication and authorization filters to include an additional JWT claim which is either nested or using special characters not supported by GraphQL.
 
