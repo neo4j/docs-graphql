@@ -190,7 +190,7 @@ Accepts the argument:
 [[ogm-api-reference-model-aggregate]]
 === `aggregate`
 
-This method can be used to aggregate nodes, and maps to the underlying schema xref::queries-aggregations/queries.adoc#queries-aggregate[Aggregate].
+This method can be used to aggregate nodes, and maps to the underlying schema xref::queries-aggregations/aggregations.adoc#_aggregate_related_nodes[Aggregate].
 
 ==== Arguments
 

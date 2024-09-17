@@ -54,7 +54,7 @@ await ogm.init();
 
 === Adding a custom resolver
 
-xref:custom-resolvers/[Custom resolvers] can be used for multiple reasons such as performing data manipulation and checks, or interact with third party systems. 
+Custom resolvers can be used for multiple reasons such as performing data manipulation and checks, or interact with third party systems. 
 In this case, you only need to create a `User` node with the `password` field set.
 You can do that by adding a sign-up mutation:
 

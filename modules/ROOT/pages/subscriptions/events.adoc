@@ -51,7 +51,6 @@ subscription {
 }
 ----
 
-[[update]]
 == `UPDATE`
 
 Subscriptions to `UPDATE` events listen *only* to node properties changes, not updates to other fields.
@@ -161,7 +160,7 @@ Only top-level properties, without relationships, are available and they are the
 [NOTE]
 ====
 Irrespective of the relationship direction in the database, the `CREATE_RELATIONSHIP` event is bound to the type targeted for the subscription.
-Consequently, if types A and B have xref:subscriptions/events.adoc#create-non-reciprocal-relationships[non-reciprocal relationships] and a GraphQL operation creates a relationship between them (despite being already previously connected in the database), the `CREATE_RELATIONSHIP` event should only return the subscription to the type A.
+Consequently, if types A and B have xref:subscriptions/events.adoc#_non_reciprocal_relationships[non-reciprocal relationships] and a GraphQL operation creates a relationship between them (despite being already previously connected in the database), the `CREATE_RELATIONSHIP` event should only return the subscription to the type A.
 ====
 
 As an example, consider the following type definitions:

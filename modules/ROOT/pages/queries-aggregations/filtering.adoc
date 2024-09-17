@@ -8,7 +8,7 @@ When querying for data, a number of operators are available for different types 
 == Equality operators
 
 All types can be tested for either equality.
-For non-equality, you *must* use the xref:/queries-aggregations/filtering.adoc#_combining_operators[`NOT`] logical operator.
+For non-equality, you *must* use the xref:/queries-aggregations/filtering.adoc#_logical_operators[`NOT`] logical operator.
 For example:
 
 .Filtering all users named John
@@ -50,7 +50,7 @@ query {
 ----
 
 Spatial types use numerical filtering differently and they also have additional options. 
-See xref:filtering.adoc#_spatial_types[Spatial types] for more information.
+See xref:filtering.adoc#_filtering_spatial_types[Filtering spatial types] for more information.
 
 == Logical operators
 

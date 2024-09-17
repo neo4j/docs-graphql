@@ -14,7 +14,7 @@ The Neo4j GraphQL Library provides the following directives to be used whilst de
 | xref::/directives/database-mapping.adoc#_relationship[`@relationship`]
 | Configures xref::/types/relationships.adoc[relationships] between object types.
 
-| xref::/directives/database-mapping.adoc#_relationship_properties[`@relationshipProperties`]
+| xref::/directives/database-mapping.adoc#_relationshipproperties[`@relationshipProperties`]
 a| Required to differentiate interfaces that are used for relationship properties, and otherwise.
 
 | xref::/directives/database-mapping.adoc#type-definitions-node[`@node`]
