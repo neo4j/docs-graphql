@@ -16,7 +16,7 @@ type Movie {
 }
 ----
 
-The following sorting input type and query should be generated:
+The following sorting input type and query is generated:
 
 [source, graphql, indent=0]
 ----
@@ -47,7 +47,7 @@ type Query {
 }
 ----
 
-The resulting query should then allow fetching all movies sorted by runtime in ascending order:
+The following query fetches all movies sorted by runtime in ascending order:
 
 [source, graphql, indent=0]
 ----
@@ -65,7 +65,7 @@ query {
 }
 ----
 
-Additionally, in case there was a relationship between the `Movie` and an `Actor` type, sorting can also be applied when fetching the `actors` field:
+If there is a relationship between the `Movie` and an `Actor` type, you can also sort when fetching the `actors` field:
 
 [source, graphql, indent=0]
 ----
@@ -85,3 +85,8 @@ query {
     }
 }
 ----
+
+[CAUTION]
+====
+You cannot sort query results based on relationship properties.
+====
