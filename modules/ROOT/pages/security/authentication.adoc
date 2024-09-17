@@ -52,9 +52,12 @@ Extend the schema:
 extend schema @authentication
 ----
 
-The `operations` and `jwt` arguments can also be used when the directive is applied to a schema extension.
+The `operations` and `jwt` arguments can also be used when the directive is applied to a schema extension, for example:
 
-// ^ should we add links or provide examples? 
+[source, graphql, indent=0]
+----
+extend schema @authentication(operations: [UPDATE, DELETE], jwt: { roles_INCLUDES: "admin" })
+----
 
 === Authentication for types
 
