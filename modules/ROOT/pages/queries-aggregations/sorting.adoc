@@ -16,7 +16,7 @@ type Movie {
 }
 ----
 
-The following sorting input type and query is generated:
+The following sorting input type and query are generated:
 
 [source, graphql, indent=0]
 ----
