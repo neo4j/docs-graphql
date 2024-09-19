@@ -216,9 +216,7 @@ await ogm.checkNeo4jCompat();
 
 == Specifying the Neo4j database
 
-There are two ways to specify which database within a DBMS should be used.
-
-=== Context
+Specify the database to be used within your DBMS via the `database` field under `sessionConfig` in the `context` that all resolvers share.
 
 [source, javascript, indent=0]
 ----
