@@ -18,8 +18,8 @@ However, when trying to scale horizontally by adding more GraphQL servers, you m
 
 image::subscriptions/diagram2.svg[title="Subscriptions with 2 servers"]
 
-In this case, Client B is subscribed to one server. 
-However, when Client A triggers the mutation, it may query a different server.
+In this case, Client A is subscribed to one server. 
+However, when Client B triggers the mutation, it may query a different server.
 
 The change happens successfully in the database, and any client connected to the same server receives the subscription event.
 However, Client A does **not** receive any update, as the server it's connected to does not get notified of any mutation.
