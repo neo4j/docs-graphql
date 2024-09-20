@@ -19,21 +19,17 @@ Global variables are available for use within the Cypher statement and can be ap
 a| 
 [source, graphql, indent=0]
 ----
-{
-  Movie {
-    title
-    actors: ACTED_IN @this {
-      role
-      actor {
-        name
-      }
-    }
-    directors: DIRECTED @this {
-      director {
-        name
-      }
-    }
-  }
+type Movie {
+    title: String
+    similarMovies(limit: Int = 10): [Movie]
+        @cypher(
+            statement: """
+            MATCH (this)<-[:ACTED_IN]-(:Actor)-[:ACTED_IN]->(rec:Movie)
+            WITH rec, COUNT(*) AS score ORDER BY score DESC
+            RETURN rec LIMIT $limit
+            """,
+            columnName: "rec"
+        )
 }
 ----
 
