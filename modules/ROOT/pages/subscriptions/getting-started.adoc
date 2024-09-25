@@ -146,7 +146,6 @@ You can subscribe to new movies created with the following statement:
 
 [source, graphql, indent=0]
 ----
-graphql
 subscription {
     movieCreated(where: { title: "The Matrix" }) {
         createdMovie {
