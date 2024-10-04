@@ -3,12 +3,46 @@
 :page-aliases: filtering.adoc
 :description: This page describes filtering operators.
 
-When querying for data, a number of operators are available for different types in the `where` argument of a query or mutation.
+When querying for data, a number of operators are available for the types in the `where` argument of a query or mutation, allowing you to filter query results.
+
+Operators can either be standalone operators (see xref:#_boolean_operators) or they are appended to field names (for example, xref:/queries-aggregations/filtering.adoc#_boolean_operators[`NOT`]).
+
+All operators can be combined using the Boolean operators `AND`, `OR`, and `NOT`.
+
+== Boolean operators
+
+As standalone operators, Boolean operators accept an array argument with items of the same format as the `where` argument.
+This way, they can be nested to form complex Boolean expressions.
+
+For example, if you want to match all actors by the name of either "Keanu" or not belonging to the "Pantoliano" family, who played in "The Matrix" movie, here is how you query that:
+
+[source, graphql, indent=0]
+----
+query {
+    actors(where: { 
+        AND: [
+            { 
+                OR: [
+                    { name_CONTAINS: "Keanu" },
+                    { NOT: { name_ENDS_WITH: "Pantoliano" } }
+                ]
+            },
+            {
+                movies_SOME: { title: "The Matrix" }
+            }
+        ]}
+    ) {
+        name
+        movies {
+            title
+        }
+    }
+}
+----
 
 == Equality operators
 
-All types can be tested for either equality.
-For non-equality, you *must* use the xref:/queries-aggregations/filtering.adoc#_logical_operators[`NOT`] logical operator.
+All types can be tested for equality or non-equality.
 For example:
 
 .Filtering all users named John
@@ -16,6 +50,18 @@ For example:
 ----
 query {
   users(where: {name: "John" })
+    id
+    name
+  }
+----
+
+For non-equality, you must use the xref:/queries-aggregations/filtering.adoc#_boolean_operators[`NOT`] logical operator.
+
+.Filtering all users which are not named John
+[source, graphql, indent=0]
+----
+query {
+  users(where: { NOT: {name: "John" }})
     id
     name
   }
@@ -51,39 +97,6 @@ query {
 
 Spatial types use numerical filtering differently and they also have additional options. 
 See xref:filtering.adoc#_filtering_spatial_types[Filtering spatial types] for more information.
-
-== Logical operators
-
-All operators can be combined using the logical operators `AND`, `OR`, and `NOT`.
-They can also be standalone operators, which means that they can be used as such and not be appended to field names.
-
-These operators accept an array argument with items of the same format as the `where` argument, which means they can also be nested to form complex combinations.
-
-For example, if you want to match all actors by the name of either "Keanu" or not belonging to the "Pantoliano" family, that played in "The Matrix" movie, here is how you can query that:
-
-[source, graphql, indent=0]
-----
-query {
-    actors(where: { 
-        AND: [
-            { 
-                OR: [
-                    { name_CONTAINS: "Keanu" },
-                    { NOT: { name_ENDS_WITH: "Pantoliano" } }
-                ]
-            },
-            {
-                movies_SOME: { title: "The Matrix" }
-            }
-        ]}
-    ) {
-        name
-        movies {
-            title
-        }
-    }
-}
-----
 
 
 == String comparison
