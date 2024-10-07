@@ -23,6 +23,7 @@
 .scala_dependencies
 .settings
 .shell_history
+.vscode/
 Thumbs.db
 \#*
 bin/teamcity/

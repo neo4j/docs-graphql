@@ -190,7 +190,7 @@ Accepts the argument:
 [[ogm-api-reference-model-aggregate]]
 === `aggregate`
 
-This method can be used to aggregate nodes, and maps to the underlying schema xref::queries-aggregations/queries.adoc#queries-aggregate[Aggregate].
+This method can be used to aggregate nodes, and maps to the underlying schema xref::queries-aggregations/aggregations.adoc#_aggregate_related_nodes[Aggregate].
 
 ==== Arguments
 
@@ -287,7 +287,7 @@ await Movie.create({ input: [{ title: "The Matrix" }] })
 === `delete`
 
 This method can be used to delete nodes, and maps to the underlying xref::mutations/delete.adoc[Delete] Mutation.
-It returns a `Promise` which resolvers to a `DeleteInfo` object:
+It returns a `Promise` which resolves to a `DeleteInfo` object:
 
 [cols="1,1,1"]
 |===
@@ -340,7 +340,7 @@ await User.delete({ where: { name: "Dan" }});
 === `find`
 
 This method can be used to find nodes, and maps to the underlying schema xref::queries-aggregations/queries.adoc[Queries].
-It returns a `Promise` which resolvers to an array of objects matching the type of the Model.
+It returns a `Promise` which resolves to an array of objects matching the type of the Model.
 
 ==== Arguments
 

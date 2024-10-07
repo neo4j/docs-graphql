@@ -24,7 +24,7 @@ type Person {
 
 .2+| `BigInt`
 | Supports up to 64 bit integers, serialized as strings in variables and in data responses. 
-Shares the same xref::queries-aggregations/filtering.adoc#filtering-numerical-operators[Numerical operators] as the other numeric types.
+Shares the same xref::queries-aggregations/filtering.adoc#_numerical_operators[Numerical operators] as the other numeric types.
 a| 
 [source, graphql, indent=0]
 ----

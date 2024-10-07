@@ -106,4 +106,3 @@ query GetUsersWithAllContent {
 ----
 
 This also helps with preventing overfetching.
-See more information in the xref::troubleshooting.adoc#appendix-preventing-overfetching[Troubleshooting] section.

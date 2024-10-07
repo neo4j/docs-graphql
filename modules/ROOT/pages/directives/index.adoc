@@ -14,7 +14,7 @@ The Neo4j GraphQL Library provides the following directives to be used whilst de
 | xref::/directives/database-mapping.adoc#_relationship[`@relationship`]
 | Configures xref::/types/relationships.adoc[relationships] between object types.
 
-| xref::/directives/database-mapping.adoc#_relationship_properties[`@relationshipProperties`]
+| xref::/directives/database-mapping.adoc#_relationshipproperties[`@relationshipProperties`]
 a| Required to differentiate interfaces that are used for relationship properties, and otherwise.
 
 | xref::/directives/database-mapping.adoc#type-definitions-node[`@node`]
@@ -40,14 +40,14 @@ a| Required to differentiate interfaces that are used for relationship propertie
 | xref::/security/authorization.adoc[`@authorization`]
 | Specifies authorization rules for queries and mutations on the type.
 
-| xref::/security/configuration.adoc#authentication-and-authorization-jwt[`@jwt`]
+| xref::/security/configuration.adoc#_the_jwt_directive[`@jwt`]
 | Configures the JWT authentication and authorization filters to include additional JWT claims.
 
-| xref::/security/configuration.adoc#_nested_claims[`@jwtClaim`]
+| xref::/security/configuration.adoc#_the_jwtclaim_directive[`@jwtClaim`]
 | Used in combination with `@jwt`.
 Configures the JWT authentication and authorization filters to include an additional JWT claim which is either nested or using special characters not supported by GraphQL.
 
-| `@subscriptionsAuthorization`
+| xref::/security/subscriptions-authorization.adoc[`@subscriptionsAuthorization`]
 | Specifies authorization rules for subscriptions on the type.
 
 |===
@@ -105,11 +105,14 @@ Particularly useful for types that are not correctly pluralized or are non-Engli
 |===
 | Directive | Description
 
-| xref::/directives/indexes-and-constraints.adoc#type-definitions-indexes-fulltext[`@fulltext`]
+| xref::/directives/indexes-and-constraints.adoc#_fulltext_indexes[`@fulltext`]
 | Indicates that there should be a fulltext index inserted into the database for the specified Node and its properties.
 
-| xref::/directives/indexes-and-constraints.adoc#type-definitions-constraints-unique[`@unique`]
+| xref::/directives/indexes-and-constraints.adoc#_unique_node_property_constraints[`@unique`]
 | Indicates that there should be a uniqueness constraint in the database for the fields that it is applied to.
+
+| xref::/directives/indexes-and-constraints.adoc#_vector_index_search[`@vector`]
+| Perform a vector index search on your database either based by passing in a vector index or a search phrase. label:beta[]
 
 |===
 

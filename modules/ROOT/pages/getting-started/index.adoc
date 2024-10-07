@@ -5,8 +5,6 @@
 
 This tutorial walks you through creating a new project with the Neo4j GraphQL Library.
 
-If you are not familiar with Neo4j and GraphQL, you can alternatively take the course https://graphacademy.neo4j.com/courses/graphql-basics/?ref=docs[Introduction to Neo4j & GraphQL] in GraphAcademy to learn the fundamentals, how to use the xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox] and the Neo4j GraphQL Library to create GraphQL APIs backed by a Neo4j graph database.
-
 This tutorial shows you how to:
 
 - Install the Neo4j GraphQL Library and its dependencies.
@@ -294,3 +292,6 @@ By now, you should have a GraphQL API connected to a Neo4j database, to which yo
 
 To learn more, keep reading the documentation about xref:queries-aggregations/index.adoc[Queries and aggregations] or alternatively learn how to use the xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox].
 For more advanced database settings, refer to the xref:driver-configuration.adoc[Driver configuration] page.
+
+// Edit at: https://github.com/neo4j-graphacademy/courses/blob/main/asciidoc/courses/graphql-basics/promo.adoc
+include::https://raw.githubusercontent.com/neo4j-graphacademy/courses/main/asciidoc/courses/graphql-basics/promo.adoc[]
