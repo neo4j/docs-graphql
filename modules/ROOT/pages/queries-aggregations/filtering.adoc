@@ -3,7 +3,7 @@
 :page-aliases: filtering.adoc
 :description: This page describes filtering operators.
 
-When querying for data, a number of operators are available for the types in the `where` argument of a query or mutation, allowing you to filter query results.
+When querying for data, a number of operators are available for the types in the `where` argument of a query or mutation, allowing you to filter query results or specify the set of objects a mutation applies to.
 
 Operators can either be standalone operators (see xref:#_boolean_operators[]) or they are appended to field names (for example, xref:/queries-aggregations/filtering.adoc#_string_comparison[]).
 
@@ -47,6 +47,7 @@ query {
 === Equality operators
 
 All types can be tested for equality or non-equality.
+
 For example:
 
 .Filtering all users named John
@@ -252,8 +253,8 @@ For `ID`:
 ----
 const features = {
     filters: {
-        String: {
-            ID: true,
+        ID: {
+            MATCHES: true,
         }
     }
 };
@@ -262,8 +263,6 @@ const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
 ----
 
 For both `String` and `ID`:
-
-// Is the following correct? would have expected "filters: { String : { MATCHES: true, ID: true}}" based on the two above
 
 [source, javascript, indent=0]
 ----
@@ -283,17 +282,54 @@ const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
 
 === Array comparison
 
-// We should add examples in this section
+Consider the following type definitions:
 
-The following operator is available on non-array fields, and accepts an array argument:
+[source, graphql, indent=0]
+----
+type Movie {
+    id: ID!
+    title: String!
+    genres: [String!]
+    year: Int!
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
+}
 
-* `_IN`
+type Actor {
+    id: ID!
+    name: String!
+    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+}
+----
 
-Conversely, the following operator is available on array fields, and accepts a single argument:
+The `_IN` operator is available on non-array fields, and accepts an array argument:
 
-* `_INCLUDES`
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { year_IN: [1999, 2000, 2001] }) {
+    title
+    year
+  }
+}
+----
 
-These operators are available for all types apart from `Boolean`.
+The query returns all movies released in the years 1999, 2000 and 2001.
+
+Conversely, the `_INCLUDES` operator is available on array fields, and accepts a single argument:
+
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { genres_INCLUDES: "Action" }) {
+    title
+    genres
+  }
+}
+----
+
+The query returns all movies which have "Action" as one of their genres.
+
+`_IN` and `_INCLUDES` are available for all types except `Boolean`.
 
 == Interface filtering
 
