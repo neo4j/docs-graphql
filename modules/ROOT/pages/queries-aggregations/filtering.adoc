@@ -263,6 +263,7 @@ const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
 
 For both `String` and `ID`:
 
+// Is the following correct? would have expected "filters: { String : { MATCHES: true, ID: true}}" based on the two above
 
 [source, javascript, indent=0]
 ----
@@ -281,6 +282,8 @@ const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
 ----
 
 === Array comparison
+
+// We should add examples in this section
 
 The following operator is available on non-array fields, and accepts an array argument:
 
