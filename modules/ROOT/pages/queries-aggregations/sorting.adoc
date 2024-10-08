@@ -88,5 +88,5 @@ query {
 
 [CAUTION]
 ====
-You cannot sort query results based on relationship properties.
+You can only sort query results based on relationship properties when using the connection API.
 ====
