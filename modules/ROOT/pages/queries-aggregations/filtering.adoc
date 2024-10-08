@@ -5,16 +5,18 @@
 
 When querying for data, a number of operators are available for the types in the `where` argument of a query or mutation, allowing you to filter query results.
 
-Operators can either be standalone operators (see xref:#_boolean_operators) or they are appended to field names (for example, xref:/queries-aggregations/filtering.adoc#_boolean_operators[`NOT`]).
+Operators can either be standalone operators (see xref:#_boolean_operators[]) or they are appended to field names (for example, xref:/queries-aggregations/filtering.adoc#_string_comparison[]).
 
 All operators can be combined using the Boolean operators `AND`, `OR`, and `NOT`.
 
-== Boolean operators
+== Operators
+
+=== Boolean operators
 
 As standalone operators, Boolean operators accept an array argument with items of the same format as the `where` argument.
 This way, they can be nested to form complex Boolean expressions.
 
-For example, if you want to match all actors by the name of either "Keanu" or not belonging to the "Pantoliano" family, who played in "The Matrix" movie, here is how you query that:
+For example, if you want to match all actors either by the name of "Keanu" or not belonging to the "Pantoliano" family, who played in "The Matrix" movie, here is how you query that:
 
 [source, graphql, indent=0]
 ----
@@ -40,7 +42,9 @@ query {
 }
 ----
 
-== Equality operators
+`name_CONTAINS` and `name_ENDS_WITH` are xref:/queries-aggregations/filtering.adoc#_string_comparison[String comparisons] while `movies_SOME` is a xref:/queries-aggregations/filtering.adoc#_relationship_filtering[relationship filter]. 
+
+=== Equality operators
 
 All types can be tested for equality or non-equality.
 For example:
@@ -72,7 +76,7 @@ query {
 For the `Boolean` type, equality operators are the only ones available.
 ====
 
-== Numerical operators
+=== Numerical operators
 
 These are the operators available for numeric (`Int`, `Float`, xref::/types/scalar.adoc[`BigInt`]), xref::/types/temporal.adoc[temporal] and xref::/types/spatial.adoc[spatial] types:
 
@@ -98,134 +102,7 @@ query {
 Spatial types use numerical filtering differently and they also have additional options. 
 See xref:filtering.adoc#_filtering_spatial_types[Filtering spatial types] for more information.
 
-
-== String comparison
-
-The following case-sensitive comparison operators are only available for use on `String` and `ID` types:
-
-* `_STARTS_WITH`
-* `_ENDS_WITH`
-* `_CONTAINS`
-
-Here is an example of how to use them:
-
-.Filtering users with name starting with "J"
-[source, graphql, indent=0]
-----
-query {
-  users(where: { name_STARTS_WITH: "J" }) {
-    id
-    name
-  }
-}
-----
-
-Additionally, numerical operators can be used for String comparisons.
-They are disabled default.
-To enable them, add them in the `filters` features options for `String`:
-
-[source, javascript, indent=0]
-----
-const { Neo4jGraphQL } = require("@neo4j/graphql");
-const neo4j = require("neo4j-driver");
-
-const typeDefs = `
-    type User {
-        name: String
-    }
-`;
-
-const driver = neo4j.driver(
-    "bolt://localhost:7687",
-    neo4j.auth.basic("username", "password")
-);
-
-const features = {
-    filters: {
-        String: {
-            LT: true,
-            GT: true,
-            LTE: true,
-            GTE: true
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-== RegEx matching
-
-The filter `_MATCHES` is also available for comparison of `String` and `ID` types.
-It accepts RegEx strings as an argument and returns any matches.
-
-
-Note that RegEx matching filters are **disabled by default**.
-This is because, on an unprotected API, they could potentially be used to execute a https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS[ReDoS attack^] against the backing Neo4j database.
-
-If you want to enable them, set the features configuration object for each:
-
-[source, javascript, indent=0]
-----
-const features = {
-    filters: {
-        String: {
-            MATCHES: true,
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-For `ID`:
-
-
-[source, javascript, indent=0]
-----
-const features = {
-    filters: {
-        String: {
-            ID: true,
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-For both `String` and `ID`:
-
-
-[source, javascript, indent=0]
-----
-const features = {
-    filters: {
-        String: {
-            MATCHES: true,
-        },
-        ID: {
-            MATCHES: true,
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-== Array comparison
-
-The following operator is available on non-array fields, and accepts an array argument:
-
-* `_IN`
-
-Conversely, the following operator is available on array fields, and accepts a single argument:
-
-* `_INCLUDES`
-
-These operators are available for all types apart from `Boolean`.
-
-== Filtering spatial types
+==== Spatial type filtering
 
 Both the `Point` and the `CartesianPoint` types use xref::queries-aggregations/filtering.adoc#_numerical_operators[numerical operators] and have an additional `_DISTANCE` filter.
 Here is a list of what each filter does for the two types:
@@ -286,23 +163,152 @@ query CloseByUsers($x: Float!, $y: Float!) {
 }
 ----
 
-== Querying an interface
+== Type comparison
+
+=== String comparison
+
+The following case-sensitive comparison operators are available for `String` and `ID` types:
+
+* `_STARTS_WITH`
+* `_ENDS_WITH`
+* `_CONTAINS`
+
+Here is an example of how to use them:
+
+.Filtering users with name starting with "J"
+[source, graphql, indent=0]
+----
+query {
+  users(where: { name_STARTS_WITH: "J" }) {
+    id
+    name
+  }
+}
+----
+
+Additionally, numerical operators can be used for String comparisons.
+They are disabled default.
+To enable them, add them in the `filters` features options for `String`:
+
+[source, javascript, indent=0]
+----
+const { Neo4jGraphQL } = require("@neo4j/graphql");
+const neo4j = require("neo4j-driver");
+
+const typeDefs = `
+    type User {
+        name: String
+    }
+`;
+
+const driver = neo4j.driver(
+    "bolt://localhost:7687",
+    neo4j.auth.basic("username", "password")
+);
+
+const features = {
+    filters: {
+        String: {
+            LT: true,
+            GT: true,
+            LTE: true,
+            GTE: true
+        }
+    }
+};
+
+const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
+----
+
+=== RegEx matching
+
+The filter `_MATCHES` is available for comparison of `String` and `ID` types.
+It accepts RegEx strings as an argument and returns any matches.
+
+Note that RegEx matching filters are disabled by default.
+This is because, on an unprotected API, they could potentially be used to execute a https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS[ReDoS attack^] against the backing Neo4j database.
+
+If you want to enable RegEx matching, update the `features` configuration object.
+
+For `String`:
+
+[source, javascript, indent=0]
+----
+const features = {
+    filters: {
+        String: {
+            MATCHES: true,
+        }
+    }
+};
+
+const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
+----
+
+For `ID`:
+
+
+[source, javascript, indent=0]
+----
+const features = {
+    filters: {
+        String: {
+            ID: true,
+        }
+    }
+};
+
+const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
+----
+
+For both `String` and `ID`:
+
+
+[source, javascript, indent=0]
+----
+const features = {
+    filters: {
+        String: {
+            MATCHES: true,
+        },
+        ID: {
+            MATCHES: true,
+        }
+    }
+};
+
+const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
+----
+
+=== Array comparison
+
+The following operator is available on non-array fields, and accepts an array argument:
+
+* `_IN`
+
+Conversely, the following operator is available on array fields, and accepts a single argument:
+
+* `_INCLUDES`
+
+These operators are available for all types apart from `Boolean`.
+
+== Interface filtering
 
 You can use the `typename_IN` filter to filter interfaces.
 Refer to xref:types/interfaces.adoc#type-definitions-interfaced-types-querying[Type definitions -> Type -> Interface] for more details and an example.
 
 == Relationship filtering
 
-Relationship filtering depends on the type of relationship that you have:
+Relationship filtering depends on the type of relationship:
 
-* `n..1`: filtering done on equality or inequality of the related nodes by specifying a filter on `field`.
-* `n..m`: filtering is done on the list of related nodes and is based on the https://neo4j.com/docs/cypher-manual/current/functions/predicate/[list predicates] available in Cypher:
+* `n..1`: the filtering is done on equality or inequality of the related nodes by specifying a filter on `field`.
+* `n..m`: the filtering is done on the list of related nodes and is based on the https://neo4j.com/docs/cypher-manual/current/functions/predicate/[list predicates] available in Cypher:
 ** `field_ALL` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-all[all]
 ** `field_NONE` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-none[none]
 ** `field_SOME` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-any[any]
 ** `field_SINGLE` - https://neo4j.com/docs/cypher-manual/current/functions/predicate/#functions-single[single]
 
-As an example, take these type definitions:
+For example, take these type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -319,10 +325,12 @@ type Post {
     likes: [User!]! @relationship(type: "LIKES", direction: IN)
 }
 ----
+
 === `n..1` relationships
 
-An `author` represents an `n..1` relationship on `Post`, where a given `Post` is authored by one, and only one, `author`. 
-The available filters here will be `author`.
+In the type definitions example, an `author` represents an `n..1` relationship on `Post`, where a given `Post` is authored by one, and only one, `author`. 
+The available filter is `author`.
+
 For example:
 
 .Find all posts by a desired author
@@ -347,8 +355,9 @@ query {
 
 === `n..m` relationships
 
-In the previous example, `posts` represents a `n..m` relationship on `User`, where a given `User` can have any number of `posts`.
-Here are some query examples:
+In the type definitions example, `posts` represents an `n..m` relationship on `User`, where a given `User` can have any number of `posts`.
+
+For example:
 
 .Find all users where all of their posts contain search term: `"neo4j"`
 [source, graphql, indent=0]
@@ -392,8 +401,8 @@ query {
 
 == Aggregation filtering
 
-This library offers, for each relationship, an aggregation key inside the `where` argument. 
-It can be used both on the `node` and `edge` of a relationship.
+The Neo4j GraphQL library offers an aggregation key inside the `where` argument of each relationship. 
+You can use it both on the `node` and `edge` of a relationship.
 
 Here are some examples on how to apply this kind of filtering:
 
@@ -477,7 +486,7 @@ query {
 }
 ----
 
-=== Operators
+=== With operators
 
 Aggregation filtering can also be done with operators.
 They provide autogenerated filters available for each type on the `node` and `edge` of the specified relationship.
