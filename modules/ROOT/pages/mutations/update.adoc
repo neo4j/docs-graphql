@@ -37,18 +37,10 @@ type Mutation {
     updatePosts(
         where: PostWhere
         update: PostUpdateInput
-        connect: PostConnectInput
-        disconnect: PostDisconnectInput
-        create: PostCreateInput
-        delete: PostDeleteInput
     ): UpdatePostsMutationResponse!
     updateUsers(
         where: UserWhere
         update: UserUpdateInput
-        connect: UserConnectInput
-        disconnect: UserDisconnectInput
-        create: UserCreateInput
-        delete: UserDeleteInput
     ): UpdateUsersMutationResponse!
 }
 ----
@@ -91,10 +83,12 @@ Instead of creating a `Post` with the `create` mutation and then connecting it t
 mutation {
     updateUsers(
         where: { name: "John Doe" }
-        create: {
-            posts: [
-                { node: { content: "An interesting way of adding a new Post!" } }
-            ]
+        update: {
+            posts: {
+                create: [
+                    { node: { content: "An interesting way of adding a new Post!" } }
+                ]
+            }
         }
     ) {
         users {
@@ -137,10 +131,12 @@ For `update` operations, `connectOrCreate` can also be used as a top-level input
 ----
 mutation {
   updateActors(
-      connectOrCreate: {
+      update: {
         movies: {
-            where: { node: { id: "1234" } }
-            onCreate: { node: { title: "Forrest Gump" } }
+            connectOrCreate: {
+                where: { node: { id: "1234" } }
+                onCreate: { node: { title: "Forrest Gump" } }
+            }
         }
       },
       where: { name: "Tom Hanks" }
