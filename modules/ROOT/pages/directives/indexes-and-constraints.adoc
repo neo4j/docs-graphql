@@ -251,7 +251,6 @@ await neoSchema.assertIndexesAndConstraints({ options: { create: true }});
 
 :description: Directives related to generative AI in the Neo4j GraphQL Library.
 
-[role=label--beta]
 == Vector index search
 
 With the `@vector` GraphQL directive you can query your database to perform a vector index search.
@@ -334,15 +333,13 @@ This defines the query to be performed on all `Product` nodes which have a vecto
 ----
 query FindSimilarProducts($vector: [Float]!) {
   searchByDescription(vector: $vector) {
-    productsConnection {
-      edges {
-        cursor
-        score
-        node {
-            id
-            name
-            description
-        }
+    edges {
+      cursor
+      score
+      node {
+          id
+          name
+          description
       }
     }
   }
@@ -418,15 +415,13 @@ This defines the query to be performed on all `Product` nodes which have a vecto
 ----
 query SearchProductsByPhrase($phrase: String!) {
   searchByPhrase(phrase: $phrase) {
-    productsConnection {
-      edges {
-        cursor
-        score
-        node {
-            id
-            name
-            description
-        }
+    edges {
+      cursor
+      score
+      node {
+          id
+          name
+          description
       }
     }
   }
