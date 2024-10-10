@@ -131,7 +131,7 @@ mutation {
 }
 ----
 
-For `update` operations, `connectOrCreate` can also be used as a top-level input for an equivalent operation:
+`connectOrCreate` is also available in `update` operations:
 
 [source, graphql, indent=0]
 ----
