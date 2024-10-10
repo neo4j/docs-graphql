@@ -4,7 +4,7 @@
 :description: This page describes how to update nodes through mutations.
 
 
-Using these type definitions:
+Consider the following type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -21,7 +21,7 @@ type User {
 }
 ----
 
-These `update` mutations and response types should be generated:
+These `update` mutations and response types are generated:
 
 [source, graphql, indent=0]
 ----
@@ -60,7 +60,7 @@ The `id` field cannot be updated as the xref::/directives/autogeneration.adoc#ty
 
 == Single `update`
 
-The content of a `Post` can be updated by executing the following GraphQL statement:
+You can update the content of a `Post` by executing the following GraphQL statement:
 
 [source, graphql, indent=0]
 ----
@@ -80,7 +80,7 @@ mutation {
 }
 ----
 
-This should update the post by adding the sentence "Some new content for this Post!".
+This updates the post by adding the sentence "Some new content for this Post!".
 
 == Nested `create` using `update`
 
@@ -131,7 +131,7 @@ mutation {
 }
 ----
 
-For `update` operations, `connectOrCreate` can also be used as a top-level input for an equivalent operation:
+For `update` operations, you can also use `connectOrCreate` as a top-level input for an equivalent operation:
 
 [source, graphql, indent=0]
 ----
