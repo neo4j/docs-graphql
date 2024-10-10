@@ -448,8 +448,6 @@ a|
 |===
 ====
 
-// maybe - add example for PUSH and POP on the same array
-
 == Mathematical operators
 
 You can use mathematical operators to update numerical fields based on their original values in a single DB transaction.

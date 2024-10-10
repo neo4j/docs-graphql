@@ -3,7 +3,7 @@
 :description: This section describes how to use mutations with the Neo4j GraphQL Library.
 
 
-This section addresses basic examples of the following mutations:
+This section shows examples of the following mutations:
 
 - xref::mutations/create.adoc[`create`] - create nodes, and recursively create or connect further nodes in the graph.
 - xref::mutations/update.adoc[`update`] - update nodes, and recursively perform any operations from there.
@@ -15,5 +15,5 @@ In order to provide the abstractions available in these mutations, the output Cy
 This can result in your database throwing out-of-memory errors depending on its configuration.
 
 If this becomes a regular occurrence, you can adjust the link:https://neo4j.com/docs/operations-manual/current/configuration/configuration-settings/#config_server.memory.heap.max_size[`server.memory.heap.max_size`] parameter in the DBMS settings.
-If you need to perform major data migrations, it may be best to manually write the necessary Cypher and execute this directly in the database.
+If you must perform major data migrations, it may be best to manually write the necessary Cypher and execute this directly in the database.
 ====
