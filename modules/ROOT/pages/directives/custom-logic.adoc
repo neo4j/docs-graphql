@@ -1,5 +1,5 @@
 = Custom logic
-:page-aliases: type-definitions/cypher.adoc, type-definitions/default-values.adoc, ogm/examples/custom-resolvers.adoc, custom-resolvers.adoc
+:page-aliases: type-definitions/cypher.adoc, type-definitions/default-values.adoc, custom-resolvers.adoc
 :description: This page describes how to use directives for custom logic.
 
 == `@cypher`

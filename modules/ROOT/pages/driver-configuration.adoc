@@ -6,7 +6,7 @@ This page describes the configuration of the Neo4j GraphQL Library driver.
 
 == Neo4j Driver
 
-For the Neo4j GraphQL Library to work, either an instance of the https://github.com/neo4j/neo4j-javascript-driver[Neo4j JavaScript driver] must be passed in on construction of your `Neo4jGraphQL` instance (or alternatively, `OGM`), or a driver, session or transaction passed into the `context.executionContext` per request.
+For the Neo4j GraphQL Library to work, either an instance of the https://github.com/neo4j/neo4j-javascript-driver[Neo4j JavaScript driver] must be passed in on construction of your `Neo4jGraphQL` instance, or a driver, session or transaction passed into the `context.executionContext` per request.
 
 The examples in this page assume a Neo4j database running at "bolt://localhost:7687" with a username of "username" and a password of "password".
 
@@ -143,31 +143,10 @@ await startStandaloneServer(server, {
 
 ----
 
-=== OGM
-
-[source, javascript, indent=0]
-----
-import { OGM } from "@neo4j/graphql-ogm";
-import neo4j from "neo4j-driver";
-
-const typeDefs = `#graphql
-    type User {
-        name: String
-    }
-`;
-
-const driver = neo4j.driver(
-    "bolt://localhost:7687",
-    neo4j.auth.basic("username", "password")
-);
-
-const ogm = new OGM({ typeDefs, driver });
-----
-
 [[driver-configuration-database-compatibility]]
 == Database compatibility
 
-Use the `checkNeo4jCompat` method available on either a `Neo4jGraphQL` or `OGM` instance to ensure the specified DBMS is of the required version, and has the necessary functions and procedures available. 
+Use the `checkNeo4jCompat` method available on a `Neo4jGraphQL` instance to ensure the specified DBMS is of the required version, and has the necessary functions and procedures available. 
 The `checkNeo4jCompat` throws an `Error` if the DBMS is incompatible, with details of the incompatibilities.
 
 === `Neo4jGraphQL`
@@ -190,28 +169,6 @@ const driver = neo4j.driver(
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
 await neoSchema.checkNeo4jCompat();
-----
-
-=== `OGM`
-
-[source, javascript, indent=0]
-----
-import { OGM } from "@neo4j/graphql-ogm";
-import neo4j from "neo4j-driver";
-
-const typeDefs = `#graphql
-    type User {
-        name: String
-    }
-`;
-
-const driver = neo4j.driver(
-    "bolt://localhost:7687",
-    neo4j.auth.basic("username", "password")
-);
-
-const ogm = new OGM({ typeDefs, driver });
-await ogm.checkNeo4jCompat();
 ----
 
 == Specifying the Neo4j database
