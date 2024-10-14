@@ -9,44 +9,7 @@ Explicit authentication, configured with the `@authentication` directive, is onl
 Unauthenticated requests with queries requiring authentication never reach the database.
 ====
 
-Authentication can be configured for an entire type, for example, the type `User`:
-
-[source, graphql, indent=0]
-----
-type User @authentication @node {
-    id: ID!
-    name: String!
-    password: String!
-}
-----
-
-Authentication will thus be validated when any of the following operations are _attempted_:
-
-* *Create*: `createUsers` mutation, `create`, or `connectOrCreate` nested operation via a related type.
-* *Read*: `users`, `usersConnection`, `usersAggregate` query, or access via related type.
-* *Update*: `updateUsers` mutation or `update` nested operation via a related type.
-* *Delete*: `deleteUsers` mutation or `delete` nested operation via a related type.
-* *Create relationship*: `connect` or `connectOrCreate` nested operation via a related type.
-* *Delete relationship*: `disconnect` nested operation via a related type.
-* *Subscribe*: all subscription operations related to type `User`.
-
-Additionally, the directive can be configured on a per-field basis, for example:
-
-[source, graphql, indent=0]
-----
-type User @node {
-    id: ID!
-    name: String!
-    password: String! @authentication
-}
-----
-
-This will only be evaluated in the following circumstances:
-
-* The `password` field is set on either `create` or `update`.
-* The `password` field is present in a selection set.
-
-=== Operations
+== Operations
 
 Authentication can be configured to only be validated on certain operations:
 
