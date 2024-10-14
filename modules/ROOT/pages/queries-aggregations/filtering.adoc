@@ -387,7 +387,7 @@ Consider the following type definitions:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     id: ID!
     title: String!
     genres: [String!]
@@ -395,7 +395,7 @@ type Movie {
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
-type Actor {
+type Actor @node {
     id: ID!
     name: String!
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
