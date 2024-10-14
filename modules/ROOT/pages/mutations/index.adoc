@@ -3,7 +3,7 @@
 :description: This section describes how to use mutations with the Neo4j GraphQL Library.
 
 
-This section shows examples of the following mutations:
+This page shows examples of the following mutations:
 
 - xref::mutations/create.adoc[`create`] - create nodes, and recursively create or connect further nodes in the graph.
 - xref::mutations/update.adoc[`update`] - update nodes, and recursively perform any operations from there.

@@ -182,7 +182,7 @@ type Movie {
 }
 ----
 
-You can push to the `tags` property array:
+You can push tags to the `tags` property array:
 
 .Mutation with a single `_PUSH`
 ====
@@ -244,7 +244,7 @@ type Movie {
 ----
 
 You can also push to both the `tags` and `moreTags` property arrays:
-.Mutation with ``_PUSH``es to two different arrays
+.Mutation with `_PUSH` to two different arrays
 ====
 [source, graphql, indent=0]
 ----
@@ -323,7 +323,7 @@ tags: ['a', 'b']
 
 Or, for more than one property from the array:
 
-.Mutation with two ``_POP``s
+.Mutation with two `_POP`
 ==== 
 [source, graphql, indent=0]
 ----
@@ -366,7 +366,7 @@ type Movie {
 
 Then, you can pop from both the `tags` and `moreTags` property arrays:
 
-.Mutation with ``_POP``s from two different arrays
+.Mutation with `_POP` from two different arrays
 ====
 [source, graphql, indent=0]
 ----
