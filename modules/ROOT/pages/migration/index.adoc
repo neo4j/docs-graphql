@@ -1,11 +1,11 @@
-[[v5-migration]]
-:description: This page lists the breaking changes from version 4.0.0 to 5.0.0 and describes how to update.
+[[v6-migration]]
+:description: This page lists the breaking changes from version 5.0.0 to 6.0.0 and describes how to update.
 :page-aliases: guides/index.adoc, guides/migration-guide/index.adoc, guides/migration-guide/server.adoc, \
 guides/migration-guide/queries.adoc, guides/migration-guide/type-definitions.adoc, guides/migration-guide/mutations.adoc
 
-= Migration to 5.0.0
+= Migration to 6.0.0
 
-This page lists all breaking changes from the Neo4j GraphQL Library version 4.x to 5.x and how to update it.
+This page lists all breaking changes from the Neo4j GraphQL Library version 5.x to 6.x and how to update it.
 
 == How to update
 
@@ -18,12 +18,16 @@ npm update @neo4j/graphql
 
 == Breaking changes
 
-Here is a list of all the breaking changes from version 4.0.0 to 5.0.0.
+Here is a list of all the breaking changes from version 5.0.0 to 6.0.0.
 
-=== `@relationshipProperties`
 
-The directive `@relationshipProperties` should now be used on types rather than interfaces.
-For example:
+== Deprecations and Warnings
+
+=== `@node` will be required to be explicitly defined
+
+In the future, types without the `@node` directive will no longer be treated as Neo4j nodes.
+In version 6.0.0, it's not required to specify every GraphQL type representing a Neo4j node with the `@node` directive, however it's recommended to do so and a warning is raised if not found.
+There are genuine cases in which a `@node` should not be used e.g., for type returned by @cypher fields which are not Neo4j nodes.
 
 [cols="1,1"]
 |===
@@ -32,13 +36,9 @@ For example:
 a|
 [source, graphql, indent=0]
 ----
-interface ActedIn @relationshipProperties {
-    screenTime: Int
-}
-
 type Movie {
     title: String
-    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
+    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
 type Person {
@@ -48,174 +48,14 @@ type Person {
 a|
 [source, graphql, indent=0]
 ----
-type ActedIn @relationshipProperties {
-    screenTime: Int
-}
-
-type Movie {
+type Movie @node {
     title: String
-    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
+    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
-type Person {
+type Person @node {
     name: String
 }
 ----
 |===
 
-=== Interface directives
-
-To better match the default behavior of GraphQL, library directives used in interfaces will not cascade to the implementing types anymore. 
-This means that most directives are no longer valid in interfaces and have to be defined in the implementing types. 
-This also applies to custom directives.
-
-
-
-=== `@declareRelationship`
-
-The `@relationship` directive is no longer available in interfaces. 
-If you need a relationship to be available on interfaces, you need to use the new `@declareRelationship` directive instead, as well as define the relationships in the concrete type.
-
-This change is due to directives no longer cascading from interfaces to types.
-However, now it is possible for a relationship to have different properties and labels in each type.
-For example:
-
-[cols="1,1"]
-|===
-|Before | Now
-a|
-[source, graphql, indent=0]
-----
-interface Production {
-    title: String!
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-}
-
-type Movie implements Production {
-    title: String!
-    actors: [Actor!]!
-}
-
-type Series implements Production {
-    title: String!
-    episodes: Int!
-    actors: [Actor!]! 
-}
-
-type Actor {
-    name: String!
-}
-----
-a|
-[source, graphql, indent=0]
-----
-interface Production {
-    title: String!
-    actors: [Actor!]! @declareRelationship
-}
-
-type Movie implements Production {
-    title: String!
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-}
-
-type Series implements Production {
-    title: String!
-    episodes: Int!
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-}
-
-type Actor {
-    name: String!
-}
-----
-|===
-
-
-=== Edge properties
-
-Edge properties in connections now exist within the field `properties` in `edges`:
-
-[cols="1,1"]
-|===
-|Before | Now
-a|
-[source, graphql, indent=0]
-----
-query ActedInConnection {
-  actors {
-    actedInConnection {
-      edges {
-          screenTime
-      }
-    }
-  }
-}
-----
-a|
-[source, graphql, indent=0]
-----
-query ActedInConnection {
-  actors {
-    actedInConnection {
-      edges {
-        properties {
-          screenTime
-        }
-      }
-    }
-  }
-}
-----
-|===
-
-
-=== `_on` filters deprecated
-
-`_on` filters for interfaces are no longer available in `where` and mutations. To filter by an implementing type, you need to use the new filter `typename_IN`: 
-
-
-[cols="1,1"]
-|===
-|Before | Now
-a|
-[source, graphql, indent=0]
-----
-query MyQuery {
-  actors(
-    where: {
-      actedInConnection_SINGLE: { node: { _on: { Movie: { } } } }
-    }
-  ) {
-    name
-  }
-}
-----
-a|
-[source, graphql, indent=0]
-----
-query MyQuery {
- actors(
-    where: {
-      actedInConnection_SINGLE: { node: { typename_IN: [Movie] } }
-    }
-  ) {
-    name
-  }
-}
-----
-|===
-
-
-[NOTE]
-====
-Using fields of a type in an interface operation is no longer supported.
-====
-
-==== Minimum NodeJS version
-
-With the deprecation of Node 16, the minimum supported NodeJS version is `18.0.0`.
-
-==== `experimental` flag
-
-The `experimental` flag is no longer available in the options of the `Neo4jGraphQL` class.
