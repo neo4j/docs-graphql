@@ -112,7 +112,7 @@ Read about xref:mutations/update.adoc#_connectorcreate_relationships[`update`] f
 
 == `connectOrCreate` relationships
 
-If a related node has the `@unique` directive defined, you can use `connectOrCreate` nested in a `create` to perform an operation similar to a xref:https://neo4j.com/docs/cypher-manual/current/clauses/merge/[Cypher `MERGE`] operation on the related node.
+If a related node has the `@unique` directive defined, you can use `connectOrCreate` nested in a `CREATE` mutation to perform an operation similar to a link:https://neo4j.com/docs/cypher-manual/current/clauses/merge/[Cypher `MERGE`] operation on the related node.
 This will create a new relationship and the related node if it doesn't exist yet.
 
 Consider the following type definitions:
