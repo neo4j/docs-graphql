@@ -28,7 +28,7 @@ It is ideal for development, testing, and servers that do not require horizontal
 == Change Data Capture label:Beta[]
 
 If your database supports Change Data Capture (CDC), you can use it as your mechanism for subscriptions using `Neo4jGraphQLSubscriptionsCDCEngine`.
-Make sure to follow the steps described on the link:https://neo4j.com/docs/cdc/current/[CDC Documentation] to enable it for your Neo4j instance.
+Make sure to follow the steps described on the link:https://neo4j.com/docs/cdc/current/[CDC Documentation] to enable it in `FULL` mode for your Neo4j instance.
 
 Note that CDC-based subscriptions behave differently from other subscription mechanisms.
 In this case, it uses the native CDC events from Neo4j database.
