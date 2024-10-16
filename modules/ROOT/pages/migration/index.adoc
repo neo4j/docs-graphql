@@ -96,6 +96,42 @@ query {
 
 == Deprecations and warnings
 
+=== Implicit equality filters are deprecated
+
+Implicit equality filters such as: 
+
+  - `{ name: "Keanu" }`
+  - `{ count: 10 }` 
+
+Are deprecated in favor of `{ name_EQ: "Keanu" }` and `{ count_EQ: 10 }` respectively and will be removed in the next major version.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+query {
+  users(where: { name: "John" }) {
+    id
+    name
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  users(where: { name_EQ: "John" }) {
+    id
+    name
+  }
+}
+----
+|===
+
+
 === `@node` will have to be explicitly defined
 
 In the future, types without the `@node` directive will no longer be treated as Neo4j nodes.
