@@ -21,13 +21,13 @@ npm update @neo4j/graphql
 Here is a list of all the breaking changes from version 5.0.0 to 6.0.0.
 
 
-== Deprecations and Warnings
+== Deprecations and warnings
 
-=== `@node` will be required to be explicitly defined
+=== `@node` will have to be explicitly defined
 
 In the future, types without the `@node` directive will no longer be treated as Neo4j nodes.
-In version 6.0.0, it's not required to specify every GraphQL type representing a Neo4j node with the `@node` directive, however it's recommended to do so and a warning is raised if not found.
-There are genuine cases in which a `@node` should not be used e.g., for type returned by @cypher fields which are not Neo4j nodes.
+In version 6.0.0, it's not required to specify every GraphQL type representing a Neo4j node with the `@node` directive, however it's recommended to do so and a warning is raised if you don't.
+There are genuine cases in which a `@node` should not be used, e.g., for types returned by @cypher fields which are not Neo4j nodes.
 
 [cols="1,1"]
 |===

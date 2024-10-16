@@ -23,8 +23,8 @@ type Movie @node {
 
 [NOTE]
 ====
-In the current version, it's not required to specify every GraphQL type representing a Neo4j node with the `@node` directive.
-In the future, types without the `@node` directive will no longer treated as Neo4j nodes.
+In version 6.x, it's not required to specify every GraphQL type representing a Neo4j node with the `@node` directive.
+In the future, types without the `@node` directive will no longer be treated as Neo4j nodes.
 ====
 
 When not differently specified, the GraphQL type name is used as a label for the represented Neo4j node. It's possible to explicitly define the Neo4j node labels by using the argument `labels`:
@@ -161,9 +161,9 @@ await startStandaloneServer(server, {
 == `@relationship`
 
 Relationships are represented by marking particular fields with a directive -- in this case, `@relationship`. 
-It defines the relationship type in the database, as well as which direction that relationship goes in.
+It defines the relationship type in the database, as well as it's direction.
 
-To add a second node type, "Actor", and connect the two together, you should do the following:
+The following type definitions add a second node type, `Actor`, and connect `Movie` and `Actor` via the `ACTED_IN` relationship:
 
 [source, graphql, indent=0]
 ----
