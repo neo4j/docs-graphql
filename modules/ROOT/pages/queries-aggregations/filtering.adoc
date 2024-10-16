@@ -103,108 +103,7 @@ query {
 Spatial types use numerical filtering differently and they also have additional options. 
 See xref:filtering.adoc#_filtering_spatial_types[Filtering spatial types] for more information.
 
-[source, javascript, indent=0]
-----
-const { Neo4jGraphQL } = require("@neo4j/graphql");
-const neo4j = require("neo4j-driver");
-
-const typeDefs = `
-    type User @node {
-        name: String
-    }
-`;
-
-const driver = neo4j.driver(
-    "bolt://localhost:7687",
-    neo4j.auth.basic("username", "password")
-);
-
-const features = {
-    filters: {
-        String: {
-            LT: true,
-            GT: true,
-            LTE: true,
-            GTE: true
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-== RegEx matching
-
-The filter `_MATCHES` is also available for comparison of `String` and `ID` types.
-It accepts RegEx strings as an argument and returns any matches.
-
-
-Note that RegEx matching filters are **disabled by default**.
-This is because, on an unprotected API, they could potentially be used to execute a https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS[ReDoS attack^] against the backing Neo4j database.
-
-If you want to enable them, set the features configuration object for each:
-
-[source, javascript, indent=0]
-----
-const features = {
-    filters: {
-        String: {
-            MATCHES: true,
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-For `ID`:
-
-
-[source, javascript, indent=0]
-----
-const features = {
-    filters: {
-        String: {
-            ID: true,
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-For both `String` and `ID`:
-
-
-[source, javascript, indent=0]
-----
-const features = {
-    filters: {
-        String: {
-            MATCHES: true,
-        },
-        ID: {
-            MATCHES: true,
-        }
-    }
-};
-
-const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
-----
-
-== Array comparison
-
-The following operator is available on non-array fields, and accepts an array argument:
-
-* `_IN`
-
-Conversely, the following operator is available on array fields, and accepts a single argument:
-
-* `_INCLUDES`
-
-These operators are available for all types apart from `Boolean`.
-
-== Filtering spatial types
+==== Spatial type filtering
 
 Both the `Point` and the `CartesianPoint` types use xref::queries-aggregations/filtering.adoc#_numerical_operators[numerical operators] and have an additional `_DISTANCE` filter.
 Here is a list of what each filter does for the two types:
@@ -298,7 +197,7 @@ const { Neo4jGraphQL } = require("@neo4j/graphql");
 const neo4j = require("neo4j-driver");
 
 const typeDefs = `
-    type User {
+    type User @node {
         name: String
     }
 `;
