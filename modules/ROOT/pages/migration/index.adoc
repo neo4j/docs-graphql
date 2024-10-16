@@ -22,7 +22,7 @@ Here is a list of all the breaking changes from version 5.0.0 to 6.0.0.
 
 === The deprecated `_NOT` filters are no longer supported
 
-The deprecated `_NOT` filters such as:
+The following deprecated `NOT` filters are removed from the schema since they are no longer supported:
 
   - `_NOT`
   - `_NOT_CONTAINS`
@@ -31,7 +31,7 @@ The deprecated `_NOT` filters such as:
   - `_NOT_STARTS_WITH`
   - `_NOT_INCUDES`
 
-Are removed from the schema and no longer supported, to achieve the same result use the logical `NOT` operator.
+To achieve the same in version 6.x of the GraphQL library, use the xref:/queries-aggregations/filtering.adoc#_boolean_operators[boolean `NOT` operator] instead.
 
 [cols="1,1"]
 |===
