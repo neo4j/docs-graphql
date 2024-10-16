@@ -161,7 +161,7 @@ await startStandaloneServer(server, {
 == `@relationship`
 
 Relationships are represented by marking particular fields with a directive -- in this case, `@relationship`. 
-It defines the relationship type in the database, as well as it's direction.
+It defines the relationship type in the database, as well as its direction.
 
 The following type definitions add a second node type, `Actor`, and connect `Movie` and `Actor` via the `ACTED_IN` relationship:
 
