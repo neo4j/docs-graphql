@@ -29,11 +29,11 @@ For instance, here is how to filter out `Post` nodes which don't belong to the c
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID!
 }
 
-type Post @authorization(filter: [
+type Post @node @authorization(filter: [
     { where: { node: { author: { id: "$jwt.sub" } } } }
 ]) {
     title: String!
@@ -57,7 +57,7 @@ For instance, to only require filtering for the reading and aggregating posts:
 
 [source, graphql, indent=0]
 ----
-type Post @authorization(filter: [
+type Post @node @authorization(filter: [
     { operations: [READ, AGGREGATE] where: { node: { author: { id: "$jwt.sub" } } } }
 ]) {
     title: String!
@@ -86,7 +86,7 @@ type JWT @jwt {
     roles: [String!]!
 }
 
-type User @authorization(validate: [
+type User @node @authorization(validate: [
     { where: { node: { id: "$jwt.sub" } } }
     { where: { jwt: { roles_INCLUDES: "admin" } } }
 ]) {
@@ -111,7 +111,7 @@ For instance, to only require validation for the update or deletion of a post:
 
 [source, graphql, indent=0]
 ----
-type Post @authorization(validate: [
+type Post @node @authorization(validate: [
     { operations: [UPDATE, DELETE] where: { node: { author: { id: "$jwt.sub" } } } }
 ]) {
     title: String!
@@ -135,11 +135,11 @@ For instance, in the case where some `Post` nodes are private and belong to a pa
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID!
 }
 
-type Post @authorization(filter: [
+type Post @node @authorization(filter: [
     { where: { node: { author: { id: "$jwt.sub" } } } }
     { requireAuthentication: false, operations: [READ], where: { node: { public: true } } }
 ]) {

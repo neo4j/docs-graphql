@@ -22,7 +22,7 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type User {
+    type User @node {
         name: String
     }
 `;
@@ -54,7 +54,7 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type User {
+    type User @node {
         name: String
     }
 `;
@@ -86,7 +86,7 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type User {
+    type User @node {
         name: String
     }
 `;
@@ -119,7 +119,7 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type User {
+    type User @node {
         name: String
     }
 `;
@@ -151,7 +151,7 @@ import { OGM } from "@neo4j/graphql-ogm";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type User {
+    type User @node {
         name: String
     }
 `;
@@ -178,7 +178,7 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type User {
+    type User @node {
         name: String
     }
 `;
@@ -200,7 +200,7 @@ import { OGM } from "@neo4j/graphql-ogm";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type User {
+    type User @node {
         name: String
     }
 `;
@@ -226,7 +226,7 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type User {
+    type User @node {
         name: String
     }
 `;

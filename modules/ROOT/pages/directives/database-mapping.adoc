@@ -8,84 +8,26 @@ This page describes how to use directives for database mapping.
 Each type in your GraphQL type definitions can be mapped to an entity in your Neo4j database, such as nodes, relationships, and relationship properties.
 
 
-== `@relationship`
-
-Relationships are represented by marking particular fields with a directive -- in this case, `@relationship`. 
-It defines the relationship type in the database, as well as which direction that relationship goes in.
-
-To add a second node type, "Actor", and connect the two together, you should do the following:
-
-[source, graphql, indent=0]
-----
-type Movie {
-    title: String
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-}
-
-type Actor {
-    name: String
-    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
-}
-----
-
-Note that, in this case, there is a directive on each "end" of the relationship, but it is not essential.
-
-
-== `@relationshipProperties`
-
-=== Definition
-
-[source, graphql, indent=0]
-----
-"""Required to differentiate between interfaces for relationship properties, and otherwise."""
-directive @relationshipProperties on OBJECT
-----
-
-`@relationshipProperties` can only be used on interfaces.
-
-=== Usage
-
-In order to add properties to a relationship, add a new type to your type definitions decorated with the `@relationshipProperties` directive.
-
-For example, for the "ACTED_IN" relationship, add a property "roles":
-
-[source, graphql, indent=0]
-----
-type Movie {
-    title: String
-    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
-}
-
-type Actor {
-    name: String
-    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedIn")
-}
-
-type ActedIn @relationshipProperties {
-    roles: [String]
-}
-----
-
-Note that in addition to this type, there is an added key `properties` in the existing `@relationship` directives.
-For more information, see xref::/types/relationships.adoc[Type definitions -> Relationships].
-
-
 [[type-definitions-node]]
 == `@node`
 
-The most basic mapping uses GraphQL type names to map to a Neo4j node label.
-For example, to represent a node with the label "Movie" and a single property "title" of type string:
+Adding the `@node` directive to your GraphQL type specifies that it represents a Neo4j node.
+For example, to represent a Neo4j node with the label "Movie" and a single property "title" of type string:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
 }
 ----
 
-With the `@node` directive, you have more control over this mapping, and you can specify the configuration of a GraphQL object type which represents a Neo4j node.
-It can be appended with the following optional parameters:
+[NOTE]
+====
+In version 6.x, it's not required to specify every GraphQL type representing a Neo4j node with the `@node` directive.
+In the future, types without the `@node` directive will no longer be treated as Neo4j nodes.
+====
 
+When not differently specified, the GraphQL type name is used as a label for the represented Neo4j node. It's possible to explicitly define the Neo4j node labels by using the argument `labels`:
 
 [discrete]
 === `labels`
@@ -216,6 +158,67 @@ await startStandaloneServer(server, {
 });
 ----
 
+== `@relationship`
+
+Relationships are represented by marking particular fields with a directive -- in this case, `@relationship`. 
+It defines the relationship type in the database, as well as its direction.
+
+The following type definitions add a second node type, `Actor`, and connect `Movie` and `Actor` via the `ACTED_IN` relationship:
+
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
+}
+
+type Actor @node {
+    name: String
+    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+}
+----
+
+Note that, in this case, there is a directive on each "end" of the relationship, but it is not essential.
+
+
+== `@relationshipProperties`
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Required to differentiate between interfaces for relationship properties, and otherwise."""
+directive @relationshipProperties on OBJECT
+----
+
+`@relationshipProperties` can only be used on interfaces.
+
+=== Usage
+
+In order to add properties to a relationship, add a new type to your type definitions decorated with the `@relationshipProperties` directive.
+
+For example, for the "ACTED_IN" relationship, add a property "roles":
+
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
+}
+
+type Actor @node {
+    name: String
+    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedIn")
+}
+
+type ActedIn @relationshipProperties {
+    roles: [String]
+}
+----
+
+Note that in addition to this type, there is an added key `properties` in the existing `@relationship` directives.
+For more information, see xref::/types/relationships.adoc[Type definitions -> Relationships].
+
 
 [[type-definitions-alias]]
 == `@alias`
@@ -227,7 +230,7 @@ For example:
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID! @id @alias(property: "dbId")
     username: String!
 }
@@ -235,13 +238,13 @@ type User {
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID! @id
     username: String! @alias(property: "dbUserName")
     livesIn: [City!]! @relationship(direction: OUT, type: "LIVES_IN", properties: "UserLivesInProperties")
 }
 
-type City {
+type City @node {
     name: String
 }
 

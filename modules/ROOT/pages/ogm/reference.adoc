@@ -42,7 +42,7 @@ a|
 .Type definition
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     username: String!
 }
 ----
@@ -68,7 +68,7 @@ a|
 import { OGM, generate } from "@neo4j/graphql-ogm";
 
 const typeDefs = `
-    type Movie {
+    type Movie @node {
         id: ID
         name: String
     }
@@ -95,7 +95,7 @@ console.log("Types Generated");
 import { OGM, generate } from "@neo4j/graphql-ogm";
 
 const typeDefs = `
-    type Movie {
+    type Movie @node {
         id: ID
         name: String
     }
@@ -127,7 +127,7 @@ Given the type definitions saved to the variable `typeDefs` and a valid driver i
 
 [source, graphql, indent=0]
 ----
-type Book {
+type Book @node {
     isbn: String! @unique
 }
 ----

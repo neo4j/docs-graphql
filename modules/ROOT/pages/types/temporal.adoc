@@ -12,7 +12,7 @@
 a| 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     createdAt: DateTime
 }
 ----
@@ -22,7 +22,7 @@ type User {
 a|
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     releaseDate: Date
 }
 ----
@@ -37,7 +37,7 @@ Comparisons are made according to the https://neo4j.com/developer/cypher/dates-d
 a|
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     runningTime: Duration!
 }
 ----
@@ -47,7 +47,7 @@ type Movie {
 a|
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     nextShowing: LocalDateTime
 }
 ----
@@ -57,7 +57,7 @@ type Movie {
 a|
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     nextShowing: Time
 }
 ----
@@ -67,7 +67,7 @@ type Movie {
 a| 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     nextShowing: LocalTime
 }
 ----

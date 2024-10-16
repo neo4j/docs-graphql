@@ -29,7 +29,7 @@ In the following example, a unique constraint is asserted for the label `Colour`
 
 [source, graphql, indent=0]
 ----
-type Colour {
+type Colour @node {
     hexadecimal: String! @unique
 }
 ----
@@ -38,7 +38,7 @@ In the next example, a unique constraint with name `unique_colour` is asserted f
 
 [source, graphql, indent=0]
 ----
-type Colour {
+type Colour @node {
     hexadecimal: String! @unique(constraintName: "unique_colour")
 }
 ----
@@ -92,7 +92,7 @@ In this example, a `Fulltext` index called "ProductName", for the name `field`, 
 
 [source, graphql, indent=0]
 ----
-type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]) {
+type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]) @node {
     name: String!
     color: Color! @relationship(type: "OF_COLOR", direction: OUT)
 }
@@ -191,7 +191,7 @@ Additionally, it is possible to define a custom query name as part of the `@full
 
 [source, graphql, indent=0]
 ----
-type Product @fulltext(indexes: [{ queryName: "CustomProductFulltextQuery", indexName: "ProductName", fields: ["name"] }]) {
+type Product @fulltext(indexes: [{ queryName: "CustomProductFulltextQuery", indexName: "ProductName", fields: ["name"] }]) @node {
     name: String!
     color: Color! @relationship(type: "OF_COLOR", direction: OUT)
 }
@@ -230,12 +230,12 @@ This creates two constraints, one for each field decorated with `@id` and `@uniq
 [source, javascript, indent=0]
 ----
 const typeDefs = `#graphql
-    type Color {
+    type Color @node {
         id: ID! @id
         hexadecimal: String! @unique
     }
 
-    type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]) {
+    type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]) @node {
         name: String!
         color: Color! @relationship(type: "OF_COLOR", direction: OUT)
     }
@@ -316,7 +316,7 @@ Perform a nearest neighbor search by passing a vector to find nodes with a vecto
 .Type definition
 [source, graphql]
 ----
-type Product @vector(indexes: [{
+type Product @node @vector(indexes: [{
   indexName: "productDescriptionIndex",
   embeddingProperty: "descriptionVector",
   queryName: "searchByDescription"
@@ -399,7 +399,7 @@ See link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/#ai-pro
 .Type definition
 [source, graphql]
 ----
-type Product @vector(indexes: [{
+type Product @node @vector(indexes: [{
   indexName: "productDescriptionIndex",
   embeddingProperty: "descriptionVector",
   provider: OPEN_AI,  # Assuming this is configured in the server

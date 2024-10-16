@@ -8,13 +8,13 @@ Using these type definitions:
 
 [source, graphql, indent=0]
 ----
-type Post {
+type Post @node {
     id: ID! @id
     content: String!
     creator: User! @relationship(type: "HAS_POST", direction: IN)
 }
 
-type User {
+type User @node {
     id: ID! @id
     name: String
     posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)

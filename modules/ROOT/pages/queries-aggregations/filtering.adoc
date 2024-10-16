@@ -197,7 +197,7 @@ const { Neo4jGraphQL } = require("@neo4j/graphql");
 const neo4j = require("neo4j-driver");
 
 const typeDefs = `
-    type User {
+    type User @node {
         name: String
     }
 `;
@@ -286,7 +286,7 @@ Consider the following type definitions:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     id: ID!
     title: String!
     genres: [String!]
@@ -294,7 +294,7 @@ type Movie {
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
-type Actor {
+type Actor @node {
     id: ID!
     name: String!
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
@@ -351,13 +351,13 @@ For example, take these type definitions:
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: ID!
     name: String
     posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)
 }
 
-type Post {
+type Post @node {
     id: ID!
     content: String
     author: User! @relationship(type: "HAS_POST", direction: IN)
@@ -450,11 +450,11 @@ Here are some examples on how to apply this kind of filtering:
 .Schema example
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     name: String
 }
 
-type Post {
+type Post @node {
     content: String
     likes: [User!]! @relationship(type: "LIKES", direction: IN)
 }
@@ -475,12 +475,12 @@ query {
 .Schema example
 [source, graphql, indent=0]
 ----
-type Passenger {
+type Passenger @node {
     name: String
     age: Int
 }
 
-type Flight {
+type Flight @node {
     code: String
     passengers: [Passenger!]! @relationship(type: "FLYING_ON", direction: IN)
 }
@@ -501,12 +501,12 @@ query {
 .Schema example
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String
     actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
 }
 
-type Person {
+type Person @node {
     name: String
 }
 
@@ -580,7 +580,7 @@ a|
 .Type definitions
 [source, graphql, indent=0]
 ----
-type Event {
+type Event @node {
     title: String!
     startTime: DateTime!
 }
@@ -603,7 +603,7 @@ a|
 .Type definitions
 [source, graphql, indent=0]
 ----
-type Event {
+type Event @node {
     title: String!
     duration: Duration!
 }
