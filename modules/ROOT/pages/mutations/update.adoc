@@ -59,7 +59,7 @@ The content of a `Post` can be updated by executing the following GraphQL statem
 mutation {
     updatePosts(
         where: {
-            id: "892CC104-A228-4BB3-8640-6ADC9F2C2A5F"
+            id_EQ: "892CC104-A228-4BB3-8640-6ADC9F2C2A5F"
         }
         update: {
             content: "Some new content for this Post!"
@@ -82,7 +82,7 @@ Instead of creating a `Post` with the `create` mutation and then connecting it t
 ----
 mutation {
     updateUsers(
-        where: { name: "John Doe" }
+        where: { name_EQ: "John Doe" }
         update: {
             posts: {
                 create: [
@@ -113,7 +113,7 @@ mutation {
     name: "Tom Hanks",
     movies: {
       connectOrCreate: {
-        where: { node: { id: "1234" } }
+        where: { node: { id_EQ: "1234" } }
         onCreate: { node: { title: "Forrest Gump" } }
       }
     }
@@ -134,12 +134,12 @@ mutation {
       update: {
         movies: {
             connectOrCreate: {
-                where: { node: { id: "1234" } }
+                where: { node: { id_EQ: "1234" } }
                 onCreate: { node: { title: "Forrest Gump" } }
             }
         }
       },
-      where: { name: "Tom Hanks" }
+      where: { name_EQ: "Tom Hanks" }
   ) {
     info {
       nodesCreated
@@ -462,7 +462,7 @@ Here is how you can do that:
 ----
 mutation incrementViewCountMutation {
   updateVideos(
-    where: { id: "VideoID" }
+    where: { id_EQ: "VideoID" }
     update: { views_INCREMENT: 1 }
   ) {
     videos {
@@ -480,7 +480,7 @@ To do that, you have to update the relationship property `revenue`:
 ----
 mutation addRevenueMutation {
   updateUsers(
-    where: { id: "UserID" },
+    where: { id_EQ: "UserID" },
     update: { ownVideo: [{ update: { edge: { revenue_ADD: 0.01 } } }] }
   ) {
     users {
