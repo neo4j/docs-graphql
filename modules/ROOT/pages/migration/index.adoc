@@ -20,6 +20,42 @@ npm update @neo4j/graphql
 
 Here is a list of all the breaking changes from version 5.0.0 to 6.0.0.
 
+=== The deprecated `_NOT` filters are no longer supported
+
+The deprecated `_NOT` filters such as:
+
+  - `_NOT`
+  - `_NOT_CONTAINS`
+  - `_NOT_ENDS_WITH`
+  - `_NOT_IN`
+  - `_NOT_STARTS_WITH`
+  - `_NOT_INCUDES`
+
+Are removed from the schema and no longer supported, to achieve the same result use the logical `NOT` operator.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+query {
+    movies(where: { title_NOT: "The Matrix" }) {
+        title
+    }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+    movies(where: { NOT: { title: "The Matrix" } }) {
+        title
+    }
+}
+----
+|===
 
 == Deprecations and warnings
 
