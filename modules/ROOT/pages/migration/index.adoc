@@ -63,12 +63,12 @@ query {
 
 === The deprecated `_NOT` on `@relationship` filters are no longer supported
 
-The deprecated `_NOT` filters on `@relationship` fields such as:
+The following deprecated `_NOT` filters on `@relationship` are removed and no longer supported:
 
   - `actors_NOT`
   - `actorsConnection_NOT`
 
-Are removed from the schema and no longer supported, to achieve the same result use the `NONE` quantifier.
+To achieve the same in version 6.x of the GraphQL library, use the `NONE` quantifier.
 
 [cols="1,1"]
 |===
