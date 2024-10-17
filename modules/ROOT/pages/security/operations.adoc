@@ -63,7 +63,7 @@ For single `delete` mutations, rules with `DELETE` on the object are evaluated:
 [source, graphql, indent=0]
 ----
 mutation {
-    deleteMovies(where: { title: "The Matrix" }) { # DELETE ON OBJECT Movie
+    deleteMovies(where: { title_EQ: "The Matrix" }) { # DELETE ON OBJECT Movie
         nodesDeleted
     }
 }
@@ -75,8 +75,8 @@ For `delete` mutations with nested delete operations, rules with operation `DELE
 ----
 mutation {
     deleteMovies(                                                  # DELETE ON OBJECT Movie
-        where: { title: "The Matrix" }
-        delete: { actors: { where: { node: { name: "Keanu" } } } } # DELETE ON OBJECT Actor
+        where: { title_EQ: "The Matrix" }
+        delete: { actors: { where: { node: { name_EQ: "Keanu" } } } } # DELETE ON OBJECT Actor
     ) { 
         nodesDeleted
     }
@@ -89,8 +89,8 @@ For a complex `update` mutation with many effects, a variety of rules is evaluat
 ----
 mutation {
     updateMovies(
-        where: { title: "The Matrix" }
-        connect: { actors: { where: { node: { name: "Keanu" } } } } # CONNECT ON OBJECT Actor and Movie
+        where: { title_EQ: "The Matrix" }
+        connect: { actors: { where: { node: { name_EQ: "Keanu" } } } } # CONNECT ON OBJECT Actor and Movie
         update: {                                                   # UPDATE ON OBJECT Movie
             title: "Speed"                                          # UPDATE ON FIELD_DEFINITION Movie.title
         }

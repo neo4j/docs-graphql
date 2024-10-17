@@ -24,7 +24,7 @@ If you wanted to fetch the posts of user "John Smith" 10 at a time, you would fi
 [source, graphql, indent=0]
 ----
 query {
-    users(where: { name: "John Smith" }) {
+    users(where: { name_EQ: "John Smith" }) {
         name
         postsConnection(first: 10) {
             edges {
@@ -46,7 +46,7 @@ In the return value, if `hasNextPage` is `true`, you would pass `endCursor` into
 [source, graphql, indent=0]
 ----
 query Users($after: String) {
-    users(where: { name: "John Smith" }) {
+    users(where: { name_EQ: "John Smith" }) {
         name
         postsConnection(first: 10, after: $after) {
             edges {
@@ -72,7 +72,7 @@ The Connection fields also offer a `totalCount` field which can be used to calcu
 [source, graphql, indent=0]
 ----
 query Users($after: String) {
-    users(where: { name: "John Smith" }) {
+    users(where: { name_EQ: "John Smith" }) {
         name
         postsConnection(first: 10) {
             edges {

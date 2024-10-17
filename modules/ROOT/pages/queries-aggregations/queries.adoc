@@ -60,7 +60,7 @@ query {
 [source, graphql, indent=0]
 ----
 query {
-    users(where: { name: "Jane Smith" }) {
+    users(where: { name_EQ: "Jane Smith" }) {
         id
         name
         posts {

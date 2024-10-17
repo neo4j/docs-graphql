@@ -152,11 +152,11 @@ Take the following example:
 ----
 mutation CreateActorAndProductions {
     updateActors(
-        where: { name: "Woody Harrelson" }
+        where: { name_EQ: "Woody Harrelson" }
         connect: {
             actedIn: {
-                where: { node: { title: "Zombieland" } }
-                connect: { actors: { where: { node: { name: "Emma Stone" } } } }
+                where: { node: { title_EQ: "Zombieland" } }
+                connect: { actors: { where: { node: { name_EQ: "Emma Stone" } } } }
             }
         }
     ) {

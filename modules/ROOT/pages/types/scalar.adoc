@@ -38,7 +38,7 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-    files(where: { size: 9223372036854775807 }) {
+    files(where: { size_EQ: 9223372036854775807 }) {
         size
     }
 }

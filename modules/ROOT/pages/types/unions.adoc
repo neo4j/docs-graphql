@@ -96,7 +96,7 @@ While this particular query only returns blogs, you could for instance use a fil
 query GetUsersWithAllContent {
     users {
         name
-        content(where: { Blog: { NOT: { title: null } }}) {
+        content(where: { Blog: { NOT: { title_EQ: null } }}) {
             ... on Blog {
                 title
             }

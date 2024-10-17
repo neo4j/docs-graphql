@@ -72,7 +72,7 @@ Say that in addition to the `User` type above, there is also a `Post` type which
 ----
 query {
     users(where: {
-        name: "Billy"
+        name_EQ: "Billy"
     }) {
         name
         posts(options: {

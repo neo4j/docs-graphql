@@ -197,7 +197,7 @@ Then delete the director node:
 [source, graphql, indent=0]
 ----
 mutation {
-  deletePeople(where: { name: "Robert Zemeckis" }) {
+  deletePeople(where: { name_EQ: "Robert Zemeckis" }) {
     nodesDeleted
   }
 }

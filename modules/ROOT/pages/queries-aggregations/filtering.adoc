@@ -30,7 +30,7 @@ query {
                 ]
             },
             {
-                movies_SOME: { title: "The Matrix" }
+                movies_SOME: { title_EQ: "The Matrix" }
             }
         ]}
     ) {
@@ -54,7 +54,7 @@ For example:
 [source, graphql, indent=0]
 ----
 query {
-  users(where: {name: "John" })
+  users(where: { name_EQ: "John" })
     id
     name
   }
@@ -66,7 +66,7 @@ For non-equality, you must use the xref:/queries-aggregations/filtering.adoc#_bo
 [source, graphql, indent=0]
 ----
 query {
-  users(where: { NOT: {name: "John" }})
+  users(where: { NOT: { name_EQ: "John" }})
     id
     name
   }
@@ -376,7 +376,7 @@ For example:
 [source, graphql, indent=0]
 ----
 query {
-    posts(where: { author: { id: "7CF1D9D6-E527-4ACD-9C2A-207AE0F5CB8C" } }) {
+    posts(where: { author: { id_EQ: "7CF1D9D6-E527-4ACD-9C2A-207AE0F5CB8C" } }) {
         content
     }
 }
@@ -386,7 +386,7 @@ query {
 [source, graphql, indent=0]
 ----
 query {
-    posts(where: { NOT: { author: { id: "7CF1D9D6-E527-4ACD-9C2A-207AE0F5CB8C" } } }) {
+    posts(where: { NOT: { author: { id_EQ: "7CF1D9D6-E527-4ACD-9C2A-207AE0F5CB8C" } } }) {
         content
     }
 }
