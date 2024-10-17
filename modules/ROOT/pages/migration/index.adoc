@@ -98,12 +98,13 @@ query {
 
 === Implicit equality filters are deprecated
 
-Implicit equality filters such as: 
+The following implicit equality filters are deprecated: 
 
   - `{ name: "Keanu" }`
   - `{ count: 10 }` 
 
-Are deprecated in favor of `{ name_EQ: "Keanu" }` and `{ count_EQ: 10 }` respectively and will be removed in the next major version.
+You can achieve the same by using `{ name_EQ: "Keanu" }` and `{ count_EQ: 10 }`.
+The deprecated quality filters will be removed in version 7.x.
 
 [cols="1,1"]
 |===
