@@ -9,11 +9,12 @@ This guide shows how to start using subscription capabilities on a GraphQL serve
 If you use link:https://studio.apollographql.com/[Apollo Studio], make sure to select the link:https://www.npmjs.com/package/graphql-ws[graphql-ws] implementation in the connection settings.
 ====
 
-Subscriptions allow to listen to changes to the database, including changes done outside of the GraphQL library.
+Subscriptions can listen to changes to the database, including changes unrelated to the GraphQL library.
 
 == Enable subscription capabilities
 
-Neo4j GraphQL subscriptions rely on Neo4j Change Data Capture. Make sure to follow the steps described on the link:https://neo4j.com/docs/cdc/current/[CDC Documentation] to enable it in `FULL` mode for your Neo4j instance.
+Neo4j GraphQL subscriptions rely on Neo4j Change Data Capture.
+Make sure to follow the steps described in the link:https://neo4j.com/docs/cdc/current/[CDC Documentation] to enable it in `FULL` mode for your Neo4j instance.
 
 Before using subscriptions on a GraphQL server, you must enable them by passing the `subscriptions` feature to `Neo4jGraphQL`:
 

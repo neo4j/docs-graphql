@@ -1,19 +1,20 @@
 [[customize-cdc]]
-= Customize CDC Subscriptions
+= Customize CDC subscriptions
 :page-aliases: subscriptions/plugins/index.adoc, subscriptions/plugins/amqp.adoc, subscriptions/plugins/single-instance.adoc
-:description: This page describes how  to customize the behaviour of subscriptions.
+:description: This page describes how to customize the behavior of subscriptions.
 
 == Neo4jGraphQLSubscriptionsCDCEngine
 
-By default, the GraphQL library will use the same driver passed to `Neo4jGraphQL` to poll for events every second. This behaviour can be changed by creating a custom instance of `Neo4jGraphQLSubscriptionsCDCEngine`.
+By default, the GraphQL library uses the same driver passed to `Neo4jGraphQL` to poll for events every second.
+This behavior can be changed by creating a custom instance of `Neo4jGraphQLSubscriptionsCDCEngine`.
 
 The following options can be passed to the constructor:
 
 * `driver`: The driver to be used for CDC queries.
 * `pollTime`: The interval, in milliseconds, between queries to CDC. 
 Defaults to 1000ms.
-Note that poll time is the period between one request finishing and the next one starting. 
-The actual time it takes for CDC events to trigger the subscription also depend on your network.
+Note that poll time is the period between a finished request and the start of the next. 
+The actual time it takes for CDC events to trigger the subscription also depends on your network.
 * `queryConfig`: An object with the driver query options to be passed to CDC requests. 
 Use the `db` field to define the target database for CDC. 
 
