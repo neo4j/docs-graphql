@@ -30,6 +30,9 @@ The deprecated `_NOT` filters such as:
   - `_NOT_IN`
   - `_NOT_STARTS_WITH`
   - `_NOT_INCUDES`
+  - `node_NOT`
+  - `edge_NOT`
+
 
 Are removed from the schema and no longer supported, to achieve the same result use the logical `NOT` operator.
 
@@ -41,18 +44,52 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-    movies(where: { title_NOT: "The Matrix" }) {
-        title
-    }
+  movies(where: { title_NOT: "The Matrix" }) {
+    title
+  }
+}
+
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { NOT: { title: "The Matrix" } }) {
+    title
+  }
+}
+----
+|===
+
+=== The deprecated `_NOT` on `@relationship` filters are no longer supported
+
+The deprecated `_NOT` filters on `@relationship` fields such as:
+
+  - `actors_NOT`
+  - `actorsConnection_NOT`
+
+Are removed from the schema and no longer supported, to achieve the same result use the `NONE` quantifier.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { actors_NOT: { name: "Keanu" } }) {
+    title
+  }
 }
 ----
 a|
 [source, graphql, indent=0]
 ----
 query {
-    movies(where: { NOT: { title: "The Matrix" } }) {
-        title
-    }
+  movies(where: { actors_NONE: { name: "Keanu" } }) {
+    title
+  }
 }
 ----
 |===
