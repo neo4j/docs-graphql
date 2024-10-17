@@ -6,13 +6,13 @@ Using the following type definitions:
 
 [source, graphql, indent=0]
 ----
-type Post {
+type Post @node {
     id: ID! @id
     content: String!
     creator: User! @relationship(type: "HAS_POST", direction: IN)
 }
 
-type User {
+type User @node {
     id: ID! @id
     name: String
     posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)
@@ -118,12 +118,12 @@ Consider the following type definitions:
 
 [source, graphql, indent=0]
 ----
-type Actor {
+type Actor @node {
     name: String!
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
 }
 
-type Movie {
+type Movie @node {
     title: String
     id: ID! @id @unique
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)

@@ -18,18 +18,17 @@ directive @unique(
 ) on FIELD_DEFINITION
 ----
 
-Using this directive does not automatically ensure the existence of these constraints, and you will need to run a function on server startup. 
-See the section xref::/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
+Using this directive does not automatically ensure the existence of these constraints, and you will need to create them manually.
 
 === Usage
 
-`@unique` directives can only be used in GraphQL object types representing nodes, and they are only applicable for the "main" label for the node.
+`@unique` directives can only be used in GraphQL object types representing nodes, for any label specified on them.
 
 In the following example, a unique constraint is asserted for the label `Colour` and the property `hexadecimal`:
 
 [source, graphql, indent=0]
 ----
-type Colour {
+type Colour @node {
     hexadecimal: String! @unique
 }
 ----
@@ -38,7 +37,7 @@ In the next example, a unique constraint with name `unique_colour` is asserted f
 
 [source, graphql, indent=0]
 ----
-type Colour {
+type Colour @node {
     hexadecimal: String! @unique(constraintName: "unique_colour")
 }
 ----
@@ -53,7 +52,7 @@ type Colour @node(labels: ["Color"]) {
 ----
 
 In the following example, all labels specified in the `labels` argument of the `@node` directive are also checked when asserting constraints.
-If there is a unique constraint specified for the `hexadecimal` property of nodes with the `Hue` label, but not the `Color` label, no error is thrown and no new constraints are created when running `assertIndexesAndConstraints`.
+If there is a unique constraint specified for the `hexadecimal` property of nodes with the `Hue` label, but not the `Color` label, no error is thrown when running `assertIndexesAndConstraints`.
 
 [source, graphql, indent=0]
 ----
@@ -64,7 +63,7 @@ type Colour @node(labels: ["Color", "Hue"]) {
 
 == Fulltext indexes
 
-You can use the `@fulltext` directive to add a https://neo4j.com/docs/cypher-manual/current/indexes-for-full-text-search/[Full text index] inside Neo4j.
+You can use the `@fulltext` directive to specify a https://neo4j.com/docs/cypher-manual/current/indexes-for-full-text-search/[full-text index] inside Neo4j.
 For example:
 
 [source, graphql, indent=0]
@@ -82,23 +81,22 @@ directive @fulltext(indexes: [FullTextInput]!) on OBJECT
 ----
 
 Using this directive does not automatically ensure the existence of these indexes.
-You need to run a function on server startup. 
-See the section xref::/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints] for details.
+They must be created manually.
 
 === Specifying
 
 The `@fulltext` directive can be used on nodes.
-In this example, a `Fulltext` index called "ProductName", for the name `field`, on the `Product` node, is added:
+In this example, a full-text index called "ProductName", for the name `field`, on the `Product` node, is specified:
 
 [source, graphql, indent=0]
 ----
-type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]) {
+type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]) @node {
     name: String!
     color: Color! @relationship(type: "OF_COLOR", direction: OUT)
 }
 ----
 
-When you run xref::/directives/indexes-and-constraints.adoc#_asserting_constraints[Asserting constraints], they create the index like so:
+This index can be created in the database by running the following Cypher:
 
 [source, cypher, indent=0]
 ----
@@ -191,7 +189,7 @@ Additionally, it is possible to define a custom query name as part of the `@full
 
 [source, graphql, indent=0]
 ----
-type Product @fulltext(indexes: [{ queryName: "CustomProductFulltextQuery", indexName: "ProductName", fields: ["name"] }]) {
+type Product @fulltext(indexes: [{ queryName: "CustomProductFulltextQuery", indexName: "ProductName", fields: ["name"] }]) @node {
     name: String!
     color: Color! @relationship(type: "OF_COLOR", direction: OUT)
 }
@@ -224,18 +222,18 @@ query {
 == Asserting constraints
 
 In order to ensure that the specified constraints exist in the database, you need to run the function `assertIndexesAndConstraints`.
-A simple example to create the necessary constraints might look like the following, assuming a valid driver instance in the variable `driver`. 
-This creates two constraints, one for each field decorated with `@id` and `@unique`, and apply the indexes specified in `@fulltext`:
+A simple example to check for the existence of the necessary constraints might look like the following, assuming a valid driver instance in the variable `driver`. 
+This checks for the unique node property constraint for the field decorated `@unique`, and checks for the index specified in `@fulltext`:
 
 [source, javascript, indent=0]
 ----
 const typeDefs = `#graphql
-    type Color {
+    type Color @node {
         id: ID! @id
         hexadecimal: String! @unique
     }
 
-    type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]) {
+    type Product @fulltext(indexes: [{ indexName: "ProductName", fields: ["name"] }]) @node {
         name: String!
         color: Color! @relationship(type: "OF_COLOR", direction: OUT)
     }
@@ -245,9 +243,8 @@ const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
 
 const schema = await neoSchema.getSchema();
 
-await neoSchema.assertIndexesAndConstraints({ options: { create: true }});
+await neoSchema.assertIndexesAndConstraints();
 ----
-
 
 :description: Directives related to generative AI in the Neo4j GraphQL Library.
 
@@ -316,7 +313,7 @@ Perform a nearest neighbor search by passing a vector to find nodes with a vecto
 .Type definition
 [source, graphql]
 ----
-type Product @vector(indexes: [{
+type Product @node @vector(indexes: [{
   indexName: "productDescriptionIndex",
   embeddingProperty: "descriptionVector",
   queryName: "searchByDescription"
@@ -399,7 +396,7 @@ See link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/#ai-pro
 .Type definition
 [source, graphql]
 ----
-type Product @vector(indexes: [{
+type Product @node @vector(indexes: [{
   indexName: "productDescriptionIndex",
   embeddingProperty: "descriptionVector",
   provider: OPEN_AI,  # Assuming this is configured in the server

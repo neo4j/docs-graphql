@@ -19,12 +19,12 @@ To create that graph using the Neo4j GraphQL Library, first you need to define t
 
 [source, graphql, indent=0]
 ----
-type Person {
+type Person @node {
     name: String!
     born: Int!
 }
 
-type Movie {
+type Movie @node {
     title: String!
     released: Int!
 }
@@ -34,14 +34,14 @@ You can then connect these two types together using `@relationship` directives:
 
 [source, graphql, indent=0]
 ----
-type Person {
+type Person @node {
     name: String!
     born: Int!
     actedInMovies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
     directedMovies: [Movie!]! @relationship(type: "DIRECTED", direction: OUT)
 }
 
-type Movie {
+type Movie @node {
     title: String!
     released: Int!
     actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
@@ -69,14 +69,14 @@ For example, suppose you want to distinguish which roles an actor played in a mo
 
 [source, graphql, indent=0]
 ----
-type Person {
+type Person @node {
     name: String!
     born: Int!
     actedInMovies: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
     directedMovies: [Movie!]! @relationship(type: "DIRECTED", direction: OUT)
 }
 
-type Movie {
+type Movie @node {
     title: String!
     released: Int!
     actors: [Person!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
@@ -99,19 +99,19 @@ interface Production {
     actors: [Actor!]! @declareRelationship
 }
 
-type Actor {
+type Actor @node {
     name: String!
     born: Int!
     actedInMovies: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
 }
 
-type Movie implements Production {
+type Movie implements Production @node {
     title: String!
     released: Int!
     actors: [Actor!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
 }
 
-type Series implements Production {
+type Series implements Production @node {
     title: String!
     released: Int!
     episodes: Int!
@@ -131,7 +131,7 @@ To set the default behavior of a relationship when it is queried, you can use th
 
 [source, graphql, indent=0]
 ----
-type Person {
+type Person @node {
     name: String!
     born: Int!
     actedInMovies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, queryDirection: DEFAULT_DIRECTED)
@@ -315,12 +315,12 @@ For example:
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     name: String!
     posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)
 }
 
-type Post {
+type Post @node {
     name: String!
 }
 ----

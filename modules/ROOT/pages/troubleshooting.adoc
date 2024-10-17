@@ -38,7 +38,7 @@ const neo4j = require("neo4j-driver");
 const { ApolloServer } = require("apollo-server");
 
 const typeDefs = `
-    type Movie {
+    type Movie @node {
         title: String!
     }
 `;
@@ -84,7 +84,7 @@ const neo4j = require("neo4j-driver");
 const { ApolloServer } = require("apollo-server");
 
 const typeDefs = `
-    type Movie {
+    type Movie @node {
         title: String!
     }
 `;
@@ -145,7 +145,7 @@ The following example will create inputs with `_emptyInput`:
 
 [source, graphql]
 ----
-type Cookie {
+type Cookie @node {
     id: ID! @id
     owner: Owner!  @relationship(type: "HAS_OWNER", direction: OUT)
     # f: String # If you don't want _emptyInput, uncomment this line.
@@ -158,13 +158,13 @@ Currently, and given the typeDefs below, Neo4j GraphQL will enforce cardinality 
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     director: Person! @relationship(type: "DIRECTED", direction: IN)
     actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
-type Person {
+type Person @node {
     name: String!
 }
 ----

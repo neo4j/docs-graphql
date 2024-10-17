@@ -47,7 +47,7 @@ interface Auth {
 a| You can use the JWT in the request to return the value of the currently logged in User:
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id: String
 }
 
@@ -117,7 +117,7 @@ Both approaches are demonstrated here:
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id
 }
 
@@ -135,7 +135,7 @@ type Query {
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     id
 }
 
@@ -185,13 +185,13 @@ In the following example, the field `similarMovies` is bound to the `Movie` type
 
 [source, graphql, indent=0]
 ----
-type Actor {
+type Actor @node {
     actorId: ID!
     name: String
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
 }
 
-type Movie {
+type Movie @node {
     movieId: ID!
     title: String
     description: String
@@ -216,7 +216,7 @@ The following example demonstrates a query to return all of the actors in the da
 
 [source, graphql, indent=0]
 ----
-type Actor {
+type Actor @node {
     actorId: ID!
     name: String
 }
@@ -239,7 +239,7 @@ The following example demonstrates a mutation using a Cypher query to insert a s
 
 [source, graphql, indent=0]
 ----
-type Actor {
+type Actor @node {
     actorId: ID!
     name: String
 }
@@ -291,7 +291,7 @@ enum Status {
     ACTIVE
     INACTIVE
 }
-type Movie {
+type Movie @node {
     status: Status @coalesce(value: ACTIVE)
 }
 ----
@@ -345,7 +345,7 @@ Take, for instance, this schema:
 [source, javascript, indent=0]
 ----
 const typeDefs = `
-    type User {
+    type User @node {
         firstName: String!
         lastName: String!
         fullName: String! @customResolver(requires: "firstName lastName")
@@ -397,13 +397,13 @@ Using a selection set string makes it possible to select fields from related typ
 [source, javascript, indent=0]
 ----
 const typeDefs = `
-    type Address {
+    type Address @node {
         houseNumber: Int!
         street: String!
         city: String!
     }
 
-    type User {
+    type User @node {
         id: ID!
         firstName: String!
         lastName: String!
@@ -437,7 +437,7 @@ interface Publication {
     publicationYear: Int!
 }
 
-type Author {
+type Author @node {
     name: String!
     publications: [Publication!]! @relationship(type: "WROTE", direction: OUT)
     publicationsWithAuthor: [String!]!
@@ -446,13 +446,13 @@ type Author {
         )
 }
 
-type Book implements Publication {
+type Book implements Publication @node {
     title: String!
     publicationYear: Int!
     author: [Author!]! @relationship(type: "WROTE", direction: IN)
 }
 
-type Journal implements Publication {
+type Journal implements Publication @node {
     subject: String!
     publicationYear: Int!
     author: [Author!]! @relationship(type: "WROTE", direction: IN)
@@ -468,7 +468,7 @@ interface Publication {
     publicationYear: Int!
 }
 
-type Author {
+type Author @node {
     name: String!
     publications: [Publication!]! @relationship(type: "WROTE", direction: OUT)
     publicationsWithAuthor: [String!]!
@@ -477,13 +477,13 @@ type Author {
         )
 }
 
-type Book implements Publication {
+type Book implements Publication @node {
     title: String!
     publicationYear: Int!
     author: [Author!]! @relationship(type: "WROTE", direction: IN)
 }
 
-type Journal implements Publication {
+type Journal implements Publication @node {
     subject: String!
     publicationYear: Int!
     author: [Author!]! @relationship(type: "WROTE", direction: IN)
@@ -525,7 +525,7 @@ Type definitions:
 
 [source, graphql, indent=0]
 ----
-type Product {
+type Product @node {
     name: String!
     slug: String! @populatedBy(callback: "slug", operations: [CREATE, UPDATE])
 }
@@ -561,7 +561,7 @@ For example, if you want a field `modifiedBy`:
 
 [source, graphql, indent=0]
 ----
-type Record {
+type Record @node {
     content: String!
     modifiedBy: @populatedBy(callback: "modifiedBy", operations: [CREATE, UPDATE])
 }

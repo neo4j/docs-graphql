@@ -14,16 +14,16 @@ It defines a `User` type that has a relationship `HAS_CONTENT`, of type `[Conten
 ----
 union Content = Blog | Post
 
-type Blog {
+type Blog @node {
     title: String
     posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)
 }
 
-type Post {
+type Post @node {
     content: String
 }
 
-type User {
+type User @node {
     name: String
     content: [Content!]! @relationship(type: "HAS_CONTENT", direction: OUT)
 }

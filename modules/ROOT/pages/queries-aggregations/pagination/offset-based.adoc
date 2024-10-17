@@ -8,7 +8,7 @@ Using the following type definition:
 
 [source, graphql, indent=0]
 ----
-type User {
+type User @node {
     name: String!
 }
 ----

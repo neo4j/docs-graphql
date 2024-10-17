@@ -8,12 +8,12 @@ In case you need to remove fields from a GraphQL Object Type or a GraphQL Input 
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String
 }
 
-type Actor {
+type Actor @node {
     name: String!
     age: Int
     actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
@@ -38,12 +38,12 @@ For instance, to hide the field `age` in the Selection Set, you can use the `@se
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String
 }
 
-type Actor {
+type Actor @node {
     name: String!
     age: Int @selectable(onRead: false, onAggregate: false)
     actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
@@ -116,12 +116,12 @@ It is possible to configure this behavior by passing the argument aggregate on t
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String
 }
 
-type Actor {
+type Actor @node {
     name: String!
     age: Int
     actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, aggregate: false)
@@ -168,12 +168,12 @@ To disable the nested `CREATE` operation, change the initial type definitions to
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String
 }
 
-type Actor {
+type Actor @node {
     name: String!
     age: Int
     actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, nestedOperations: [UPDATE, DELETE, CONNECT, DISCONNECT, CONNECT_OR_CREATE])
@@ -188,12 +188,12 @@ If instead, no nested operations are required, it is possible to disable all the
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String
 }
 
-type Actor {
+type Actor @node {
     name: String!
     age: Int
     actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, nestedOperations: [])
@@ -222,7 +222,7 @@ With the following definition:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String @selectable(onRead: false, onAggregate: true)
 }
@@ -253,7 +253,7 @@ In case you want to remove the `description` field from `MovieAggregateSelection
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String @selectable(onRead: false, onAggregate: false)
 }
@@ -281,12 +281,12 @@ For instance, these type definitions:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String
 }
 
-type Actor {
+type Actor @node {
     name: String!
     actedIn: [Movie!]!
         @relationship(type: "ACTED_IN", direction: OUT)
@@ -329,12 +329,12 @@ With this definition:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String @settable(onCreate: true, onUpdate: false)
 }
 
-type Actor {
+type Actor @node {
     name: String!
     actedIn: [Movie!]!
         @relationship(type: "ACTED_IN", direction: OUT)
@@ -365,12 +365,12 @@ For example:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String
 }
 
-type Actor {
+type Actor @node {
     name: String!
     actedIn: [Movie!]!
         @relationship(type: "ACTED_IN", direction: OUT)
@@ -416,13 +416,13 @@ With this definition:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String @filterable(byValue: false, byAggregate: false)
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 
-type Actor {
+type Actor @node {
     name: String!
     actedIn: [Movie!]!
         @relationship(type: "ACTED_IN", direction: OUT)
@@ -485,13 +485,13 @@ For example:
 
 [source, graphql, indent=0]
 ----
-type Movie {
+type Movie @node {
     title: String!
     description: String @filterable(byValue: false, byAggregate: false)
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN) @filterable(byValue: false, byAggregate: false)
 }
 
-type Actor {
+type Actor @node {
     name: String!
     actedIn: [Movie!]!
         @relationship(type: "ACTED_IN", direction: OUT)
