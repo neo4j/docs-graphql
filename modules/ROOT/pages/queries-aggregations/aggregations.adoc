@@ -4,7 +4,7 @@
 
 == Type definitions
 
-Quries on this page assume the following type definitions:
+Queries on this page assume the following type definitions:
 
 [source, graphql, indent=0]
 ----
