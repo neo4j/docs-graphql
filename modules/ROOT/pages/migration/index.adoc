@@ -54,7 +54,7 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-  movies(where: { NOT: { title: "The Matrix" } }) {
+  movies(where: { NOT: { title_EQ: "The Matrix" } }) {
     title
   }
 }
@@ -78,7 +78,7 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-  movies(where: { actors_NOT: { name: "Keanu" } }) {
+  movies(where: { actors_NOT: { name_EQ: "Keanu" } }) {
     title
   }
 }
@@ -87,7 +87,7 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-  movies(where: { actors_NONE: { name: "Keanu" } }) {
+  movies(where: { actors_NONE: { name_EQ: "Keanu" } }) {
     title
   }
 }
