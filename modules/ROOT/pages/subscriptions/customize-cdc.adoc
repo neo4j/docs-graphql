@@ -3,6 +3,8 @@
 :page-aliases: subscriptions/plugins/index.adoc, subscriptions/plugins/amqp.adoc, subscriptions/plugins/single-instance.adoc
 :description: This page describes how to customize the behavior of subscriptions.
 
+GraphQL subscriptions to Neo4j use [Change Data Capture](https://neo4j.com/docs/cdc/current/). It's behaviour can be configured by passing an instance of `Neo4jGraphQLSubscriptionsCDCEngine`
+
 == Neo4jGraphQLSubscriptionsCDCEngine
 
 By default, the GraphQL library uses the same driver passed to `Neo4jGraphQL` to poll for events every second.
@@ -34,6 +36,9 @@ const neoSchema = new Neo4jGraphQL({
     driver,
     features: {
         subscriptions: engine,
+        queryConfig: {
+             database: "neo4j",
+        }
     },
 });
 ----
