@@ -118,11 +118,9 @@ enum SubscriptionFields {
     CREATED
     UPDATED
     DELETED
-    RELATIONSHIP_CREATED
-    RELATIONSHIP_DELETED
 }
 
-directive @subscription(events: [SubscriptionFields!]! = [CREATED, UPDATED, DELETED, RELATIONSHIP_CREATED, RELATIONSHIP_DELETED]) on OBJECT | SCHEMA
+directive @subscription(events: [SubscriptionFields!]! = [CREATED, UPDATED, DELETE]) on OBJECT | SCHEMA
 ----
 
 === Usage
