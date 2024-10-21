@@ -18,9 +18,7 @@ You would fetch the first "page" of 10 by executing:
 [source, graphql, indent=0]
 ----
 query {
-    users(options: {
-        limit: 10
-    }) {
+    users(limit: 10) {
         name
     }
 }
@@ -33,10 +31,7 @@ And then on subsequent calls, introduce the `offset` argument and increment it b
 [source, graphql, indent=0]
 ----
 query {
-    users(options: {
-        offset: 10
-        limit: 10
-    }) {
+    users(offset: 10, limit: 10) {
         name
     }
 }
@@ -47,10 +42,7 @@ query {
 [source, graphql, indent=0]
 ----
 query {
-    users(options: {
-        offset: 20
-        limit: 10
-    }) {
+    users(offset: 20, limit: 10) {
         name
     }
 }
@@ -75,10 +67,7 @@ query {
         name_EQ: "Billy"
     }) {
         name
-        posts(options: {
-            offset: 20
-            limit: 10
-        }) {
+        posts(offset: 20, limit: 10) {
             content
         }
     }
