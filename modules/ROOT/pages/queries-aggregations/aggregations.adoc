@@ -180,17 +180,3 @@ query {
 }
 ----
 
-When performing an aggregation on related nodes, the query against the relationship
-can be defined as "undirected" by using the argument `directed: false`:
-
-[source, graphql, indent=0]
-----
-query {
-    users {
-        id
-        postsAggregate(directed: false) {
-            count
-        }
-    }
-}
-----
