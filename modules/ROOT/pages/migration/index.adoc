@@ -24,19 +24,45 @@ Here is a list of all the breaking changes from version 5.0.0 to 6.0.0.
 
 The minimum Node.js version required to run the Neo4j GraphQL Library is now 20.0.0.
 
-=== Changed minimum Noo4j version to 5.0.0
+=== Changed minimum Neo4j version to 5.0.0
 
 The minimum Neo4j version required to run the Neo4j GraphQL Library is now 5.0.0.
 
+=== Removed the deprecated `@relationship` implicit `_SOME` filters
+
+The deprecated `@relationship` filter without the operator suffix has been removed in favor of the `_SOME` filter.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(where: { actors: { name: "Keanu" } }) {
+    title
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(where: { actors_SOME: { name: "Keanu" } }) {
+    title
+  }
+}
+----
+|===
+
 === Invalid filters in Aggregation filter inputs are being removed
 
-GraphQL input types used for aggregation filters contained some filters that did not rely on aggregating functions. 
-These filters were deprecated and are now removed from the generated schema.
+In previous versions of the Library, the input used for aggregation filters contained filters that did not rely on aggregating functions. Those filters were deprecated in previous Library versions and removed from the schema.
 
 To see the aggregating functions supported on filtering refer to xref:/queries-aggregations/filtering.adoc#_aggregation_filtering[Aggregation filtering],
 
-
-=== String aggregation filters that are not using _LENGTH are removed
+=== String aggregation filters that are not using `_LENGTH` are removed
 
 String aggregations are computed using lengths, and the `_LENGTH` suffix is now required for all string aggregation filters.
 
@@ -69,8 +95,6 @@ a|
 
 ----
 |===
-
-
 
 === Removed the deprecated `options` argument from `assertIndexesAndConstraints`
 
@@ -121,7 +145,6 @@ mutation UpdatePeople {
 ----
 |===
 
-
 === Changed the sort argument for interfaces Connection fields
 
 The sort argument for interfaces Connection fields is now a list of non nullable element.
@@ -154,7 +177,6 @@ The following deprecated `NOT` filters are removed from the schema since they ar
   - `_NOT_INCUDES`
   - `node_NOT`
   - `edge_NOT`
-
 
 To achieve the same in version 6.x of the GraphQL library, use the xref:/queries-aggregations/filtering.adoc#_boolean_operators[boolean `NOT` operator] instead.
 
@@ -216,6 +238,10 @@ query {
 ----
 |===
 
+=== The bookmark field has been removed from the schema
+
+The bookmark field has been removed from the Mutation info response as it is no longer required.
+
 
 === The `excludeDeprecatedFields` setting in the Neo4jFeaturesSettings has been changed
 
@@ -238,10 +264,9 @@ The following fields have been added:
   - `deprecatedOptionsArgument`
   - `directedArgument`
 
-
 == Additions
 
-=== Added count_EQ as alternative to the deprecated count
+=== Added `count_EQ` as alternative to the deprecated count
 
 The `count_EQ` filter is now available as an alternative to the deprecated `count` filter.
 
@@ -336,7 +361,6 @@ query {
 ----
 |===
 
-
 === `@node` will have to be explicitly defined
 
 In the future, types without the `@node` directive will no longer be treated as Neo4j nodes.
@@ -403,7 +427,7 @@ a|
 ----
 |===
 
-=== Deprecated pagination `options`` argument
+=== Deprecated pagination `options` argument
 
 The `options` argument in query and `@relationship` fields is deprecated and will be removed in the future. Use the `limit`, `offset` and `sort` arguments instead.
 
@@ -451,5 +475,3 @@ The `directed` argument was used to change the query direction of the relationsh
 
 The `directed` argument in `@relationship` fields is deprecated and will be removed in the future.
 Please configure this using `queryDirection` and `direction` arguments of the `@relationship` directive.
-
-
