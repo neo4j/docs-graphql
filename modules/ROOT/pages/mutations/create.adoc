@@ -112,7 +112,7 @@ Read about xref:mutations/update.adoc#_connectorcreate_relationships[`update`] f
 
 == `connectOrCreate` relationships
 
-If a related node has the `@unique` directive defined, you can use `connectOrCreate` nested in a `CREATE` mutation to perform an operation similar to a link:https://neo4j.com/docs/cypher-manual/current/clauses/merge/[Cypher `MERGE`] operation on the related node.
+If a related node has the `@unique` directive defined, you can use `connectOrCreate` nested in a `create` mutation to perform an operation similar to a link:https://neo4j.com/docs/cypher-manual/current/clauses/merge/[Cypher `MERGE`] operation on the related node.
 This will create a new relationship and the related node if it doesn't exist yet.
 
 Consider the following type definitions:
@@ -157,9 +157,9 @@ This ensures that a movie with ID 1234 exists and is connected to `"Tom Hanks"`.
 If the movie does not exist, it will be created with the title `"Forrest Gump"`.
 If a movie with the given ID already exists, it will also be connected to `"Tom Hanks"`, and keep whatever title it has.
 
-== `CREATE` optimization
+== `create` optimization
 
-With `CREATE` operations, there is no limit on how many nodes can be created at once.
+With `create` operations, there is no limit on how many nodes can be created at once.
 However, there is a known performance issue for large batch sizes. 
 
 The Neo4j GraphQL Library contains an optimization feature designed to mitigate it, but it does not work in the following scenarios:
