@@ -60,14 +60,6 @@
 
 * xref:introspector.adoc[Introspector]
 
-* xref:ogm/index.adoc[]
-** xref:ogm/installation.adoc[]
-** xref:ogm/directives.adoc[]
-** xref:ogm/selection-set.adoc[]
-** xref:ogm/type-generation.adoc[]
-** xref:ogm/subscriptions.adoc[]
-** xref:ogm/reference.adoc[]
-
 * *Frameworks and integrations*
 
 * xref:integrations/apollo-federation.adoc[]

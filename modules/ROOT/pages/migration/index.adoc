@@ -20,8 +20,118 @@ npm update @neo4j/graphql
 
 Here is a list of all the breaking changes from version 5.0.0 to 6.0.0.
 
+=== The deprecated `_NOT` filters are no longer supported
+
+The following deprecated `NOT` filters are removed from the schema since they are no longer supported:
+
+  - `_NOT`
+  - `_NOT_CONTAINS`
+  - `_NOT_ENDS_WITH`
+  - `_NOT_IN`
+  - `_NOT_STARTS_WITH`
+  - `_NOT_INCUDES`
+  - `node_NOT`
+  - `edge_NOT`
+
+
+To achieve the same in version 6.x of the GraphQL library, use the xref:/queries-aggregations/filtering.adoc#_boolean_operators[boolean `NOT` operator] instead.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { title_NOT: "The Matrix" }) {
+    title
+  }
+}
+
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { NOT: { title_EQ: "The Matrix" } }) {
+    title
+  }
+}
+----
+|===
+
+=== The deprecated `_NOT` on `@relationship` filters are no longer supported
+
+The following deprecated `_NOT` filters on `@relationship` are removed and no longer supported:
+
+  - `actors_NOT`
+  - `actorsConnection_NOT`
+
+To achieve the same in version 6.x of the GraphQL library, use the `NONE` quantifier.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { actors_NOT: { name_EQ: "Keanu" } }) {
+    title
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { actors_NONE: { name_EQ: "Keanu" } }) {
+    title
+  }
+}
+----
+|===
 
 == Deprecations and warnings
+
+=== Implicit equality filters are deprecated
+
+The following implicit equality filters are deprecated: 
+
+  - `{ name: "Keanu" }`
+  - `{ count: 10 }` 
+
+You can achieve the same by using `{ name_EQ: "Keanu" }` and `{ count_EQ: 10 }`.
+The deprecated quality filters will be removed in version 7.x.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+query {
+  users(where: { name: "John" }) {
+    id
+    name
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  users(where: { name_EQ: "John" }) {
+    id
+    name
+  }
+}
+----
+|===
+
 
 === `@node` will have to be explicitly defined
 

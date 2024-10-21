@@ -90,7 +90,7 @@ To filter subscriptions to `create` operations for movies by their genre, here i
 [source, graphql, indent=0]
 ----
 subscription {
-    movieCreated(where: {genre: "Drama"}) {
+    movieCreated(where: { genre_EQ: "Drama" }) {
         createdMovie {
             title
         }
@@ -112,7 +112,7 @@ Here is how to filter subscription to `update` operations in movies with average
 [source, graphql, indent=0]
 ----
 subscription {
-    movieUpdate(where: {averageRating_GT: 8}) {
+    movieUpdate(where: { averageRating_GT: 8 }) {
         updatedMovie {
             title
         }
@@ -144,14 +144,14 @@ mutation {
 
 mutation {
     updateTheMatrix: updateMovie(
-        where: {title: "The Matrix"}
-        update: {averageRating: 7.9}
+        where: { title_EQ: "The Matrix" }
+        update: { averageRating: 7.9 }
     ) {
         title
     },
     updateResurrections: updateMovie(
-        where: {title: "The Matrix Resurrections"}
-        update: {averageRating: 8.9}
+        where: { title_EQ: "The Matrix Resurrections" }
+        update: { averageRating: 8.9 }
     ) {
         title
     }
@@ -167,7 +167,7 @@ Here is how to filter subscription to `delete` operations in movies by their gen
 [source, graphql, indent=0]
 ----
 subscription {
-    movieDeleted(where: { NOT: { genre: "Comedy" } }) {
+    movieDeleted(where: { NOT: { genre_EQ: "Comedy" } }) {
         deletedMovie {
             title
         }
@@ -197,9 +197,9 @@ subscription {
     movieUpdated(where: {
         OR: [
             { title_CONTAINS: "Matrix" },
-            { genre: "comedy" },
+            { genre_EQ: "comedy" },
             { AND: [ 
-                { NOT: { genre: "romantic comedy" } },
+                { NOT: { genre_EQ: "romantic comedy" } },
                 { releasedIn_GT: 2000 },
                 { releasedIn_LTE: 2005 }
             ] },

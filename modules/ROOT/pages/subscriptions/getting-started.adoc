@@ -144,7 +144,7 @@ You can subscribe to new movies created with the following statement:
 [source, graphql, indent=0]
 ----
 subscription {
-    movieCreated(where: { title: "The Matrix" }) {
+    movieCreated(where: { title_EQ: "The Matrix" }) {
         createdMovie {
             title
         }
@@ -158,7 +158,7 @@ You can try this with the following query:
 [source, graphql, indent=0]
 ----
 mutation {
-    createMovies(input: [{ title: "The Matrix" }]) {
+    createMovies(input: [{ title_EQ: "The Matrix" }]) {
         movies {
             title
         }
