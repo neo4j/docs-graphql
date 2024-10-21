@@ -193,7 +193,7 @@ mutation CreateActor {
             actedInMovies: {
                 connect: {
                     where: {
-                        node: { title: "Forrest Gump" }
+                        node: { title_EQ: "Forrest Gump" }
                     }
                     edge: {
                         roles: ["Forrest"]
@@ -288,7 +288,7 @@ Now that you have the `Movie` information in your database, you can query everyt
 [source, graphql, indent=0]
 ----
 query {
-    movies(where: { title: "Forrest Gump" }) {
+    movies(where: { title_EQ: "Forrest Gump" }) {
         title
         released
         director {

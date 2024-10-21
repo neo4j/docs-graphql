@@ -140,17 +140,6 @@ of any required fields that is passed as arguments to the custom resolver.
 
 |===
 
-== OGM
-
-[cols="2,5"]
-|===
-| Directive | Description
-
-| xref::ogm/directives.adoc#_private[`@private`]
-| Protects fields which should only be available through the xref::ogm/index.adoc[OGM].
-
-|===
-
 == Relay
 
 [cols="2,5"]
