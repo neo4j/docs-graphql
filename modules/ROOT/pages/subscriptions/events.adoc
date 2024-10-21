@@ -1389,7 +1389,7 @@ mutation {
 mutation { 
     deleteMovies(
         where: {
-            title: "John Wick"
+            title_EQ: "John Wick"
         }
     ) {
         nodesDeleted
@@ -1490,7 +1490,7 @@ mutation {
 mutation { 
     deleteMovies(
         where: {
-            title: "New York Stories"
+            title_EQ: "New York Stories"
         }
     ) {
         nodesDeleted
@@ -1667,7 +1667,7 @@ mutation {
 mutation { 
     deleteMovies(
         where: {
-            title: "Sweeney Todd"
+            title_EQ: "Sweeney Todd"
         }
     ) {
         nodesDeleted
