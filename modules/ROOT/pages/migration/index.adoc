@@ -34,7 +34,7 @@ The following deprecated `NOT` filters are removed from the schema since they ar
   - `edge_NOT`
 
 
-To achieve the same in version 6.x of the GraphQL library, use the xref:/queries-aggregations/filtering.adoc#_boolean_operators[boolean `NOT` operator] instead.
+To achieve the same in version 6.x of the GraphQL Library, use the xref:/queries-aggregations/filtering.adoc#_boolean_operators[boolean `NOT` operator] instead.
 
 [cols="1,1"]
 |===
@@ -68,7 +68,7 @@ The following deprecated `_NOT` filters on `@relationship` are removed and no lo
   - `actors_NOT`
   - `actorsConnection_NOT`
 
-To achieve the same in version 6.x of the GraphQL library, use the `NONE` quantifier.
+To achieve the same in version 6.x of the GraphQL Library, use the `NONE` quantifier.
 
 [cols="1,1"]
 |===

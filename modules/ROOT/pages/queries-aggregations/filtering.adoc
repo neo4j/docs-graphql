@@ -440,7 +440,7 @@ query {
 
 == Aggregation filtering
 
-The Neo4j GraphQL library offers an aggregation key inside the `where` argument of each relationship. 
+The Neo4j GraphQL Library offers an aggregation key inside the `where` argument of each relationship. 
 You can use it both on the `node` and `edge` of a relationship.
 
 Here are some examples on how to apply this kind of filtering:
