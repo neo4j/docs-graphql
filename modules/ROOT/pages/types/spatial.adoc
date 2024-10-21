@@ -57,7 +57,7 @@ For example, you can query for a `User` with an exact location:
 [source, graphql, indent=0]
 ----
 query Users($longitude: Float!, $latitude: Float!) {
-    users(where: { location: { longitude: $longitude, latitude: $latitude } }) {
+    users(where: { location_EQ: { longitude: $longitude, latitude: $latitude } }) {
         name
         location {
             longitude

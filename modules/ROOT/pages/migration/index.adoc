@@ -54,7 +54,7 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-  movies(where: { NOT: { title: "The Matrix" } }) {
+  movies(where: { NOT: { title_EQ: "The Matrix" } }) {
     title
   }
 }
@@ -78,7 +78,7 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-  movies(where: { actors_NOT: { name: "Keanu" } }) {
+  movies(where: { actors_NOT: { name_EQ: "Keanu" } }) {
     title
   }
 }
@@ -87,7 +87,7 @@ a|
 [source, graphql, indent=0]
 ----
 query {
-  movies(where: { actors_NONE: { name: "Keanu" } }) {
+  movies(where: { actors_NONE: { name_EQ: "Keanu" } }) {
     title
   }
 }
@@ -95,6 +95,43 @@ query {
 |===
 
 == Deprecations and warnings
+
+=== Implicit equality filters are deprecated
+
+The following implicit equality filters are deprecated: 
+
+  - `{ name: "Keanu" }`
+  - `{ count: 10 }` 
+
+You can achieve the same by using `{ name_EQ: "Keanu" }` and `{ count_EQ: 10 }`.
+The deprecated quality filters will be removed in version 7.x.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+query {
+  users(where: { name: "John" }) {
+    id
+    name
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+query {
+  users(where: { name_EQ: "John" }) {
+    id
+    name
+  }
+}
+----
+|===
+
 
 === `@node` will have to be explicitly defined
 

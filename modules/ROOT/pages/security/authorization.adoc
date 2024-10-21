@@ -34,7 +34,7 @@ type User @node {
 }
 
 type Post @node @authorization(filter: [
-    { where: { node: { author: { id: "$jwt.sub" } } } }
+    { where: { node: { author: { id_EQ: "$jwt.sub" } } } }
 ]) {
     title: String!
     content: String!
@@ -58,7 +58,7 @@ For instance, to only require filtering for the reading and aggregating posts:
 [source, graphql, indent=0]
 ----
 type Post @node @authorization(filter: [
-    { operations: [READ, AGGREGATE] where: { node: { author: { id: "$jwt.sub" } } } }
+    { operations: [READ, AGGREGATE] where: { node: { author: { id_EQ: "$jwt.sub" } } } }
 ]) {
     title: String!
     content: String!
@@ -87,7 +87,7 @@ type JWT @jwt {
 }
 
 type User @node @authorization(validate: [
-    { where: { node: { id: "$jwt.sub" } } }
+    { where: { node: { id_EQ: "$jwt.sub" } } }
     { where: { jwt: { roles_INCLUDES: "admin" } } }
 ]) {
     id: ID!
@@ -112,7 +112,7 @@ For instance, to only require validation for the update or deletion of a post:
 [source, graphql, indent=0]
 ----
 type Post @node @authorization(validate: [
-    { operations: [UPDATE, DELETE] where: { node: { author: { id: "$jwt.sub" } } } }
+    { operations: [UPDATE, DELETE] where: { node: { author: { id_EQ: "$jwt.sub" } } } }
 ]) {
     title: String!
     content: String!
@@ -140,8 +140,8 @@ type User @node {
 }
 
 type Post @node @authorization(filter: [
-    { where: { node: { author: { id: "$jwt.sub" } } } }
-    { requireAuthentication: false, operations: [READ], where: { node: { public: true } } }
+    { where: { node: { author: { id_EQ: "$jwt.sub" } } } }
+    { requireAuthentication: false, operations: [READ], where: { node: { public_EQ: true } } }
 ]) {
     title: String!
     content: String!
