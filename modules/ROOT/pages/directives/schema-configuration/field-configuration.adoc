@@ -437,7 +437,7 @@ input MovieWhere {
   OR: [MovieWhere!]
   AND: [MovieWhere!]
   NOT: MovieWhere
-  title: String
+  title_EQ: String
   title_IN: [String!]
   title_CONTAINS: String
   title_STARTS_WITH: String
@@ -507,7 +507,7 @@ input MovieWhere {
   OR: [MovieWhere!]
   AND: [MovieWhere!]
   NOT: MovieWhere
-  title: String
+  title_EQ: String
   title_IN: [String!]
   title_CONTAINS: String
   title_STARTS_WITH: String
