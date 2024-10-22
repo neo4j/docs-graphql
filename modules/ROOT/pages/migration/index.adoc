@@ -28,9 +28,9 @@ The minimum Node.js version required to run the Neo4j GraphQL Library is now 20.
 
 The minimum Neo4j version required to run the Neo4j GraphQL Library is now 5.0.0.
 
-=== Removed the deprecated `@relationship` implicit `_SOME` filters
+=== Removed the deprecated implicit "some" filter from `@relationship`
 
-The deprecated `@relationship` filter without the operator suffix has been removed in favor of the `_SOME` filter.
+The deprecated "some" filter without operator suffix has been removed from `@relationship` in favor of the explicit `_SOME` filter.
 
 [cols="1,1"]
 |===
@@ -56,15 +56,16 @@ a|
 ----
 |===
 
-=== Invalid filters in Aggregation filter inputs are being removed
+=== Removed invalid filters in aggregation filter inputs
 
-In previous versions of the Library, the input used for aggregation filters contained filters that did not rely on aggregating functions. Those filters were deprecated in previous Library versions and removed from the schema.
+In previous versions of the library, the input used for aggregation filters contained filters that did not rely on aggregating functions.
+These filters were deprecated in previous library versions and are removed from the schema.
 
 To see the aggregating functions supported on filtering refer to xref:/queries-aggregations/filtering.adoc#_aggregation_filtering[Aggregation filtering],
 
-=== String aggregation filters that are not using `_LENGTH` are removed
+=== Removed string aggregation filters not using `_LENGTH`
 
-String aggregations are computed using lengths, and the `_LENGTH` suffix is now required for all string aggregation filters.
+Since string aggregations are computed using length, they now require the `_LENGTH` suffix for all string aggregation filters.
 
 [cols="1,1"]
 |===
@@ -102,7 +103,7 @@ The deprecated `options` argument from the `assertIndexesAndConstraints` utility
 Database migrations are outside of the scope of the Neo4j GraphQL Library, and all indexes and constraints will have to be managed manually.
 
 
-=== Removed top-level argument that are not `update` from the top-level update
+=== Removed top-level arguments that are not `update` from the top-level update
 
 The top-level `update` mutation now only accepts the `update` argument.
 
