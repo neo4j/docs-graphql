@@ -30,7 +30,7 @@ The minimum Neo4j version required to run the Neo4j GraphQL Library is now 5.0.0
 
 === Removed the deprecated implicit "some" filter from `@relationship`
 
-The deprecated "some" filter without operator suffix has been removed from `@relationship` in favor of the explicit `_SOME` filter.
+The deprecated implicit "some" filter without operator suffix has been removed from `@relationship` in favor of the explicit `_SOME` filter.
 
 [cols="1,1"]
 |===
@@ -109,12 +109,11 @@ The top-level `update` mutation now only accepts the `update` argument.
 
 The following nested operations have been moved into the `update` argument:
 
-  - create
-  - create
-  - delete
-  - connect
-  - disconnect
-  - connectOrCreate
+  - `create`
+  - `delete`
+  - `connect`
+  - `disconnect`
+  - `connectOrCreate`
 
 [cols="1,1"]
 |===
@@ -241,7 +240,7 @@ query {
 
 === Removed the bookmark field from the schema
 
-The bookmark field has been removed from the mutation information responses (CreateInfo, UpdateInfo, DeleteInfo) as it is no longer required.
+The bookmark field has been removed from the mutation `info` responses (`CreateInfo`, `UpdateInfo`, `DeleteInfo`) as it is no longer required.
 
 
 === Changed the `excludeDeprecatedFields` setting in the Neo4jFeaturesSettings
@@ -266,7 +265,7 @@ The following fields have been added:
 
 == Additions
 
-=== Added `count_EQ` as an alternative to the deprecated `count` filter
+=== Added the `_EQ` filter as an alternative to the deprecated implicit equal filters
 
 The `count_EQ` filter is now available as an alternative to the deprecated `count` filter.
 
@@ -459,7 +458,7 @@ a|
 
 === Deprecated `directed` argument in `@relationship` fields
 
-The `directed` argument was used to change the query direction of the relationship field at query time, for instance:
+The `directed` argument was used to change the query direction of the relationship field at the query time, for instance:
 
 
 [source, graphql, indent=0]
