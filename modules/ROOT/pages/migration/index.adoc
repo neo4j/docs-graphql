@@ -145,9 +145,9 @@ mutation UpdatePeople {
 ----
 |===
 
-=== Changed the sort argument for interfaces Connection fields
+=== Changed the sort argument for interfaces connection fields
 
-The sort argument for interfaces Connection fields is now a list of non nullable element.
+The sort argument for interfaces connection fields is now a list of non-nullable elements.
 
 [cols="1,1"]
 |===
@@ -238,17 +238,16 @@ query {
 ----
 |===
 
-=== The bookmark field has been removed from the schema
+=== Removed the bookmark field from the schema
 
-The bookmark field has been removed from the Mutation info response as it is no longer required.
+The bookmark field has been removed from the mutation information responses (CreateInfo, UpdateInfo, DeleteInfo) as it is no longer required.
 
 
-=== The `excludeDeprecatedFields` setting in the Neo4jFeaturesSettings has been changed
+=== Changed the `excludeDeprecatedFields` setting in the Neo4jFeaturesSettings
 
 As in version 6.x many of the deprecated fields have been removed, the `excludeDeprecatedFields` setting has been modified to reflect these changes.
 
 The following fields have been removed:
-
 
   - `bookmark`
   - `negationFilters`
@@ -266,7 +265,7 @@ The following fields have been added:
 
 == Additions
 
-=== Added `count_EQ` as alternative to the deprecated count
+=== Added `count_EQ` as an alternative to the deprecated `count` filter
 
 The `count_EQ` filter is now available as an alternative to the deprecated `count` filter.
 
@@ -294,9 +293,9 @@ a|
 ----
 |===
 
-=== Added the _EQ filter as alternative of the deprecated implicit equal filters
+=== Added the `_EQ` filter as an alternative to the deprecated implicit "equal" filter
 
-The `_EQ` filter is now available as an alternative to the deprecated implicit equal filters.
+The `_EQ` filter is now available as an alternative to the deprecated implicit "equal" filter.
 
 [cols="1,1"]
 |===
@@ -399,9 +398,9 @@ type Person @node {
 
 === Deprecated the implicit equality filters
 
-Previously when a field in a filter was present in filter without specifying the operator, it was treated as an equality filter.
-
-This behavior is now deprecated and will be removed in the future. Please, use the `_EQ` filter.
+Previously, if a field was present in a filter without specifying the operator, it was treated as an equality filter.
+This behavior is now deprecated and will be removed in the future.
+Use the `_EQ` filter instead.
 
 [cols="1,1"]
 |===
@@ -429,7 +428,8 @@ a|
 
 === Deprecated pagination `options` argument
 
-The `options` argument in query and `@relationship` fields is deprecated and will be removed in the future. Use the `limit`, `offset` and `sort` arguments instead.
+The `options` argument in query and `@relationship` fields is deprecated and will be removed in the future.
+Use the `limit`, `offset` and `sort` arguments instead.
 
 [cols="1,1"]
 |===
@@ -458,7 +458,7 @@ a|
 
 === Deprecated `directed` argument in `@relationship` fields
 
-The `directed` argument was used to change the query direction of the relationship field at the query time, for instance:
+The `directed` argument was used to change the query direction of the relationship field at query time, for instance:
 
 
 [source, graphql, indent=0]
@@ -474,4 +474,4 @@ The `directed` argument was used to change the query direction of the relationsh
 ----
 
 The `directed` argument in `@relationship` fields is deprecated and will be removed in the future.
-Please configure this using `queryDirection` and `direction` arguments of the `@relationship` directive.
+Configure the query direction via the `queryDirection` and `direction` arguments of the `@relationship` directive instead.
