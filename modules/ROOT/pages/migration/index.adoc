@@ -123,23 +123,25 @@ The following nested operations have been moved into the `update` argument:
 a|
 [source, graphql, indent=0]
 ----
-mutation UpdatePeople {
-    updatePeople(create: { movies: { node: { title: "The Good" } } }) {
-        people {
-            name
-        }
+mutation UpdateActors {
+  updateActors(create: { movies: { node: { title: "The Good" } } }) {
+    actors {
+      name
     }
+  }
 }
 ----
 a|
 [source, graphql, indent=0]
 ----
-mutation UpdatePeople {
-    updatePeople(create: { movies: { node: { title: "The Good" } } }) {
-        people {
-            name
-        }
+mutation UpdateActors {
+  updateActors(
+    update: { movies: { create: { node: { title: "The Good" } } } }
+  ) {
+    actors {
+      name
     }
+  }
 }
 ----
 |===
