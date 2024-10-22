@@ -107,7 +107,7 @@ Database migrations are outside of the scope of the Neo4j GraphQL Library, and a
 
 The top-level `update` mutation now only accepts the `update` argument.
 
-The nested operation:
+The following nested operations have been moved into the `update` argument:
 
   - create
   - create
@@ -115,8 +115,6 @@ The nested operation:
   - connect
   - disconnect
   - connectOrCreate
-
-Are now moved into the `update` argument.
 
 [cols="1,1"]
 |===
