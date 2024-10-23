@@ -20,6 +20,151 @@ npm update @neo4j/graphql
 
 Here is a list of all the breaking changes from version 5.0.0 to 6.0.0.
 
+=== Changed minimum Node.js version to 20.0.0
+
+The minimum Node.js version required to run the Neo4j GraphQL Library is now 20.0.0.
+
+=== Changed minimum Neo4j version to 5.0.0
+
+The minimum Neo4j version required to run the Neo4j GraphQL Library is now 5.0.0.
+
+=== Removed the deprecated implicit "some" filter from `@relationship`
+
+The deprecated implicit "some" filter without operator suffix has been removed from `@relationship` in favor of the explicit `_SOME` filter.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(where: { actors: { name: "Keanu" } }) {
+    title
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(where: { actors_SOME: { name: "Keanu" } }) {
+    title
+  }
+}
+----
+|===
+
+=== Removed invalid filters in aggregation filter inputs
+
+In previous versions of the library, the input used for aggregation filters contained filters that did not rely on aggregating functions.
+These filters were deprecated in previous library versions and are removed from the schema.
+
+To see the aggregating functions supported on filtering refer to xref:/queries-aggregations/filtering.adoc#_aggregation_filtering[Aggregation filtering],
+
+=== Removed string aggregation filters not using `_LENGTH`
+
+Since string aggregations are computed using length, they now require the `_LENGTH` suffix for all string aggregation filters.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(
+    where: { actorsAggregate: { node: { name_AVERAGE_EQUAL: 1.5 } } }
+  ) {
+    title
+  }
+}
+
+----
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(
+    where: { actorsAggregate: { node: { name_AVERAGE_LENGTH_EQUAL: 1.5 } } }
+  ) {
+    title
+  }
+}
+
+----
+|===
+
+=== Removed the deprecated `options` argument from `assertIndexesAndConstraints`
+
+The deprecated `options` argument from the `assertIndexesAndConstraints` utility has been removed.
+Database migrations are outside of the scope of the Neo4j GraphQL Library, and all indexes and constraints will have to be managed manually.
+
+
+=== Removed top-level arguments that are not `update` from the top-level update
+
+The top-level `update` mutation now only accepts the `update` argument.
+
+The following nested operations have been moved into the `update` argument:
+
+  - `create`
+  - `delete`
+  - `connect`
+  - `disconnect`
+  - `connectOrCreate`
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+mutation UpdateActors {
+  updateActors(create: { movies: { node: { title: "The Good" } } }) {
+    actors {
+      name
+    }
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+mutation UpdateActors {
+  updateActors(
+    update: { movies: { create: { node: { title: "The Good" } } } }
+  ) {
+    actors {
+      name
+    }
+  }
+}
+----
+|===
+
+=== Changed the sort argument for interfaces connection fields
+
+The sort argument for interfaces connection fields is now a list of non-nullable elements.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+productionsConnection(after: String, first: Int, sort: [ProductionSort], where: ProductionWhere): ProductionsConnection!
+----
+a|
+[source, graphql, indent=0]
+----
+productionsConnection(after: String, first: Int, sort: [ProductionSort!], where: ProductionWhere): ProductionsConnection!
+----
+|===
+
 === The deprecated `_NOT` filters are no longer supported
 
 The following deprecated `NOT` filters are removed from the schema since they are no longer supported:
@@ -33,8 +178,7 @@ The following deprecated `NOT` filters are removed from the schema since they ar
   - `node_NOT`
   - `edge_NOT`
 
-
-To achieve the same in version 6.x of the GraphQL library, use the xref:/queries-aggregations/filtering.adoc#_boolean_operators[boolean `NOT` operator] instead.
+To achieve the same in version 6.x of the GraphQL Library, use the xref:/queries-aggregations/filtering.adoc#_boolean_operators[boolean `NOT` operator] instead.
 
 [cols="1,1"]
 |===
@@ -68,7 +212,7 @@ The following deprecated `_NOT` filters on `@relationship` are removed and no lo
   - `actors_NOT`
   - `actorsConnection_NOT`
 
-To achieve the same in version 6.x of the GraphQL library, use the `NONE` quantifier.
+To achieve the same in version 6.x of the GraphQL Library, use the `NONE` quantifier.
 
 [cols="1,1"]
 |===
@@ -88,6 +232,90 @@ a|
 ----
 query {
   movies(where: { actors_NONE: { name_EQ: "Keanu" } }) {
+    title
+  }
+}
+----
+|===
+
+=== Removed the bookmark field from the schema
+
+The bookmark field has been removed from the mutation `info` responses (`CreateInfo`, `UpdateInfo`, `DeleteInfo`) as it is no longer required.
+
+
+=== Changed the `excludeDeprecatedFields` setting in the Neo4jFeaturesSettings
+
+As in version 6.x many of the deprecated fields have been removed, the `excludeDeprecatedFields` setting has been modified to reflect these changes.
+
+The following fields have been removed:
+
+  - `bookmark`
+  - `negationFilters`
+  - `arrayFilters`
+  - `stringAggregation`
+  - `aggregationFilters`
+  - `nestedUpdateOperationsFields`
+
+The following fields have been added:
+
+
+  - `implicitEqualFilters`
+  - `deprecatedOptionsArgument`
+  - `directedArgument`
+
+== Additions
+
+=== Added the `_EQ` filter as an alternative to the deprecated implicit equal filters
+
+The `count_EQ` filter is now available as an alternative to the deprecated `count` filter.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(where: { actorsAggregate: { count: 10 } }) {
+    title
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(where: { actorsAggregate: { count_EQ: 10 } }) {
+    title
+  }
+}
+----
+|===
+
+=== Added the `_EQ` filter as an alternative to the deprecated implicit "equal" filter
+
+The `_EQ` filter is now available as an alternative to the deprecated implicit "equal" filter.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(where: { title: "The Matrix" }) {
+    title
+  }
+}
+
+----
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(where: { title_EQ: "The Matrix" }) {
     title
   }
 }
@@ -132,7 +360,6 @@ query {
 ----
 |===
 
-
 === `@node` will have to be explicitly defined
 
 In the future, types without the `@node` directive will no longer be treated as Neo4j nodes.
@@ -169,3 +396,82 @@ type Person @node {
 ----
 |===
 
+=== Deprecated the implicit equality filters
+
+Previously, if a field was present in a filter without specifying the operator, it was treated as an equality filter.
+This behavior is now deprecated and will be removed in the future.
+Use the `_EQ` filter instead.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(where: { title: "The Matrix" }) {
+    title
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(where: { title_EQ: "The Matrix" }) {
+    title
+  }
+}
+----
+|===
+
+=== Deprecated pagination `options` argument
+
+The `options` argument in query and `@relationship` fields is deprecated and will be removed in the future.
+Use the `limit`, `offset` and `sort` arguments instead.
+
+[cols="1,1"]
+|===
+|Before | Now
+
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(options: { limit: 10, offset: 10, sort: { title: ASC } }) {
+    title
+  }
+}
+----
+a|
+[source, graphql, indent=0]
+----
+{
+  movies(limit: 10, offset: 10, sort: { title: ASC }) {
+    title
+  }
+}
+----
+|===
+
+
+=== Deprecated `directed` argument in `@relationship` fields
+
+The `directed` argument was used to change the query direction of the relationship field at the query time, for instance:
+
+
+[source, graphql, indent=0]
+----
+{
+  movies {
+    title
+    actors(directed: false) {
+      name
+    }
+  }
+}
+----
+
+The `directed` argument in `@relationship` fields is deprecated and will be removed in the future.
+Configure the query direction via the `queryDirection` and `direction` arguments of the `@relationship` directive instead.

@@ -1,10 +1,11 @@
 [[mutations-update]]
 = `update`
 :page-aliases: array-methods.adoc, mathematical-operators.adoc
+:example-caption!:
 :description: This page describes how to update nodes through mutations.
 
 
-Using these type definitions:
+Consider the following type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -21,7 +22,7 @@ type User @node {
 }
 ----
 
-These `update` mutations and response types should be generated:
+These `update` mutations and response types are generated:
 
 [source, graphql, indent=0]
 ----
@@ -52,7 +53,7 @@ The `id` field cannot be updated as the xref::/directives/autogeneration.adoc#ty
 
 == Single `update`
 
-The content of a `Post` can be updated by executing the following GraphQL statement:
+You can update the content of a `Post` by executing the following GraphQL statement:
 
 [source, graphql, indent=0]
 ----
@@ -72,7 +73,7 @@ mutation {
 }
 ----
 
-This should update the post by adding the sentence "Some new content for this Post!".
+This updates the post by adding the sentence "Some new content for this Post!".
 
 == Nested `create` using `update`
 
@@ -160,8 +161,120 @@ Array methods allow the modification of existing property arrays in `update` mut
 
 For that, the following operators are available:
 
-* `_POP`: expects a single `Int` value as input.
-* `_PUSH`: conforms to the type of input defined in the type definition.
+* `_PUSH`
+* `_POP`
+
+=== `_PUSH`
+
+`_PUSH` conforms to the type of input defined in the type definition.
+
+Consider the following type definitions, a `Movie` with a property array of `String` types called `tags`:
+
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String
+    tags: [String]
+}
+----
+
+You can push tags to the `tags` property array:
+
+.Mutation with a single `_PUSH`
+====
+[source, graphql, indent=0]
+----
+mutation {
+    updateMovies (update: { tags_PUSH: "another tag" }) {
+        movies {
+            title
+            tags
+        }
+    }
+}
+----
+[col=1,1]
+|===
+| Before | After
+
+| `['some tag']`
+
+| `['some tag', 'another tag']`
+|===
+====
+
+Or push multiple elements in a single update:
+
+.Mutation with two `_PUSH`
+====
+[source, graphql, indent=0]
+----
+mutation {
+    updateMovies (update: { tags_PUSH: ["another tag", "one more tag"] }) {
+        movies {
+            title
+            tags
+        }
+    }
+}
+----
+
+[col=1,1]
+|===
+| Before | After
+
+| `['some tag']`
+| `['some tag', 'another tag', 'one more tag']`
+|===
+====
+
+Similarly, you can have multiple array property fields and update them in the same query:
+
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String
+    tags: [String]
+    moreTags: [String]
+}
+----
+
+You can also push to both the `tags` and `moreTags` property arrays:
+.Mutation with `_PUSH` to two different arrays
+====
+[source, graphql, indent=0]
+----
+mutation {
+    updateMovies (update: { tags_PUSH: "another tag", moreTags_PUSH: "a different tag" }) {
+        movies {
+            title
+            tags
+            moreTags
+        }
+    }
+}
+----
+
+[col=1,1]
+|===
+| Before | After
+
+a|
+```
+    tags: ['some tag']
+    moreTags: []
+```
+a|
+```
+    tags: ['some tag', 'another tag']
+    moreTags ['a different tag']
+```
+|===
+====
+
+=== `_POP`
+
+`_POP` expects a single `Int` value as input.
 
 Consider the following type definitions, a `Movie` with a property array called `tags`:
 
@@ -174,6 +287,20 @@ type Movie @node {
 ----
 
 You can pop from this `tags` property array:
+
+.Mutation with a single `_POP`
+====
+[source, graphql, indent=0]
+----
+mutation {
+    updateMovies (update: { tags_POP: 1 }) {
+        movies {
+            title
+            tags
+        }
+    }
+}
+----
 
 [cols="1,1"]
 |===
@@ -188,11 +315,16 @@ a|
 tags: ['a', 'b']
 ```
 |===
+====
 
+Or, for more than one property from the array:
+
+.Mutation with two `_POP`
+==== 
 [source, graphql, indent=0]
 ----
 mutation {
-    updateMovies (update: { tags_POP: 1 }) {
+    updateMovies (update: { tags_POP: 2 }) {
         movies {
             title
             tags
@@ -200,8 +332,6 @@ mutation {
     }
 }
 ----
-
-Or, for more than one property from the array:
 
 [cols="1,1"]
 |===
@@ -216,20 +346,10 @@ a|
 tags: ['a']
 ```
 |===
-
-[source, graphql, indent=0]
-----
-mutation {
-    updateMovies (update: { tags_POP: 2 }) {
-        movies {
-            title
-            tags
-        }
-    }
-}
-----
+====
 
 Similarly, you can have multiple array property fields and update them in the same query:
+
 
 [source, graphql, indent=0]
 ----
@@ -240,7 +360,22 @@ type Movie @node {
 }
 ----
 
-Then, you can `POP` from both the `tags` and `moreTags` property arrays:
+Then, you can pop from both the `tags` and `moreTags` property arrays:
+
+.Mutation with `_POP` from two different arrays
+====
+[source, graphql, indent=0]
+----
+mutation {
+    updateMovies (update: { tags_POP: 1, moreTags_POP: 2 }) {
+        movies {
+            title
+            tags
+            moreTags
+        }
+    }
+}
+----
 
 [cols="1,1"]
 |===
@@ -257,172 +392,24 @@ a|
     moreTags: ['x']
 ```
 |===
-
-[source, graphql, indent=0]
-----
-mutation {
-    updateMovies (update: { tags_POP: 1, moreTags_POP: 2 }) {
-        movies {
-            title
-            tags
-            moreTags
-        }
-    }
-}
-----
-
-=== `_PUSH`
-
-Using the same type definitions as before, you can push to the `tags` property array:
-
-[col=1,1]
-|====
-| Before | After
-
-| `['some tag']`
-
-| `['some tag', 'another tag']`
-|====
-
-[source, graphql, indent=0]
-----
-mutation {
-    updateMovies (update: { tags_PUSH: "another tag" }) {
-        movies {
-            title
-            tags
-        }
-    }
-}
-----
-
-Or push multiple elements in a single update:
-
-[col=1,1]
-|====
-| Before | After
-
-| `['some tag']`
-| `['some tag', 'another tag', 'one more tag']`
-|====
-
-[source, graphql, indent=0]
-----
-mutation {
-    updateMovies (update: { tags_PUSH: ["another tag", "one more tag"] }) {
-        movies {
-            title
-            tags
-        }
-    }
-}
-----
-
-Similarly, you can have multiple array property fields and update them in the same query:
-
-[source, graphql, indent=0]
-----
-type Movie @node {
-    title: String
-    tags: [String]
-    moreTags: [String]
-}
-----
-
-You can also push to both the `tags` and `moreTags` property arrays:
-
-[col=1,1]
-|====
-| Before | After
-
-a|
-```
-    tags: ['some tag']
-    moreTags: []
-```
-a|
-```
-    tags: ['some tag', 'another tag']
-    moreTags ['a different tag']
-```
-|====
-
-[source, graphql, indent=0]
-----
-mutation {
-    updateMovies (update: { tags_PUSH: "another tag", moreTags_PUSH: "a different tag" }) {
-        movies {
-            title
-            tags
-            moreTags
-        }
-    }
-}
-----
-
-=== Combined methods
-
-It is possible to perform both a `_PUSH` and `_POP` operation in one single `update` mutation.
-
-Consider the following type definitions:
-
-[source, graphql, indent=0]
-----
-type Movie @node {
-    title: String
-    tags: [String]
-    moreTags: [String]
-}
-----
-
-You can update both property arrays with either `_POP` or `_PUSH` operators at once:
-
-[col=1,1]
-|====
-| Before | After
-
-a|
-```
-    tags: ['some tag']
-    moreTags: []
-```
-
-a|
-```
-    tags: []
-    moreTags ['a different tag']
-```
-|====
-
-[source, graphql, indent=0]
-----
-mutation {
-    updateMovies (update: { tags_POP: 1, moreTags_PUSH: "a different tag" }) {
-        movies {
-            title
-            tags
-            moreTags
-        }
-    }
-}
-----
+====
 
 == Mathematical operators
 
-Mathematical operators can be used to update numerical fields based on their original values in a single DB transaction.
-For that, specific operators are available on different numerical types: `Int`, `Float`, xref::/types/scalar.adoc[`BigInt`].
+You can use mathematical operators to update numerical fields based on their original values in a single DB transaction.
+For that, specific operators are available on different numerical types: `Int`, `Float` and xref::/types/scalar.adoc[`BigInt`].
 They are supported within these entities:
 
 * Nodes
 * Relationship properties
 * Interfaces
 
-For `Int` and `BigInt` types, the following operators are available:
+For the `Int` and `BigInt` types, the following operators are available:
 
-* `_DECREMENT`
 * `_INCREMENT`
+* `_DECREMENT`
 
-For `Float` type, the following operators are available:
+For the `Float` type, the following operators are available:
 
 * `_ADD`
 * `_SUBTRACT`
@@ -432,10 +419,10 @@ For `Float` type, the following operators are available:
 [NOTE]
 ====
 Operators remain available as optional fields.
-If a mathematical operator has been used in a field not defined, it will prompt a GraphQL error.
+If a mathematical operator has been used in an undefined field, it causes a GraphQL error.
 ====
 
-For example, take the following GraphQL schema for a social video platform:
+For example, consider the following GraphQL schema for a social video platform:
 
 [source, graphql, indent=0]
 ----
@@ -455,7 +442,7 @@ type OwnVideo @relationshipProperties {
 }
 ----
 
-Suppose a user viewed a video in this platform, so that you want to increment `viewersCount` for that video by `1`.
+Suppose a user watched a video in this platform, and you want to increment `viewersCount` for that video by `1`.
 Here is how you can do that:
 
 [source, graphql, indent=0]
@@ -473,7 +460,7 @@ mutation incrementViewCountMutation {
 }
 ----
 
-Now, suppose the social platform wants to reward the user with 0.01 dollars for viewing the video.
+Now, suppose you want the social platform to reward the user with 0.01 dollars for watching the video.
 To do that, you have to update the relationship property `revenue`:
 
 [source, graphql, indent=0]

@@ -4,6 +4,7 @@ name: "Verify docs PR"
 on:
   pull_request:
     branches:
+      - 6.x
       - 5.x
       - 4.x
       - 3.x
