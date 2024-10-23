@@ -475,3 +475,14 @@ The `directed` argument was used to change the query direction of the relationsh
 
 The `directed` argument in `@relationship` fields is deprecated and will be removed in the future.
 Configure the query direction via the `queryDirection` and `direction` arguments of the `@relationship` directive instead.
+
+=== Deprecated `@relationship.queryDirection` `_DEFAULT` and `_ONLY` options.
+
+Following the deprecation of the `directed` argument, the values accepted by the `@relationship.queryDirection` have changed:
+
+- `DEFAULT_DIRECTED` is deprecated.
+- `DEFAULT_UNDIRECTED` is deprecated.
+- `DIRECTED_ONLY` is renamed to `DIRECTED` 
+- `UNDIRECTED_ONLY` is renamed to `UNDIRECTED`
+
+Following this change, a warning is raised if a deprecated value is used.

@@ -140,10 +140,8 @@ type Person @node {
 
 `queryDirection` can have the following values:
 
-* `DEFAULT_DIRECTED` (default): all queries are **directed** by default, but users may perform undirected queries.
-* `DEFAULT_UNDIRECTED`: all queries are **undirected** by default, but users may perform directed queries.
-* `DIRECTED_ONLY`: only directed queries can be performed on this relationship.
-* `UNDIRECTED_ONLY`: only undirected queries can be performed on this relationship.
+* `DIRECTED`: only directed queries can be performed on this relationship.
+* `UNDIRECTED`: only undirected queries can be performed on this relationship.
 
 == Inserting data
 
