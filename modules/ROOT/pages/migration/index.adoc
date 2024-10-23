@@ -28,6 +28,55 @@ The minimum Node.js version required to run the Neo4j GraphQL Library is now 20.
 
 The minimum Neo4j version required to run the Neo4j GraphQL Library is now 5.0.0.
 
+
+=== Removed Non-CDC subscriptions
+
+Support for subscription engines other than `Neo4jGraphQLSubscriptionsCDCEngine` has been dropped. This means subscriptions only work on databases with Change-Data-Capture enabled. The following previously supported engines are no longer supported:
+
+* Neo4jGraphQLSubscriptionsDefaultEngine
+* link:https://www.npmjs.com/package/@neo4j/graphql-amqp-subscriptions-engine[Neo4jGraphQLAMQPSubscriptionsEngine]
+
+==== Changed default subscription engine
+
+When setting up the default subscriptions for Neo4jGraphQL, now the production-ready CDC engine is used (`Neo4jGraphQLSubscriptionsCDCEngine`) instead of the previous default engine:
+
+[source, javascript]
+----
+new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    features: {
+        subscriptions: true
+    },
+});
+----
+
+This means the default subscriptions now require CDC enabled in your database
+
+==== Removed relationship subscriptions
+
+The subscriptions operations `*RelationshipCreated` and `*RelationshipDeleted` are no longer supported.
+
+For example:
+
+[source, graphql, indent=0]
+----
+subscription MovieRelationshipDeleted {
+  movieRelationshipCreated {
+    movie {
+      title
+    }
+    createdRelationship {
+      actors {
+        node {
+          name
+        }
+      }
+    }
+  }
+}
+----
+
 === Removed the deprecated implicit "some" filter from `@relationship`
 
 The deprecated implicit "some" filter without operator suffix has been removed from `@relationship` in favor of the explicit `_SOME` filter.
