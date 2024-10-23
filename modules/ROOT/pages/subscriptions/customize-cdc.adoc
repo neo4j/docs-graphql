@@ -4,7 +4,7 @@
 :description: This page describes how to customize the behavior of subscriptions.
 
 GraphQL subscriptions to Neo4j use [Change Data Capture](https://neo4j.com/docs/cdc/current/) (CDC).
-It's behavior can be configured by passing an instance of `Neo4jGraphQLSubscriptionsCDCEngine`.
+Its behavior can be configured by passing an instance of `Neo4jGraphQLSubscriptionsCDCEngine`.
 
 == Neo4jGraphQLSubscriptionsCDCEngine
 
