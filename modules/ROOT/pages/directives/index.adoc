@@ -5,6 +5,30 @@
 
 The Neo4j GraphQL Library provides the following directives to be used whilst defining types:
 
+== Security
+
+[cols="2,5"]
+|===
+| Directive | Description
+
+| xref::/security/authentication.adoc#_authentication[`@authentication`]
+| Requires authentication checks when accessing the type.
+
+| xref::/security/authorization.adoc[`@authorization`]
+| Specifies authorization rules for queries and mutations on the type.
+
+| xref::/security/configuration.adoc#_jwt[`@jwt`]
+| Configures the JWT authentication and authorization filters to include additional JWT claims.
+
+| xref::/security/configuration.adoc#_jwtclaim[`@jwtClaim`]
+| Used in combination with `@jwt`.
+Configures the JWT authentication and authorization filters to include an additional JWT claim which is either nested or using special characters not supported by GraphQL.
+
+| xref::/security/subscriptions-authorization.adoc[`@subscriptionsAuthorization`]
+| Specifies authorization rules for subscriptions on the type.
+
+|===
+
 == Database mapping
 
 [cols="2,5"]
@@ -12,43 +36,19 @@ The Neo4j GraphQL Library provides the following directives to be used whilst de
 | Directive | Description
 
 | xref::/directives/database-mapping.adoc#_relationship[`@relationship`]
-| Configures xref::/types/relationships.adoc[relationships] between object types.
+| Configures xref::/types/relationships.adoc[relationships] between object types. Also see xref::/directives/schema-configuration/field-configuration.adoc#_relationship[`@relationship` field configuration].
 
 | xref::/directives/database-mapping.adoc#_relationshipproperties[`@relationshipProperties`]
 a| Required to differentiate interfaces that are used for relationship properties, and otherwise.
 
-| xref::/directives/database-mapping.adoc#type-definitions-node[`@node`]
+| xref::/directives/database-mapping.adoc#_node[`@node`]
 | Specifies the configuration of a GraphQL object type which represents a Neo4j node.
 
-| xref::/directives/database-mapping.adoc#type-definitions-alias[`@alias`]
+| xref::/directives/database-mapping.adoc#_alias[`@alias`]
 | Maps a GraphQL schema field to a Neo4j property on a node or relationship.
 
 | xref::/types/relationships.adoc#_declarerelationship[`@declareRelationship`]
 | Configure relationships to be implemented on object types.
-
-|===
-
-== Security
-
-[cols="2,5"]
-|===
-| Directive | Description
-
-| xref::/security/authentication.adoc[`@authentication`]
-| Requires authentication checks when accessing the type.
-
-| xref::/security/authorization.adoc[`@authorization`]
-| Specifies authorization rules for queries and mutations on the type.
-
-| xref::/security/configuration.adoc#_the_jwt_directive[`@jwt`]
-| Configures the JWT authentication and authorization filters to include additional JWT claims.
-
-| xref::/security/configuration.adoc#_the_jwtclaim_directive[`@jwtClaim`]
-| Used in combination with `@jwt`.
-Configures the JWT authentication and authorization filters to include an additional JWT claim which is either nested or using special characters not supported by GraphQL.
-
-| xref::/security/subscriptions-authorization.adoc[`@subscriptionsAuthorization`]
-| Specifies authorization rules for subscriptions on the type.
 
 |===
 
@@ -84,7 +84,7 @@ Configures the JWT authentication and authorization filters to include an additi
 | xref::/directives/schema-configuration/type-configuration.adoc#type-definitions-default-values-default[`@default`]
 | Allows the setting of a default value for a field during object creation.
 
-| xref::/directives/schema-configuration/type-configuration.adoc#type-definitions-plural[`@plural`]
+| xref::/directives/schema-configuration/type-configuration.adoc#_plural[`@plural`]
 | Redefines how to compose the plural of the type for the generated operations.
 Particularly useful for types that are not correctly pluralized or are non-English words.
 
@@ -157,7 +157,7 @@ of any required fields that is passed as arguments to the custom resolver.
 |===
 | Directive | Description
 
-| xref:/integrations/relay-compatibility.adoc[`@relayId`]
+| xref:/integrations/relay-compatibility.adoc#_relayid[`@relayId`]
 | Specifies that the field should be used as the global node identifier for Relay.
 
 |===

@@ -10,10 +10,16 @@ Each type in your GraphQL type definitions can be mapped to an entity in your Ne
 
 == `@relationship`
 
+=== Definition
+
+// tba
+
+=== Usage
+
 Relationships are represented by marking particular fields with a directive -- in this case, `@relationship`. 
 It defines the relationship type in the database, as well as which direction that relationship goes in.
 
-To add a second node type, "Actor", and connect the two together, you should do the following:
+To add two node types, "Movie" and "Actor", and connect the two:
 
 [source, graphql, indent=0]
 ----
@@ -28,8 +34,14 @@ type Actor {
 }
 ----
 
-Note that, in this case, there is a directive on each "end" of the relationship, but it is not essential.
+[NOTE]
+====
+The `@relationship` directive is used twice, once on each end of the relationship.
+This is the standard way of modeling a relationship with the GraphQL library.
+However, it is not a requirement of the type definitions themselves and relationships can deliberately be underspecified, for example to limit access through the API layer.
+====
 
+ Also see xref::/directives/schema-configuration/field-configuration/#_relationship[`@relationship` field configuration].
 
 == `@relationshipProperties`
 
@@ -70,8 +82,13 @@ Note that in addition to this type, there is an added key `properties` in the ex
 For more information, see xref::/types/relationships.adoc[Type definitions -> Relationships].
 
 
-[[type-definitions-node]]
 == `@node`
+
+=== Definition
+
+// tba
+
+=== Usage
 
 The most basic mapping uses GraphQL type names to map to a Neo4j node label.
 For example, to represent a node with the label "Movie" and a single property "title" of type string:
@@ -84,13 +101,15 @@ type Movie {
 ----
 
 With the `@node` directive, you have more control over this mapping, and you can specify the configuration of a GraphQL object type which represents a Neo4j node.
-It can be appended with the following optional parameters:
 
+==== The `labels` parameter
 
-[discrete]
-=== `labels`
+You can append the optional parameters `labels` to a GraphQL object with the `@node` directive.
+This parameter lists the labels to be used in Neo4j instead of the GraphQL type name.
 
-This parameter defines the list of label to be used in Neo4j instead of the GraphQL type name:
+.Querying a field with the `labels` parameter
+====
+Consider the following type definition:
 
 [source, graphql, indent=0]
 ----
@@ -99,7 +118,7 @@ type Dog @node(labels: ["K9"]) {
 }
 ----
 
-This way, the following query:
+Here is a query against the `Dog` node:
 
 [source, graphql, indent=0]
 ----
@@ -110,15 +129,20 @@ This way, the following query:
 }
 ----
 
-Generates the Cypher query:
+The following Cypher is generated:
 
 [source, cypher, indent=0]
 ----
 MATCH (this: K9)
 RETURN this { .name } as name
 ----
+====
 
-If the GraphQL type name should still be used as a label, it needs to be specified as well:
+If you want to use the GraphQL type name as a label, specifiy both.
+
+.Querying a field with two entries for the `labels` parameter
+====
+Consider the following type definition:
 
 [source, graphql, indent=0]
 ----
@@ -127,7 +151,8 @@ type Dog @node(labels: ["Dog", "K9"]) {
 }
 ----
 
-This way, the following query:
+Here is an example for a query against the `Dog` node 
+
 
 [source, graphql, indent=0]
 ----
@@ -138,13 +163,14 @@ This way, the following query:
 }
 ----
 
-Generates the Cypher query:
+The following Cypher is generated:
 
 [source, cypher, indent=0]
 ----
 MATCH (this:Dog:K9)
 RETURN this { .name } as this
 ----
+====
 
 [NOTE]
 ====
@@ -161,12 +187,18 @@ type Dog @node(labels: ["K9", "Dog"]) {
 }
 ----
 
+See xref::/directives/indexes-and-constraints.adoc#_unique_node_property_constraints[`@unique`] to learn more about the `@unique` directive.
 
-[discrete]
-=== Using `$jwt` and `$context`
+
+==== Using `$jwt` and `$context`
 
 In some cases, you may want to generate dynamic labels depending on the user requesting. 
-For that, you can use the variable `$jwt` to define a custom label in the JWT:
+You can use the variable `$jwt` to define a custom label in the JWT.
+
+
+.Querying a field with a `$jwt` variable in the `labels` parameter
+====
+Consider the following type definition:
 
 [source, graphql, indent=0]
 ----
@@ -186,13 +218,14 @@ The following query yields a different Cypher query depending on the user JWT:
 }
 ----
 
-Assuming there is a user with the value `"username": "arthur"` in JWT, the Cypher query looks like:
+Assuming there is a user with the value `"username": "arthur"` in JWT, the Cypher query looks like this:
 
 [source, cypher, indent=0]
 ----
 MATCH (this:arthur)
 RETURN this { .name } as this
 ----
+====
 
 Similarly, context values can be passed directly:
 
@@ -203,7 +236,7 @@ type User @node(label: ["$context.appId"]) {
 }
 ----
 
-When running the server with Apollo:
+For example, if you are running the server with Apollo:
 
 [source, js, indent=0]
 ----
@@ -217,8 +250,13 @@ await startStandaloneServer(server, {
 ----
 
 
-[[type-definitions-alias]]
 == `@alias`
+
+=== Definition
+
+// tba
+
+=== Usage
 
 This directive maps a GraphQL field to a Neo4j property on a node or relationship.
 It can be used on any fields that are not `@cypher` or `@relationship` fields.

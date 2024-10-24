@@ -7,7 +7,9 @@
 The `@cypher` directive binds a GraphQL field to the results of a Cypher query.
 This directive can be used both for properties in a type or as top level queries.
 
-=== Global variables
+=== Definition
+
+==== Global variables
 
 Global variables are available for use within the Cypher statement, and can be applied to the `@cypher` directive.
 
@@ -90,14 +92,14 @@ type Query {
 |===
 
 
-=== Return values
+==== Return values
 
 The return value of Cypher statements must always be of the same type to which the directive is applied.
 
 The variable must also be aliased with a name that is the same as the one passed to `columnName`.
 This can be the name of a node, relationship query, or an alias in the `RETURN` statement of the Cypher statement.
 
-==== Scalar values
+===== Scalar values
 
 Cypher statements must return a value which matches the scalar type to which the directive was applied.
 For example:
@@ -109,7 +111,7 @@ type Query {
 }
 ----
 
-==== Object types
+===== Object types
 
 When returning an object type, all fields of the type must be available in the Cypher return value. 
 This can be achieved by either returning the entire object from the Cypher query, or returning a map of the fields which are required for the object type. 
@@ -152,7 +154,7 @@ type Query {
 The downside of the latter approach is that you need to adjust the return object as you change your object type definition.
 
 
-=== Input arguments
+==== Input arguments
 
 The `@cypher` statement can access the query parameters by prepending `$` to the parameter name. 
 For example:
@@ -174,7 +176,7 @@ query {
 ----
 
 
-=== Usage examples
+=== Usage
 
 The `@cypher` directive can be used in different contexts, such as the ones described in this section.
 
@@ -383,7 +385,11 @@ directive @customResolver(
 ) on FIELD_DEFINITION
 ----
 
-=== The `requires` argument
+=== Usage
+
+// tba - an example without requires argument (?)
+
+==== The `requires` argument
 
 The `requires` argument can be used:
 

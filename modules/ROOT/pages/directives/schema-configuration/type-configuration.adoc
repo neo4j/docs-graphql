@@ -184,8 +184,13 @@ type SomeType {
 ----
 
 
-[[type-definitions-plural]]
 == `@plural`
+
+=== Definition
+
+// tba
+
+=== Usage
 
 This directive redefines how to compose the plural of the type for the generated operations.
 This is particularly useful for types that are not correctly pluralized or are non-English words.
