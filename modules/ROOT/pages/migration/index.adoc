@@ -31,7 +31,8 @@ The minimum Neo4j version required to run the Neo4j GraphQL Library is now 5.0.0
 
 === Removed Non-CDC subscriptions
 
-Support for subscription engines other than `Neo4jGraphQLSubscriptionsCDCEngine` has been dropped. This means subscriptions only work on databases with Change-Data-Capture enabled. The following previously supported engines are no longer supported:
+Support for subscription engines other than `Neo4jGraphQLSubscriptionsCDCEngine` has been dropped.
+This means subscriptions only work on databases with Change Data Capture (CDC) enabled. The following engines are no longer supported:
 
 * Neo4jGraphQLSubscriptionsDefaultEngine
 * link:https://www.npmjs.com/package/@neo4j/graphql-amqp-subscriptions-engine[Neo4jGraphQLAMQPSubscriptionsEngine]
@@ -51,7 +52,7 @@ new Neo4jGraphQL({
 });
 ----
 
-This means the default subscriptions now require CDC enabled in your database
+This means the default subscriptions now require CDC enabled in your database.
 
 ==== Removed relationship subscriptions
 
