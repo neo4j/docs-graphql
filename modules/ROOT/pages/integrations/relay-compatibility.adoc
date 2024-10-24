@@ -35,19 +35,24 @@ type Book implements Node {
 With that, Relay clients are able to refetch `Book` objects using the `node` query field.
 The following section dives into how to do this with the Neo4j GraphQL Library.
 
-== The `@relayId` directive
+
+== `@relayId`
 
 The Neo4j GraphQL Library provides an abstraction over the required `id` field, allowing the value of any unique property in the database to be used as the object identifier.
+This is provided by the `@relayId` directive
 
-This is provided by the `@relayId` directive, which has the following definition:
+=== Definition
+
+The `@relayId` directive has the following definition:
 
 [source, graphql]
 ----
 directive @relayId on FIELD_DEFINITION
 ----
 
-Considering the same `Book` example, ISBN is normally a unique identifier. 
-You can configure this like so:
+=== Usage
+
+For books, the ISBN usually is a unique identifier:
 
 [source, graphql]
 ----
@@ -56,7 +61,7 @@ type Book {
 }
 ----
 
-When the schema is augmented, this type will be output as:
+When the schema is augmented, this type is output as:
 
 [source, graphql]
 ----

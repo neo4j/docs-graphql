@@ -146,7 +146,13 @@ By default, filtering is available on https://www.rfc-editor.org/rfc/rfc7519#sec
 
 Filtering can be configured for additional JWT claims using the `@jwt` directive and, in some circumstances, the `@jwtClaim` directive.
 
-=== The `@jwt` directive
+=== `@jwt`
+
+==== Definition
+
+// tba
+
+==== Usage
 
 If you configure an additional `roles` claim, which is an array of strings located at the root of the JWT payload, add the following to the type definitions:
 
@@ -163,7 +169,13 @@ The type name `JWT` is not mandatory.
 You can use any name as long as it is decorated with the `@jwt` directive.
 ====
 
-=== The `@jwtClaim` directive
+=== `@jwtClaim`
+
+==== Definition
+
+// tba
+
+==== Usage
 
 A `roles` claim is not necessarily located at the JWT payload root.
 It can instead be in a nested location, for example under `myApplication`:

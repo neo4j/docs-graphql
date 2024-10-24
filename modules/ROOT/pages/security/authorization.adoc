@@ -7,8 +7,18 @@ They use predicates to evaluate the data accessed by the Cypher generated from a
 
 All authorization rules have an implied requirement for authentication, given that the rules are normally evaluated against values in the JWT payload.
 
-In the case of explicit authentication, configured using the `@authentication` directive, it is only ever evaluated during Cypher translation time.
+In the case of explicit authentication, configured using the xref::/security/authentication.adoc#_authentication[`@authentication`] directive, it is only ever evaluated during Cypher translation time.
 Unauthenticated requests with queries requiring authentication never reach the database.
+
+== `@authorization`
+
+=== Definition
+
+// tba
+
+=== Usage
+
+// tba - what could be moved to this section from below?
 
 [WARNING]
 ====

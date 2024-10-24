@@ -3,13 +3,22 @@
 = Subscriptions authorization
 
 Subscriptions require their own authorization rules, which are configured with the `@subscriptionsAuthorization` directive.
-These rules are different to normal authorization rules because only filtering rules are available for subscriptions events and subscriptions events have more limitations in how they can be filtered.
+
+== `@subscriptionsAuthorization`
+
+Rules for subscriptions authorization are different to normal authorization rules because only filtering rules are available for subscriptions events and subscriptions events have more limitations in how they can be filtered.
 
 All subscriptions authorization rules have an implied requirement for authentication, given that the rules are normally evaluated against values in the JWT payload.
 
-== Rules
+=== Definition
 
-=== Filtering
+// tba
+
+=== Usage
+
+// tba - what could be moved to this section from below?
+
+== Filtering rules
 
 Filtering rules prevent events which contain information that users don't have access to from reaching them - they will receive no indication that this is the case.
 These rules are evaluated when the events are returned from the database, before they are broadcasted out to subscribing GraphQL clients.
@@ -24,8 +33,6 @@ type User @subscriptionsAuthorization(filter: [
     id: ID!
 }
 ----
-
-==== Events
 
 Filtering can be configured to only be performed on certain events:
 
