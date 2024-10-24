@@ -35,15 +35,8 @@ input MovieSort {
     runtime: SortDirection
 }
 
-input MovieOptions {
-    """Specify one or more MovieSort objects to sort Movies by. The sorts will be applied in the order in which they are arranged in the array."""
-    sort: [MovieSort!]
-    limit: Int
-    offset: Int
-}
-
 type Query {
-    movies(where: MovieWhere, options: MovieOptions): [Movie!]!
+    movies(where: MovieWhere, sort: [MovieSort!], limit: Int, offset: Int): [Movie!]!
 }
 ----
 
@@ -52,13 +45,12 @@ The following query fetches all movies sorted by runtime in ascending order:
 [source, graphql, indent=0]
 ----
 query {
-    movies(options: {
-        sort: [
+    movies(sort: [
             {
                 runtime: ASC
             }
         ]
-    }) {
+    ) {
         title
         runtime
     }
@@ -73,13 +65,12 @@ query {
     movies {
         title
         runtime
-        actors(options: {
-            sort: [
+        actors(sort: [
                 {
                     surname: ASC
                 }
             ]
-        }) {
+        ) {
             surname
         }
     }
