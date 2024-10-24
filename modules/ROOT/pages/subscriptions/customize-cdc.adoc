@@ -1,0 +1,46 @@
+[[customize-cdc]]
+= Customize CDC subscriptions
+:page-aliases: subscriptions/plugins/index.adoc, subscriptions/plugins/amqp.adoc, subscriptions/plugins/single-instance.adoc
+:description: This page describes how to customize the behavior of subscriptions.
+
+GraphQL subscriptions to Neo4j use [Change Data Capture](https://neo4j.com/docs/cdc/current/) (CDC).
+Its behavior can be configured by passing an instance of `Neo4jGraphQLSubscriptionsCDCEngine`.
+
+== Neo4jGraphQLSubscriptionsCDCEngine
+
+By default, the GraphQL library uses the same driver passed to `Neo4jGraphQL` to poll for events every second.
+This behavior can be changed by creating a custom instance of `Neo4jGraphQLSubscriptionsCDCEngine`.
+
+The following options can be passed to the constructor:
+
+* `driver`: The driver to be used for CDC queries.
+* `pollTime`: The interval, in milliseconds, between queries to CDC. 
+Defaults to 1000ms.
+Note that poll time is the period between a finished request and the start of the next. 
+The actual time it takes for CDC events to trigger the subscription also depends on your network.
+* `queryConfig`: An object with the driver query options to be passed to CDC requests. 
+Use the `db` field to define the target database for CDC. 
+
+For example:
+
+[source, javascript, indent=0]
+----
+import { Neo4jGraphQL, Neo4jGraphQLSubscriptionsCDCEngine } from '@neo4j/graphql';
+
+const engine = new Neo4jGraphQLSubscriptionsCDCEngine({
+    driver,
+    pollTime: 5000
+})
+
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    driver,
+    features: {
+        subscriptions: engine,
+        queryConfig: {
+             database: "neo4j",
+        }
+    },
+});
+----
+

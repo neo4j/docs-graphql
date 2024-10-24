@@ -9,8 +9,12 @@ This guide shows how to start using subscription capabilities on a GraphQL serve
 If you use link:https://studio.apollographql.com/[Apollo Studio], make sure to select the link:https://www.npmjs.com/package/graphql-ws[graphql-ws] implementation in the connection settings.
 ====
 
+Subscriptions can listen to changes to the database, including changes unrelated to the GraphQL library.
 
 == Enable subscription capabilities
+
+Neo4j GraphQL subscriptions rely on Neo4j Change Data Capture.
+Make sure to follow the steps described in the link:https://neo4j.com/docs/cdc/current/[CDC Documentation] to enable it in `FULL` mode for your Neo4j instance.
 
 Before using subscriptions on a GraphQL server, you must enable them by passing the `subscriptions` feature to `Neo4jGraphQL`:
 
@@ -26,7 +30,7 @@ new Neo4jGraphQL({
 ----
 
 
-== Install dependencies
+== Setting up an `@apollo/server` server
 
 Then, the next step is to install the following dependencies:
 
@@ -35,8 +39,6 @@ Then, the next step is to install the following dependencies:
 npm i --save ws graphql-ws neo4j-driver @neo4j/graphql express @apollo/server body-parser cors
 ----
 
-
-== Setting up an `@apollo/server` server
 
 Add the following code to your `index.js` file to implement a simple `@apollo/server` server with subscriptions (for more options, see link:https://www.apollographql.com/docs/apollo-server/data/subscriptions/[Apollo's documentation]):
 
@@ -133,11 +135,6 @@ async function main() {
 main();
 ----
 
-[NOTE]
-====
-This setup uses the default subscriptions mechanism suitable only for development, testing, and single instance servers. 
-If you need to scale horizontally for a production-ready application, see xref::subscriptions/scaling.adoc[Horizontal scaling].
-====
 
 == GraphQL subscriptions
 
@@ -168,7 +165,3 @@ mutation {
     }
 }
 ----
-
-== Further reading
-
-Keep reading this section on xref:subscriptions/index.adoc[Subscriptions] for more information and advanced examples.

@@ -50,8 +50,7 @@
 ** xref:subscriptions/getting-started.adoc[Getting started]
 ** xref:subscriptions/events.adoc[Events]
 ** xref:subscriptions/filtering.adoc[]
-** xref:subscriptions/scaling.adoc[]
-** xref:subscriptions/engines.adoc[Engines]
+** xref:subscriptions/customize-cdc.adoc[]
 
 * *How-To*
 
