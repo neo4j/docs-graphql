@@ -3,7 +3,7 @@
 = Subscriptions authorization
 
 Subscriptions require their own authorization rules, which are configured with the `@subscriptionsAuthorization` directive.
-These rules are different to normal authorization rules because only filtering rules are available for subscriptions events and subscriptions events have more limitations in how they can be filtered.
+These rules are different to authorization rules for queries and mutations because they use filtering rules available for subscriptions events.
 
 All subscriptions authorization rules have an implied requirement for authentication, given that the rules are normally evaluated against values in the JWT payload.
 
