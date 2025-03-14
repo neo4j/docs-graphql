@@ -466,35 +466,6 @@ type Person @node {
 ----
 |===
 
-=== Deprecated the implicit equality filters
-
-Previously, if a field was present in a filter without specifying the operator, it was treated as an equality filter.
-This behavior is now deprecated and will be removed in the future.
-Use the `_EQ` filter instead.
-
-[cols="1,1"]
-|===
-|Before | Now
-
-a|
-[source, graphql, indent=0]
-----
-{
-  movies(where: { title: "The Matrix" }) {
-    title
-  }
-}
-----
-a|
-[source, graphql, indent=0]
-----
-{
-  movies(where: { title_EQ: "The Matrix" }) {
-    title
-  }
-}
-----
-|===
 
 === Deprecated pagination `options` argument
 
