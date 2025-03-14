@@ -564,3 +564,44 @@ A warning is raised if you use a deprecated value.
 === Deprecated aggregations on ID fields
 
 Aggregations on ID fields are now deprecated and will be removed in the future.
+
+
+=== Deprecated Aggregate operations
+
+Explicit Aggregate operations, both top level and nested, have been deprecated in favor of the fields `aggregate` inside Connection operations.
+
+So, for example:
+
+[source, graphql, indent=0]
+----
+query {
+  moviesAggregate {
+    count
+    title {
+      shortest
+    }
+  }
+}
+----
+
+Is deprecated in favor of:
+
+[source, graphql, indent=0]
+----
+query {
+  moviesConnection {
+    aggregate {
+      node {
+        title {
+          shortest
+        }
+      }
+      count {
+        nodes
+      }
+    }
+  }
+}
+----
+
+Note that `count` now returns the explcit fields `nodes` and `edges`.
