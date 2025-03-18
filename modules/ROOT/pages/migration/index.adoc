@@ -566,11 +566,11 @@ A warning is raised if you use a deprecated value.
 Aggregations on ID fields are now deprecated and will be removed in the future.
 
 
-=== Deprecated Aggregate operations
+=== Deprecated aggregation operations
 
-Explicit Aggregate operations, both top level and nested, have been deprecated in favor of the fields `aggregate` inside Connection operations.
+Explicit aggregation operations, both top-level and nested, have been deprecated in favor of the `aggregate` field inside connection operations.
 
-So, for example:
+For example:
 
 [source, graphql, indent=0]
 ----
@@ -584,7 +584,7 @@ query {
 }
 ----
 
-Is deprecated in favor of:
+The previous query is deprecated in favor of the following:
 
 [source, graphql, indent=0]
 ----
@@ -604,4 +604,4 @@ query {
 }
 ----
 
-Note that `count` now returns the explcit fields `nodes` and `edges`.
+Note that `count` now returns the explicit fields `nodes` and `edges`.
