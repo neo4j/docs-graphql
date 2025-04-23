@@ -103,54 +103,6 @@ mutation {
 }
 ----
 
-== `connectOrCreate` relationships
-
-Consider the example provided in the xref:mutations/create.adoc#_connectorcreate_relationships[`create`] page:
-
-[source, graphql, indent=0]
-----
-mutation {
-  createActors(input: {
-    name: "Tom Hanks",
-    movies: {
-      connectOrCreate: {
-        where: { node: { id_EQ: "1234" } }
-        onCreate: { node: { title: "Forrest Gump" } }
-      }
-    }
-  }) {
-    info {
-      nodesCreated
-    }
-  }
-}
-----
-
-`connectOrCreate` is also available in `update` operations:
-
-[source, graphql, indent=0]
-----
-mutation {
-  updateActors(
-      update: {
-        movies: {
-            connectOrCreate: {
-                where: { node: { id_EQ: "1234" } }
-                onCreate: { node: { title: "Forrest Gump" } }
-            }
-        }
-      },
-      where: { name_EQ: "Tom Hanks" }
-  ) {
-    info {
-      nodesCreated
-    }
-  }
-}
-----
-
-This operation is equivalent to the previous example.
-
 == Array methods
 
 Array methods allow the modification of existing property arrays in `update` mutations within these entities:
