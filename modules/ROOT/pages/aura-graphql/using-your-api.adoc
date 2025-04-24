@@ -27,34 +27,4 @@ For example, with cURL and replacing the UPPERCASE values with those of your own
 curl --location  YOUR_GRAPHQL_API_URL --header 'Authorization: Bearer YOUR_JWT'--header 'Content-Type: application/json --data 'YOUR_GRAPHQL_QUERY'
 ----
 
-== Querying your GraphQL API from a browser
 
-=== CORS Policy
-
-For security reasons, browsers restrict cross-origin requests to servers.
-This means that by default, if you configure a web app to make a request to your GraphQL APIs from a browser, it will fail.
-This is because your web app is hosted at a different origin than your GraphQL API.
-
-However, most modern browsers support Cross-Origin Resource Sharing (CORS).
-This involves the browser sending a "preflight" request to the server to check that it will allow the actual request.
-You can configure your GraphQL APIs to allow cross-origin requests from your web app by adding it to the list of allowed origins.
-For example, if you expect requests to be made by a web app hosted at `https://example.com`, this should be added to the list of allowed origins for your GraphQL API.
-
-[NOTE]
-====
-Only exact matches for allowed origins are supported - wildcards (*) will do not work.
-====
-
-Use the aura-cli and the following command, replacing the UPPERCASE values as required:
-
-[source, bash, indent=0]
-----
-aura-cli data-api graphql cors-policy allowed-origin add NEW_ALLOWED_ORIGIN --data-api-id YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
-----
-
-Allowed origins that are no longer required can be removed with the following command, replacing the UPPERCASE values as required:
-
-[source, bash, indent=0]
-----
-aura-cli data-api graphql cors-policy allowed-origin remove OLD_ALLOWED_ORIGIN --data-api-id YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
-----

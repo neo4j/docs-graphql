@@ -1,0 +1,147 @@
+= Create a new GraphQL Data API
+
+== Before you get started
+
+Make sure that you have:
+
+* The ID, username and password for the AuraDB.
+* Type definitions
+* If you're intending to use JWKS for authentication, the URL from your identity provider that will be used to verify JWKS tokens
+
+
+If you intend to use the Aura CLI, then follow the guidance provided in  xref:aura-graphql/prerequisites.adoc#_install_and_configure_the_aura_cli[Using the Aura CLI with GraphQL APIs] before proceeding.
+
+
+== Console
+
+. In the Aura Console, select **Data APIs** from the left side navigation.
++
+image::aura-graphql/create/console.png[] 
++
+. You will now see the page to create a new GraphQL Data API.  As there are a number of sections to complete, each is described seperately. 
++
+image::aura-graphql/create/create-api-1.png[]
++
+. Details
++
+You will need to complete the following fields
++
+* **API name** :  A friendly name to use for the GraphQL API
+* **Instance** : The AuraDB instance you are creating a GraphQL API for
+* **Instance username** : The username of the AuraDB instance
+* **Instance password** : The password for the AuraDB instance
++
+Two other items are optional.
++
+* **Enable introspection** : Allows you to query the schema and discover the available queries, mutations, subscriptions, types and fields in the GraphQL API.  
+* **Enable field suggestions** : Provides suggestions that hint towards GraphQL typos 
++
+image::aura-graphql/create/create-details.png[]
++
+[NOTE]
+====
+**Enable introspection**  and **Enable field suggestions** are intended for development or testing environments.  They should never be enabled for production systems as the information they provide can be used by unknown actors from reverse-engineering your GraphQL schema and executing arbitrary operations
+====
++
+. Type Definitions
++
+This is where you describe the graph database in the AuraDB that the GraphQL API will be used with.  The Type Definitions are the same as those used with Neo4j GraphQL Library with the exception that custom resolvers cannot be used.    
++
+If you already have data in the AuraDB, a quick way to obtain Type Definitions is to use the https://graphql-toolbox.neo4j.io[Neo4j GraphQL Toolbox].  This facility has the ability to connect to an AuraDB, automatically create Type Definitions and allow GraphQL operations.  
++
+Alternatively you can write your own Type Definition from first principles by following the guidance provided in xref:index.adoc[Neo4j GraphQL Library] documention
++
+If you are using GraphQL Federation then make sure to select **Enable GraphQL subgraph**
++
+image::aura-graphql/create/create-type-defs.png[]
++
+. Cross-Origin Resource Sharing (CORS) policy
++
+If a browser based application will be using this GraphQL API you will need to add an entry in Cross-Origin Resource Sharing ( CORS ) policy else it will not work.  CORS is a browser-based security mechanism that prevents web pages to access resources from a server on a different domain. You will need to allow the domain that serves the browser application by adding it to the CORs policy.   This includes development environments, e.g node.js, that serves content on http://localhost or similar and using web based tooling for GraphQL APIs such as https://studio.apollographql.com/[Apollo Studio]
++
+This is not needed if a non-browser based application is using the GraphQL API as CORs does not apply to those.  For example, if you are trying out GraphQL operations using CURL 
++
+[NOTE]
+====
+The domain entered in the CORs policy must be an exact match.  For example, http://localhost is not the same as http://localhost:3000/  Wildcards are not supported. 
+====
++
+To add a CORS policy entry , enter the exact domain, inclusive of http / https and any port number, in the **Origin box**.  If you need multiple entries, select **Add allowed origin** 
++
+image::aura-graphql/create/create-cors-policy.png[]
++
+. Authentication providers
++
+All requests to the GraphQL API are authenticated and there are two options for the type of authentication; API key or  JSON Web Key Set ( JWKS ).  It is possible to use these in combination and have multiples of each.   
++
+After choosing the Authentication Provider from the dropdown list, enter a friendly name.  This is all that is needed when using API Key.  The API Key will be shown after the GraphQL API key has been created.    If using JWKS, you will need to provide a friendly name and the URL from your identity provider that is used to verify JWKS tokens. 
++
+To add more than one, select **Add authentication provider**
++
+An authentication provider can be removed by selecting the trash icon
++
+image::aura-graphql/create/create-auth-providers.png[]
++
+[NOTE]
+====
+It is not recommended to use API keys with browser based applications that are using the GraphQL API.  This is due to the API key being visible when using browser developer tooling and very little control over GraphQL operations.  A 3rd party Identity Provider with JWKS provides better security and allows for granular security rules, based on information within the JWKS token, to be defined within the Type Definitions to control GraphQL operations.
+====
++
+. Sizing
++
+Sizing a GraphQL API is baesd on the complexity of the Type Definitions , roughly how big those are, and the workload that will be serviced.  Larger sizes have a higher hourly cost. When the cost is not displayed, please refer to the agreement you have with Neo4j. 
++
+image::aura-graphql/create/create-sizing.png[]
++
+. Create
+At this point the configuration is complete for the GraphQL API.  Select **Create** to proceed to create the GraphQL API.  If you don't want to do this, go to the top right of the page and select **Cancel**.
++
+. API key
++
+If you chose to use API Key with the GraphQL API it will now be displayed.  It is important to store this information as it cannot be retrieved again.  Ensure that you do so somewhere that is safe and secure.  Select **I understand** and then **Close** when you have done this.
++
+image::aura-graphql/create/create-save-api-key.png[]
++ 
+. The GraphQL API will now be provisioned.  
+You can see the status of this operation by selecting **Data APIs** from the left hand bar of the Console.  When the status changes to 'Ready', the API is available for use.   If it has a status of 'Error', select image:aura-graphql/create/menu-selector.png[28,28]  and then **Edit** from the menu to correct the configuration.
+
+
+== Aura CLI
+Like the Console, the Aura CLI can also be used to create a GraphQL API.  There is a difference - only an API Key is used for the authentication provider.  This can be changed in the Console _after_ the GraphQL API has been provisioned
+
+To create a GraphQL API with the Aura CLI, proceed as follows.
+
+. Find the AuraDB instance ID 
++
+From the table, locate the ID of the Aura instance that the GraphQL API will be used with.
++
+[source, bash, indent=0]
+----
+aura-cli instance list --output table
+----
++
+. Save Type Definitions
++
+To avoid having to encode Type Definitions into base64 format to use directly with the Aura CLI, save them in a file.  
++
+. Create
++
+Provision the GraphQL API, replacing the values in UPPERCASE with your own
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql create --name YOUR_FRIENDLY_NAME --instance-id YOUR_AURA_INSTANCE_ID --instance-username YOUR_AURA_INSTANCE_USER --instance-password YOUR_AURA_INSTANCE_PASSWORD --type-definitions-file FULL_PATH_TO_YOUR_TYPE_DEFS
+----
++
+The response will show information about the new GraphQL API.  Make sure you note the API Key and ID.
++
+. Check progress
++ 
+To see if the GraphQL API is ready to use
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql get YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----
+
+

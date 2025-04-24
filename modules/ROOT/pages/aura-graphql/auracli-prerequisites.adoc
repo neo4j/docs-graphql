@@ -1,0 +1,149 @@
+= Configuring the Aura CLI for the GraphQL API
+
+GraphQL for Neo4j AuraDB is managed using the Aura Console or the beta commands of Aura CLI command line tool.  For the latter there are installation and configuration steps to be taken before it can be used. 
+
+
+== Obtain Aura API credentials
+
+The Aura CLI communicates with Neo4j AuraDB platform via an API.
+To use the API, a set of credentials is required.
+To get the credentials, follow these steps depending on which version of the console you are using.
+
+. Log in to the link:https://console.neo4j.io/[Neo4j Aura Console].
+. Navigate to the top right where your account name is displayed and select it.  A dropdown menu will apear.
++
+image::aura-graphql/using-the-auracli/unified-console-account-dropdown.png[]
++
+. From the menu, select *API keys*.  This will show any existing API keys that you may already have. 
++
+image::aura-graphql/using-the-auracli/unified-console-api-keys.png[]
++
+. Click *Create* to create a new API key. 
++
+image::aura-graphql/using-the-auracli/unified-console-api-keys-create.png[]
++
+. In the pop-up window, enter a name for the API Key and then click *Create*.
++
+image::aura-graphql/using-the-auracli/unified-console-api-keys-created.png[]
++
+. The client ID and client secret are displayed. Be sure to record or save these as the client secret will not be shown again.
+
+
+== Install the Aura CLI
+
+. Navigate to link:https://github.com/neo4j/aura-cli/releases/tag/v1.1.0[https://github.com/neo4j/aura-cli/releases/tag/v1.1.0] in your browser.
++
+[NOTE]
+====
+Use Aura CLI version 1.1.0 or higher for managing your GraphQL APIs.
+====
++
+. Download the compressed file that matches your system. Make a note of the folder where the file is located.
+. After the file has been downloaded, extract the contents.
+. Open a command prompt and move to the location where you extracted the files.
+. Complete the installation by moving the aura-cli executable file into the file path.
+.. Mac/Linux users:
++
+[source, bash, indent=0]
+----
+sudo mv aura-cli /usr/local/bin
+----
++
+.. Windows users:
++
+[source, cmd, indent=0]
+----
+move aura-cli c:\windows\system32
+----
++
+. At the command prompt, type:
++
+[source, bash, indent=0]
+----
+aura-cli -v
+----
++
+. You should see this:
++
+[source, bash, indent=0]
+----
+aura version v1.1.0
+----
+
+[NOTE]
+====
+If you are using a Mac, you may receive a warning from Apple that aura-cli could not be verified.
+If this happens, open *System Settings*, click *Privacy & Security* on the left, and scroll down on the right.
+Click *Open Anyway*.
+This should not happen again.
+The aura-cli has been through the Apple certification process but it can take time to trickle down through the Apple ecosystem.
+====
+
+== Configure the Aura CLI
+
+Configure the Aura CLI with the Aura API client ID and client secret you obtained earlier.
+
+
+. At the command prompt, enter the following, using your values for the items in CAPITALS:
++
+[source, bash, indent=0]
+----
+aura-cli credential add --name YOUR_LABEL --client-id YOUR_CLIENT_ID --client-secret YOUR_CLIENT_SECRET
+----
++
+. To confirm the credentials are working, list your Aura instances:
++
+[source, bash, indent=0]
+----
+aura-cli instance list --output table
+----
+
+
+=== Enable the beta commands
+
+Set the configuration option to make available the beta commands to use GraphQL for Neo4j AuraDB with the Aura CLI
+
+. At the command prompt, enter the following:
++
+[source, bash, indent=0]
+----
+aura-cli config set beta-enabled true
+----
++
+. Check if the commands are listed for the open beta:
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql
+----
++
+. You should see this:
++
+[source, bash, indent=0]
+----
+Allows you to programmatically provision and manage your GraphQL APIs
+
+Usage:
+  aura-cli data-api graphql [command]
+
+Available Commands:
+  auth-provider Allows you to programmatically manage Authentication providers for a specific GraphQL Data API
+  cors-policy   Allows you to manage the Cross-Origin Resource Sharing (CORS) policy for a specific GraphQL Data API
+  create        Creates a new GraphQL Data API
+  delete        Delete a GraphQL Data API
+  get           Get details of a GraphQL Data API
+  list          Returns a list of GraphQL Data APIs
+  pause         Pause a GraphQL Data API
+  resume        Resume a GraphQL Data API
+  update        Edit a GraphQL Data API
+
+Flags:
+  -h, --help   help for graphql
+
+Global Flags:
+      --auth-url string
+      --base-url string
+      --output string
+
+Use "aura-cli data-api graphql [command] --help" for more information about a command.
+----

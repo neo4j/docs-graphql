@@ -1,0 +1,59 @@
+= View a GraphQL API
+
+
+== Console
+
+. In Aura Console, select **Data API** from the left side navigation.
++
+image::aura-graphql/view/console-dataapi-one-listed.png[]
++
+. Look to the right of the GraphQL API that you wish to view. Select image:aura-graphql/delete/menu-selector.png[28,28].  
++
+image::aura-graphql/view/console-dataapi-one-created-menu.png[]
++
+From the menu, select **Edit**.  The GraphQL API configuration will be shown
++
+. Viewing
+Scroll up and down the configuration settings to see them
++
+image::aura-graphql/view/console-dataapi-edit.png[]
++
+Once you have finsihed, select **Back** to reuturn.  
+
+
+== Aura CLI
+To view the settings with the Aura CLI, it is first necessary to obtain:- 
+
+* The ID of the AuraDB the GraphQL API is being used with
+* The ID of GraphQL API
+
+=== Look up ID for AuraDB and GraphQL API
+. Find the ID of the AuraDB
++ 
+Display a list of AuraDBs in a table
++
+[source, bash, indent=0]
+----
+aura-cli instance list --output table
+----
+From the table, find the AuraDB that has the GraphQL API that you wish to change.  Note its ID
++
+. Find the GraphQL ID
++
+Using the AuraDB ID, list any GraphQL API that it may have.
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql list --instance-id YOUR_AURA_INSTANCE_ID --output table
+----
++ 
+From that table, locate the GraphQL API you want to modify and note down it's ID.
+
+
+=== View current settings
+Before you make any change it is useful to view the current settings.  Using the IDs of both the AuraDB ID and GraphQL API, this is achieved with
+
+[source, bash, indent=0]
+----
+aura-cli data-api graphql get YOUR_GRAPHQL_API_ID   --instance-id YOUR_AURA_INSTANCE_ID 
+----
