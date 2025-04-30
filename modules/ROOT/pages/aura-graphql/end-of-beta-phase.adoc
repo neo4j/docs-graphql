@@ -137,4 +137,4 @@ aura-cli data-api graphql delete YOUR_GRAPHQL_DATA_API_ID  --instance-id YOUR_AU
 
 == Provide feedback 
 
-Please consider taking a few moments to provide feedback either by creating an issue in our (https://github.com/neo4j/graphql/issues/new/choose)[GitHub repository] or using our #graphql channel on our [Discord Community](https://discord.gg/M8mTADEJ) or our [forums](https://community.neo4j.com/c/drivers-stacks/graphql/33).
+Please consider taking a few moments to provide feedback either by creating an issue in our link:https://github.com/neo4j/graphql/issues/new/choose[GitHub repository] or using our #graphql channel on our link:https://discord.gg/M8mTADEJ[Discord Community] or our link:https://community.neo4j.com/c/drivers-stacks/graphql/33[forums].
