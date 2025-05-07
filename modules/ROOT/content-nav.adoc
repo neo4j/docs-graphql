@@ -56,14 +56,6 @@
 
 * *Products*
 
-* xref:aura-graphql/index.adoc[]
-** xref:aura-graphql/prerequisites.adoc[]
-** xref:aura-graphql/deploy-and-operate.adoc[]
-** xref:aura-graphql/authentication-providers.adoc[]
-** xref:aura-graphql/using-your-api.adoc[]
-** xref:aura-graphql/end-of-beta-phase.adoc[]
-
-
 * xref:introspector.adoc[Introspector]
 
 * *Frameworks and integrations*
