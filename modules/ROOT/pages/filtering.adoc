@@ -177,7 +177,7 @@ query CloseByUsers {
 
 === String comparison
 
-The following case-sensitive comparison operators are available for `String` and `ID` types:
+The following comparison operators are available for `String` and `ID` types:
 
 * `startsWith`
 * `endsWith`
@@ -229,6 +229,35 @@ const features = {
 
 const neoSchema = new Neo4jGraphQL({ features, typeDefs, driver });
 ----
+
+==== Case-insensitive comparison
+
+Case insensitive filters can be enabled with the `CASE_INSENSITIVE` option:
+
+```javascript
+const neoSchema = new Neo4jGraphQL({
+    features: {
+        filters: {
+            String: {
+                CASE_INSENSITIVE: true,
+            },
+        },
+    },
+});
+```
+
+This enables the field `caseInsensitive` on string filters:
+
+```graphql
+query {
+    movies(where: { title: { caseInsensitive: { eq: "the matrix" } } }) {
+        title
+    }
+}
+```
+
+All the string filters can be used along with `caseInsensitive`.
+
 
 === RegEx matching
 
