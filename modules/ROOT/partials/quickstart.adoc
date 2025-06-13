@@ -1,8 +1,12 @@
+// This doc is also sourced in the Aura Developer Hub.
+// Because of that, cross-links are absolute and
+// source blocks have copy=true .
+
 == Install
 
 Install the Neo4j GraphQL library and its peer dependencies with `npm`.
 
-[source, bash]
+[source, bash, copy=true]
 ----
 npm install @neo4j/graphql graphql neo4j-driver @apollo/server
 ----
@@ -14,7 +18,7 @@ link:https://neo4j.com/docs/graphql/current/getting-started/[More info on instal
 
 Connect to the Neo4j server via `neo4j.driver()` and your server credentials.
 
-[source, javascript]
+[source, javascript, copy=true]
 ----
 import neo4j from "neo4j-driver";
 
@@ -30,7 +34,7 @@ const driver = neo4j.driver(
 Provide the GraphQL type definitions mapping to the nodes and relationships in your Neo4j database through `Neo4jGraphQL`.
 
 .Type definitions for node labels `Actor` and `Movie`
-[source, javascript]
+[source, javascript, copy=true]
 ----
 import { Neo4jGraphQL } from "@neo4j/graphql";
 
@@ -55,7 +59,7 @@ const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
 Start an `ApolloServer` instance drawing its schema from the Neo4j type definitions.
 Execute mutations and link:https://neo4j.com/docs/graphql/current/getting-started/#_create_nodes_in_the_database[create nodes in the database] through the Apollo server.
 
-[source, javascript]
+[source, javascript, copy=true]
 ----
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
