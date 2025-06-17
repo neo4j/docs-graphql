@@ -1,0 +1,191 @@
+= Updating a GraphQL API
+
+You can change the following configuration settings of an existing GraphQL API:
+
+* The friendly name of the GraphQL API.
+* Username and/or password for the associated Aura instance.
+* Type definitions.
+* The authentication provider(s) used by the GraphQL API.
+* The CORS policy used by the GraphQL API.
+
+== Console
+
+. In Aura Console, select **Data API** from the left side navigation.
++
+. Locate the GraphQL API that you wish to update and use the three dots icon, then **Edit**.
++
+Review and make changes to the configuration settings.
+**Save** to persist your changes, or go **Back** to discard any changes made.
+
+It takes a few moments to apply the saved changes.
+When the data API has a status of "Ready", the changes have been applied.
+
+
+== Aura CLI
+
+There are three main commands used by the Aura CLI to modify a GraphQL API:
+
+. `update`: Modify the general settings of a GraphQL Data API.
+. `cors-policy`: Change the Cross-Origin Resource Sharing (CORS) policy.
+. `auth-provider`: Manage the authentication providers used by the GraphQL API.
+
+
+To change the settings with the Aura CLI, it is first necessary to obtain:
+
+* The ID of the AuraDB the GraphQL API is being used with.
+* The ID of GraphQL API.
+
+[CAUTION]
+====
+The Aura CLI does not ask for confirmation and processes a command immediately.
+====
+
+=== Looking up the IDs
+
+. Find the ID of the AuraDB.
++
+Display a list of AuraDBs in a table:
++
+[source, bash, indent=0]
+----
+aura-cli instance list
+----
+From the table, find the AuraDB that has the GraphQL API that you wish to change.
+Make a note of its ID.
++
+. Find the GraphQL ID
++
+Using the AuraDB ID, list any GraphQL API that it may have:
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql list --instance-id YOUR_AURA_INSTANCE_ID
+----
++
+From that table, locate the GraphQL API you want to modify and make a note of its ID.
+
+
+=== Reviewing the settings
+
+Before you make changes it is useful to review the current settings.
+Using the IDs of both AuraDB and the GraphQL API, this is achieved with:
+
+[source, bash, indent=0]
+----
+aura-cli data-api graphql get YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----
+
+
+=== `update`
+
+The `update` command allows for modification of:
+
+* The GraphQL API friendly name.
+* The username of the associated AuraDB.
+* The password for the username of the associated AuraDB.
+* The type definitions used by the GraphQL API.
+
+You can change multiple settings at once:
+
+[source, bash, indent=0]
+----
+aura-cli data-api graphql update <YOUR_GRAPHQL_API_ID> --instance-id <YOUR_AURA_INSTANCE_ID> <YOUR_MODIFICATION_FLAGS>
+----
+
+where `<YOUR_MODIFICATION_FLAGS>` is one or more from:
+
+* `--instance-password <STRING>` - The password of the instance this GraphQL Data API connects to.
+* `--instance-username <STRING>` - The username of the instance this GraphQL Data API connects to.
+* `--name <STRING>` - The name of the GraphQL Data API.
+* `--type-definitions <STRING>` - The GraphQL type definitions. These must be Base64-encoded.
+* `--type-definitions-file <STRING>`- The path to a local GraphQL type definitions file, e.g. `path/to/typeDefs.graphql`.
+
+
+=== `auth-provider`
+
+GraphQL for Neo4j AuraDB allows you to use an API key, a JWT token from an external identity provider or both for authentication and switch between them.
+The authentication method is stored as an authentication provider.
+
+There are advantages and disadvantages to both types.
+API keys are quickly set up but do not allow for access control and should not be used within a user-facing client application.
+JWKS (JSON Web Key Sets) authentication providers require an external identity provider but allow for fine-grained rules around authentication and authorization as part of a GraphQL API type definitions.
+
+[CAUTION]
+====
+If you use an API key authentication provider in a user-facing client application, you risk leaking the API key to your users.
+This can give them full access to your GraphQL API.
+We recommend you to use JWKS authentication providers in user-facing client applications.
+====
+
+- View the list of current authentication providers:
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql auth-provider list --data-api-id YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----
++
+- Get the details of a specific authentication provider:
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql auth-provider get YOUR_AUTH_PROVIDER_ID --data-api-id YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----
++
+- Add a new API key.
+  You can create a new API key and mark it as disabled to prevent its use.
+  To do that, add `--disabled` to the command.
+  It is only possible to enable the key via the Console.
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql auth-provider create --name YOUR_FRIENDLY_NAME --type api-key --data-api-id YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----
++
+- Add a new JWKS.
+  You can create a new JWKS and mark it as disabled to prevent its use.
+  To do that, add `--disabled` to the command.
+  It is only possible to enable the key set using the Console.
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql auth-provider create --name YOUR_FRIENDLY_NAME --url YOUR_URL_FOR_JWKS_VERIFICATION --type jwks --data-api-id YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----
++
+- Remove an existing authentication provider.
+  An authentication provider for a GraphQL API can be removed by deleting it.
+  At least one enabled authentication provider is required for a GraphQL API.
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql auth-provider delete --name YOUR_FRIENDLY_NAME --type api-key --data-api-id YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----
+
+
+=== `cors-policy`
+
+You can add or remove allowed origins for the CORS policy of the GraphQL API.
+
+- Display the existing allowed origins:
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql get YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----
++
+- Add a new origin:
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql cors-policy allowed-origin add ORIGIN --data-api-id YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----
++
+Adding several origins requires executing this command multiple times.
++
+- Remove an existing origin:
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql cors-policy allowed-origin remove ORIGIN --data-api-id YOUR_GRAPHQL_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----
++
+Removing several origins requires executing this command multiple times.

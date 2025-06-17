@@ -1,0 +1,59 @@
+= Deleting a GraphQL API
+
+== Console
+
+. In Aura Console, select **Data API** from the left side navigation.
++
+. Locate the GraphQL API that you wish to delete and use the three dots icon, then **Delete**.
++
+Confirm the deletion by typing the name of the GraphQL API in the dialog and select **Delete** again.
++
+image::aura-graphql/delete/confirm-deletion.png[]
+
+
+== Aura CLI
+
+Deletion of a GraphQL API using the Aura CLI requires:
+
+* The ID of the AuraDB the GraphQL API is being used with.
+* The ID of GraphQL API.
+
+[CAUTION]
+====
+The Aura CLI does not ask for confirmation and processes the command immediately.
+====
+
+
+=== Looking up the IDs
+
+. Find the ID of the AuraDB.
++
+Display a list of AuraDBs in a table:
++
+[source, bash, indent=0]
+----
+aura-cli instance list
+----
+From the table, find the AuraDB that has the GraphQL API that you wish to change.
+Make a note of its ID.
++
+. Find the GraphQL ID
++
+Using the AuraDB ID, list any GraphQL API that it may have:
++
+[source, bash, indent=0]
+----
+aura-cli data-api graphql list --instance-id YOUR_AURA_INSTANCE_ID
+----
++
+From that table, locate the GraphQL API you want to modify and make a note of its ID.
+
+
+=== Delete the GraphQL API
+
+Using both the AuraDB instance ID and the ID of the associated GraphQL API, you can now delete the GraphQL API itself:
+
+[source, bash, indent=0]
+----
+aura-cli data-api graphql delete YOUR_GRAPHQL_DATA_API_ID --instance-id YOUR_AURA_INSTANCE_ID
+----

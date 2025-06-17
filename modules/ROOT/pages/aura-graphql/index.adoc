@@ -1,16 +1,5 @@
-= GraphQL for Neo4j AuraDB Beta
+= GraphQL for Neo4j AuraDB
 
-Welcome to the beta release of GraphQL for Neo4j AuraDB.
+Welcome to GraphQL for Neo4j AuraDB.
 
-Your feedback and insights help us refine and evolve the product and meet the needs of our users.
-
-The beta release is designed to give you a first look at GraphQL for Neo4j AuraDB.
-You may encounter suboptimal behavior.
-
-You can help us get GraphQL for Neo4j AuraDB ready for production:
-
-- *Dive in*: Explore and test its features.
-- *Test the product limits*: We'd rather discover weak areas at this stage.
-- *Share your experience*: Tell us what works, what doesn't, and what you'd like to see in the future.
-- *Provide feedback*: Use our `#graphql` channel on our link:https://discord.gg/M8mTADEJ[Discord Community], or our link:https://community.neo4j.com/c/drivers-stacks/graphql/33[forums] to report issues, suggest improvements, or ask questions.
-
+If you would like to provide feedback, use our `#graphql` channel on our link:https://discord.gg/M8mTADEJ[Discord Community], or our link:https://community.neo4j.com/c/drivers-stacks/graphql/33[forums] to report issues, suggest improvements, or ask questions.
