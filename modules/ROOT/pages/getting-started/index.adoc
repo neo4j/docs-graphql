@@ -53,7 +53,7 @@ It takes your GraphQL type definitions and generates a schema backed by a Neo4j 
 +
 [source, bash, indent=0]
 ----
-npm install @neo4j/graphql@alpha graphql neo4j-driver @apollo/server
+npm install @neo4j/graphql graphql neo4j-driver @apollo/server
 ----
 
 . Set up a https://neo4j.com[Neo4j database].
