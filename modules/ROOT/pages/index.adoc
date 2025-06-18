@@ -8,20 +8,20 @@ The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript
 With Neo4j as the graph database, the GraphQL Library makes it simple for applications to have data treated as a graph natively from the frontend all the way to storage.
 This avoids duplicate schema work and ensures flawless integration between frontend and backend developers.
 
+// Modify links below
+
 If you are new to Neo4j and GraphQL take a look at xref:getting-started/index.adoc[Creating a new project] and xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox] to learn the fundamentals of the Neo4j GraphQL Library and how to create GraphQL APIs backed by a Neo4j graph database.
 
-[NOTE]
-====
-The GRANDstack starter app has been deprecated. 
-For more information, read the section on xref::deprecations.adoc[Deprecations].
-====
 
 == How it works
 
 The Neo4j GraphQL Library requires a set of type definitions that describes the shape of your graph data.
 It can generate an entire executable schema with all of the additional types needed to execute queries and mutations to interact with your Neo4j database.
 
-For every query and mutation that is executed against this generated schema, the Neo4j GraphQL Library generates a single Cypher query which is executed against the database. This eliminates the https://www.google.com/search?q=graphql+n%2B1[N+1 Problem], which can make GraphQL implementations slow and inefficient.
+For every query and mutation that is executed against this generated schema, the Neo4j GraphQL Library generates a single Cypher query which is executed against the database.
+This eliminates the https://www.google.com/search?q=graphql+n%2B1[N+1 Problem], which can make GraphQL implementations slow and inefficient.
+
+The Neo4j GraphQL Library features:
 
 - Automatic generation of xref::queries-aggregations/queries.adoc[Queries] and xref::mutations/index.adoc[Mutations] for CRUD interactions.
 - xref::/types/index.adoc[Types], including temporal and spatial.
@@ -36,6 +36,8 @@ For every query and mutation that is executed against this generated schema, the
 
 == Interaction
 
+// Modify link below and add info about aura graphql
+
 In the xref::getting-started/index.adoc[Getting Started] guide, Apollo Server is used to host the GraphQL schema, so you can interact directly with your API with no frontend.
 In case you prefer to use frontend frameworks, these are some clients that interact with GraphQL APIs:
 
@@ -43,11 +45,13 @@ In case you prefer to use frontend frameworks, these are some clients that inter
 - https://vuejs.org/[Vue.js] - support through https://apollo.vuejs.org/[Vue Apollo]
 - https://angularjs.org/[AngularJS] - support through https://apollo-angular.com/docs/[Apollo Angular].
 
+
 == Deployment
 
 There are a variety of methods for deploying GraphQL APIs.
 In the xref::getting-started/index.adoc[Getting Started] guide, Apollo Server is being used for demonstration.
 You can check their own documentation about https://www.apollographql.com/docs/apollo-server/deployment[Deployment] for more details.
+
 
 == Versioning
 
@@ -66,16 +70,19 @@ Additionally, prerelease version numbers may have additional suffixes, for examp
 
 `NUMBER` in the suffix is simply an incrementing release number in each phase.
 
+
 == Requirements
 
 . https://neo4j.com/deployment-center/#gdb-selfmanaged[Neo4j Database] or https://neo4j.com/product/auradb/[Neo4j AuraDB] version 5.x with APOC core plugin. Note that with version 5.15 or higher you are using using the xref:/directives/indexes-and-constraints.adoc#_vector_index_search[`@vector` directive].
 . https://nodejs.org/en/[Node.js] 20+.
+
 
 == Resources
 
 . https://github.com/neo4j/graphql[GitHub]
 . https://github.com/neo4j/graphql/issues[Issue Tracker]
 . https://www.npmjs.com/package/@neo4j/graphql[npm package]
+
 
 == License
 

@@ -12,8 +12,9 @@ This tutorial shows you how to:
 - Start an instance of the library to generate a GraphQL schema.
 - Run an instance of a server to execute queries and mutations against your schema.
 
-The tutorial assumes familiarity with command line and JavaScript, and also that you have a recent version of Node.js installed. 
+The tutorial assumes familiarity with the command line and JavaScript, and also that you have a recent version of Node.js installed. 
 The examples use the default `npm` package manager, but you can use another one of choice.
+
 
 == Create a new project
 
@@ -39,33 +40,36 @@ npm init es6 --yes
 touch index.js
 ----
 
+
 == Install dependencies
 
-. Install the Neo4j GraphQL Library and its dependencies:
-+
-.. `@neo4j/graphql`: the official Neo4j GraphQL Library package.
-It takes your GraphQL type definitions and generates a schema backed by a Neo4j database.
-.. `graphql`: the package used to generate a schema and execute queries and mutations.
-.. `neo4j-driver`: the official Neo4j Driver package for JavaScript, of which an instance must be passed into the Neo4j GraphQL Library.
+Install the Neo4j GraphQL Library and its dependencies with:
 
-. Install a GraphQL server package to host your schema and allow the execution of queries and mutations against it.
-.. The https://www.apollographql.com/docs/apollo-server/[`@apollo/server`] is the default package for Apollo Server:
-+
 [source, bash, indent=0]
 ----
 npm install @neo4j/graphql graphql neo4j-driver @apollo/server
 ----
 
-. Set up a https://neo4j.com[Neo4j database].
+- `@neo4j/graphql` is the official Neo4j GraphQL Library package.
+It takes your GraphQL type definitions and generates a schema backed by a Neo4j database.
+- `graphql` is the package used to generate a schema and execute queries and mutations.
+- `neo4j-driver` is the official Neo4j Driver package for JavaScript, of which an instance must be passed into the Neo4j GraphQL Library.
+
+Install a GraphQL server package to host your schema and allow the execution of queries and mutations against it.
+The https://www.apollographql.com/docs/apollo-server/[`@apollo/server`] is the default package for Apollo Server.
+
+Set up a https://neo4j.com[Neo4j database].
 Make sure it fulfills the xref::index.adoc#_requirements[requirements], including the necessary plugins.
+Populate the database, for example with the Northwind dataset, available link::https://neo4j.com/docs/getting-started/appendix/example-data/[here].
+
 
 == Set GraphQL type definitions
 
-The Neo4j GraphQL Library is primarily driven by type definitions which map to the nodes and relationships in your Neo4j database. 
+The Neo4j GraphQL Library is driven by type definitions which map to the nodes and relationships in your Neo4j database. 
 To get started, use a simple example with two node types, one with label "Actor" and the other "Movie":
 
-. Open the previously created `index.js` in your editor of choice and write your type definitions. 
-Add all of the necessary package imports:
+. Open the file `index.js` from xref:#_create_a_new_project[] in your editor and write your type definitions. 
+Add all the necessary package imports:
 +
 [source, javascript, indent=0]
 ----
@@ -75,26 +79,28 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type Movie @node {
-        title: String
-        actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
+    type Product @node {
+        productName: String
+        category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
     }
 
-    type Actor @node {
-        name: String
-        movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+    type Category @node {
+        categoryName: String
+        products: [Product!]! @relationship(type: "PART_OF", direction: IN)
     }
 `;
 ----
 +
-Note that these type definitions only *define* the node labels "Actor" and "Movie", and a relationship "ACTED_IN" between the two. 
+Note that these type definitions only define the node labels "Product" and "Category", and a relationship "PART_OF" between the two. 
 When the schema is generated, you can then execute queries for `actors` and `movies` to read data from the database.
 
-. Alternatively, you can also automatically generate type definitions from an existing database by xref::introspector.adoc[introspecting the schema].
+. Alternatively, you automatically generate type definitions from an existing database by xref::introspector.adoc[introspecting the schema].
+
 
 == Create an instance of `Neo4jGraphQL`
 
 To create an instance of the Neo4j GraphQL Library, you need a Neo4j driver to connect to your database.
+
 
 === Using AuraDB
 
@@ -103,6 +109,7 @@ To create an instance of the Neo4j GraphQL Library, you need a Neo4j driver to c
 . Make sure to save the generated password and the connection URI provided after the instance is ready and looking similar to this:
 +
 image::neo4j-aura-dashboard.png[width=500]
+
 
 === Using a Neo4j database
 
@@ -117,6 +124,7 @@ const driver = neo4j.driver(
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
 ----
+
 
 == Create an instance of `ApolloServer`
 
@@ -135,8 +143,8 @@ const { url } = await startStandaloneServer(server, {
 console.log(`🚀 Server ready at ${url}`);
 ----
 
-== Start the server
 
+== Start the server
 
 Make sure that your `index.js` file looks like this:
 
@@ -284,6 +292,7 @@ Since you only created one "Movie" node and one "Actor", the Response panel show
   }
 }
 ----
+
 
 == Conclusion
 
