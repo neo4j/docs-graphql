@@ -1,0 +1,54 @@
+// This doc is also sourced in the Aura Developer Hub.
+// Because of that, cross-links are absolute and source blocks have copy=true .
+
+== Installation
+
+. Download the compressed file that matches your system from the link:https://github.com/neo4j/aura-cli/releases/tag/v1.1.0[Aura CLI github repository] and extract it.
+. Move the `aura-cli` executable to the file path:
++
+[source, bash, indent=0]
+----
+sudo mv aura-cli /usr/local/bin
+----
++
+. Execute the following:
++
+[source, bash, indent=0]
+----
+aura-cli -v
+----
+
+link:https://neo4j.com/docs/aura/aura-cli/installation/[More info on installing the Aura CLI]
+
+
+== Setting up an Aura API
+
+
+=== Obtain Aura API credentials
+
+. Log in to the link:https://console.neo4j.io/[Neo4j Aura Console].
+. Navigate to the top right and select your account name, then **API keys** from the dropdown menu.
+. Use **Create**, then enter a a name for the API key and confirm with **Create**.
+. Copy the client ID and client secret.
+
+
+=== Configure the Aura CLI
+
+. Execute the following:
++
+[source, bash, indent=0]
+----
+aura-cli credential add --name <YOUR_LABEL> --client-id <YOUR_CLIENT_ID> --client-secret <YOUR_CLIENT_SECRET>
+----
+
+
+=== Enable beta commands
+
+Set the configuration option to make beta commands available to use GraphQL for Neo4j AuraDB with the Aura CLI.
+
+. On the command line, execute the following:
++
+[source, bash, indent=0]
+----
+aura-cli config set beta-enabled true
+----
