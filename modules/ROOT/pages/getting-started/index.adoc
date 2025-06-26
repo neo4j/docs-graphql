@@ -1,9 +1,131 @@
 [[getting-started]]
 = Creating a new project
-:description: This section describes how to get started with the Neo4j GraphQL Library.
+:description: This section describes how to get started with the Neo4j GraphQL.
+
+This page walks you through creating a new project with the Neo4j GraphQL.
 
 
-This tutorial walks you through creating a new project with the Neo4j GraphQL Library.
+== GraphQL and Aura Console
+
+This tutorial shows you how to create and use a GraphQL Data API in Aura Console.
+
+
+=== Create a GraphQL Data API
+
+In the Aura Console, select **Data services** > **Data APIs** from the left side navigation.
+Use **Create API**.
+
+
+==== Details
+
+Provide a name for your new API as well the instance data for the instance you want to use under **Details**.
+
+[CAUTION]
+====
+If you set **Enable introspection** and **Enable field suggestions** for production systems the information they provide can be used by malicious actors to reverse-engineer your GraphQL schema and execute arbitrary operations.
+
+**Enable introspection** allows you to query the schema and discover the available queries, mutations, subscriptions, types and fields in the GraphQL API.
+
+**Enable field suggestions** provides suggestions that hint towards GraphQL typos.
+Even with just field suggestions enabled, it is possible for a malicious actor to discover your entire schema.
+====
+
+
+==== Type definitions
+
+Write or paste your **Type definitions**, for example:
++
+[source, graphql, indent=0]
+----
+type Product @node {
+    productName: String
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+}
+
+type Category @node {
+    categoryName: String
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+----
+
+The type definitions describe what parts of the graph database in the AuraDB are accessible by requests made via the GraphQL API.
+
+If you already have data in the AuraDB, you can obtain your type definitions via the https://graphql-toolbox.neo4j.io[Neo4j GraphQL Toolbox].
+The toolbox can connect to the AuraDB and automatically create type definitions and allow GraphQL operations.
+
+//link
+If you are using GraphQL Federation then make sure to select **Enable GraphQL subgraph**.
+
+
+==== Cross-Origin Resource Sharing (CORS) policy
+
+If you want to use your GraphQL API with a browser-based application, add an entry in your Cross-Origin Resource Sharing (CORS) policy.
+CORS is a browser-based security mechanism that prevents web pages from accessing resources from a server with a different origin.
+
+Add the URL that serves the browser-based application to the **Origin box**.
+If you need multiple entries, select **Add allowed origin**.
+
+[NOTE]
+====
+The URL entered in the CORS policy must be an exact match.
+For example, http://localhost is not the same as http://localhost:3000/.
+Wildcards are not supported.
+====
+
+This includes development environments such as Node.js, which serves content on your localhost or similar.
+This also holds for using web-based tooling for GraphQL APIs such as https://studio.apollographql.com/[Apollo Studio].
+
+You can skip this step if you want to use your GraphQL API with non-browser-based application.
+
+
+==== Authentication providers
+
+All requests to the GraphQL API are authenticated and there are two options for the type of authentication: API key or JSON Web Key Set (JWKS).
+It is possible to use these in combination and have multiples of each.
+
+After choosing the authentication provider from the dropdown list, enter a friendly name.
+This is all that is needed when using API key.
+The API key will be shown after the GraphQL API key has been created.
+If you are using JWKS, provide a friendly name and the URL from your identity provider that is used to verify JWKS tokens.
+
+Add more more providers via **Add authentication provider**.
+
+An authentication provider can be removed by selecting the trash icon.
+
+[CAUTION]
+====
+It is not recommended to use API keys with user-facing applications that are using the GraphQL API.
+This is due to the risk of the API key being visible to malicious users and very little control over GraphQL operations.
+
+A 3rd party identity provider with JWKS provides better security and allows for granular security rules, based on information within the JWKS token, to be defined within the type definitions to control GraphQL operations.
+====
+
+
+==== Sizing
+
+Sizing a GraphQL API is based on the size and complexity of the type definitions and the expected workload.
+Larger sizes have a higher hourly cost.
+If the cost is not displayed, refer to the agreement you have with Neo4j.
+
+Select **Create** to proceed and create the GraphQL API.
+
+
+=== API key
+
+If you chose to use an API key with the GraphQL API it is now displayed.
+Store this information securely as it cannot be retrieved again.
+Select **I understand** and then **Close** once you have done this.
+
+The GraphQL API will now be provisioned.
+You can see the status via **Data APIs** from the left side navigation.
+When the status changes to "Ready", the API is ready to use.
+If it has a status of 'Error', use the three dots icon and **Edit** from the menu to change the configuration.
+
+=== Usage
+
+//
+
+== Self-hosting GraphQL
 
 This tutorial shows you how to:
 
@@ -12,11 +134,19 @@ This tutorial shows you how to:
 - Start an instance of the library to generate a GraphQL schema.
 - Run an instance of a server to execute queries and mutations against your schema.
 
-The tutorial assumes familiarity with the command line and JavaScript, and also that you have a recent version of Node.js installed. 
-The examples use the default `npm` package manager, but you can use another one of choice.
+
+=== Prerequisites
+
+- The tutorial assumes familiarity with the command line and JavaScript.
+- Make sure that you have a recent version of Node.js installed.
+- The examples use the default `npm` package manager, but you can use other package managers.
+- Set up a https://neo4j.com[Neo4j database].
+Make sure it fulfills the xref::index.adoc#_requirements[requirements], including the necessary plugins.
+Populate the database, for example with the Northwind dataset, available link::https://neo4j.com/docs/getting-started/appendix/example-data/[here].
+The tutorial examples refer to this dataset.
 
 
-== Create a new project
+=== Set up a directory
 
 . Create a new directory and `cd` into it:
 +
@@ -41,7 +171,7 @@ touch index.js
 ----
 
 
-== Install dependencies
+=== Install dependencies
 
 Install the Neo4j GraphQL Library and its dependencies with:
 
@@ -58,19 +188,12 @@ It takes your GraphQL type definitions and generates a schema backed by a Neo4j 
 Install a GraphQL server package to host your schema and allow the execution of queries and mutations against it.
 The https://www.apollographql.com/docs/apollo-server/[`@apollo/server`] is the default package for Apollo Server.
 
-Set up a https://neo4j.com[Neo4j database].
-Make sure it fulfills the xref::index.adoc#_requirements[requirements], including the necessary plugins.
-Populate the database, for example with the Northwind dataset, available link::https://neo4j.com/docs/getting-started/appendix/example-data/[here].
 
+=== Add GraphQL type definitions
 
-== Set GraphQL type definitions
+The Neo4j GraphQL Library is driven by type definitions which map to the nodes and relationships in your Neo4j database.
+Open the file `index.js` from xref:#_set_up_a_directory[] in your editor and paste the following type definitions alongside the necessary package imports:
 
-The Neo4j GraphQL Library is driven by type definitions which map to the nodes and relationships in your Neo4j database. 
-To get started, use a simple example with two node types, one with label "Actor" and the other "Movie":
-
-. Open the file `index.js` from xref:#_create_a_new_project[] in your editor and write your type definitions. 
-Add all the necessary package imports:
-+
 [source, javascript, indent=0]
 ----
 import { ApolloServer } from '@apollo/server';
@@ -90,28 +213,14 @@ const typeDefs = `#graphql
     }
 `;
 ----
-+
-Note that these type definitions only define the node labels "Product" and "Category", and a relationship "PART_OF" between the two. 
-When the schema is generated, you can then execute queries for `actors` and `movies` to read data from the database.
 
-. Alternatively, you automatically generate type definitions from an existing database by xref::introspector.adoc[introspecting the schema].
+These type definitions only define the node labels "Product" and "Category", and a relationship "PART_OF" between the two. 
+When the schema has been generated, you can execute queries for `products` and `category` to read data from the database.
 
-
-== Create an instance of `Neo4jGraphQL`
-
-To create an instance of the Neo4j GraphQL Library, you need a Neo4j driver to connect to your database.
+Note that you can alternatively generate type definitions automatically from an existing database by xref::introspector.adoc[introspecting the schema].
 
 
-=== Using AuraDB
-
-. For an AuraDB database, https://neo4j.com/cloud/platform/aura-graph-database/?ref=docs-graphql[create an instance].
-
-. Make sure to save the generated password and the connection URI provided after the instance is ready and looking similar to this:
-+
-image::neo4j-aura-dashboard.png[width=500]
-
-
-=== Using a Neo4j database
+=== Create an instance of `Neo4jGraphQL`
 
 For a database located at the default "neo4j://localhost:7687" (see more about https://neo4j.com/docs/operations-manual/current/configuration/ports[port configuration]), with the username "username" and the password "password", add the following to the bottom of your `index.js` file:
 
@@ -126,7 +235,7 @@ const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
 ----
 
 
-== Create an instance of `ApolloServer`
+=== Create an instance of `ApolloServer`
 
 To create an Apollo Server instance using the generated schema, in which you can execute queries against it, add the following to the bottom of `index.js`:
 
@@ -144,9 +253,9 @@ console.log(`🚀 Server ready at ${url}`);
 ----
 
 
-== Start the server
+=== Start the server
 
-Make sure that your `index.js` file looks like this:
+Make sure that your `index.js` file looks like this full example:
 
 [source, javascript]
 ----
@@ -156,14 +265,14 @@ import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
 const typeDefs = `#graphql
-    type Movie @node {
-        title: String
-        actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
+    type Product @node {
+        productName: String
+        category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
     }
 
-    type Actor @node {
-        name: String
-        movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+    type Category @node {
+        categoryName: String
+        products: [Product!]! @relationship(type: "PART_OF", direction: IN)
     }
 `;
 
@@ -204,51 +313,49 @@ If successful, you should see the following output:
 The address http://localhost:4000/ is the URL where the Apollo Server starts.
 
 
-== Create nodes in the database
+=== Create nodes in the database
 
 . Visit http://localhost:4000/ in your web browser. 
-You should get redirected to the Apollo Sandbox:
-+
-image::apollo-server-landing-page.png[]
+You should get redirected to the Apollo Sandbox.
 
 . At the moment your database is empty. 
-To start adding data, copy and paste the following mutation to the Operation panel to create a movie and an actor in that movie:
+To start adding data, copy and paste the following mutation to the **Operation** panel to create a movie and an actor in that movie:
 +
 [source, graphql, indent=0]
 ----
 mutation {
-  createMovies(
+  createProducts(
     input: [
       {
-        title: "Forrest Gump"
-        actors: { create: [{ node: { name: "Tom Hanks" } }] }
+        productName: "New Product"
+        category: { create: [{ node: { categoryName: "New Category" } }] }
       }
     ]
   ) {
-    movies {
-      title
-      actors {
-        name
+    products {
+      productName
+      category {
+        categoryName
       }
     }
   }
 }
 ----
 
-. Click the "Run" button on the top right. 
-You should get the following confirmation that the data has been created in the database in the Response panel:
+. Use **Run** on the top right. 
+You should get the following confirmation that the data has been created in the database in the **Response** panel:
 +
 [source, json, indent=0]
 ----
 {
   "data": {
-    "createMovies": {
-      "movies": [
+    "createProducts": {
+      "products": [
         {
-          "title": "Forrest Gump",
-          "actors": [
+          "title": "New Product",
+          "category": [
             {
-              "name": "Tom Hanks"
+              "name": "New Category"
             }
           ]
         }
@@ -258,33 +365,33 @@ You should get the following confirmation that the data has been created in the 
 }
 ----
 
-. Query the data which you just added. 
-Copy and paste the following query to the Operations panel:
+. Query the data you just added. 
+Copy and paste the following query to the **Operations** panel:
 +
 [source, graphql, indent=0]
 ----
 query {
-  movies {
-    title
-    actors {
-      name
+  products {
+    productName
+    category {
+      categoryName
     }
   }
 }
 ----
 +
-Since you only created one "Movie" node and one "Actor", the Response panel shows the following:
+Since you only created one "Product" node and one "Category" node, the **Response** panel shows the following:
 +
 [source, json, indent=0]
 ----
 {
   "data": {
-    "movies": [
+    "products": [
       {
-        "title": "Forrest Gump",
-        "actors": [
+        "productName": "New Product",
+        "category": [
           {
-            "name": "Tom Hanks"
+            "categoryName": "New Category"
           }
         ]
       }
@@ -293,14 +400,11 @@ Since you only created one "Movie" node and one "Actor", the Response panel show
 }
 ----
 
-
-== Conclusion
-
 This concludes the tutorial.
-By now, you should have a GraphQL API connected to a Neo4j database, to which you added two nodes. 
+You now have a GraphQL API connected to a Neo4j database and you have added two nodes. 
 
-To learn more, keep reading the documentation about xref:queries-aggregations/index.adoc[Queries and aggregations] or alternatively learn how to use the xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox].
-For more advanced database settings, refer to the xref:driver-configuration.adoc[Driver configuration] page.
+To learn more, see xref:queries-aggregations/index.adoc[Queries and aggregations] and xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox].
+For more advanced database settings, refer to xref:driver-configuration.adoc[Driver configuration].
 
 // Edit at: https://github.com/neo4j-graphacademy/courses/blob/main/asciidoc/courses/graphql-basics/promo.adoc
 include::https://raw.githubusercontent.com/neo4j-graphacademy/courses/main/asciidoc/courses/graphql-basics/promo.adoc[]

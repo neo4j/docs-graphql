@@ -73,7 +73,8 @@ Additionally, prerelease version numbers may have additional suffixes, for examp
 
 == Requirements
 
-. https://neo4j.com/deployment-center/#gdb-selfmanaged[Neo4j Database] or https://neo4j.com/product/auradb/[Neo4j AuraDB] version 5.x with APOC core plugin. Note that with version 5.15 or higher you are using using the xref:/directives/indexes-and-constraints.adoc#_vector_index_search[`@vector` directive].
+. https://neo4j.com/product/auradb/[Neo4j AuraDB] version 5.x with APOC core plugin or https://neo4j.com/deployment-center/#gdb-selfmanaged[Neo4j Database].
+Note that version 5.15 or higher is required to use the xref:/directives/indexes-and-constraints.adoc#_vector_index_search[`@vector` directive].
 . https://nodejs.org/en/[Node.js] 20+.
 
 
