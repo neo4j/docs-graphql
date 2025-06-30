@@ -192,7 +192,7 @@ The address http://localhost:4000/ is the URL where the Apollo Server starts.
 You should get redirected to the Apollo Sandbox.
 
 . At the moment your database is empty. 
-To start adding data, copy and paste the following mutation to the **Operation** panel to create a movie and an actor in that movie:
+To start adding data, copy and paste the following mutation to the **Operation** panel to create a product and a category in that product:
 +
 [source, graphql, indent=0]
 ----

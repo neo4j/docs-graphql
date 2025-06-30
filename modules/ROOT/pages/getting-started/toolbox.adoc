@@ -12,6 +12,7 @@ With it, you can:
 . Build the Neo4j GraphQL schema.
 . Experiment, query, and play.
 
+
 == Connect to a Neo4j database
 
 Before you start using the Toolbox, make sure you have followed all xref:index.adoc#_requirements[requirements] to run a Neo4j database.
@@ -21,7 +22,7 @@ You can use https://neo4j.com/docs/desktop-manual/current/[Neo4j Desktop] or htt
 
 . Set your type definitions directly in the Toolbox editor or introspect the Neo4j database you connected to.
 +
-If you followed one of the xref:getting-started/index.adoc[Getting started tutorials], you should see these type definitions in the GraphQL Toolbox:
+If you followed the xref:getting-started/graphql-self-hosted.adoc[self-hosted GraphQL tutorial], you should see these type definitions in the GraphQL Toolbox:
 +
 [source, graphql, indent=0]
 ----
