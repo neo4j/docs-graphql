@@ -1,0 +1,161 @@
+= GraphQL and Aura Console
+
+This tutorial shows you how to create and use a GraphQL Data API in Aura Console.
+
+
+== Create a GraphQL Data API
+
+In the Aura Console, select **Data services** > **Data APIs** from the left side navigation.
+Use **Create API**.
+
+
+=== Details
+
+Provide a name for your new API as well the instance data for the instance you want to use under **Details**.
+
+[CAUTION]
+====
+If you set **Enable introspection** and **Enable field suggestions** for production systems the information they provide can be used by malicious actors to reverse-engineer your GraphQL schema and execute arbitrary operations.
+
+**Enable introspection** allows you to query the schema and discover the available queries, mutations, subscriptions, types and fields in the GraphQL API.
+
+**Enable field suggestions** provides suggestions that hint towards GraphQL typos.
+Even with just field suggestions enabled, it is possible for a malicious actor to discover your entire schema.
+====
+
+
+=== Type definitions
+
+Write or paste your **Type definitions**, for example:
++
+[source, graphql, indent=0]
+----
+type Product @node {
+    productName: String
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+}
+
+type Category @node {
+    categoryName: String
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+----
+
+The type definitions describe what parts of the graph database in the AuraDB are accessible by requests made via the GraphQL API.
+
+If you already have data in the AuraDB, you can obtain your type definitions via the https://graphql-toolbox.neo4j.io[Neo4j GraphQL Toolbox].
+The toolbox can connect to the AuraDB and automatically create type definitions and allow GraphQL operations.
+
+//link
+If you are using GraphQL Federation then make sure to select **Enable GraphQL subgraph**.
+
+
+=== Cross-Origin Resource Sharing (CORS) policy
+
+To use your GraphQL API with a browser-based application, add an entry in your Cross-Origin Resource Sharing (CORS) policy.
+CORS is a browser-based security mechanism that prevents web pages from accessing resources from a server with a different origin.
+
+Add the URL `http://localhost:4000/` to the **Origin** box to enable the use of https://studio.apollographql.com/[Apollo Studio].
+If you need multiple entries, select **Add allowed origin**.
+
+[NOTE]
+====
+The URL entered in the CORS policy must be an exact match.
+`http://localhost` is not the same as `http://localhost:4000/`.
+Wildcards are not supported.
+====
+
+
+=== Authentication providers
+
+All requests to the GraphQL API are authenticated and there are two options for the type of authentication: API key or JSON Web Key Set (JWKS).
+It is possible to use these in combination and have multiples of each.
+
+Select an authentication provider from the dropdown list and enter a name.
+
+The API key will be shown after the GraphQL API key has been created, see below.
+If you are using JWKS, provide a name and the URL from your identity provider that is used to verify JWKS tokens.
+
+Add more more providers via **Add authentication provider**.
+Remove authentication providers via the trash icon.
+
+[CAUTION]
+====
+It is not recommended to use API keys with user-facing applications that are using the GraphQL API.
+This is due to the risk of the API key being visible to malicious users and very little control over GraphQL operations.
+
+A 3rd party identity provider with JWKS provides better security and allows for granular security rules, based on information within the JWKS token, to be defined within the type definitions to control GraphQL operations.
+====
+
+
+=== Sizing
+
+Sizing a GraphQL API is based on the size and complexity of the type definitions and the expected workload.
+Larger sizes have a higher hourly cost.
+If the cost is not displayed, refer to the agreement you have with Neo4j.
+
+Select **Create** to proceed and create the GraphQL API.
+
+
+== API key
+
+If you chose to use an API key with the GraphQL API it is now displayed.
+Store this information securely as it cannot be retrieved again.
+Select **I understand** and then **Close** once you have done this.
+
+The GraphQL API will now be provisioned.
+You can see the status via **Data APIs** from the left side navigation.
+When the status changes to "Ready", the API is ready to use.
+If it has a status of 'Error', use the three dots icon and **Edit** from the menu to change the configuration.
+
+
+== Usage
+
+When the status for the GraphQL API is "Ready" you can send GraphQL requests to it.
+As all requests are subject to authentication, you must include an API key or JWT token.
+
+With cURL, requests have the following format:
+
+[source, bash, indent=0]
+----
+curl --location <YOUR_GRAPHQL_API_URL> --header 'Content-Type: application/json' --header 'x-api-key: <YOUR_API_KEY>' --data '<YOUR_GRAPHQL_QUERY>'
+----
+
+[source, bash, indent=0]
+----
+curl --location <YOUR_GRAPHQL_API_URL> --header 'Authorization: Bearer <YOUR_JWT>'--header 'Content-Type: application/json --data '<YOUR_GRAPHQL_QUERY>'
+----
+
+
+=== Create nodes in the database
+
+On the command line, execute:
+
+[source, bash, indent=0]
+----
+curl --location  --header 'Content-Type: application/json' --header 'x-api-key: <YOUR_API_KEY>' --data '<YOUR_GRAPHQL_QUERY>'
+curl --location <YOUR_GRAPHQL_API_URL> --header 'Content-Type: application/json' --header 'x-api-key: <YOUR_API_KEY>' --data '{ "query": "mutation { createProducts( input: [ { productName: \"New Product\" category: { create: [{ node: { categoryName: \"New Category\" } }] } } ] ) { products { productName category { categoryName } } }}" }'
+----
+
+Verify by querying the data you just added:
+
+[source, bash, indent=0]
+----
+curl --location https://4ea54ef6-graphql.production-orch-0969.neo4j.io/graphql --header 'Content-Type: application/json' --header 'x-api-key: dG0K4gBjDx4XEHpP0Ca7rKzToSUE3VcU' --data '{ "query": "query { products { productName category { categoryName } }}" }'
+----
+
+You should see this:
+
+[source, bash, indent=0]
+----
+{"data":{"products":[{"productName":"New Product","category":[{"categoryName":"New Category"}]}]}}
+----
+
+This concludes the tutorial.
+You now have a GraphQL Data API connected to a Neo4j AuraDB and you have added two nodes. 
+
+To learn more, see xref:queries-aggregations/index.adoc[Queries and aggregations] and xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox].
+For more advanced database settings, refer to xref:driver-configuration.adoc[Driver configuration].
+
+// Edit at: https://github.com/neo4j-graphacademy/courses/blob/main/asciidoc/courses/graphql-basics/promo.adoc
+include::https://raw.githubusercontent.com/neo4j-graphacademy/courses/main/asciidoc/courses/graphql-basics/promo.adoc[]

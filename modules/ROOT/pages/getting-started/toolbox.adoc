@@ -21,21 +21,22 @@ You can use https://neo4j.com/docs/desktop-manual/current/[Neo4j Desktop] or htt
 
 . Set your type definitions directly in the Toolbox editor or introspect the Neo4j database you connected to.
 +
-If you followed the xref:getting-started/index.adoc[Getting started tutorial], you should see these type definitions in the GraphQL Toolbox:
+If you followed one of the xref:getting-started/index.adoc[Getting started tutorials], you should see these type definitions in the GraphQL Toolbox:
 +
 [source, graphql, indent=0]
 ----
-type Actor @node {
-  actedInMovies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
-  name: String!
+type Product @node {
+    productName: String
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
 }
 
-type Movie @node {
-  actorsActedIn: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-  title: String!
+type Category @node {
+    categoryName: String
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
 }
 ----
 +
+// new screenshot
 image::toolbox-schema-view.png[GraphQL Toolbox schema view]
 
 . Click the button "Build schema" and then go to the Query editor tab. 
@@ -45,19 +46,20 @@ image::toolbox-schema-view.png[GraphQL Toolbox schema view]
 [source, graphql, indent=0]
 ----
 {
-  actors {
-    name
+  products {
+    productName
   }
 }
 ----
 +
+// new screenshot
 image::toolbox-editor-view.png[GraphQL Toolbox editor view]
 
-The query returns the name of the single actor in the database:
+The query returns the name of the single product in the database:
 
 [source, graphql, indent=0]
 ----
-{ "data": { "actors": [{ "name": "Tom Hanks" }] } }
+{ "data": { "products": [{ "productName": "New Product" }] } }
 ----
 
 == Store type definitions as favorite
@@ -66,4 +68,5 @@ You can store your type definitions as favorites and access a range of settings 
 
 . Go to the Type definitions tab and click on the star icon to save it as a favorite:
 +
+//new screenshot
 image:toolbox-favorite.png[Save a type definition as favorite]

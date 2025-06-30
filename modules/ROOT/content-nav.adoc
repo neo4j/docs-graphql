@@ -3,6 +3,8 @@
 * *Getting started*
 
 * xref:getting-started/index.adoc[]
+** xref:getting-started/graphql-aura.adoc[]
+** xref:getting-started/graphql-self-hosted.adoc[]
 * xref:getting-started/toolbox.adoc[]
 
 * *Reference*

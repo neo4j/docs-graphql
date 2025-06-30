@@ -1,0 +1,283 @@
+= Self-hosting GraphQL
+
+This tutorial shows you how to:
+
+- Install the Neo4j GraphQL Library and its dependencies.
+- Set type definitions that represent the structure of your graph database.
+- Start an instance of the library to generate a GraphQL schema.
+- Run an instance of a server to execute queries and mutations against your schema.
+
+
+== Prerequisites
+
+- The tutorial assumes familiarity with the command line and JavaScript.
+- Make sure that you have a recent version of Node.js installed.
+- The examples use the default `npm` package manager, but you can use other package managers.
+- Set up a https://neo4j.com[Neo4j database].
+Make sure it fulfills the xref::index.adoc#_requirements[requirements], including the necessary plugins.
+//Populate the database, for example with the Northwind dataset, available link::https://neo4j.com/docs/getting-started/appendix/example-data/[here].
+//The tutorial examples refer to this dataset.
+
+
+== Set up a directory
+
+. Create a new directory and `cd` into it:
++
+[source, bash, indent=0]
+----
+mkdir neo4j-graphql-example
+cd neo4j-graphql-example
+----
++
+. Create a new Node.js project (with ESM modules enabled by using the es6 option):
++
+[source, bash, indent=0]
+----
+npm init es6 --yes
+----
++
+. Create an empty `index.js` file which will contain all of the code for this tutorial:
++
+[source, bash, indent=0]
+----
+touch index.js
+----
+
+
+== Install dependencies
+
+Install the Neo4j GraphQL Library and its dependencies with:
+
+[source, bash, indent=0]
+----
+npm install @neo4j/graphql graphql neo4j-driver @apollo/server
+----
+
+- `@neo4j/graphql` is the official Neo4j GraphQL Library package.
+It takes your GraphQL type definitions and generates a schema backed by a Neo4j database.
+- `graphql` is the package used to generate a schema and execute queries and mutations.
+- `neo4j-driver` is the official Neo4j Driver package for JavaScript, of which an instance must be passed into the Neo4j GraphQL Library.
+
+Install a GraphQL server package to host your schema and allow the execution of queries and mutations against it.
+The https://www.apollographql.com/docs/apollo-server/[`@apollo/server`] is the default package for Apollo Server.
+
+
+== Add GraphQL type definitions
+
+The Neo4j GraphQL Library is driven by type definitions which map to the nodes and relationships in your Neo4j database.
+Open the file `index.js` from xref:#_set_up_a_directory[] in your editor and paste the following type definitions alongside the necessary package imports:
+
+[source, javascript, indent=0]
+----
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+    type Product @node {
+        productName: String
+        category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+    }
+
+    type Category @node {
+        categoryName: String
+        products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+    }
+`;
+----
+
+These type definitions only define the node labels "Product" and "Category", and a relationship "PART_OF" between the two. 
+When the schema has been generated, you can execute queries for `products` and `category` to read data from the database.
+
+Note that you can alternatively generate type definitions automatically from an existing database by xref::introspector.adoc[introspecting the schema].
+
+
+== Create an instance of `Neo4jGraphQL`
+
+For a database located at the default "neo4j://localhost:7687" (see more about https://neo4j.com/docs/operations-manual/current/configuration/ports[port configuration]), with the username "username" and the password "password", add the following to the bottom of your `index.js` file:
+
+[source, javascript, indent=0]
+----
+const driver = neo4j.driver(
+    "neo4j://localhost:7687",
+    neo4j.auth.basic("username", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
+----
+
+
+== Create an instance of `ApolloServer`
+
+To create an Apollo Server instance using the generated schema, in which you can execute queries against it, add the following to the bottom of `index.js`:
+
+[source, javascript, indent=0]
+----
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+const { url } = await startStandaloneServer(server, {
+    listen: { port: 4000 },
+});
+
+console.log(`🚀 Server ready at ${url}`);
+----
+
+
+== Start the server
+
+Make sure that your `index.js` file looks like this full example:
+
+[source, javascript]
+----
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+    type Product @node {
+        productName: String
+        category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+    }
+
+    type Category @node {
+        categoryName: String
+        products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+    }
+`;
+
+const driver = neo4j.driver(
+    "neo4j://localhost:7687",
+    neo4j.auth.basic("username", "password")
+);
+
+const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+const { url } = await startStandaloneServer(server, {
+    context: async ({ req }) => ({ req }),
+    listen: { port: 4000 },
+});
+
+console.log(`🚀 Server ready at ${url}`);
+----
+
+You are ready to start up your GraphQL server. 
+Back in the command line, run:
+
+[source, bash, indent=0]
+----
+node index.js
+----
+
+If successful, you should see the following output:
+
+[source, bash, indent=0]
+----
+🚀 Server ready at http://localhost:4000/
+----
+
+The address http://localhost:4000/ is the URL where the Apollo Server starts.
+
+
+== Create nodes in the database
+
+. Visit http://localhost:4000/ in your web browser. 
+You should get redirected to the Apollo Sandbox.
+
+. At the moment your database is empty. 
+To start adding data, copy and paste the following mutation to the **Operation** panel to create a movie and an actor in that movie:
++
+[source, graphql, indent=0]
+----
+mutation {
+  createProducts(
+    input: [
+      {
+        productName: "New Product"
+        category: { create: [{ node: { categoryName: "New Category" } }] }
+      }
+    ]
+  ) {
+    products {
+      productName
+      category {
+        categoryName
+      }
+    }
+  }
+}
+----
+
+. Use **Run** on the top right. 
+You should get the following confirmation that the data has been created in the database in the **Response** panel:
++
+[source, json, indent=0]
+----
+{
+  "data": {
+    "createProducts": {
+      "products": [
+        {
+          "productName": "New Product",
+          "category": [
+            {
+              "categoryName": "New Category"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+----
+
+. Query the data you just added. 
+Copy and paste the following query to the **Operations** panel:
++
+[source, graphql, indent=0]
+----
+query {
+  products {
+    productName
+    category {
+      categoryName
+    }
+  }
+}
+----
++
+Since you only created one "Product" node and one "Category" node, the **Response** panel shows the following:
++
+[source, json, indent=0]
+----
+{
+  "data": {
+    "products": [
+      {
+        "productName": "New Product",
+        "category": [
+          {
+            "categoryName": "New Category"
+          }
+        ]
+      }
+    ]
+  }
+}
+----
+
+This concludes the tutorial.
+You now have a GraphQL API connected to a Neo4j database and you have added two nodes. 
+
+To learn more, see xref:queries-aggregations/index.adoc[Queries and aggregations] and xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox].
+For more advanced database settings, refer to xref:driver-configuration.adoc[Driver configuration].
+
+// Edit at: https://github.com/neo4j-graphacademy/courses/blob/main/asciidoc/courses/graphql-basics/promo.adoc
+include::https://raw.githubusercontent.com/neo4j-graphacademy/courses/main/asciidoc/courses/graphql-basics/promo.adoc[]
