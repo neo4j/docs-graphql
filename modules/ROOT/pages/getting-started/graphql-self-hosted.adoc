@@ -15,8 +15,6 @@ This tutorial shows you how to:
 - The examples use the default `npm` package manager, but you can use other package managers.
 - Set up a https://neo4j.com[Neo4j database].
 Make sure it fulfills the xref::index.adoc#_requirements[requirements], including the necessary plugins.
-//Populate the database, for example with the Northwind dataset, available link::https://neo4j.com/docs/getting-started/appendix/example-data/[here].
-//The tutorial examples refer to this dataset.
 
 
 == Set up a directory

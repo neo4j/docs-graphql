@@ -5,8 +5,7 @@ This tutorial shows you how to create and use a GraphQL Data API in Aura Console
 
 == Create a GraphQL Data API
 
-In the Aura Console, select **Data services** > **Data APIs** from the left side navigation.
-Use **Create API**.
+In the Aura Console, select **Data services** > **Data APIs** from the left side navigation and then **Create API**.
 
 
 === Details
@@ -43,11 +42,10 @@ type Category @node {
 
 The type definitions describe what parts of the graph database in the AuraDB are accessible by requests made via the GraphQL API.
 
-If you already have data in the AuraDB, you can obtain your type definitions via the https://graphql-toolbox.neo4j.io[Neo4j GraphQL Toolbox].
+Alternatively, if you already have data in the AuraDB, you can obtain your type definitions via the https://graphql-toolbox.neo4j.io[Neo4j GraphQL Toolbox].
 The toolbox can connect to the AuraDB and automatically create type definitions and allow GraphQL operations.
 
-//link
-If you are using GraphQL Federation then make sure to select **Enable GraphQL subgraph**.
+If you are using link:https://graphql.org/learn/federation/[GraphQL Federation] then make sure to select **Enable GraphQL subgraph**.
 
 
 === Cross-Origin Resource Sharing (CORS) policy
@@ -71,9 +69,7 @@ All requests to the GraphQL API are authenticated and there are two options for 
 It is possible to use these in combination and have multiples of each.
 
 Select **API Key** from the dropdown list and enter a name.
-
 The API key will be shown after the GraphQL API key has been created.
-
 
 [CAUTION]
 ====
@@ -105,8 +101,7 @@ You can see the status via **Data APIs** from the left side navigation.
 
 == Create nodes in the database
 
-When the status for the GraphQL API is "Ready" you can send GraphQL requests to it.
-As all requests are subject to authentication, you must include the API key.
+When the status for the GraphQL API is **Ready** you can send GraphQL requests to it.
 
 
 === Via cURL
