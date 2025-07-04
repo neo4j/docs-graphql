@@ -26,7 +26,6 @@ Even with just field suggestions enabled, it is possible for a malicious actor t
 === Type definitions
 
 Paste these **Type definitions**:
-+
 [source, graphql, indent=0]
 ----
 type Product @node {
@@ -108,28 +107,28 @@ When the status for the GraphQL API is **Ready** you can send GraphQL requests t
 
 [source, bash, indent=0]
 ----
-curl --location <YOUR_GRAPHQL_API_URL> --header 'Content-Type: application/json' --header 'x-api-key: <YOUR_API_KEY>' --data '<YOUR_GRAPHQL_QUERY>'
+curl --location <YOUR_GRAPHQL_API_URL> --header 'Content-Type: application/json' --header 'x-api-key: <YOUR_API_KEY>' --data '{ "query": "<YOUR_GRAPHQL_QUERY>" }'
 ----
 
 On the command line, execute:
 
 [source, bash, indent=0]
 ----
-curl --location <YOUR_GRAPHQL_API_URL> --header 'Content-Type: application/json' --header 'x-api-key: <YOUR_API_KEY>' --data '{ "query": "mutation { createProducts( input: [ { productName: \"New Product\" category: { create: [{ node: { categoryName: \"New Category\" } }] } } ] ) { products { productName category { categoryName } } }}" }'
+curl --location <YOUR_GRAPHQL_API_URL> --header 'Content-Type: application/json' --header 'x-api-key: <YOUR_API_KEY>' --data '{ "query": "mutation { createProducts( input: [ { productName: \"New Product\" category: { create: [ { node: { categoryName: \"New Category\" } } ] } } ] ) { products { productName category { categoryName } } } }" }'
 ----
 
 Verify by querying the data you just added:
 
 [source, bash, indent=0]
 ----
-curl --location https://4ea54ef6-graphql.production-orch-0969.neo4j.io/graphql --header 'Content-Type: application/json' --header 'x-api-key: dG0K4gBjDx4XEHpP0Ca7rKzToSUE3VcU' --data '{ "query": "query { products { productName category { categoryName } }}" }'
+curl --location <YOUR_GRAPHQL_API_URL> --header 'Content-Type: application/json' --header 'x-api-key: <YOUR_API_KEY>' --data '{ "query": "query { products { productName category { categoryName } } }" }'
 ----
 
 You should see this:
 
 [source, bash, indent=0]
 ----
-{"data":{"products":[{"productName":"New Product","category":[{"categoryName":"New Category"}]}]}}
+{ "data": { "products": [ { "productName": "New Product", "category": [{ "categoryName": "New Category" }] } ] } } 
 ----
 
 
