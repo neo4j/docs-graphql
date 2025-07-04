@@ -221,9 +221,9 @@ a|
 |===
 ====
 
-=== `_POP`
+=== `pop`
 
-`_POP` expects a single `Int` value as input.
+`pop` expects a single `Int` value as input.
 
 Consider the following type definitions, a `Movie` with a property array called `tags`:
 
@@ -237,7 +237,7 @@ type Movie @node {
 
 You can pop from this `tags` property array:
 
-.Mutation with a single `_POP`
+.Mutation with a single `pop`
 ====
 [source, graphql, indent=0]
 ----
@@ -268,7 +268,7 @@ tags: ['a', 'b']
 
 Or, for more than one property from the array:
 
-.Mutation with two `_POP`
+.Mutation with two `pop`
 ==== 
 [source, graphql, indent=0]
 ----
@@ -311,7 +311,7 @@ type Movie @node {
 
 Then, you can pop from both the `tags` and `moreTags` property arrays:
 
-.Mutation with `_POP` from two different arrays
+.Mutation with `pop` from two different arrays
 ====
 [source, graphql, indent=0]
 ----
