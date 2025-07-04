@@ -65,9 +65,9 @@ Wildcards are not supported.
 === Authentication providers
 
 All requests to the GraphQL API are authenticated and there are two options for the type of authentication: API key or JSON Web Key Set (JWKS).
-It is possible to use these in combination and have multiples of each.
+It is possible to set up multiple authentication providers and select a different one for each request.
 
-Select **API Key** from the dropdown list and enter a name.
+For the purpose of this tutorial, avoid setting up a JWKS endpoint, select **API Key** from the dropdown list and enter a name.
 The API key will be shown after the GraphQL API key has been created.
 
 [CAUTION]
