@@ -11,7 +11,7 @@ This tutorial shows you how to:
 == Prerequisites
 
 - The tutorial assumes familiarity with the command line and JavaScript.
-- Make sure that you have a recent version of Node.js installed.
+- Make sure that you have https://nodejs.org/en/[Node.js] 20+ installed.
 - The examples use the default `npm` package manager, but you can use other package managers.
 - Set up a https://neo4j.com[Neo4j database].
 Make sure it fulfills the xref::index.adoc#_requirements[requirements], including the necessary plugins.

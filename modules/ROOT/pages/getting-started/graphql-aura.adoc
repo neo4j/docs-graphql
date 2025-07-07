@@ -134,7 +134,7 @@ You should see this:
 
 === Via Apollo Server
 
-. On the https://studio.apollographql.com/[Apollo Studio] website, paste your GraphQL Data API URL to the **Sandbox** input.
+. On the https://studio.apollographql.com/sandbox/explorer[Apollo Studio] website, paste your GraphQL Data API URL to the **Sandbox** input.
 . Use the cog icon and add `x-api-key` and the API key for your data API under **Shared headers** and **Save**.
 . To start adding data, copy and paste the following mutation to the **Operation** panel to create a product and category in that product:
 +

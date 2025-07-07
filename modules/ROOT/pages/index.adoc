@@ -36,7 +36,7 @@ The Neo4j GraphQL Library features:
 
 // Modify link below and add info about aura graphql
 
-In xref::getting-started/graphql-aura.adoc[] as well as xref::getting-started/graphql-self-hosted.adoc[], Apollo Server is used to host the GraphQL schema, so you can interact directly with your API with no frontend.
+In xref::getting-started/graphql-aura.adoc[] as well as xref::getting-started/graphql-self-hosted.adoc[], a GraphQL server is used to serve the GraphQL schema, so you can interact directly with your API with no frontend.
 In case you prefer to use frontend frameworks, these are some clients that interact with GraphQL APIs:
 
 - https://reactjs.org/[React] - support through https://www.apollographql.com/docs/react/[Apollo Client]
@@ -71,9 +71,7 @@ Additionally, prerelease version numbers may have additional suffixes, for examp
 
 == Requirements
 
-. https://neo4j.com/product/auradb/[Neo4j AuraDB] version 5.x with APOC core plugin or https://neo4j.com/deployment-center/#gdb-selfmanaged[Neo4j Database].
-Note that version 5.15 or higher is required to use the xref:/directives/indexes-and-constraints.adoc#_vector_index_search[`@vector` directive].
-. https://nodejs.org/en/[Node.js] 20+.
+. https://neo4j.com/product/auradb/[Neo4j AuraDB] version 2025.x or https://neo4j.com/deployment-center/#gdb-selfmanaged[Neo4j Database] running the latest 5.x version or above with the APOC core plugin.
 
 
 == Resources
