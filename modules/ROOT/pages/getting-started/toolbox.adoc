@@ -40,6 +40,11 @@ type Category @node {
 
 image::toolbox-schema-view.png[GraphQL Toolbox schema view]
 
+[NOTE]
+====
+If you modified your database after following the xref:getting-started/graphql-self-hosted.adoc[self-hosted GraphQL tutorial], you may see different introspection results.
+====
+
 
 == Build the schema and query the database
 

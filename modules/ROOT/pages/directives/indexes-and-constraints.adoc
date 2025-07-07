@@ -168,6 +168,11 @@ query {
 [#_vector_index_search]
 == `@vector`
 
+[NOTE]
+====
+Data APIs created in Aura Console currently do not support the `@vector` directive. 
+====
+
 With the `@vector` GraphQL directive you can query your database to perform a vector index search.
 Queries are performed by passing in either a vector index or a query phrase.
 

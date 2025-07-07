@@ -25,16 +25,13 @@ The Neo4j GraphQL Library features:
 - xref::/types/index.adoc[Types], including temporal and spatial.
 - Support for both node and relationship properties.
 - Extensibility through the xref::/directives/custom-logic.adoc#_cypher[`@cypher` directive] and/or xref::/directives/custom-logic.adoc#_customresolver[Custom Resolvers].
-- Extensive xref::filtering.adoc[Filtering] and xref::queries-aggregations/sorting.adoc[Sorting] options.
+- Extensive xref::filtering.adoc[Filtering], xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination.adoc[Pagination] options.
 - Options for xref::/directives/database-mapping.adoc[Database mapping] and value xref::/directives/autogeneration.adoc[Autogeneration].
-- xref::/queries-aggregations/pagination.adoc[Pagination] options.
 - xref::/security/index.adoc[Security options] and additional xref::schema-configuration/index.adoc[Schema Configuration].
 - A xref::getting-started/toolbox.adoc[Toolbox] (UI) to experiment with your Neo4j GraphQL API on Neo4j Desktop.
 
 
 == Interaction
-
-// Modify link below and add info about aura graphql
 
 In xref::getting-started/graphql-aura.adoc[] as well as xref::getting-started/graphql-self-hosted.adoc[], a GraphQL server is used to serve the GraphQL schema, so you can interact directly with your API with no frontend.
 In case you prefer to use frontend frameworks, these are some clients that interact with GraphQL APIs:
@@ -47,8 +44,11 @@ In case you prefer to use frontend frameworks, these are some clients that inter
 == Deployment
 
 There are a variety of methods for deploying GraphQL APIs.
-In the xref::getting-started/index.adoc[Getting Started] guide, Apollo Server is being used for demonstration.
-You can check their own documentation about https://www.apollographql.com/docs/apollo-server/deployment[Deployment] for more details.
+
+With Aura Console, you can create and use a GraphQL API, see xref::getting-started/graphql-aura.adoc[].
+
+The xref::getting-started/graphql-self-hosted.adoc[] guide uses Apollo Server.
+You can check the Apollo documentation on https://www.apollographql.com/docs/apollo-server/deployment[Deployment] for more details.
 
 
 == Versioning

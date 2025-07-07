@@ -11,6 +11,7 @@ In the Aura Console, select **Data services** > **Data APIs** from the left side
 === Details
 
 Provide a name for your new API as well the instance data for the instance you want to use under **Details**.
+Also do **Enable introspection** and **Enable field suggestions** for use with xref:#_via_apollo_server[Apollo Server].
 
 [CAUTION]
 ====

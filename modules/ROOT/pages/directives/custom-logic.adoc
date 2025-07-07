@@ -498,6 +498,11 @@ type Journal implements Publication @node {
 
 == `@populatedBy`
 
+[NOTE]
+====
+Data APIs created in Aura Console currently do not support the `@populatedBy` directive. 
+====
+
 This directive is used to specify a callback function, which is executed during GraphQL query parsing,
 to populate fields which have not been provided within the input.
 
