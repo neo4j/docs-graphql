@@ -2,6 +2,11 @@
 
 This tutorial shows you how to create and use a GraphQL Data API in Aura Console.
 
+== Prerequisites
+
+Set up an AuraDB instance.
+Refer to link:https://neo4j.com/docs/aura/getting-started/create-instance/[Creating a Neo4j Aura instance].
+
 
 == Create a GraphQL Data API
 

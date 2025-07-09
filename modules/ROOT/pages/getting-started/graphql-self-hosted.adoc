@@ -105,6 +105,12 @@ const driver = neo4j.driver(
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
 ----
 
+[NOTE]
+====
+Hardcoding your credentials like this is not advisable because it exposes them to anyone who can access your source code.
+In a real application, protect your credentials.
+====
+
 
 == Create an instance of `ApolloServer`
 
