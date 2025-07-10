@@ -53,6 +53,7 @@
 * *How-To*
 
 * xref:driver-configuration.adoc[]
+* xref:northwind-api.adoc[]
 
 * *Products*
 

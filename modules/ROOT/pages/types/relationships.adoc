@@ -147,6 +147,7 @@ type Person @node {
 ----
 
 `queryDirection` can have the following values:
+
 * `DIRECTED`: only directed queries can be performed on this relationship.
 * `UNDIRECTED`: only undirected queries can be performed on this relationship.
 
@@ -335,4 +336,4 @@ type Post @node {
 ----
 
 The relationship at `User.posts` is considered a "many" relationship, which means it should always be of type `NonNullListType` and `NonNullNamedType`. 
-In other words, both the array and the type inside of a "many" relationship should have a `!`.
+In other words, both the array and the type inside of a "many" relationship must have a `!`.

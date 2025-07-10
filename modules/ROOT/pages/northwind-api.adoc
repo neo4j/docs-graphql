@@ -1,0 +1,81 @@
+[[northwind-api]]
+= Creating an API for the Northwind dataset
+:description: This tutorial builds an API around the Northwind sample dataset with the Neo4j GraphQL Library.
+
+This tutorial uses the Neo4j GraphQL Library to build an API for the Northwind sample datset.
+
+The Northwind set includes but is not limited to data about products, suppliers, orders and customers.
+This model lends itself for a webshop API.
+
+
+== Prerequisites
+
+. Set up a new AuraDB instance.
+Refer to link:https://neo4j.com/docs/aura/getting-started/create-instance/[Creating a Neo4j Aura instance].
+. Populate the instance with the Northwind dataset.
+.. In Aura, select **Learning**, then **Beginner** under **Getting started**.
+.. Select the **Learn the basics** tile and scroll to page 4/11 in the left side menu.
+.. Trigger the import with **Get the Northwind datset** and then **Run import** on the right hand side.
+
+[NOTE]
+====
+If you have completed the GraphQL and Aura Console getting started guide and would like to get rid of the example nodes you have created there, run the following in **Query**:
+
+[source,cypher]
+----
+MATCH (n) DETACH DELETE n;
+----
+====
+
+
+== Goal
+
+A webshop API which connects to the Northwind dataset should be able to:
+
+* Create new customers
+* Place orders
+* Calculate prices for orders
+* Filter products by supplier and category
+
+
+== Type definitions
+
+First, make the nodes and relationships from xref:#_goal[] available:
+
+[source, graphql, indent=0]
+----
+type Customer @node {
+    contactName: String!
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+
+type Order @node {
+    orderID: Int!
+    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
+    products: [Product!]! @relationship(type: "ORDERS", direction: OUT)
+}
+
+type Product @node {
+    productName: String!
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+    orders: [Product!]! @relationship(type: "ORDERS", direction: IN)
+    supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
+}
+
+type Category @node {
+    categoryName: String!
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+
+type Supplier @node {
+    supplierID: Int!
+    companyName: String!
+    products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
+}
+
+type ordersProperties @relationshipProperties {
+    unitPrice: Float!
+    quantity: Int!
+}
+----
+
