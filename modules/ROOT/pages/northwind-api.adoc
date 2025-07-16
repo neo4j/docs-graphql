@@ -361,3 +361,10 @@ Result:
   }
 }
 ----
+
+
+== Links
+
+* See xref:directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] for more on how to handle unique identifiers with the GraphQL Library
+* See xref:directives/database-mapping.adoc#_relationshipproperties[`@relationshipProperties`] for details on relationship properties accessed with the GraphQL Library
+* See xref:filtering.adoc[] for more information about how to apply filters with the GraphQL Library
