@@ -27,8 +27,8 @@ MATCH (n) DETACH DELETE n;
 .. In Aura, select **Learning**, then **Beginner** under **Getting started**.
 .. Select the **Learn the basics** tile and scroll to page 4/11 in the left side menu.
 .. Trigger the import with **Get the Northwind datset** and then **Run import** on the right hand side.
-. The code examples in xref:#_use_the_api[] are in JavaScript.
-
+//. The code examples in xref:#_use_the_api[] are in JavaScript.
+// Well, there are no examples yet.
 
 == Goal
 
