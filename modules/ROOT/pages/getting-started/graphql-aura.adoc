@@ -32,6 +32,7 @@ Even with just field suggestions enabled, it is possible for a malicious actor t
 === Type definitions
 
 Paste these **Type definitions**:
+
 [source, graphql, indent=0]
 ----
 type Product @node {

@@ -1,77 +1,79 @@
 [[index]]
 = Introduction
 :page-aliases: introduction.adoc
-:description: This section describes the Neo4j GraphQL Library.
+:description: An introduction to the Neo4j GraphQL Library.
 
-The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript library that enables rapid API development for cross-platform and mobile applications by tapping into the power of connected data.
+The Neo4j GraphQL Library is:
 
-With Neo4j as the graph database, the GraphQL Library makes it simple for applications to have data treated as a graph natively from the frontend all the way to storage.
-This avoids duplicate schema work and ensures flawless integration between frontend and backend developers.
+* highly flexible and low-code
+* open source
+* a JavaScript library
+* leveraging graph-native data
 
-If you are new to Neo4j and GraphQL take a look at xref:getting-started/index.adoc[Creating a new project] and xref:getting-started/toolbox.adoc[Neo4j GraphQL Toolbox] to learn the fundamentals of the Neo4j GraphQL Library and how to create GraphQL APIs backed by a Neo4j graph database.
-
+It enables rapid API development for cross-platform and mobile applications.
 
 == How it works
 
-The Neo4j GraphQL Library requires a set of type definitions that describes the shape of your graph data.
-It can generate an entire executable schema with all of the additional types needed to execute queries and mutations to interact with your Neo4j database.
+The Neo4j GraphQL Library requires a set of type definitions that describes the shape of your graph data and creates an API layer to communicate with the data.
 
-For every query and mutation that is executed against this generated schema, the Neo4j GraphQL Library generates a single Cypher query which is executed against the database.
-This eliminates the https://www.google.com/search?q=graphql+n%2B1[N+1 Problem], which can make GraphQL implementations slow and inefficient.
+It generates an entire executable schema with all additional types needed to execute queries and mutations to interact with your Neo4j database.
 
-The Neo4j GraphQL Library features:
+For example, consider these type definitions:
 
-- Automatic generation of xref::queries-aggregations/queries.adoc[Queries] and xref::mutations/index.adoc[Mutations] for CRUD interactions.
-- xref::/types/index.adoc[Types], including temporal and spatial.
-- Support for both node and relationship properties.
-- Extensibility through the xref::/directives/custom-logic.adoc#_cypher[`@cypher` directive] and/or xref::/directives/custom-logic.adoc#_customresolver[Custom Resolvers].
-- Extensive xref::filtering.adoc[Filtering], xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination.adoc[Pagination] options.
-- Options for xref::/directives/database-mapping.adoc[Database mapping] and value xref::/directives/autogeneration.adoc[Autogeneration].
-- xref::/security/index.adoc[Security options] and additional xref::schema-configuration/index.adoc[Schema Configuration].
-- A xref::getting-started/toolbox.adoc[Toolbox] (UI) to experiment with your Neo4j GraphQL API on Neo4j Desktop.
+[source, graphql, indent=0]
+----
+type Product @node {
+    productName: String
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+}
 
+type Category @node {
+    categoryName: String
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+----
 
-== Interaction
+Based on these type definitions, the library generates query and mutation templates to create new instances of the types as well as query existing instances.
 
-In xref::getting-started/graphql-aura.adoc[] as well as xref::getting-started/graphql-self-hosted.adoc[], a GraphQL server is used to serve the GraphQL schema, so you can interact directly with your API with no frontend.
-In case you prefer to use frontend frameworks, these are some clients that interact with GraphQL APIs:
+The following mutation creates a new product as well as a new category:
 
-- https://reactjs.org/[React] - support through https://www.apollographql.com/docs/react/[Apollo Client]
-- https://vuejs.org/[Vue.js] - support through https://apollo.vuejs.org/[Vue Apollo]
-- https://angularjs.org/[AngularJS] - support through https://apollo-angular.com/docs/[Apollo Angular].
+[source, graphql, indent=0]
+----
+mutation {
+  createProducts(
+    input: [
+      {
+        productName: "New Product"
+        category: { create: [{ node: { categoryName: "New Category" } }] }
+      }
+    ]
+  ) {
+    products {
+      productName
+      category {
+        categoryName
+      }
+    }
+  }
+}
+----
 
+Here is an example of how you can query existing data:
 
-== Deployment
+[source, graphql, indent=0]
+----
+query {
+  products {
+    productName
+    category {
+      categoryName
+    }
+  }
+}
+----
 
-There are a variety of methods for deploying GraphQL APIs.
-
-With Aura Console, you can create and use a GraphQL API, see xref::getting-started/graphql-aura.adoc[].
-
-The xref::getting-started/graphql-self-hosted.adoc[] guide uses Apollo Server.
-You can check the Apollo documentation on https://www.apollographql.com/docs/apollo-server/deployment[Deployment] for more details.
-
-
-== Versioning
-
-The Neo4j GraphQL Library uses https://semver.org/[Semantic Versioning]. 
-Given a version number `MAJOR.MINOR.PATCH`, the increment is based on:
-
-- `MAJOR` - incompatible API changes compared to the previous `MAJOR` version, for which you will likely have to migrate
-- `MINOR` - new features have been added in a backwards compatible manner
-- `PATCH` - bug fixes have been added in a backwards compatible manner.
-
-Additionally, prerelease version numbers may have additional suffixes, for example `MAJOR.MINOR.PATCH-PRERELEASE.NUMBER`, where `PRERELEASE` is one of the following:
-
-- `alpha` - unstable prerelease artifacts, and the API may change between releases during this phase
-- `beta` - feature complete prerelease artifacts, which will be more stable than `alpha` releases but will likely still contain bugs
-- `rc` - release candidate including artifacts to be promoted to a stable release, in a last effort to find trailing bugs.
-
-`NUMBER` in the suffix is simply an incrementing release number in each phase.
-
-
-== Requirements
-
-. https://neo4j.com/product/auradb/[Neo4j AuraDB] version 2025.x or https://neo4j.com/deployment-center/#gdb-selfmanaged[Neo4j Database] running the latest 5.x version or above with the APOC core plugin.
+See xref:using-the-library.adoc[] to learn how to use the GraphQL Library in your technology stack.
+Check out xref:getting-started/index.adoc[] to create a new project, either based on Neo4j Aura or self-hosted.
 
 
 == Resources

@@ -1,0 +1,46 @@
+= Using the library
+:description: Learn how to use the Neo4j GraphQL Library with your technology stack.
+
+== Library features
+
+The Neo4j GraphQL Library features:
+
+- Automatic generation of xref::queries-aggregations/queries.adoc[Queries] and xref::mutations/index.adoc[Mutations] for CRUD interactions.
+- xref::/types/index.adoc[Types], including temporal and spatial.
+- Support for both node and relationship properties.
+- Extensibility through the xref::/directives/custom-logic.adoc#_cypher[`@cypher` directive] and/or xref::/directives/custom-logic.adoc#_customresolver[Custom Resolvers].
+- Extensive xref::filtering.adoc[Filtering], xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination.adoc[Pagination] options.
+- Options for xref::/directives/database-mapping.adoc[Database mapping] and value xref::/directives/autogeneration.adoc[Autogeneration].
+- xref::/security/index.adoc[Security options] and additional xref::schema-configuration/index.adoc[Schema Configuration].
+- A xref::getting-started/toolbox.adoc[Toolbox] (UI) to experiment with your Neo4j GraphQL API on Neo4j Desktop.
+
+
+== Under the hood
+
+For every query and mutation that is executed against this generated schema, the Neo4j GraphQL Library generates a single Cypher query which is executed against the database.
+This eliminates the https://www.google.com/search?q=graphql+n%2B1[N+1 Problem], which can make GraphQL implementations slow and inefficient.
+
+
+== Interaction
+
+In xref::getting-started/graphql-aura.adoc[] as well as xref::getting-started/graphql-self-hosted.adoc[], a GraphQL server serves the GraphQL schema, so you can interact directly with your API with no frontend.
+In case you prefer to use frontend frameworks, these are some clients that interact with GraphQL APIs:
+
+- https://reactjs.org/[React] - support through https://www.apollographql.com/docs/react/[Apollo Client]
+- https://vuejs.org/[Vue.js] - support through https://apollo.vuejs.org/[Vue Apollo]
+- https://angularjs.org/[AngularJS] - support through https://apollo-angular.com/docs/[Apollo Angular].
+
+
+== Deployment
+
+There are a variety of methods for deploying GraphQL APIs.
+
+With Aura Console, you can create and use a GraphQL API, see xref::getting-started/graphql-aura.adoc[].
+
+The xref::getting-started/graphql-self-hosted.adoc[] guide uses Apollo Server.
+You can check the Apollo documentation on https://www.apollographql.com/docs/apollo-server/deployment[Deployment] for more details.
+
+
+== Requirements
+
+. https://neo4j.com/product/auradb/[Neo4j AuraDB] version 2025.x or https://neo4j.com/deployment-center/#gdb-selfmanaged[Neo4j Database] running the latest 5.x version or above with the APOC core plugin.
