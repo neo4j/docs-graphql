@@ -72,6 +72,9 @@ query {
 }
 ----
 
+For every query and mutation that is executed against this generated schema, the Neo4j GraphQL Library generates a single Cypher query which is executed against the database.
+This eliminates the https://www.google.com/search?q=graphql+n%2B1[N+1 Problem], which can make GraphQL implementations slow and inefficient.
+
 See xref:using-the-library.adoc[] to learn how to use the GraphQL Library in your technology stack.
 Check out xref:getting-started/index.adoc[] to create a new project, either based on Neo4j Aura or self-hosted.
 
