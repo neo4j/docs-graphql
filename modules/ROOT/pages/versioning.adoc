@@ -4,8 +4,8 @@
 The Neo4j GraphQL Library uses https://semver.org/[Semantic Versioning]. 
 Given a version number `MAJOR.MINOR.PATCH`, the increment is based on:
 
-- `MAJOR` - incompatible API changes compared to the previous `MAJOR` version, for which you will likely have to migrate
-- `MINOR` - new features have been added in a backwards compatible manner
+- `MAJOR` - incompatible API changes compared to the previous `MAJOR` version, for which you will likely have to migrate.
+- `MINOR` - new features have been added in a backwards compatible manner.
 - `PATCH` - bug fixes have been added in a backwards compatible manner.
 
 Additionally, prerelease version numbers may have additional suffixes, for example `MAJOR.MINOR.PATCH-PRERELEASE.NUMBER`, where `PRERELEASE` is one of the following:
