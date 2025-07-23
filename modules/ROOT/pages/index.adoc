@@ -3,22 +3,45 @@
 :page-aliases: introduction.adoc
 :description: An introduction to the Neo4j GraphQL Library.
 
-The Neo4j GraphQL Library is:
-
-* highly flexible and low-code
-* open source
-* a JavaScript library
-* leveraging graph-native data
-
-It enables rapid API development for cross-platform and mobile applications.
+The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript library that enables rapid API development for cross-platform and mobile applications by tapping into the power of connected data.
 
 == How it works
 
-The Neo4j GraphQL Library requires a set of type definitions that describes the shape of your graph data and creates an API layer to communicate with the data.
+Here is an example of how you can query existing data:
 
-It generates an entire executable schema with all additional types needed to execute queries and mutations to interact with your Neo4j database.
+[source, graphql, indent=0]
+----
+query {
+  products {
+    productName
+    category {
+      categoryName
+    }
+  }
+}
+----
 
-For example, consider these type definitions:
+The response looks like this:
+
+[source, json, indent=0]
+----
+{
+  "data": {
+    "products": [
+      {
+        "productName": "New Product",
+        "category": [
+          {
+            "categoryName": "New Category"
+          }
+        ]
+      }
+    ]
+  }
+}
+----
+
+For the example query to work, the library requires the following type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -35,7 +58,7 @@ type Category @node {
 
 Based on these type definitions, the library generates query and mutation templates to create new instances of the types as well as query existing instances.
 
-The following mutation creates a new product as well as a new category:
+The following mutation creates the new product and the new category which were queried above:
 
 [source, graphql, indent=0]
 ----
@@ -58,25 +81,24 @@ mutation {
 }
 ----
 
-Here is an example of how you can query existing data:
-
-[source, graphql, indent=0]
-----
-query {
-  products {
-    productName
-    category {
-      categoryName
-    }
-  }
-}
-----
-
 For every query and mutation that is executed against this generated schema, the Neo4j GraphQL Library generates a single Cypher query which is executed against the database.
 This eliminates the https://www.google.com/search?q=graphql+n%2B1[N+1 Problem], which can make GraphQL implementations slow and inefficient.
 
 See xref:using-the-library.adoc[] to learn how to use the GraphQL Library in your technology stack.
 Check out xref:getting-started/index.adoc[] to create a new project, either based on Neo4j Aura or self-hosted.
+
+
+== Library features
+
+- Automatic generation of xref::queries-aggregations/queries.adoc[Queries] and xref::mutations/index.adoc[Mutations] for CRUD interactions.
+- xref::/types/index.adoc[Types], including temporal and spatial.
+- Support for both node and relationship properties.
+- Extensive xref::filtering.adoc[Filtering], xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination.adoc[Pagination] options.
+- xref::/security/index.adoc[Security options] and additional xref::schema-configuration/index.adoc[Schema Configuration].
+- xref:/subscriptions/index.adoc[Subscriptions] to server events.
+- xref:integrations/apollo-federation.adoc[Apollo federation integration].
+- Extensibility through the xref::/directives/custom-logic.adoc#_cypher[`@cypher` directive] and/or xref::/directives/custom-logic.adoc#_customresolver[Custom Resolvers].
+- A xref::getting-started/toolbox.adoc[Toolbox] (UI) to experiment with your Neo4j GraphQL API on Neo4j Desktop.
 
 
 == Resources

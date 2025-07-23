@@ -1,5 +1,5 @@
 * xref:index.adoc[Introduction]
-* xref:using-the-library.adoc[]
+* xref:integrating-the-library.adoc[]
 
 * *Getting started*
 

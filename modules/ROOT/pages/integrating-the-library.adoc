@@ -1,18 +1,5 @@
-= Using the library
+= Integrating the library
 :description: Learn how to use the Neo4j GraphQL Library with your technology stack.
-
-== Library features
-
-The Neo4j GraphQL Library features:
-
-- Automatic generation of xref::queries-aggregations/queries.adoc[Queries] and xref::mutations/index.adoc[Mutations] for CRUD interactions.
-- xref::/types/index.adoc[Types], including temporal and spatial.
-- Support for both node and relationship properties.
-- Extensibility through the xref::/directives/custom-logic.adoc#_cypher[`@cypher` directive] and/or xref::/directives/custom-logic.adoc#_customresolver[Custom Resolvers].
-- Extensive xref::filtering.adoc[Filtering], xref::queries-aggregations/sorting.adoc[Sorting] and xref::/queries-aggregations/pagination.adoc[Pagination] options.
-- Options for xref::/directives/database-mapping.adoc[Database mapping] and value xref::/directives/autogeneration.adoc[Autogeneration].
-- xref::/security/index.adoc[Security options] and additional xref::schema-configuration/index.adoc[Schema Configuration].
-- A xref::getting-started/toolbox.adoc[Toolbox] (UI) to experiment with your Neo4j GraphQL API on Neo4j Desktop.
 
 
 == Interaction
