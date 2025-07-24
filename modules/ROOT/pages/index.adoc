@@ -5,7 +5,52 @@
 
 The Neo4j GraphQL Library is a highly flexible, low-code, open source JavaScript library that enables rapid API development for cross-platform and mobile applications by tapping into the power of connected data.
 
+
 == How it works
+
+The Neo4j GraphQL Library requires a set of type definitions that describes the shape of your graph data and creates an API layer to communicate with the data.
+
+It generates an entire executable schema with all additional types needed to execute queries and mutations to interact with your Neo4j database.
+
+For example, consider these type definitions:
+
+[source, graphql, indent=0]
+----
+type Product @node {
+    productName: String
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+}
+
+type Category @node {
+    categoryName: String
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+----
+
+Based on these type definitions, the library generates query and mutation templates to create new instances of the types as well as query existing instances.
+
+The following mutation creates a new product as well as a new category:
+
+[source, graphql, indent=0]
+----
+mutation {
+  createProducts(
+    input: [
+      {
+        productName: "New Product"
+        category: { create: [{ node: { categoryName: "New Category" } }] }
+      }
+    ]
+  ) {
+    products {
+      productName
+      category {
+        categoryName
+      }
+    }
+  }
+}
+----
 
 Here is an example of how you can query existing data:
 
@@ -37,46 +82,6 @@ The response looks like this:
         ]
       }
     ]
-  }
-}
-----
-
-For the example query to work, the library requires the following type definitions:
-
-[source, graphql, indent=0]
-----
-type Product @node {
-    productName: String
-    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
-}
-
-type Category @node {
-    categoryName: String
-    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
-}
-----
-
-Based on these type definitions, the library generates query and mutation templates to create new instances of the types as well as query existing instances.
-
-The following mutation creates the new product and the new category which were queried above:
-
-[source, graphql, indent=0]
-----
-mutation {
-  createProducts(
-    input: [
-      {
-        productName: "New Product"
-        category: { create: [{ node: { categoryName: "New Category" } }] }
-      }
-    ]
-  ) {
-    products {
-      productName
-      category {
-        categoryName
-      }
-    }
   }
 }
 ----
