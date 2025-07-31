@@ -1,4 +1,5 @@
 * xref:index.adoc[Introduction]
+* xref:integrating-the-library.adoc[]
 
 * *Getting started*
 
@@ -74,7 +75,8 @@
 
 * *Versions and support*
 
+* xref:versioning.adoc[]
 * xref:migration/index.adoc[Migration guide]
-* xref:deprecations.adoc[Deprecations]
+* xref:deprecations.adoc[]
 * xref:optimization.adoc[]
 * xref:troubleshooting.adoc[]

@@ -15,7 +15,7 @@ With it, you can:
 
 == Connect to a Neo4j database
 
-Before you start using the Toolbox, make sure you have followed all xref:index.adoc#_requirements[requirements] to run a Neo4j database.
+Before you start using the Toolbox, make sure you have followed all xref::integrating-the-library.adoc#_requirements[requirements] to run a Neo4j database.
 You can use https://neo4j.com/docs/desktop-manual/current/[Neo4j Desktop] or https://neo4j.com/docs/aura/auradb/[Neo4j AuraDB] for that.
 
 
