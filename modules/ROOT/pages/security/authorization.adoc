@@ -171,7 +171,7 @@ If you want to check that after the update the author of the post is still the c
 [source, graphql, indent=0]
 ----
 type Post @node @authorization(validate: [
-    { operations: [UPDATE], when: [AFTER], where: { node: { author: { id: "$jwt.sub" } } } }
+    { operations: [UPDATE], when: [AFTER], where: { node: { author: { id: { eq: "$jwt.sub" } } } } }
 ]) {
     title: String!
     content: String!
@@ -190,7 +190,7 @@ For example, consider a `User` type with a `password` field:
 type User @node {
     id: ID!
     username: String!
-    password: String! @authorization(where: [{ operations: [READ, UPDATE], where: { node: { id: "$jwt.sub" } } }])
+    password: String! @authorization(validate: [{ operations: [READ, UPDATE], where: { node: { id: { eq: "$jwt.sub" } } } }])
 }
 ----
 
@@ -259,7 +259,7 @@ For example, the following would allow for the update of a `User` node if the JW
 ----
 type User @node @authorization(validate: [
     { operations: [UPDATE], where: { jwt: { roles: { includes: "admin" } } } }
-    { operations: [UPDATE], where: { node: { locked: false } } }
+    { operations: [UPDATE], where: { node: { locked: { eq: false } } } }
 ]) {
     id: ID!
     locked: Boolean!
@@ -271,7 +271,7 @@ If you want to combine the rule that a user must be an admin with the rule that 
 [source, graphql, indent=0]
 ----
 type User @node @authorization(validate: [
-    { operations: [UPDATE], where: { AND: [{ jwt: { roles: { includes: "admin" } } }, { node: { locked: false } }] } }
+    { operations: [UPDATE], where: { AND: [{ jwt: { roles: { includes: "admin" } } }, { node: { locked: {eq: false} } }] } }
 ]) {
     id: ID!
     locked: Boolean!
