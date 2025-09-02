@@ -1,0 +1,28 @@
+= Versioning
+:description: The approach to versioning of the Neo4j GraphQL Library.
+
+
+== LTS version
+
+GraphQL Library version 5 is the long-term support (LTS) version.
+It is maintained but no new features are added to it.
+
+Version 7 is the recommended version and actively being developed.
+
+
+== Semantic versioning
+
+The Neo4j GraphQL Library uses https://semver.org/[Semantic Versioning]. 
+Given a version number `MAJOR.MINOR.PATCH`, the increment is based on:
+
+- `MAJOR` - incompatible API changes compared to the previous `MAJOR` version, for which you will likely have to migrate.
+- `MINOR` - new features have been added in a backwards compatible manner.
+- `PATCH` - bug fixes have been added in a backwards compatible manner.
+
+Additionally, prerelease version numbers may have additional suffixes, for example `MAJOR.MINOR.PATCH-PRERELEASE.NUMBER`, where `PRERELEASE` is one of the following:
+
+- `alpha` - unstable prerelease artifacts, and the API may change between releases during this phase
+- `beta` - feature complete prerelease artifacts, which will be more stable than `alpha` releases but will likely still contain bugs
+- `rc` - release candidate including artifacts to be promoted to a stable release, in a last effort to find trailing bugs.
+
+`NUMBER` in the suffix is simply an incrementing release number in each phase.
