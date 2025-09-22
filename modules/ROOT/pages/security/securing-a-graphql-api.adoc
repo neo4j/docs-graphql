@@ -18,24 +18,54 @@ Lorem ipsum.
 
 === Authentication
 
-Lorem ipsum.
-Explanation on different auth options.
+The xref:security/authentication.adoc[`@authentication` directive] can be applied globally, only to certain fields or only to certain types, and only for certain operations.
 
 
-==== JWT
+==== JSON Web Token (JWT) authentication
 
-Lorem ipsum.
+JWT authentication is a popular method for token-based authentication.
+It allows clients to obtain and use tokens to authenticate subsequent requests.
+
+JWT are represent encoded JSON data.
+These data can have arbitrary fields - which ones they should contain depends on the application preferences.
+For instance, if the server side is trying to parse a field `roles_INCLUDES`, then the JWT should contain that.
+
+[source, graphql, indent=0]
+----
+//Example
+----
+
+You can encode and decode JWT using a site like link:https://www.jwt.io/[https://www.jwt.io/].
 
 
-==== Lorem?
+//==== Other methods?
 
-ipsum.
+//Lorem ipsum.
 
 
 === Authorization
 
-Validate versus filter.
-We want to ensure we don't report back database internals to end users. Validate throws an error, which could be a hint of what exists or not.
+The xref:security/authorization.adoc[`@authorization` directive] can either be used to filter out data which users should not have access to or throw an error if a query is executed against such data.
+
+Both have their own use cases:
+
+[source, graphql, indent=0]
+----
+//Example for filtering 
+----
+
+Lorem ipsum.
+
+[source, graphql, indent=0]
+----
+//Example for validation
+----
+
+Lorem ipsum.
+
+It is important to be aware that error messages generated through validation can be a security concern since they can report database internals to your users.
+
+Also see <<best-practice-internal-errors>> on this page.
 
 
 == Best practice checklist
@@ -50,7 +80,7 @@ While the xref:getting-started/graphql-aura.adoc[Getting started page for GraphQ
 Both potentially expose information that can be used to gain insight on specifics of your GraphQL schema and execute targeted malicious opLorem ipsumerations.
 Be sure to deactivate both in a customer-facing real-life scenario.
 
-
+[[best-practice-internal-errors]]
 === Catch internal errors
 
 For the same reason it is advisable to avoid introspection and data field suggestions, it can make your API more secure to catch internal errors and redact which information you want to pass on to the end user.

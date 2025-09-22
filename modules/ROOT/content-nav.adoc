@@ -9,6 +9,7 @@
 
 * *Reference*
 * xref:security/index.adoc[]
+** xref:security/securing-a-graphql-api.adoc[]
 ** xref:security/configuration.adoc[]
 ** xref:security/authentication.adoc[]
 ** xref:security/authorization.adoc[]
