@@ -14,7 +14,7 @@ This tutorial shows you how to:
 - Make sure that you have https://nodejs.org/en/[Node.js] 20+ installed.
 - The examples use the default `npm` package manager, but you can use other package managers.
 - Set up a https://neo4j.com[Neo4j database].
-Make sure it fulfills the xref::index.adoc#_requirements[requirements], including the necessary plugins.
+Make sure it fulfills the xref::integrating-the-library.adoc#_requirements[requirements], including the necessary plugins.
 
 
 == Set up a directory

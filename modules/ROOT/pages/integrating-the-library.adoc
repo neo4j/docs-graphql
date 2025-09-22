@@ -1,0 +1,27 @@
+= Integrating the library
+:description: Learn how to use the Neo4j GraphQL Library with your technology stack.
+
+
+== Interaction
+
+In xref::getting-started/graphql-aura.adoc[] as well as xref::getting-started/graphql-self-hosted.adoc[], a GraphQL server serves the GraphQL schema, so you can interact directly with your API with no frontend.
+In case you prefer to use frontend frameworks, these are some clients that interact with GraphQL APIs:
+
+- https://reactjs.org/[React] - support through https://www.apollographql.com/docs/react/[Apollo Client]
+- https://vuejs.org/[Vue.js] - support through https://apollo.vuejs.org/[Vue Apollo]
+- https://angularjs.org/[AngularJS] - support through https://apollo-angular.com/docs/[Apollo Angular].
+
+
+== Deployment
+
+There are a variety of methods for deploying GraphQL APIs.
+
+With Aura Console, you can create and use a GraphQL API, see xref::getting-started/graphql-aura.adoc[].
+
+The xref::getting-started/graphql-self-hosted.adoc[] guide uses Apollo Server.
+You can check the Apollo documentation on https://www.apollographql.com/docs/apollo-server/deployment[Deployment] for more details.
+
+
+== Requirements
+
+. https://neo4j.com/product/auradb/[Neo4j AuraDB] version 2025.x or https://neo4j.com/deployment-center/#gdb-selfmanaged[Neo4j Database] running the latest 5.x version or above with the APOC core plugin.
