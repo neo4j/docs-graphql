@@ -172,7 +172,29 @@ To make it generic, pipe the `contactName` from an input into the query and send
 
 [source, javascript, indent=0]
 ----
-// JavaScript example
+async function createCustomer(contactName) {
+  const mutation = `
+    mutation CreateCustomer($contactName: String!) {
+      createCustomers(input: [{ contactName: $contactName }]) {
+        customers { 
+          contactName
+          customerID 
+        }
+      }
+    }
+  `;
+
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query: mutation, variables: { contactName } }),
+  });
+
+  const json = await res.json();
+  return json;
+}
 ----
 
 
