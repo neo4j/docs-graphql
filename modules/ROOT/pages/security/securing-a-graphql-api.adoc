@@ -20,8 +20,8 @@ MATCH (n) DETACH DELETE n;
 ----
 ====
 
-This tutorial is built on top of the xref:northwind-api.adoc[Northwind API tutorial].
-Specifically, it will extend the following type definitions:
+This tutorial builds on top of the xref:northwind-api.adoc[Northwind API tutorial].
+Specifically, it extends the following type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -59,6 +59,7 @@ type ordersProperties @relationshipProperties {
 == Security-related directives
 
 The GraphQL Library has several directives dedicated to security: `@authentication` and `@authorization`, as well as `@jwt` and `@jwtClaim`.
+The `@selectable` and `@settable` directives can be used to control accessibility of data fields through certain operations.
 
 
 === Authentication
@@ -70,6 +71,159 @@ Add admin authorization for operations on customers, orders, products, categorie
 * `DELETE` for customers,
 * `UPDATE` and `DELETE` for orders,
 * `CREATE`, `UPDATE` and `DELETE` for products, categories and suppliers.
+
+[source, graphql, indent=0]
+----
+type Customer
+    @node
+    @authentication( <1>
+      operations: [DELETE],
+      jwt: { roles: { includes: "admin" } }
+    ) {
+    contactName: String!
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+
+type Order
+    @node
+    @authentication( <2>
+      operations: [UPDATE, DELETE],
+      jwt: { roles: { includes: "admin" } }
+    ) { 
+    orderID: ID! @id
+    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
+    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
+}
+
+type Product
+    @node
+    @authentication( <3>
+      operations: [CREATE, UPDATE, DELETE],
+      jwt: { roles: { includes: "admin" } }
+    ) {
+    productName: String!
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+    orders: [Product!]! @relationship(type: "ORDERS", direction: IN, properties: "ordersProperties")
+    supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
+}
+
+type Category
+    @node
+    @authentication( <4>
+      operations: [CREATE, UPDATE, DELETE],
+      jwt: { roles: { includes: "admin" } }
+    ) {
+    categoryName: String!
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+
+type Supplier
+    @node
+    @authentication( <5>
+      operations: [CREATE, UPDATE, DELETE],
+      jwt: { roles: { includes: "admin" } }
+    ) {
+    supplierID: ID! @id
+    companyName: String!
+    products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
+}
+----
+
+==== JSON Web Token (JWT) authentication
+
+JWT authentication is a popular method for token-based authentication.
+It allows clients to obtain and use tokens to authenticate subsequent requests.
+
+JWT are represented by encoded JSON data.
+These data can have arbitrary fields - which ones they should contain depends on the application preferences.
+
+For instance, if the server side is trying to parse the `roles` field that was introduced in xref:#_authentication[], then the JWT should contain that.
+With `@jwtClaim`, you can specify a path to a customer ID in a nested location.
+For example:
+
+[source, graphql, indent=0]
+----
+type JWT @jwt {
+    roles: [String!]!
+    customerID: String! @jwtClaim(path: "sub")
+}
+----
+
+You can encode and decode JWT using a site like link:https://www.jwt.io/[https://www.jwt.io/].
+
+
+=== Authorization
+
+The xref:security/authorization.adoc[`@authorization` directive] can either be used to filter out data which users should not have access to or throw an error if a query is executed against such data.
+
+Both have their own use cases.
+
+To make customer data and order data inaccessible to anyone who is not the specific user or an admin, consider the following uses of filters with the `@authorization` directive:
+
+[source, graphql, indent=0]
+----
+type Customer
+    @node
+    @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [ <1>
+            { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    contactName: String!
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+
+type Order
+    @node
+    @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [ <2>
+            { where: { node: { customer: { all: { customerID: { eq: "$jwt.customerID" } } } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    orderID: ID! @id
+    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
+    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
+}
+----
+
+For sensitive data, you can also use a validating authorization:
+
+[source, graphql, indent=0]
+----
+type Customer
+    @node
+    @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    contactName: String!
+    adminNotes: [String!]! @authorization(
+      validate: [ <1>
+        { where: { jwt: { roles: { includes: "admin" } } } }
+      ]
+    )
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+----
+
+`adminNotes` can only be read by admins and trying to access this field causes an error if the user is not an admin.
+
+It is important to be aware that error messages generated through validation can be a security concern since they can report database internals to your users.
+
+Also see <<best-practice-internal-errors>> on this page.
+
+
+=== `@selectable` and `@settable`
 
 [source, graphql, indent=0]
 ----
@@ -89,85 +243,7 @@ type Customer
     customerID: ID! @id
     orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
 }
-
-type Order
-    @node
-    @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
-    @authorization(
-        filter: [
-            { where: { node: { customer: { all: { customerID: { eq: "$jwt.customerID" } } } } } }
-            { where: { jwt: { roles: { includes: "admin" } } } }
-        ]
-    ) {
-    orderID: ID! @id
-    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
-    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
-}
-
-type Product @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
-    productName: String!
-    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
-    orders: [Product!]! @relationship(type: "ORDERS", direction: IN, properties: "ordersProperties")
-    supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
-}
-
-type Category @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
-    categoryName: String!
-    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
-}
-
-type Supplier @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
-    supplierID: ID! @id
-    companyName: String!
-    products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
-}
 ----
-
-==== JSON Web Token (JWT) authentication
-
-JWT authentication is a popular method for token-based authentication.
-It allows clients to obtain and use tokens to authenticate subsequent requests.
-
-JWT are represented by encoded JSON data.
-These data can have arbitrary fields - which ones they should contain depends on the application preferences.
-For instance, if the server side is trying to parse a field `roles`, then the JWT should contain that.
-With `@jwtClaim`, you can specify a path to a customer ID in a nested location.
-Here is an example:
-
-[source, graphql, indent=0]
-----
-type JWT @jwt {
-    roles: [String!]!
-    customerID: String! @jwtClaim(path: "sub")
-}
-----
-
-You can encode and decode JWT using a site like link:https://www.jwt.io/[https://www.jwt.io/].
-
-
-=== Authorization
-
-The xref:security/authorization.adoc[`@authorization` directive] can either be used to filter out data which users should not have access to or throw an error if a query is executed against such data.
-
-Both have their own use cases:
-
-[source, graphql, indent=0]
-----
-//Example for filtering 
-----
-
-Lorem ipsum.
-
-[source, graphql, indent=0]
-----
-//Example for validation
-----
-
-Lorem ipsum.
-
-It is important to be aware that error messages generated through validation can be a security concern since they can report database internals to your users.
-
-Also see <<best-practice-internal-errors>> on this page.
 
 
 == Best practice checklist
@@ -358,74 +434,76 @@ Follow the input validation methods summarized in the link:https://cheatsheetser
 
 
 
+== Full example
+
+Here is the full set of type definitions extended with security-related directives:
+
+[source, graphql, indent=0]
+----
+type JWT @jwt {
+    roles: [String!]!
+    customerID: String! @jwtClaim(path: "sub")
+}
+
+type Customer
+    @node
+    @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    contactName: String!
+    sensitiveData: String! @selectable(onRead: false, onAggregate: false)
+    createdAt: DateTime! @settable(onCreate: true, onUpdate: false)
+    adminNotes: [String!]! @authorization(validate: [{ where: { jwt: { roles: { includes: "admin" } } } }])
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+
+type Order
+    @node
+    @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { where: { node: { customer: { all: { customerID: { eq: "$jwt.customerID" } } } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    orderID: ID! @id
+    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
+    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
+}
+
+type Product @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
+    productName: String!
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+    orders: [Product!]! @relationship(type: "ORDERS", direction: IN, properties: "ordersProperties")
+    supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
+}
+
+type Category @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
+    categoryName: String!
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+
+type Supplier @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
+    supplierID: ID! @id
+    companyName: String!
+    products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
+}
+
+type ordersProperties @relationshipProperties {
+    unitPrice: Float!
+    quantity: Int!
+}
+----
+
+
 == Further reading
 
 Neo4j  has a link:https://neo4j.com/docs/operations-manual/current/authentication-authorization/manage-privileges/[Role-based access control] mechanism that can be leveraged to increase security even further.
 
 
 
-
-
-
-
-[source, graphql, indent=0]
-----
-    type JWT @jwt {
-        roles: [String!]!
-        customerID: String! @jwtClaim(path: "sub")
-    }
-
-    type Customer
-        @node
-        @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
-        @authorization(
-            filter: [
-                { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
-                { where: { jwt: { roles: { includes: "admin" } } } }
-            ]
-        ) {
-        contactName: String!
-        sensitiveData: String! @selectable(onRead: false, onAggregate: false)
-        createdAt: DateTime! @settable(onCreate: true, onUpdate: false)
-        adminNotes: [String!]! @authorization(validate: [{ where: { jwt: { roles: { includes: "admin" } } } }])
-        customerID: ID! @id
-        orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
-    }
-
-    type Order
-        @node
-        @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
-        @authorization(
-            filter: [
-                { where: { node: { customer: { all: { customerID: { eq: "$jwt.customerID" } } } } } }
-                { where: { jwt: { roles: { includes: "admin" } } } }
-            ]
-        ) {
-        orderID: ID! @id
-        customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
-        products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
-    }
-
-    type Product @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
-        productName: String!
-        category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
-        orders: [Product!]! @relationship(type: "ORDERS", direction: IN, properties: "ordersProperties")
-        supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
-    }
-
-    type Category @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
-        categoryName: String!
-        products: [Product!]! @relationship(type: "PART_OF", direction: IN)
-    }
-
-    type Supplier @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
-        supplierID: ID! @id
-        companyName: String!
-        products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
-    }
-
-    type ordersProperties @relationshipProperties {
-        unitPrice: Float!
-        quantity: Int!
-    }
-----
