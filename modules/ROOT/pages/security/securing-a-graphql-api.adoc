@@ -58,8 +58,8 @@ type ordersProperties @relationshipProperties {
 
 == Security-related directives
 
-The GraphQL Library has several directives dedicated to security: `@authentication` and `@authorization`, as well as `@jwt` and `@jwtClaim`.
-The `@selectable` and `@settable` directives can be used to control accessibility of data fields through certain operations.
+The GraphQL Library has several directives dedicated to security: xref:security/authentication.adoc[`@authentication`] and xref:security/authorization.adoc[`@authorization`], as well as `@jwt` and `@jwtClaim`.
+The xref:directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] and xref:directives/schema-configuration/field-configuration.adoc#_settable[`@settable`] directives can be used to control accessibility of data fields through certain operations.
 
 
 === Authentication
@@ -225,6 +225,8 @@ Also see <<best-practice-internal-errors>> on this page.
 
 === `@selectable` and `@settable`
 
+To restrict access through operations directly, you can use the xref:directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] and xref:directives/schema-configuration/field-configuration.adoc#_settable[`@settable`] directives, for example:
+
 [source, graphql, indent=0]
 ----
 type Customer
@@ -242,6 +244,76 @@ type Customer
     adminNotes: [String!]! @authorization(validate: [{ where: { jwt: { roles: { includes: "admin" } } } }])
     customerID: ID! @id
     orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+----
+
+The `sensitiveData` field is neither available for queries nor for subscriptions nor for aggregations.
+The `createdAt` field can be set when a new customer is created, but it cannot be updated.
+
+
+=== Full example
+
+Here is the full set of type definitions extended with security-related directives:
+
+[source, graphql, indent=0]
+----
+type JWT @jwt {
+    roles: [String!]!
+    customerID: String! @jwtClaim(path: "sub")
+}
+
+type Customer
+    @node
+    @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    contactName: String!
+    sensitiveData: String! @selectable(onRead: false, onAggregate: false)
+    createdAt: DateTime! @settable(onCreate: true, onUpdate: false)
+    adminNotes: [String!]! @authorization(validate: [{ where: { jwt: { roles: { includes: "admin" } } } }])
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+
+type Order
+    @node
+    @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { where: { node: { customer: { all: { customerID: { eq: "$jwt.customerID" } } } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    orderID: ID! @id
+    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
+    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
+}
+
+type Product @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
+    productName: String!
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+    orders: [Product!]! @relationship(type: "ORDERS", direction: IN, properties: "ordersProperties")
+    supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
+}
+
+type Category @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
+    categoryName: String!
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+
+type Supplier @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
+    supplierID: ID! @id
+    companyName: String!
+    products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
+}
+
+type ordersProperties @relationshipProperties {
+    unitPrice: Float!
+    quantity: Int!
 }
 ----
 
@@ -432,73 +504,6 @@ Follow the input validation methods summarized in the link:https://cheatsheetser
 
 // Examples?
 
-
-
-== Full example
-
-Here is the full set of type definitions extended with security-related directives:
-
-[source, graphql, indent=0]
-----
-type JWT @jwt {
-    roles: [String!]!
-    customerID: String! @jwtClaim(path: "sub")
-}
-
-type Customer
-    @node
-    @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
-    @authorization(
-        filter: [
-            { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
-            { where: { jwt: { roles: { includes: "admin" } } } }
-        ]
-    ) {
-    contactName: String!
-    sensitiveData: String! @selectable(onRead: false, onAggregate: false)
-    createdAt: DateTime! @settable(onCreate: true, onUpdate: false)
-    adminNotes: [String!]! @authorization(validate: [{ where: { jwt: { roles: { includes: "admin" } } } }])
-    customerID: ID! @id
-    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
-}
-
-type Order
-    @node
-    @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
-    @authorization(
-        filter: [
-            { where: { node: { customer: { all: { customerID: { eq: "$jwt.customerID" } } } } } }
-            { where: { jwt: { roles: { includes: "admin" } } } }
-        ]
-    ) {
-    orderID: ID! @id
-    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
-    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
-}
-
-type Product @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
-    productName: String!
-    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
-    orders: [Product!]! @relationship(type: "ORDERS", direction: IN, properties: "ordersProperties")
-    supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
-}
-
-type Category @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
-    categoryName: String!
-    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
-}
-
-type Supplier @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
-    supplierID: ID! @id
-    companyName: String!
-    products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
-}
-
-type ordersProperties @relationshipProperties {
-    unitPrice: Float!
-    quantity: Int!
-}
-----
 
 
 == Further reading
