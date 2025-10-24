@@ -58,7 +58,7 @@ type ordersProperties @relationshipProperties {
 
 == Security-related directives
 
-The GraphQL Library has several directives dedicated to security: xref:security/authentication.adoc[`@authentication`] and xref:security/authorization.adoc[`@authorization`], as well as `@jwt` and `@jwtClaim`.
+The GraphQL Library has several directives dedicated to security: xref:security/authentication.adoc[`@authentication`] and xref:security/authorization.adoc[`@authorization`], as well as xref:security/configuration.adoc#_jwt[`@jwt`] and xref:security/configuration.adoc#_jwtclaim[`@jwtClaim`].
 The xref:directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] and xref:directives/schema-configuration/field-configuration.adoc#_settable[`@settable`] directives can be used to control accessibility of data fields through certain operations.
 
 
