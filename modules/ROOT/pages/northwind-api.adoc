@@ -1,8 +1,8 @@
 [[northwind-api]]
-= Creating an API for the Northwind data set
+= GraphQL modelling for the Northwind data set
 :description: This tutorial builds an API around the Northwind sample data set with the Neo4j GraphQL Library.
 
-This tutorial uses the Neo4j GraphQL Library to build an API for the Northwind sample datset.
+This tutorial uses the Neo4j GraphQL Library to build an API for the Northwind sample dataset.
 
 The Northwind set includes but is not limited to data about products, suppliers, orders and customers.
 This model lends itself for a webshop API.
@@ -14,14 +14,16 @@ This model lends itself for a webshop API.
 Refer to link:https://neo4j.com/docs/aura/getting-started/create-instance/[Creating a Neo4j Aura instance].
 . Populate the instance with the Northwind data set.
 +
-[NOTE]
-====
 If you have completed the GraphQL and Aura Console getting started guide and would like to get rid of the example nodes you have created there, run the following in **Query** before populating your data base with the Northwind set:
-
++
 [source,cypher]
 ----
 MATCH (n) DETACH DELETE n;
 ----
++
+[CAUTION]
+====
+This Cypher query deletes all data in your database.
 ====
 +
 .. In Aura, select **Learning**, then **Beginner** under **Getting started**.
@@ -168,32 +170,17 @@ mutation {
 }
 ----
 
-To make it generic, pipe the `contactName` from an input into the query and send the request:
+To make it generic, you can use a link:https://graphql.org/learn/queries/#variables[GraphQL variable] to set the contactName dynamically:
 
 [source, javascript, indent=0]
 ----
-async function createCustomer(contactName) {
-  const mutation = `
-    mutation CreateCustomer($contactName: String!) {
-      createCustomers(input: [{ contactName: $contactName }]) {
-        customers { 
-          contactName
-          customerID 
-        }
-      }
+mutation CreateCustomer($contactName: String!) {
+  createCustomers(input: [{ contactName: $contactName }]) {
+    customers { 
+      contactName
+      customerID 
     }
-  `;
-
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ query: mutation, variables: { contactName } }),
-  });
-
-  const json = await res.json();
-  return json;
+  }
 }
 ----
 
@@ -225,11 +212,8 @@ mutation {
 }
 ----
 
-Note that the `orderID` is modeled as a UUID and therefore differs from the order IDs on orders that were already part of the Northwind data set.
-The data model could be extended to account for that by keeping track of the order IDs in a separate system, making sure that the IDs are unique.
-
-The products, how many of each of them as well as the customer who places the order must be known.
-A shopping basket typically hands this information to the routine that is placing the order:
+To place an order, the customer and product information must already be known or collected.
+A shopping basket can be implemented as follows:
 
 [source, javascript, indent=0]
 ----
@@ -239,9 +223,8 @@ A shopping basket typically hands this information to the routine that is placin
 
 === Calculate prices for orders
 
-Calculating the price of an order is achieved by accessing the `unitPrice` and `quantity` fields of the products that share the `ORDERS` relationship with the order.
-
-Retrieve an order by its ID as well as the products associated with it:
+To calculate order prices, query the `order` operation field and filter the orders by using the `orderID` filter.
+Then access the relationship properties `quantity` and `unitPrice` from the relationships `ORDERS` that connect the `Order` and the `Product` node:
 
 [source, graphql, indent=0]
 ----
