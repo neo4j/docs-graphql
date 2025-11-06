@@ -29,8 +29,6 @@ This Cypher query deletes all data in your database.
 .. In Aura, select **Learning**, then **Beginner** under **Getting started**.
 .. Select the **Learn the basics** tile and scroll to page 4/11 in the left side menu.
 .. Trigger the import with **Get the Northwind datset** and then **Run import** on the right hand side.
-//. The code examples in xref:#_use_the_api[] are in JavaScript.
-// Well, there are no examples yet.
 
 == Goal
 
@@ -157,11 +155,9 @@ The following mutation creates a new customer by the name of "Jane Doe":
 ----
 mutation {
   createCustomers(
-    input: [
-      {
-        contactName: "Jane Doe"
-      }
-    ]
+    input: [{
+      contactName: "Jane Doe"
+    }]
   ) {
     customers {
       contactName
@@ -172,10 +168,14 @@ mutation {
 
 To make it generic, you can use a link:https://graphql.org/learn/queries/#variables[GraphQL variable] to set the contactName dynamically:
 
-[source, javascript, indent=0]
+[source, graphql, indent=0]
 ----
 mutation CreateCustomer($contactName: String!) {
-  createCustomers(input: [{ contactName: $contactName }]) {
+  createCustomers(
+    input: [{
+      contactName: $contactName 
+    }]
+  ) {
     customers { 
       contactName
       customerID 
@@ -213,12 +213,7 @@ mutation {
 ----
 
 To place an order, the customer and product information must already be known or collected.
-A shopping basket can be implemented as follows:
-
-[source, javascript, indent=0]
-----
-// JavaScript example
-----
+A shopping basket on the client side typically processes and displays this information.
 
 
 === Calculate prices for orders
@@ -277,8 +272,6 @@ The result looks like this:
 ----
 
 The product of `quantity` and `unitPrice` is the total cost, which in this case is 116.25.
-
-// maybe add another JavaScript example here, that accesses the JSON response and actually calculates the amount. This could also be made generic, so that it is not reliant on the orderID used here.
 
 Note that there is no `discount` field on the `ORDERS` relationship and it is unclear how taxation works in this scenario.
 
