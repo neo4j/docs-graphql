@@ -57,6 +57,7 @@
 * *How-To*
 
 * xref:driver-configuration.adoc[]
+* xref:graphql-modeling.adoc[]
 
 * *Products*
 
