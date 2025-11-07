@@ -20,7 +20,7 @@ MATCH (n) DETACH DELETE n;
 ----
 ====
 
-This tutorial builds on top of the xref:northwind-api.adoc[Northwind API tutorial].
+This tutorial builds on top of the xref:graphql-modeling.adoc[GraphQL modeling tutorial].
 Specifically, it extends the following type definitions:
 
 [source, graphql, indent=0]
