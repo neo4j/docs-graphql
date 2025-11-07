@@ -1,0 +1,368 @@
+[[northwind-api]]
+= GraphQL modelling for the Northwind data set
+:description: This tutorial builds an API around the Northwind sample data set with the Neo4j GraphQL Library.
+
+This tutorial uses the Neo4j GraphQL Library to build an API for the Northwind sample dataset.
+
+The Northwind set includes but is not limited to data about products, suppliers, orders and customers.
+This model lends itself for a webshop API.
+
+
+== Prerequisites
+
+. Set up a new AuraDB instance.
+Refer to link:https://neo4j.com/docs/aura/getting-started/create-instance/[Creating a Neo4j Aura instance].
+. Populate the instance with the Northwind data set.
++
+If you have completed the GraphQL and Aura Console getting started guide and would like to get rid of the example nodes you have created there, run the following in **Query** before populating your data base with the Northwind set:
++
+[source,cypher]
+----
+MATCH (n) DETACH DELETE n;
+----
++
+[CAUTION]
+====
+This Cypher query deletes all data in your database.
+====
++
+.. In Aura, select **Learning**, then **Beginner** under **Getting started**.
+.. Select the **Learn the basics** tile and scroll to page 4/11 in the left side menu.
+.. Trigger the import with **Get the Northwind datset** and then **Run import** on the right hand side.
+
+== Goal
+
+A webshop API which connects to the Northwind data set should be able to:
+
+* Create new customers
+* Place orders
+* Calculate prices for orders
+* Filter products by supplier and category
+
+See xref:#_use_the_api[] for example implementations.
+
+
+== Create the GraphQL Data API
+
+See xref:getting-started/graphql-aura.adoc[] for steps on how to do this.
+For the purpose of this tutorial, make sure to **Enable introspection** and **Enable field suggestions**.
+
+
+=== Type definitions
+
+Make the relevant nodes and relationships available by using these type definitions:
+
+[source, graphql, indent=0]
+----
+type Customer @node {
+    contactName: String!
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+
+type Order @node {
+    orderID: ID! @id
+    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
+    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
+}
+
+type Product @node {
+    productName: String!
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+    orders: [Product!]! @relationship(type: "ORDERS", direction: IN, properties: "ordersProperties")
+    supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
+}
+
+type Category @node {
+    categoryName: String!
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+
+type Supplier @node {
+    supplierID: ID! @id
+    companyName: String!
+    products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
+}
+
+type ordersProperties @relationshipProperties {
+    unitPrice: Float!
+    quantity: Int!
+}
+----
+
+Navigate to the link:https://studio.apollographql.com/sandbox/explorer[Apollo Studio] website and paste your GraphQL Data API URL to the **Sandbox** input.
+Use the cog icon and add `x-api-key` and the API key for your data API under **Shared headers** and **Save**.
+
+=== Make sure the API is working
+
+Verify that the relevant parts of the Northwind data set are accessible:
+
+[source, graphql, indent=0]
+----
+query {
+    categories {
+      categoryName
+    }
+}
+----
+
+You should see as the **Response**:
+
+[source, json, indent=0]
+----
+{
+  "data": {
+    "categories": [
+      {
+        "categoryName": "Beverages"
+      },
+      {
+        "categoryName": "Condiments"
+      },
+      {
+        "categoryName": "Confections"
+      },
+      {
+        "categoryName": "Dairy Products"
+      },
+      {
+        "categoryName": "Grains/Cereals"
+      },
+      {
+        "categoryName": "Meat/Poultry"
+      },
+      {
+        "categoryName": "Produce"
+      },
+      {
+        "categoryName": "Seafood"
+      }
+    ]
+  }
+}
+----
+
+== Use the API
+
+The following sections provide simple examples of how to use the API in a webshop scenario.
+
+
+=== Creating new customers
+
+The following mutation creates a new customer by the name of "Jane Doe":
+
+[source, graphql, indent=0]
+----
+mutation {
+  createCustomers(
+    input: [{
+      contactName: "Jane Doe"
+    }]
+  ) {
+    customers {
+      contactName
+    }
+  }
+}
+----
+
+To make it generic, you can use a link:https://graphql.org/learn/queries/#variables[GraphQL variable] to set the contactName dynamically:
+
+[source, graphql, indent=0]
+----
+mutation CreateCustomer($contactName: String!) {
+  createCustomers(
+    input: [{
+      contactName: $contactName 
+    }]
+  ) {
+    customers { 
+      contactName
+      customerID 
+    }
+  }
+}
+----
+
+
+=== Placing an order
+
+To place an order, create a new order node that is linked to a number of product nodes and a customer node:
+
+[source, graphql, indent=0]
+----
+mutation {
+  createOrders(
+    input: {
+      customer: {
+        connect: { where: { node: { contactName: { eq: "Jane Doe" } } } }
+      }
+      products: {
+        connect: {
+          edge: { unitPrice: 23.25, quantity: 5 }
+          where: { node: { productName: { eq: "Tofu" } } }
+        }
+      }
+    }
+  ) {
+    orders {
+      orderID
+    }
+  }
+}
+----
+
+To place an order, the customer and product information must already be known or collected.
+A shopping basket on the client side typically processes and displays this information.
+
+
+=== Calculate prices for orders
+
+To calculate order prices, query the `order` operation field and filter the orders by using the `orderID` filter.
+Then access the relationship properties `quantity` and `unitPrice` from the relationships `ORDERS` that connect the `Order` and the `Product` node:
+
+[source, graphql, indent=0]
+----
+query {
+  orders(where: { orderID: { eq: "6a5572bb-41fb-4263-913c-69c678c04766"} }) {
+    products {
+      productName
+    }
+    orderID
+    productsConnection {
+      edges {
+        properties {
+          quantity
+          unitPrice
+        }
+      }
+    }
+  }
+}
+----
+
+The result looks like this:
+
+[source, json, indent=0]
+----
+{
+  "data": {
+    "orders": [
+      {
+        "products": [
+          {
+            "productName": "Tofu"
+          }
+        ],
+        "orderID": "6a5572bb-41fb-4263-913c-69c678c04766",
+        "productsConnection": {
+          "edges": [
+            {
+              "properties": {
+                "quantity": 5,
+                "unitPrice": 23.25
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+----
+
+The product of `quantity` and `unitPrice` is the total cost, which in this case is 116.25.
+
+Note that there is no `discount` field on the `ORDERS` relationship and it is unclear how taxation works in this scenario.
+
+
+=== Filter products
+
+To filter products by category and supplier, first query for the `categoryName`s and supplier `companyName`s:
+
+[source, graphql, indent=0]
+----
+query {
+    categories {
+      categoryName
+    }
+    suppliers {
+      companyName
+    }
+}
+----
+
+Subsequent queries can now yield a filtered product list.
+For products of a certain category:
+
+[source, graphql, indent=0]
+----
+query {
+  products(where: {categoryConnection: {all: {node: {categoryName: {eq: "Produce"}}}}}) {
+    productName
+  }
+}
+----
+
+Result:
+
+[source, json, indent=0]
+----
+{
+  "data": {
+    "products": [
+      {
+        "productName": "Uncle Bob's Organic Dried Pears"
+      },
+      {
+        "productName": "Tofu"
+      },
+      {
+        "productName": "Rössle Sauerkraut"
+      },
+      {
+        "productName": "Manjimup Dried Apples"
+      },
+      {
+        "productName": "Longlife Tofu"
+      }
+    ]
+  }
+}
+----
+
+Similarly, a filter by supplier looks like this:
+
+[source, graphql, indent=0]
+----
+query {
+  products(where: {supplierConnection: {some: {node: {companyName: {eq: "New England Seafood Cannery"}}}}}) {
+    productName
+  }
+}
+----
+
+Result:
+
+[source, json, indent=0]
+----
+{
+  "data": {
+    "products": [
+      {
+        "productName": "Boston Crab Meat"
+      },
+      {
+        "productName": "Jack's New England Clam Chowder"
+      }
+    ]
+  }
+}
+----
+
+
+== Links
+
+* See xref:directives/autogeneration.adoc#type-definitions-autogeneration-id[`@id`] for more on how to handle unique identifiers with the GraphQL Library
+* See xref:directives/database-mapping.adoc#_relationshipproperties[`@relationshipProperties`] for details on relationship properties accessed with the GraphQL Library
+* See xref:filtering.adoc[] for more information about how to apply filters with the GraphQL Library
