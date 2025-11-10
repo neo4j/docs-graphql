@@ -327,7 +327,7 @@ Besides authentication and authorization considerations, there are a couple of w
 
 While the xref:getting-started/graphql-aura.adoc[Getting started page for GraphQL and Aura Console] advocates to both **Enable introspection** as well as **Enable field suggestions**, this is not recommended when considering security.
 
-Both potentially expose information that can be used to gain insight on specifics of your GraphQL schema and execute targeted malicious opLorem ipsumerations.
+Both potentially expose information that can be used to gain insight on specifics of your GraphQL schema and execute targeted malicious operations.
 Be sure to deactivate both in a customer-facing real-life scenario.
 
 [[best-practice-internal-errors]]
@@ -482,7 +482,7 @@ The link:https://shopify.dev/docs/api/usage/limits#the-leaky-bucket-algorithm[le
 
 ==== Query cost analysis
 
-link:https://github.com/pa-bru/graphql-cost-analysis[raphql-cost-analysis]
+link:https://github.com/pa-bru/graphql-cost-analysis[graphql-cost-analysis]
 
 
 === Use timeouts
