@@ -330,34 +330,6 @@ While the xref:getting-started/graphql-aura.adoc[Getting started page for GraphQ
 Both potentially expose information that can be used to gain insight on specifics of your GraphQL schema and execute targeted malicious operations.
 Be sure to deactivate both in a customer-facing real-life scenario.
 
-[[best-practice-internal-errors]]
-=== Catch internal errors
-
-For the same reason it is advisable to avoid introspection and data field suggestions, it can make your API more secure to catch internal errors and redact which information you want to pass on to the end user.
-
-For example, the following error reveals information XY:
-
-[source, json, indent=0]
-----
-"data": {
-  "field": "value"
-}
-----
-
-You can use Apollo Server's link:https://www.apollographql.com/docs/apollo-server/data/errors[Error Handling] to catch such internal errors and then decide how to pass this on to your users:
-
-[source, typescript, indent=0]
-----
-import { ApolloServerErrorCode } from '@apollo/server/errors';
-
-if (error.extensions?.code === ApolloServerErrorCode.GRAPHQL_PARSE_FAILED) {
-  // respond to the syntax error
-
-} else if (error.extensions?.code === "MY_CUSTOM_CODE") {
-  // do something else
-
-}
-----
 
 
 === Limit query depth
@@ -494,15 +466,6 @@ There are many ways and places to use timeouts.
 Here are a few examples.
 
 // examples
-
-
-=== Validate user input
-
-User input may potentially be malicious, for example, it could contain code snippets which get executed when running queries against the database.
-
-Follow the input validation methods summarized in the link:https://cheatsheetseries.owasp.org/cheatsheets/GraphQL_Cheat_Sheet.html#input-validation[OWASP Cheat Sheet Series].
-
-// Examples?
 
 
 
