@@ -357,21 +357,40 @@ query {
 }
 ----
 
-This can be achieved with a package such as link:https://www.npmjs.com/package/graphql-depth-limit[graphql-depth-limit]:
+This can be achieved with link:https://escape.tech/graphql-armor/docs/plugins/max-depth/[GraphQL Armor]:
 
 [source, typescript, indent=0]
 ----
-import depthLimit from 'graphql-depth-limit'
-import express from 'express'
-import graphqlHTTP from 'express-graphql'
-import schema from './schema'
- 
-const app = express()
- 
-app.use('/graphql', graphqlHTTP((req, res) => ({
-  schema,
-  validationRules: [ depthLimit(10) ]
-})))
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { ApolloArmor } from '@escape.tech/graphql-armor';
+import { readFileSync } from 'fs';
+
+// Assume you have your schema definition in a string or file.
+const typeDefs = readFileSync('./your-schema.graphql', 'utf-8');
+const resolvers = { /* Your resolvers here. */ }; 
+// Instantiate GraphQL Armor and configure the maxDepth plugin.
+const armor = new ApolloArmor({
+  maxDepth: {
+    enabled: true,
+    n: 5, // Sets the maximum allowed query depth to 5.
+  },
+});
+
+// Get the security plugins provided by Armor.
+const plugins = armor.protect();
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  plugins: [...plugins], // Add the armor plugins to Apollo Server.
+});
+
+const { url } = await startStandaloneServer(server, {
+  listen: { port: 4000 },
+});
+
+console.log(`🚀 Server ready at ${url}`);
 ----
 
 
@@ -393,46 +412,45 @@ query {
 }
 ----
 
-To avoid this, you can cap the input number directly in your resolvers, for example like this:
+You can prevent denial of service attacks based on queries such as this by paginating query results.
+
+A server-side pagination solution based on type definitions could look like this:
 
 [source, graphql, indent=0]
 ----
-// example
-----
+type PageInfo {
+  startCursor: String
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
 
-Alternatively, use a library such as link:https://github.com/joonhocho/graphql-input-number[graphql-input-number]:
+// Connection types for nested data (Products within an Order)
+type ProductEdge {
+  node: Product!
+  cursor: String!
+}
 
-[source, typescript, indent=0]
-----
-import {
-  GraphQLInputInt,
-  GraphQLInputFloat,
-} from 'graphql-input-number';
+type ProductConnection {
+  edges: [ProductEdge!]!
+  pageInfo: PageInfo!
+}
 
-const argType = GraphQLInputInt({
-  name: 'OneToNineInt',
-  min: 1,
-  max: 9,
-});
+// Connection types for root-level data (Orders list)
+type OrderEdge {
+  node: Order!
+  cursor: String!
+}
 
-new GraphQLObjectType({
-  name: 'Query',
-  fields: {
-    input: {
-      type: GraphQLInt,
-      args: {
-        number: {
-          type: argType,
-        },
-      },
-      resolve: (_, {number}) => {
+type OrderConnection {
+  edges: [OrderEdge!]!
+  pageInfo: PageInfo!
+}
 
-        // 'number' IS AN INT BETWEEN 1 to 9.
-
-      };
-    },
-  },
-});
+// The root query that is targeted
+type Query {
+  orders(first: Int, after: String, last: Int, before: String): OrderConnection
+}
 ----
 
 
@@ -443,30 +461,21 @@ There is more than one approach.
 Several are outlined in the following sections.
 
 
-==== Rate limit scores
-
-Refer to GitHub's link:https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#primary-rate-limit-for-authenticated-users[Rate limits for the REST API].
-
-
 ==== Query cost points
 
-The link:https://shopify.dev/docs/api/usage/limits#the-leaky-bucket-algorithm[leaky bucket algorithm].
+The link:https://shopify.dev/docs/api/usage/limits#the-leaky-bucket-algorithm[leaky bucket algorithm] represents an algorithmic solution to slow down the processing of multiple requests at once.
+
 
 ==== Query cost analysis
 
-link:https://github.com/pa-bru/graphql-cost-analysis[graphql-cost-analysis]
-
+link:https://escape.tech/graphql-armor/docs/plugins/cost-limit/[GraphQL Armor] offers a way to limit the cost of GraphQL queries.
 
 === Use timeouts
 
 To prevent the API from not responding or falling victim to denial of service attacks, it is feasible to make use of timeouts.
-This way, subsequent queries will not be blocked by a long-running previous query.
+This way, subsequent queries aren't blocked by a long-running previous query.
 
-There are many ways and places to use timeouts.
-Here are a few examples.
-
-// examples
-
+You can set a timeout via the GraphQL Library driver, see xref:driver-configuration.adoc#_transaction_configuration_in_context[Transaction configuration in context].
 
 
 == Further reading
