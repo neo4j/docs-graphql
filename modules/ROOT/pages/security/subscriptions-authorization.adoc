@@ -34,8 +34,6 @@ Filtering can be configured to only be performed on certain events:
 * `CREATED`
 * `UPDATED`
 * `DELETED`
-* `RELATIONSHIP_CREATED`
-* `RELATIONSHIP_DELETED`
 
 For instance, to only require filtering for mutations to a type itself and not its relationships:
 
