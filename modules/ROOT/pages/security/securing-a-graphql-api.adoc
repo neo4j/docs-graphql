@@ -64,9 +64,9 @@ The xref:directives/schema-configuration/field-configuration.adoc#_selectable[`@
 
 === Authentication
 
-The xref:security/authentication.adoc[`@authentication` directive] can be applied globally, only to certain fields or only to certain types, and only for certain operations.
+You can apply the xref:security/authentication.adoc[`@authentication` directive] either globally, only to certain fields or only to certain types, and only for certain operations.
 
-Add admin authorization for operations on customers, orders, products, categories and suppliers:
+Add authentication as an admin to operations on customers, orders, products, categories and suppliers:
 
 * `DELETE` for customers,
 * `UPDATE` and `DELETE` for orders,
@@ -139,7 +139,9 @@ JWT are represented by encoded JSON data.
 These data can have arbitrary fields - which ones they should contain depends on the application preferences.
 
 For instance, if the server side is trying to parse the `roles` field that was introduced in xref:#_authentication[], then the JWT should contain that.
-With `@jwtClaim`, you can specify a path to a customer ID in a nested location.
+Specify the types of JWT data with `@jwt`.
+Then you can specify a path to a customer ID in a nested location with `@jwtClaim`.
+
 For example:
 
 [source, graphql, indent=0]
@@ -167,7 +169,7 @@ type Customer
     @node
     @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
     @authorization(
-        filter: [ <1>
+        filter: [
             { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
             { where: { jwt: { roles: { includes: "admin" } } } }
         ]
@@ -181,7 +183,7 @@ type Order
     @node
     @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
     @authorization(
-        filter: [ <2>
+        filter: [
             { where: { node: { customer: { all: { customerID: { eq: "$jwt.customerID" } } } } } }
             { where: { jwt: { roles: { includes: "admin" } } } }
         ]
@@ -207,7 +209,7 @@ type Customer
     ) {
     contactName: String!
     adminNotes: [String!]! @authorization(
-      validate: [ <1>
+      validate: [
         { where: { jwt: { roles: { includes: "admin" } } } }
       ]
     )
@@ -323,13 +325,12 @@ type ordersProperties @relationshipProperties {
 Besides authentication and authorization considerations, there are a couple of worthwhile best practices to increase your API's security.
 
 
-=== Avoid introspection and data field suggestions
+=== Introspection and data field suggestions
 
 While the xref:getting-started/graphql-aura.adoc[Getting started page for GraphQL and Aura Console] advocates to both **Enable introspection** as well as **Enable field suggestions**, this is not recommended when considering security.
 
 Both potentially expose information that can be used to gain insight on specifics of your GraphQL schema and execute targeted malicious operations.
-Be sure to deactivate both in a customer-facing real-life scenario.
-
+We recommend you to deactivate both in a customer-facing real-life scenario unless you have a good reason to use them.
 
 
 === Limit query depth
@@ -482,5 +483,4 @@ You can set a timeout via the GraphQL Library driver, see xref:driver-configurat
 
 Neo4j  has a link:https://neo4j.com/docs/operations-manual/current/authentication-authorization/manage-privileges/[Role-based access control] mechanism that can be leveraged to increase security even further.
 
-
-
+For more security-related topics in GraphQL, refer to the link:https://www.graphql.org/learn/security/[GraphQL Security] page.

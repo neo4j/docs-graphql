@@ -10,7 +10,6 @@
 
 * *Reference*
 * xref:security/index.adoc[]
-** xref:security/securing-a-graphql-api.adoc[]
 ** xref:security/configuration.adoc[]
 ** xref:security/authentication.adoc[]
 ** xref:security/authorization.adoc[]
@@ -58,6 +57,7 @@
 
 * xref:driver-configuration.adoc[]
 * xref:graphql-modeling.adoc[]
+* xref:security/securing-a-graphql-api.adoc[]
 
 * *Products*
 
