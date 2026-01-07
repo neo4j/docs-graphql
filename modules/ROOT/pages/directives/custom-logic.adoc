@@ -597,4 +597,25 @@ new Neo4jGraphQL({
 })
 ----
 
-Note that the second positional argument, in this case `_args`, has a type of `Record<string, never>`, and as such it will always be an empty object.
+Note that the second positional argument, in this case `_args`, has a type of `Record<string, never>`, and as such it is always an empty object.
+This is to maintain a compatible signature with GraphQL resolvers.
+
+
+**`populatedByOperation`**
+
+The `context` argument contains the field `populatedByOperation`.
+This field is the mutation type that triggered the callback (`CREATE` or `UPDATE`).
+`populatedByOperation` allows for different logic to be executed depending on the type of operation.
+For example:
+
+[source, javascript, indent=0]
+----
+const modifiedByCallback = async (_parent, _args, context) => {
+    if(context.populatedByOperation === "UPDATE"){
+        return context.username;
+    } else {
+        return "";
+    }
+}
+----
+
