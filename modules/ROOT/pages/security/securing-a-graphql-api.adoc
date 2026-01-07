@@ -419,24 +419,6 @@ A server-side pagination solution based on type definitions could look like this
 
 [source, graphql, indent=0]
 ----
-type PageInfo {
-  startCursor: String
-  endCursor: String
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-}
-
-// Connection types for nested data (Products within an Order)
-type ProductEdge {
-  node: Product!
-  cursor: String!
-}
-
-type ProductConnection {
-  edges: [ProductEdge!]!
-  pageInfo: PageInfo!
-}
-
 // Connection types for root-level data (Orders list)
 type OrderEdge {
   node: Order!
@@ -448,9 +430,15 @@ type OrderConnection {
   pageInfo: PageInfo!
 }
 
+type PageInfo {
+  startCursor: String
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
 // The root query that is targeted
 type Query {
-  orders(first: Int, after: String, last: Int, before: String): OrderConnection
+  orders(first: Int, after: String): OrderConnection
 }
 ----
 
