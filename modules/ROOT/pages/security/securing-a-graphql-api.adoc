@@ -30,7 +30,7 @@ type Customer @node {
     customerID: ID! @id
     orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
 }
-type Order @node {
+type Order @limit(max: 20, default: 10) @node {
     orderID: ID! @id
     customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
     products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
@@ -76,7 +76,7 @@ Add authentication as an admin to operations on customers, orders, products, cat
 ----
 type Customer
     @node
-    @authentication( <1>
+    @authentication(
       operations: [DELETE],
       jwt: { roles: { includes: "admin" } }
     ) {
@@ -87,7 +87,7 @@ type Customer
 
 type Order
     @node
-    @authentication( <2>
+    @authentication(
       operations: [UPDATE, DELETE],
       jwt: { roles: { includes: "admin" } }
     ) { 
@@ -98,7 +98,7 @@ type Order
 
 type Product
     @node
-    @authentication( <3>
+    @authentication(
       operations: [CREATE, UPDATE, DELETE],
       jwt: { roles: { includes: "admin" } }
     ) {
@@ -110,7 +110,7 @@ type Product
 
 type Category
     @node
-    @authentication( <4>
+    @authentication(
       operations: [CREATE, UPDATE, DELETE],
       jwt: { roles: { includes: "admin" } }
     ) {
@@ -120,7 +120,7 @@ type Category
 
 type Supplier
     @node
-    @authentication( <5>
+    @authentication(
       operations: [CREATE, UPDATE, DELETE],
       jwt: { roles: { includes: "admin" } }
     ) {
@@ -282,6 +282,7 @@ type Customer
 }
 
 type Order
+    @limit(max: 20, default: 10) 
     @node
     @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
     @authorization(
@@ -441,6 +442,8 @@ type Query {
   orders(first: Int, after: String): OrderConnection
 }
 ----
+
+This pairs with the `@limit` directive defined on the `Order` type definition.
 
 
 === Rate-limit your API
