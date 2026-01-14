@@ -24,4 +24,14 @@ You can check the Apollo documentation on https://www.apollographql.com/docs/apo
 
 == Requirements
 
-. https://neo4j.com/product/auradb/[Neo4j AuraDB] version 2025.x or https://neo4j.com/deployment-center/#gdb-selfmanaged[Neo4j Database] running the latest 5.x version or above with the APOC core plugin.
+The Neo4j GraphQL Library requires one of the following Neo4j database versions:
+
+. https://neo4j.com/product/auradb/[Neo4j AuraDB] version 2025.x 
+. https://neo4j.com/deployment-center/#gdb-selfmanaged[Neo4j Database] running only the latest 5.x or 2025.x versions
+
+The APOC core plugin must be installed.
+
+[NOTE]
+====
+To check the requirements are met before starting the server, the `checkNeo4jCompat` function is exposed on the Neo4jGraphQL instance.
+====
