@@ -445,6 +445,10 @@ type Query {
 
 This pairs with the `@limit` directive defined on the `Order` type definition.
 
+With the `@limit` directive and server-side pagination, the potentially harmful query above only yields 10 `Order` objects at maximum, and depending on the values for `first` and `after`, the query can further reduce this and set an offset. 
+
+The same can be applied analogously to products.
+
 
 === Rate-limit your API
 
