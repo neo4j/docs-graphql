@@ -30,7 +30,7 @@ type Customer @node {
     customerID: ID! @id
     orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
 }
-type Order @limit(max: 20, default: 10) @node {
+type Order @limit(max: 10, default: 10) @node {
     orderID: ID! @id
     customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
     products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
@@ -282,7 +282,7 @@ type Customer
 }
 
 type Order
-    @limit(max: 20, default: 10) 
+    @limit(max: 10, default: 10) 
     @node
     @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
     @authorization(
