@@ -33,5 +33,5 @@ The APOC core plugin must be installed.
 
 [NOTE]
 ====
-To check the requirements are met before starting the server, the `checkNeo4jCompat` function is exposed on the Neo4jGraphQL instance.
+To check whether the requirements are met before starting the server, the `checkNeo4jCompat` function is exposed on the Neo4jGraphQL instance.
 ====
