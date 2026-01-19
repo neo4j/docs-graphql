@@ -1,0 +1,481 @@
+[[securing-an-api]]
+:description: This page is a tutorial on how to secure your API created with the Neo4j GraphQL Library.
+= Securing your GraphQL API
+
+This page is a tutorial on how to secure your API created with the Neo4j GraphQL Library.
+
+
+== Prerequisites
+
+. Set up a new AuraDB instance.
+Refer to link:https://neo4j.com/docs/aura/getting-started/create-instance/[Creating a Neo4j Aura instance].
+. Populate the instance with the Northwind data set.
+
+[NOTE]
+====
+If you have completed the GraphQL and Aura Console getting started guide and would like to get rid of the example nodes you have created there, run the following in **Query** before populating your data base with the Northwind set:
+[source,cypher]
+----
+MATCH (n) DETACH DELETE n;
+----
+====
+
+This tutorial builds on top of the xref:graphql-modeling.adoc[GraphQL modeling tutorial].
+Specifically, it extends the following type definitions:
+
+[source, graphql, indent=0]
+----
+type Customer @node {
+    contactName: String!
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+type Order @limit(max: 10, default: 10) @node {
+    orderID: ID! @id
+    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
+    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
+}
+type Product @node {
+    productName: String!
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+    orders: [Product!]! @relationship(type: "ORDERS", direction: IN, properties: "ordersProperties")
+    supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
+}
+type Category @node {
+    categoryName: String!
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+type Supplier @node {
+    supplierID: ID! @id
+    companyName: String!
+    products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
+}
+type ordersProperties @relationshipProperties {
+    unitPrice: Float!
+    quantity: Int!
+}
+----
+
+== Security-related directives
+
+The GraphQL Library has several directives dedicated to security: xref:security/authentication.adoc[`@authentication`] and xref:security/authorization.adoc[`@authorization`], as well as xref:security/configuration.adoc#_jwt[`@jwt`] and xref:security/configuration.adoc#_jwtclaim[`@jwtClaim`].
+The xref:directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] and xref:directives/schema-configuration/field-configuration.adoc#_settable[`@settable`] directives can be used to control accessibility of data fields through certain operations.
+
+
+=== Authentication
+
+You can apply the xref:security/authentication.adoc[`@authentication` directive] either globally, only to certain fields or only to certain types, and only for certain operations.
+
+Add authentication as an admin to operations on customers, orders, products, categories and suppliers:
+
+* `DELETE` for customers,
+* `UPDATE` and `DELETE` for orders,
+* `CREATE`, `UPDATE` and `DELETE` for products, categories and suppliers.
+
+[source, graphql, indent=0]
+----
+type Customer
+    @node
+    @authentication(
+      operations: [DELETE],
+      jwt: { roles: { includes: "admin" } }
+    ) {
+    contactName: String!
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+
+type Order
+    @node
+    @authentication(
+      operations: [UPDATE, DELETE],
+      jwt: { roles: { includes: "admin" } }
+    ) { 
+    orderID: ID! @id
+    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
+    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
+}
+
+type Product
+    @node
+    @authentication(
+      operations: [CREATE, UPDATE, DELETE],
+      jwt: { roles: { includes: "admin" } }
+    ) {
+    productName: String!
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+    orders: [Product!]! @relationship(type: "ORDERS", direction: IN, properties: "ordersProperties")
+    supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
+}
+
+type Category
+    @node
+    @authentication(
+      operations: [CREATE, UPDATE, DELETE],
+      jwt: { roles: { includes: "admin" } }
+    ) {
+    categoryName: String!
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+
+type Supplier
+    @node
+    @authentication(
+      operations: [CREATE, UPDATE, DELETE],
+      jwt: { roles: { includes: "admin" } }
+    ) {
+    supplierID: ID! @id
+    companyName: String!
+    products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
+}
+----
+
+==== JSON Web Token (JWT) authentication
+
+JWT authentication is a popular method for token-based authentication.
+It allows clients to obtain and use tokens to authenticate subsequent requests.
+
+JWT are represented by encoded JSON data.
+These data can have arbitrary fields - which ones they should contain depends on the application preferences.
+
+For instance, if the server side is trying to parse the `roles` field that was introduced in xref:#_authentication[], then the JWT should contain that.
+Specify the types of JWT data with `@jwt`.
+Then you can specify a path to a customer ID in a nested location with `@jwtClaim`.
+
+For example:
+
+[source, graphql, indent=0]
+----
+type JWT @jwt {
+    roles: [String!]!
+    customerID: String! @jwtClaim(path: "sub")
+}
+----
+
+You can encode and decode JWT using a site like link:https://www.jwt.io/[https://www.jwt.io/].
+
+
+=== Authorization
+
+The xref:security/authorization.adoc[`@authorization` directive] can either be used to filter out data which users should not have access to or throw an error if a query is executed against such data.
+
+Both have their own use cases.
+
+To make customer data and order data inaccessible to anyone who is not the specific user or an admin, consider the following uses of filters with the `@authorization` directive:
+
+[source, graphql, indent=0]
+----
+type Customer
+    @node
+    @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    contactName: String!
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+
+type Order
+    @node
+    @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { where: { node: { customer: { all: { customerID: { eq: "$jwt.customerID" } } } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    orderID: ID! @id
+    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
+    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
+}
+----
+
+For sensitive data, you can also use a validating authorization:
+
+[source, graphql, indent=0]
+----
+type Customer
+    @node
+    @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    contactName: String!
+    adminNotes: [String!]! @authorization(
+      validate: [
+        { where: { jwt: { roles: { includes: "admin" } } } }
+      ]
+    )
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+----
+
+`adminNotes` can only be read by admins and trying to access this field causes an error if the user is not an admin.
+
+It is important to be aware that error messages generated through validation can be a security concern since they can report database internals to your users.
+
+Also see <<best-practice-internal-errors>> on this page.
+
+
+=== `@selectable` and `@settable`
+
+To restrict access through operations directly, you can use the xref:directives/schema-configuration/field-configuration.adoc#_selectable[`@selectable`] and xref:directives/schema-configuration/field-configuration.adoc#_settable[`@settable`] directives, for example:
+
+[source, graphql, indent=0]
+----
+type Customer
+    @node
+    @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    contactName: String!
+    sensitiveData: String! @selectable(onRead: false, onAggregate: false)
+    createdAt: DateTime! @settable(onCreate: true, onUpdate: false)
+    adminNotes: [String!]! @authorization(validate: [{ where: { jwt: { roles: { includes: "admin" } } } }])
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+----
+
+The `sensitiveData` field is neither available for queries nor for subscriptions nor for aggregations.
+The `createdAt` field can be set when a new customer is created, but it cannot be updated.
+
+
+=== Full example
+
+Here is the full set of type definitions extended with security-related directives:
+
+[source, graphql, indent=0]
+----
+type JWT @jwt {
+    roles: [String!]!
+    customerID: String! @jwtClaim(path: "sub")
+}
+
+type Customer
+    @node
+    @authentication(operations: [DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { operations: [READ], where: { node: { customerID: { eq: "$jwt.customerID" } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    contactName: String!
+    sensitiveData: String! @selectable(onRead: false, onAggregate: false)
+    createdAt: DateTime! @settable(onCreate: true, onUpdate: false)
+    adminNotes: [String!]! @authorization(validate: [{ where: { jwt: { roles: { includes: "admin" } } } }])
+    customerID: ID! @id
+    orders: [Order!]! @relationship(type: "PURCHASED", direction: OUT)
+}
+
+type Order
+    @limit(max: 10, default: 10) 
+    @node
+    @authentication(operations: [UPDATE, DELETE], jwt: { roles: { includes: "admin" } })
+    @authorization(
+        filter: [
+            { where: { node: { customer: { all: { customerID: { eq: "$jwt.customerID" } } } } } }
+            { where: { jwt: { roles: { includes: "admin" } } } }
+        ]
+    ) {
+    orderID: ID! @id
+    customer: [Customer!]! @relationship(type: "PURCHASED", direction: IN)
+    products: [Product!]! @relationship(type: "ORDERS", direction: OUT, properties: "ordersProperties")
+}
+
+type Product @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
+    productName: String!
+    category: [Category!]! @relationship(type: "PART_OF", direction: OUT)
+    orders: [Product!]! @relationship(type: "ORDERS", direction: IN, properties: "ordersProperties")
+    supplier: [Supplier!]! @relationship(type: "SUPPLIES", direction: IN)
+}
+
+type Category @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
+    categoryName: String!
+    products: [Product!]! @relationship(type: "PART_OF", direction: IN)
+}
+
+type Supplier @node @authentication(operations: [CREATE, UPDATE, DELETE], jwt: { roles: { includes: "admin" } }) {
+    supplierID: ID! @id
+    companyName: String!
+    products: [Product!]! @relationship(type: "SUPPLIES", direction: OUT)
+}
+
+type ordersProperties @relationshipProperties {
+    unitPrice: Float!
+    quantity: Int!
+}
+----
+
+
+== Best practice checklist
+
+Besides authentication and authorization considerations, there are a couple of worthwhile best practices to increase your API's security.
+
+
+=== Introspection and data field suggestions
+
+While the xref:getting-started/graphql-aura.adoc[Getting started page for GraphQL and Aura Console] advocates to both **Enable introspection** as well as **Enable field suggestions**, this is not recommended when considering security.
+
+Both potentially expose information that can be used to gain insight on specifics of your GraphQL schema and execute targeted malicious operations.
+We recommend you to deactivate both in a customer-facing real-life scenario unless you have a good reason to use them.
+
+
+=== Limit query depth
+
+Limiting query depth disallows potentially harmful queries such as the following recursive query:
+
+[source, graphql, indent=0]
+----
+query {
+  order(id: 42) {
+    products {
+      order {
+        products {
+          order {
+            products {
+              order {
+                # and so on...
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+----
+
+This can be achieved with link:https://escape.tech/graphql-armor/docs/plugins/max-depth/[GraphQL Armor]:
+
+[source, typescript, indent=0]
+----
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { ApolloArmor } from '@escape.tech/graphql-armor';
+import { readFileSync } from 'fs';
+
+// Assume you have your schema definition in a string or file.
+const typeDefs = readFileSync('./your-schema.graphql', 'utf-8');
+const resolvers = { /* Your resolvers here. */ }; 
+// Instantiate GraphQL Armor and configure the maxDepth plugin.
+const armor = new ApolloArmor({
+  maxDepth: {
+    enabled: true,
+    n: 5, // Sets the maximum allowed query depth to 5.
+  },
+});
+
+// Get the security plugins provided by Armor.
+const plugins = armor.protect();
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  plugins: [...plugins], // Add the armor plugins to Apollo Server.
+});
+
+const { url } = await startStandaloneServer(server, {
+  listen: { port: 4000 },
+});
+
+console.log(`🚀 Server ready at ${url}`);
+----
+
+
+=== Paginate list fields
+
+Returning large query result lists can negatively affect server performance.
+For example, a query like the following would return a siginificant number of nodes:
+
+[source, graphql, indent=0]
+----
+query {
+  order(first: 1000) {
+    orderID
+    products(last: 100) {
+      productName
+      productCategory
+    }
+  }
+}
+----
+
+You can prevent denial of service attacks based on queries such as this by paginating query results.
+
+A server-side pagination solution based on type definitions could look like this:
+
+[source, graphql, indent=0]
+----
+// Connection types for root-level data (Orders list)
+type OrderEdge {
+  node: Order!
+  cursor: String!
+}
+
+type OrderConnection {
+  edges: [OrderEdge!]!
+  pageInfo: PageInfo!
+}
+
+type PageInfo {
+  startCursor: String
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
+// The root query that is targeted
+type Query {
+  orders(first: Int, after: String): OrderConnection
+}
+----
+
+This pairs with the `@limit` directive defined on the `Order` type definition.
+
+With the `@limit` directive and server-side pagination, the potentially harmful query above only yields 10 `Order` objects at maximum, and depending on the values for `first` and `after`, the query can further reduce this and set an offset. 
+
+The same can be applied analogously to products.
+
+
+=== Rate-limit your API
+
+Rate-limiting an API means setting an upper bound to how many requests a client can send in a certain amount of time or how costly those requests may be.
+There is more than one approach.
+Several are outlined in the following sections.
+
+
+==== Query cost points
+
+The link:https://shopify.dev/docs/api/usage/limits#the-leaky-bucket-algorithm[leaky bucket algorithm] represents an algorithmic solution to slow down the processing of multiple requests at once.
+
+
+==== Query cost analysis
+
+link:https://escape.tech/graphql-armor/docs/plugins/cost-limit/[GraphQL Armor] offers a way to limit the cost of GraphQL queries.
+
+=== Use timeouts
+
+To prevent the API from not responding or falling victim to denial of service attacks, it is feasible to make use of timeouts.
+This way, subsequent queries aren't blocked by a long-running previous query.
+
+You can set a timeout via the GraphQL Library driver, see xref:driver-configuration.adoc#_transaction_configuration_in_context[Transaction configuration in context].
+
+
+== Further reading
+
+Neo4j  has a link:https://neo4j.com/docs/operations-manual/current/authentication-authorization/manage-privileges/[Role-based access control] mechanism that can be leveraged to increase security even further.
+
+For more security-related topics in GraphQL, refer to the link:https://www.graphql.org/learn/security/[GraphQL Security] page.
