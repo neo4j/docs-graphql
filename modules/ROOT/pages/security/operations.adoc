@@ -1,4 +1,4 @@
-= Operation examples
+= Applying authentication and authorization rules
 //:page-aliases: /authentication-and-authorization/reference/operations.adoc, /security/reference/operations.adoc
 :description: This page describes how to set up authorization operations in the Neo4j GraphQL Library.
 
