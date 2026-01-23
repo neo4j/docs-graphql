@@ -35,6 +35,7 @@ From these type definitions, the library generates the following operation field
     * `movieDeleted`
 
 **moviesConnection**:
+
     * `aggregate`
     * `edges`
     * `totalCount`
