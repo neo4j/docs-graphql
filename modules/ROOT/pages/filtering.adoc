@@ -9,7 +9,7 @@ When querying for data, a number of operators are available for the types in the
 
 Operators can either be standalone operators (see xref:#_boolean_operators[]) or they are appended to field names (for example, xref:#_string_comparison[]).
 
-All operators can be combined using the Boolean operators `AND`, `OR`, and `NOT`.
+All other operators can be combined using the Boolean operators `AND`, `OR`, and `NOT`.
 
 == Operators
 
