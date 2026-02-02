@@ -94,6 +94,9 @@ Particularly useful for types that are not correctly pluralized or are non-Engli
 | xref:/directives/schema-configuration/field-configuration.adoc#_settable[`@settable`]
 | Sets the availability of fields on the `create` and `update` inputs.
 
+| xref:/directives/schema-configuration/field-configuration.adoc#_sortable[`@sortable`]
+| Sets the availability of sorting inputs for that field.
+
 | xref:/directives/schema-configuration/field-configuration.adoc#_filterable[`@filterable`]
 | Defines the filters generated for a field.
 

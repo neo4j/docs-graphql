@@ -398,6 +398,71 @@ input ActorUpdateInput {
 
 This means `actedIn` can be updated on an update, but it is no longer available on `create` operations.
 
+
+== `@sortable`
+
+This directive sets the availability of the input fields for sorting.
+It has one arguments:
+
+* **byValue**: if disabled, this field is not available for sorting.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Instructs @neo4j/graphql to generate sorting inputs for this field."""
+directive @sortable(byValue: Boolean! = true) on FIELD_DEFINITION
+----
+
+=== Usage
+
+With this definition:
+
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String!
+    description: String! @sortable(byValue: false)
+}
+----
+
+The following input type is generated for Movies:
+
+[source, graphql, indent=0]
+----
+"""
+Fields to sort Movies by. The order in which sorts are applied is not guaranteed when specifying many fields in one MovieSort object.
+"""
+input MovieSort {
+  title: SortDirection
+}
+----
+
+This means that movies can be sorted by the title, but not by the description:
+
+This is valid:
+[source, graphql, indent=0]
+----
+query {
+  movies(sort: {title: DESC}) {
+    title
+  }
+}
+----
+
+This won't be valid:
+[source, graphql, indent=0]
+----
+query {
+  movies(sort: {description: DESC}) {
+    title
+  }
+}
+----
+
+
+If no fields are sortable, the type `MovieSort` won't be generated, and the `sort` input won't be avaiable.
+
 == `@filterable`
 
 This directive defines the filters generated for the field to which this directive is applied.
