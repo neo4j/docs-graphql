@@ -404,7 +404,7 @@ This means `actedIn` can be updated on an update, but it is no longer available 
 This directive sets the availability of the input fields for sorting.
 It has a single argument:
 
-* **byValue**: if disabled, this field is not available for sorting.
+* **byValue**: Defaults to true. If disabled, this field is not available for sorting.
 
 === Definition
 
