@@ -402,7 +402,7 @@ This means `actedIn` can be updated on an update, but it is no longer available 
 == `@sortable`
 
 This directive sets the availability of the input fields for sorting.
-It has one arguments:
+It has a single argument:
 
 * **byValue**: if disabled, this field is not available for sorting.
 
@@ -438,7 +438,7 @@ input MovieSort {
 }
 ----
 
-This means that movies can be sorted by the title, but not by the description:
+Movies can be sorted by the title, but not by description:
 
 This is valid:
 [source, graphql, indent=0]
@@ -450,7 +450,7 @@ query {
 }
 ----
 
-This won't be valid:
+This is not valid:
 [source, graphql, indent=0]
 ----
 query {
@@ -461,7 +461,7 @@ query {
 ----
 
 
-If no fields are sortable, the type `MovieSort` won't be generated, and the `sort` input won't be avaiable.
+If no fields are sortable, the type `MovieSort` is not generated, and the `sort` input isn't available.
 
 == `@filterable`
 
