@@ -44,6 +44,8 @@ export type Neo4jFeaturesSettings = {
         attributeFilters?: boolean;
     };
     vector?: Neo4jVectorSettings;
+    limitRequired?: boolean;
+    complexityEstimators?: boolean;
 };
 ----
 
@@ -82,3 +84,17 @@ See xref:optimization.adoc#_exclude_deprecated_fields[Exclude `@deprecated` fiel
 
 Set your GenAI provider credentials with the `vector` field.
 See xref:directives/indexes-and-constraints.adoc#_vector_index_search[`@vector`].
+
+
+=== Limit required settings
+
+Set `limitRequired` to `true` to require a `limit` argument for all read operations that return lists.
+This is useful to prevent unbounded queries that can lead to performance issues.
+See xref:security/avoid-unbounded-queries.adoc#_limit_required[Require `limit` argument].
+
+
+=== Complexity estimators settings
+
+Set `complexityEstimators` to `true` to enable the assignment of a complexity "score" to each field in the schema.
+This feature creates complexity estimators compatible with the link:https://www.npmjs.com/package/graphql-query-complexity[graphql-query-complexity] library, which can be used to generate the total complexity score of an incoming query via the `getComplexity` function.
+See xref:security/avoid-unbounded-queries.adoc#_complexity_estimators[Complexity estimators].

@@ -1,0 +1,140 @@
+= Avoid unbounded queries
+:description: This section describes how to prevent unbounded queries from reaching the server that can lead to performance issues.
+
+Unbounded queries can cause performance issues and potentially crash your application by consuming excessive resources. The Neo4j GraphQL Library provides several mechanisms to help you avoid these problems.
+
+== Require `limit` argument
+
+Setting `limitRequired` to `true` in the feature settings makes the `limit` argument non-nullable in the generated schema, forcing all read operations to include a `limit` argument on all fields that return a list of items. 
+
+This protects against queries that return massive datasets across nested relationships.
+
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        limitRequired: true
+    }
+});
+----
+
+When this feature is enabled:
+
+* All queries that return arrays must include a `limit` argument
+* Queries without a `limit` will not be compliant with the GraphQL schema
+* This applies to both top-level queries and nested relationship queries
+
+Assuming the following type definitions:
+[source, graphql, indent=0]
+----
+type Movie @node { 
+    title: String 
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN) 
+}
+
+type Actor @node {
+    name: String
+}
+----
+
+* Valid query:
+[source, graphql, indent=0]
+----
+query {
+    movies(limit: 1) {
+        title
+        actors(limit: 1) {
+            name
+        }
+    }
+}
+----
+
+* Invalid query, `limit` argument not provided on `movies` field:
+[source, graphql, indent=0]
+----
+query {
+    # Error: `Field "movies" argument "limit" of type "Int!" is required, but it was not provided`
+    movies {
+        title
+        actors(limit: 1) {
+            name
+        }
+    }
+}
+----
+
+* Invalid query, `limit` argument not provided on `actors` field:
+[source, graphql, indent=0]
+----
+query {
+    movies(limit: 1) {
+        title
+        # Error: `Field "actors" argument "limit" of type "Int!" is required, but it was not provided`
+        actors {
+            name
+        }
+    }
+}
+----
+
+
+== Complexity estimators
+
+Setting `complexityEstimators` to `true` enables the assignment of a complexity "score" to each field in your schema. This feature creates complexity estimators that are compatible with the link:https://www.npmjs.com/package/graphql-query-complexity[graphql-query-complexity] library.
+
+You can then use the complexity "score" to automatically reject queries that exceed your defined complexity limits before reaching the server, protecting your system from resource-intensive operations.
+
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        complexityEstimators: true
+    }
+});
+----
+
+When this feature is enabled:
+
+* Each field in your schema is assigned a complexity score
+* You can use the `getComplexity` function from `graphql-query-complexity` to calculate the total complexity of incoming queries
+* You can set maximum complexity thresholds to reject overly complex queries
+
+To use the complexity estimators, include this logic to run when receiving a query in your GraphQL server implementation.
+[source, javascript, indent=0]
+----
+ const complexity = getComplexity({
+    schema, // result of Neo4jGraphQL.getSchema() 
+    query,  // the GraphQL query document sent to server for execution
+    estimators: DefaultComplexityEstimators, // exported from the neo4j/graphql package
+});
+
+if (complexity > 100) {
+    throw new Error(`Query is too complex: ${complexity}. Maximum allowed complexity is 100.`);
+}
+----
+For example, if you are using Apollo Server, you can use the `requestDidStart` function of an `ApolloServerPlugin`.
+
+
+Computing the complexity
+
+// COMPLEXITY FORMULA
+// c = c_child + lvl_limit * c_field, where
+// c_field = 1
+// lvl_limit defaults to 1
+// c_child comes from simpleEstimator 
+
+[source, graphql, indent=0]
+----
+query {
+    movies(limit: 10) {     # c = 10 * 1 = 10
+        title               # c = 1
+        actors(limit: 50) { # c = 50 * 1 = 50
+            name            # c = 1
+        }
+    }
+}
+# Total complexity = 10 + 1 + 50 + 1 = 62
+----
