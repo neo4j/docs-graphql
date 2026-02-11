@@ -225,9 +225,10 @@ query {
 ----
 
 
-== A note about aggregate with pagination
+== Aggregations and pagination
 
-Because aggregate is done within the `Connection` type, the optional arguments `first` and `after` are available for pagination. However, pagination **does not** apply to aggregate
+Since aggregations are done within the `Connection` type, the optional arguments `first` and `after` are available for pagination.
+However, pagination **does not** apply to aggregations.
 
 For example:
 
@@ -244,7 +245,7 @@ query {
 }
 ----
 
-The result would return the count of all the nodes:
+The result returns the count of all the nodes:
 
 [source, json, indent=0]
 ----
