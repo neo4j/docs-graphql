@@ -20,7 +20,7 @@ type Actor @node {
     name: String 
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT) 
 }
-extend schema @query(read: true, aggregate: false)
+extend schema @query(read: true, connection: true, aggregate: false)
 ----
 
 This configuration disables all top-level aggregation operations for the `Movie` and `Actor` types, while still allowing read operations.
@@ -59,7 +59,7 @@ type Movie @node {
     actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN) 
 } 
 
-type Actor @node @query(read: false, aggregate: true) { 
+type Actor @node @query(read: false, connection: false, aggregate: true) { 
     name: String 
     movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT) 
 }

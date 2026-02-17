@@ -51,8 +51,10 @@ This directive is used to limit the availability of query operations in the libr
 
 [source, graphql, indent=0]
 ----
-directive @query(read: Boolean! = true, aggregate: Boolean! = false) on OBJECT | SCHEMA | INTERFACE | UNION
+directive @query(read: Boolean! = true, connection: Boolean, aggregate: Boolean! = false) on OBJECT | SCHEMA | INTERFACE | UNION
 ----
+
+Where the value of the `connection` argument defaults to the value of the `read` argument.
 
 === Usage
 
@@ -68,7 +70,25 @@ type Movie @node @query(read: false, aggregate: true) {
 .Disable _moviesConnection_ aggregate field
 [source, graphql, indent=0]
 ----
-type Movie @node @query(read: true, aggregate: false)  { 
+type Movie @node @query(read: true, aggregate: false)  { # aggregate can be omitted as it defaults to false
+    title: String 
+    length: Int
+}
+----
+
+.Disable _moviesConnection_ completely
+[source, graphql, indent=0]
+----
+type Movie @node @query(read: true, connection: false, aggregate: false)  { # aggregate can be omitted as it defaults to false
+    title: String 
+    length: Int
+}
+----
+
+.Disable all reads
+[source, graphql, indent=0]
+----
+type Movie @node @query(read: false, aggregate: false)  { # aggregate can be omitted as it defaults to false
     title: String 
     length: Int
 }

@@ -49,8 +49,10 @@ Aggregations on a type are provided in the field `aggregate` inside Connection:
 query {
     usersConnection {
         aggregate {
-            name {
-                longest
+            node {
+                name {
+                    longest
+                }
             }
         }
     }
@@ -94,8 +96,10 @@ a|
 query {
     postsConnection {
         aggregate {
-            createdAt {
-                min
+            node {
+                createdAt {
+                    min
+                }
             }
         }
     }
@@ -219,4 +223,41 @@ query {
     }
 }
 ----
+
+
+== Aggregations and pagination
+
+Since aggregations are done within the `Connection` type, the optional arguments `first` and `after` are available for pagination.
+However, pagination **does not** apply to aggregations.
+
+For example:
+
+[source, graphql, indent=0]
+----
+query {
+    usersConnection(first: 10) {
+        aggregate {
+            count {
+                nodes
+            }
+        }
+    }
+}
+----
+
+The result returns the count of all the nodes:
+
+[source, json, indent=0]
+----
+{
+    "usersConnection": {
+        "aggregate": {
+            "count": {
+                "nodes": 38
+            }
+        }
+    }
+}
+----
+
 
