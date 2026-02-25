@@ -108,6 +108,8 @@ const result = {
 ----
 ====
 
+=== Filtering for specific union member type
+
 To filter for a specific union member type, you can use the `where` argument on the relationship field.
 
 .Get User nodes with related Content nodes filtered by Blog type
