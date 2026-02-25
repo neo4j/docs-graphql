@@ -1,0 +1,376 @@
+[[single-relationships]]
+= Single relationships and cardinality considerations
+:page-aliases: relationships/relationships.adoc relationships/single-relationships.adoc
+:description: This page describes the different ways to model a Neo4j relationship in the GraphQL schema and talks about the limitations.
+
+
+Irrespective of the data model you have in your Neo4j database, the GraphQL schema should be designed in a way that allows the access of the data that your application needs. This means that there are often multiple ways to model the same data in the GraphQL schema, each with benefits and tradeoffs.
+
+With this in mind, the problem of data integrity arises in the case of APIs that allow for data manipulation.
+There are some limitations in the Neo4j database that make it impossible for the Neo4j GraphQL library generated operations to enforce certain data integrity rules that are valid in GraphQL schema design.
+
+This page describes the different ways to model a Neo4j relationship in the GraphQL schema and describes their limitations.
+
+== Data model
+
+Take the following graph as an example in which a `Person` type has two different relationship types, which can connect it to a `Movie` type.
+
+image::relationships/2-relationship-types.png[title="Model of a Movie node connected to a Person node through two different relationship types: ACTED_IN and DIRECTED."]
+
+As before, we start with defining the two node types together with their fields.
+
+.Defining the node types
+[source, graphql, indent=0]
+----
+type Person @node {
+    name: String!
+}
+
+type Movie @node {
+    title: String!
+    released: Int!
+}
+----
+
+== Modelling Relationships
+
+=== Many-to-Many Relationships
+
+A `Person` can _act in_ multiple movies, and a `Movie` can have multiple actors acted in it. 
+Conceptually this is a *many-to-many* relationship and we model it by using list types for both relationship fields, on both sides of the relationship.
+
+.Adding relationship fields both ways for a many-to-many relationship of type ACTED_IN between Person and Movie
+[source, graphql, indent=0]
+----
+type Person @node {
+    name: String!
+    actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+}
+
+type Movie @node {
+    title: String!
+    released: Int!
+    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+}
+----
+
+[CAUTION]
+====
+Both the list type and the type inside the list must be non-nullable, meaning that the relationship field must always return an array of values, and that array cannot contain null values. This means there will always be a number of related nodes (even if that number is zero), and the related nodes will always be valid nodes (never null).
+
+In other words, both the array and the type inside must have a `!`.
+====
+
+=== One-to-Many Relationships
+
+A `Person` can _direct_ multiple movies but a `Movie` only has one director. Conceptually this is a *one-to-many* relationship and we model it by using a list type for the relationship field on the `Person` type, and a non-list type for the relationship field on the `Movie` type. 
+
+.Adding relationship fields both ways for a one-to-many relationship of type DIRECTED between Person and Movie
+[source, graphql, indent=0]
+----
+type Person @node {
+    name: String!
+    actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+    directed: [Movie!]! @relationship(type: "DIRECTED", direction: OUT)
+}
+
+type Movie @node {
+    title: String!
+    released: Int!
+    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+    director: Person @relationship(type: "DIRECTED", direction: IN)
+}
+----
+
+[CAUTION]
+====
+Note that it is impossible for a `Movie` to not have a director, so ideally we would want to make the `director` field non-nullable. This is however not possible with the Neo4j GraphQL Library due to a limitation of Neo4j in enforcing a cardinality of 1 relationship between nodes in the database, which is required for a non-nullable relationship field.
+====
+
+=== One-to-One Relationships
+
+A `Person` Ana can _marry_ only one other `Person` Bob, and that other `Person` Bob can only be married to that `Person` Ana. Conceptually this is a *one-to-one* relationship and we model it by using a non-list type for the relationship field on both sides of the relationship.
+
+.Adding relationship fields both ways for a one-to-one relationship of type MARRIED between Person and Person
+[source, graphql, indent=0]
+----
+type Person @node {
+    name: String!
+    spouse: Person @relationship(type: "MARRIED", direction: OUT)
+}
+----
+
+In this case, the relationship is between nodes of the same type. This does not need to be the case and is only for the sake of this example. 
+
+[CAUTION]
+====
+The same limitation as in One-to-Many relationships applies here, meaning that it is not possible to make the `spouse` field non-nullable.
+====
+
+== Querying single relationships
+
+Querying single relationships (of a non-null type) will return a single node data if there is a relationship, and null otherwise. 
+If the database contains multiple relationships of the same type, which is possible as a consequence of the previously mentioned Neo4j cardinality limitation, only one node will be returned. 
+
+[CAUTION]
+====
+The node that is returned is not deterministic, meaning that it can be any of the nodes that are connected through that relationship.
+====
+
+.Get Movie by title with related Person through DIRECTED relationship
+====
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { title: { eq: "No Country for Old Men" } }) {
+    title
+    director {
+      name
+    }
+  }
+}
+----
+====
+
+=== Filter by single relationships
+
+Single relationships (of a non-null type) can be used as filters in the `where` argument of a query.
+
+.Get Movie nodes filtered by the name of the director through the DIRECTED relationship
+====
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { director: { name: { eq: "Joel Coen" } } }) {
+    title
+  }
+}
+----
+====
+
+
+== Mutating single relationships
+
+Only a subset of the operations provided by the Neo4j GraphQL Library for relationship fields is available for single relationships (of a non-null type).
+
+At the moment only create and delete operations are supported on single relationships.
+
+=== Creating a single relationship
+
+It is possible to create the node on the single side of a single relationship and connect it to the source node in the same operation, using the `create` nested mutation.
+
+.Create a Movie node and connect it to an inline created Person node through the DIRECTED relationship
+====
+The following query will create both the `Movie` node and the `Person` node, and connect them through the `DIRECTED` relationship.
+
+[source, graphql, indent=0]
+----
+mutation {
+  createMovies(input: [{ 
+    title: "No Country for Old Men", 
+    released: 2007, 
+    director: { create: { node: { name: "Joel Coen" } } } 
+}]){
+    movies {
+        title
+        director {
+            name
+        }
+    }
+  }
+}
+----
+====
+
+However, the `connect` nested mutation is not available. 
+Therefore, if the node on the single side of a single relationship already exists, the relationship has to be created from the many side of the relationship. This can imply a second operation.
+
+.Create a Movie node and connect it to an existing Person node through the DIRECTED relationship
+====
+The following query will create the `Movie` node.
+
+[source, graphql, indent=0]
+----
+mutation {
+  createMovies(input: [{ 
+    title: "No Country for Old Men", 
+    released: 2007
+}]){
+    movies {
+        title
+    }
+  }
+}
+----
+
+Then, another query will connect the two nodes through the `DIRECTED` relationship.
+
+[source, graphql, indent=0]
+----
+mutation {
+  updatePerson(
+    where: { name: { eq: "Joel Coen" } }
+    update: { 
+        directed: { 
+            connect: { 
+                where: { node: { title: { eq: "No Country for Old Men" } } }
+            } 
+        } 
+    }
+  ){
+    info {
+        relationshipsCreated
+    }
+  }
+}
+----
+====
+
+=== Deleting a single relationship
+
+In the same way as for creates, it is possible to delete the node on the single side of a single relationship as a nested operation when deleting the source node.
+
+.Delete Movie and Person nodes that are connected through the DIRECTED relationship
+====
+The following query will delete the `Movie` node and the `Person` node if any is found by traversing the `DIRECTED` relationship.
+
+[source, graphql, indent=0]
+----
+mutation {
+  deleteMovies(
+    where: { title: { eq: "No Country for Old Men" } },
+    delete: {
+        director: { 
+            where: { node: { name: { eq: "Joel Coen" } } }
+        } 
+    }
+  ){
+    nodesDeleted
+    relationshipsDeleted
+  }
+}
+----
+====
+
+However, the `disconnect` nested mutation is not available. 
+Therefore, if the intention is to delete the relationship, the disconnect has to be performed from the many side of the relationship. 
+
+.Delete an existing DIRECTED relationship between a Movie and a Person node
+====
+[source, graphql, indent=0]
+----
+mutation {
+  updatePerson(
+    where: { name: { eq: "Joel Coen" } }
+    update: {
+        directed: [{
+            disconnect: { 
+                where: { node: { title: { eq: "No Country for Old Men" } } },
+            } 
+        }]
+    }
+  ){
+    info {
+        relationshipsDeleted
+    }
+  }
+}
+----
+====
+
+== Neo4j cardinality limitation
+
+=== Example
+
+In the context of multiple surfaces accessing the same Neo4j database, it is possible that what a GraphQL API models as a single relationship between two types might end up matching multiple relationships in the database, due to the Neo4j cardinality limitation described above.
+
+Even within the same GraphQL API surface, for a *one-to-many* relationship it is possible to end up having multiple relationships.
+
+Consider the following sample data in the database:
+
+image::relationships/data/2Person-Movie-single-relationship.png[title="Disconnected nodes in the database (Left); The state of the database after running the following create and update operations (Right)"]
+
+.Create a Movie node and connect it to 2 Person nodes through the DIRECTED relationship
+====
+The following query will connect the `Movie` node to both `Person` nodes through the `DIRECTED` relationship.
+
+[source, graphql, indent=0]
+----
+mutation {
+  updatePerson(
+    where: { name: { contains: "Coen" } }
+    update: { 
+        directed: { 
+            connect: { 
+                where: { node: { title: { eq: "No Country for Old Men" } } }
+            } 
+        } 
+    }
+  ){
+    info {
+        relationshipsCreated
+    }
+  }
+}
+----
+====
+
+Querying for `Movies` and their `director` relationship fields will return only one object because of the type of the relationship in the GraphQL schema.
+If there are multiple relationships of the same type between the same two nodes, only one node will be returned. 
+
+[CAUTION]
+====
+The node that is returned is not deterministic, meaning that it can be any of the nodes that are connected through that relationship.
+====
+
+.Get Movie by title with related Person through DIRECTED relationship
+====
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { title: { eq: "No Country for Old Men" } }) {
+    title
+    director {
+      name
+    }
+  }
+}
+----
+
+Results for the above query, considering the sample data of this page, would be either of the following 2 options:
+[source, javascript, indent=0]
+----
+const resultWithJoelCoen = {
+    data: {
+         movies: [
+                {
+                    title: "No Country for Old Men",
+                    director: { name: "Joel Coen" },
+                },
+            ],
+    },
+};
+const resultWithEthanCoen = {
+    data: {
+         movies: [
+                {
+                    title: "No Country for Old Men",
+                    director: { name: "Ethan Coen" },
+                },
+            ],
+    },
+};
+----
+====
+
+=== Addressing the cardinality limitation
+
+This is a limitation of the Neo4j GraphQL Library because at the moment Neo4j cannot reliably enforce cardinality 1 in relationships between nodes, which is required for a non-nullable relationship field on the *one-to-* side of a *one-to-one* or *one-to-many* relationship.
+
+There are a couple of options to work around this limitation:
+
+1. Model the relationship as nullable, as the DIRECTED relationship in the example above. Protect the integrity of your data through application logic, for example by ensuring that every time a `Movie` node is created, it is connected to a `Person` node through the `DIRECTED` relationship.
+2. Define your relationship with the `@cypher` directive instead of the `@relationship` directive. This option means that some functionality provided by the Neo4j GraphQL Library will not be available. For more information, see xref::/directives/database-mapping.adoc#_cypher[`@cypher` directive].
+3. Model the relationship as a "many-to-many" relationship using list types, same as ACTED_IN in the example above. 
+
+

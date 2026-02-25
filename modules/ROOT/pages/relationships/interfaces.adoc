@@ -1,0 +1,494 @@
+[[type-definitions-interfaces]]
+= Interface types
+:page-aliases: type-definitions/interfaces.adoc, type-definitions/types/interfaces.adoc
+:description: This page describes how to use and define interfaces on relationship fields.
+
+
+This page describes how to use Interfaces in the context of Relationships, as well as exemplifies how to use them in queries and mutations.
+
+== Data model
+
+Take the following graph as an example in which a `Person` type has two different relationship types, which can connect it to a both a `Movie` and a `Series` type. The *ACTED_IN* relationship has different properties depending on the target node type.
+
+image::relationships/relationship-interface.png[title="Model of a Person node connected to both Movie and Series nodes through the ACTED_IN relationship. The ACTED_IN relationship properties differ between the two target node types.",width=80%]
+
+== Sample database data
+
+For the sake of query result examples, let's consider a hypothetical database consisting of the following sample data, which follows the data model described above.
+
+image::relationships/data/Person-2Movie-2Series-ActedIn.png[title="Sample database data of a Person node (shown in orange) that has ACTED_IN relationships to two Movies (shown in blue) and two Series (shown in green)", height=70%]
+
+== Relationships on an Interface
+
+We see a lot of commonality between the `Movie` and `Series` types. This commonality can be captured by defining an interface `Production`, implemented by both `Movie` and `Series`, and declaring the relationship field `actors` on that interface.
+
+This allows you to query the relationship from the interface, while supporting the flexibility of relationship details such as type and properties to be defined in the concrete types. 
+
+=== `@declareRelationship`
+
+The `@relationship` directive can only be used on fields of object types. 
+
+If you want to model relationships on interfaces, which will then be implemented by concrete object types, you can use the `@declareRelationship` directive.
+
+For more information, see xref::/directives/index.adoc#_declarerelationship[`@declareRelationship`].
+
+.Declaring a relationship field on an Interface
+[source, graphql, indent=0]
+----
+interface Production {
+  title: String!
+  actors: [Person!]! @declareRelationship
+}
+
+type Person @node {
+  name: String!
+}
+----
+
+=== Implementing the declared relationship
+
+The concrete types implementing the `Production` interface must then define their own relationship details such as type and properties. This captures their nuances, while still being queryable as a field of the `Production` interface. 
+
+Notice how the `ACTED_IN` relationship differs between `ActedInSeries` and `ActedIn`. 
+
+.Extending the type definition with `Movie` and `Series` implementing the `Production` Interface
+[source, graphql, indent=0]
+----
+interface Production {
+  title: String!
+  actors: [Person!]! @declareRelationship
+}
+
+type Movie implements Production @node {
+  title: String!
+  released: Int!
+  actors: [Person!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
+}
+
+type Series implements Production @node {
+  title: String!
+  episodes: Int!
+  actors: [Person!]! @relationship(type: "ACTED_IN", properties: "ActedInSeries", direction: IN)
+}
+
+type ActedIn @relationshipProperties {
+  roles: [String!]!
+}
+
+type ActedInSeries @relationshipProperties {
+  roles: [String!]!
+  episodes: [Int!]!
+}
+
+type Person @node {
+  name: String!
+}
+----
+
+[CAUTION]
+====
+A declared relationship needs to be implemented in all concrete types that implement the interface, just like any other field on an interface type. 
+
+In other words, the `actors` field needs to be implemented in both the `Movie` and `Series` types, and decorated with the `@relationship` directive.
+====
+
+=== Querying an Interface relationship
+
+When querying a relationship field declared on an interface, while the relationship field is accessible from the interface level, the returned data will be based on the concrete types that implement the interface.
+
+.The generated query fields, ignoring the `Person` type
+[source, graphql, indent=0]
+----
+# Top-level interface query fields
+productions(limit: Int, offset: Int, sort: [ProductionSort!], where: ProductionWhere): [Production!]!
+productionsConnection(after: String, first: Int, sort: [ProductionSort!], where: ProductionWhere): ProductionsConnection!
+# Top-level concrete type query fields
+movies(limit: Int, offset: Int, sort: [MovieSort!], where: MovieWhere): [Movie!]!
+moviesConnection(after: String, first: Int, sort: [MovieSort!], where: MovieWhere): MoviesConnection!
+series(limit: Int, offset: Int, sort: [SeriesSort!], where: SeriesWhere): [Series!]!
+seriesConnection(after: String, first: Int, sort: [SeriesSort!], where: SeriesWhere): SeriesConnection!
+----
+
+We are interested in the `productions` and `productionsConnection` query fields.
+
+.Get Production nodes with related Actor nodes
+====
+This query returns a sorted list of up to 10 productions, that is a mix of `Movie` and `Series` nodes, with their related actors. 
+
+Notice the use of inline fragments to access the fields specific to the concrete types.
+
+[source, graphql, indent=0]
+----
+query {
+  productions(limit: 10, sort: { title: ASC }) {
+    title
+    ... on Movie {
+      released
+    }
+    actors {
+      name
+    }
+  }
+}
+----
+
+Results for the above query, considering the sample data of this page, would be:
+[source, javascript, indent=0]
+----
+const result = {
+    data: {
+         productions: [
+                {
+                    title: "Argo",
+                    released: 2012,
+                    actors: [{ name: "Ben Affleck" }],
+                },
+                {
+                    title: "Gone Girl",
+                    released: 2014,
+                    actors: [{ name: "Ben Affleck" }],
+                },
+                {
+                    title: "The Voyage of the Mimi",
+                    actors: [{ name: "Ben Affleck" }],
+                },
+                {
+                    title: "Buffy the Vampire Slayer",
+                    actors: [{ name: "Ben Affleck" }],
+                },
+            ],
+    },
+};
+----
+====
+
+.Get Production nodes with related Actor nodes and relationship properties
+====
+The query above will return a sorted list of up to 10 productions, that is a mix of `Movie` and `Series` nodes, with their related actors along with the relationship properties of the `ACTED_IN` relationship. 
+
+Because of the different relationship properties type, `ActedIn` and `ActedInSeries`, the query needs to use inline fragments to access the relationship properties.
+
+[source, graphql, indent=0]
+----
+query {
+  productionsConnection(first: 10, sort: [{ title: ASC }]) {
+    edges {
+      node {
+        title
+        actorsConnection(first: 2, sort: { node: { name: ASC } }) {
+          edges {
+            node {
+              name
+            }
+            properties {
+              ... on ActedIn {
+                roles
+              }
+              ... on ActedInSeries {
+                roles
+                episodes
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+----
+
+For example, the response for the above query, considering the sample data of this page, would be:
+
+[source, javascript, indent=0]
+----
+const result = {
+    data: {
+        productionsConnection: {
+              edges: [
+                  {
+                      node: {
+                          title: "Argo",
+                          actorsConnection: {
+                              edges: [
+                                  {
+                                      node: {
+                                          name: "Ben Affleck",
+                                      },
+                                      properties: {
+                                          roles: ["Tony Mendez"],
+                                      },
+                                  },
+                              ],
+                          },
+                      },
+                  },
+                  {
+                      node: {
+                          title: "Buffy the Vampire Slayer",
+                          actorsConnection: {
+                              edges: [
+                                  {
+                                      node: {
+                                          name: "Ben Affleck",
+                                      },
+                                      properties: {
+                                          roles: ["Basketball Player #10"],
+                                          episodes: 1,
+                                      },
+                                  },
+                              ],
+                          },
+                      },
+                  },
+                  {
+                      node: {
+                          title: "Gone Girl",
+                          actorsConnection: {
+                              edges: [
+                                  {
+                                      node: {
+                                          name: "Ben Affleck",
+                                      },
+                                      properties: {
+                                          roles: ["Nick Dunne"],
+                                      },
+                                  },
+                              ],
+                          },
+                      },
+                  },
+                  {
+                      node: {
+                          title: "The Voyage of the Mimi",
+                          actorsConnection: {
+                              edges: [
+                                  {
+                                      node: {
+                                          name: "Ben Affleck",
+                                      },
+                                      properties: {
+                                          roles: ["C.T. Granville"],
+                                          episodes: 7,
+                                      },
+                                  },
+                              ],
+                          },
+                      },
+                  },
+              ],
+          },
+    },
+};
+----
+====
+
+
+== Relationships to an Interface
+
+For the data model described at the beginning of this chapter, the `Person` type nodes are connected to `Movie` and `Series` nodes but we have not modelled this relationship in the GraphQL schema yet.
+
+These relationships can be modelled by adding relationship fields to the `Person` type that point to the `Production` interface, and then implementing the relationship details in the concrete types. 
+
+.Extending the `Person` type with new relationship fields
+[source, graphql, indent=0]
+----
+type Person @node {
+  name: String!
+  born: Int!
+  # relationship to an interface
+  actedIn: [Production!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
+}
+----
+
+=== Querying relationships to an Interface
+
+When querying a relationship field of an Interface type, the Interface fields can be queried directly as these are conceptually shared by all the implementations of the Interface, for example `title` for `Production`.
+
+To query fields specific to the concrete types implementing the Interface, inline fragments need to be used, for example `released` for `Movie` and `episodes` for `Series`.
+
+.Get all Person nodes with all Production nodes they ACTED_IN
+====
+Notice the use of inline fragments to access the fields specific to the concrete types `Movie` and `Series`.
+
+[source, graphql, indent=0]
+----
+query {
+    people {
+        name
+        actedIn {
+            title
+            ... on Movie {
+                released
+            }
+            ... on Series {
+                episodes
+            }
+        }
+    }
+}
+----
+
+====
+
+
+=== Filtering for specific implementations of the Interface
+
+When querying a relationship field of an Interface type, receiving nodes of all implementing types is not mandatory. If desired, you can request specific node types by using the `typename` filter.
+
+.Get all Person nodes with Production nodes they ACTED_IN filtered by Movie type
+====
+Notice the typename filter and the use of inline fragments to access the fields specific to the concrete type `Movie`.
+
+[source, graphql, indent=0]
+----
+query {
+  people {
+    name
+    actedIn(where: { typename: [Movie] }) {
+      title
+      ... on Movie {
+        released
+      }
+    }
+  }
+}
+----
+====
+
+=== Creating a relationship to an Interface
+
+When creating a relationship to an Interface type, the concrete type of the node that is being connected needs to be specified in the mutation.
+
+.Create a Person node with related Production nodes
+====
+Notice the specification of the concrete type (`Movie` or `Series`) of the node that is being created.
+
+[source, graphql, indent=0]
+----
+mutation CreateActorAndProductions {
+  createPeople(
+    input: [
+      {
+        name: "Ben Affleck"
+        actedIn: {
+          create: [
+            {
+              edge: { roles: ["Tony Mendez"] }
+              node: { Movie: { title: "Argo", released: 2012 } }
+            }
+            {
+              edge: { roles: ["Nick Dunne"] }
+              node: { Movie: { title: "Gone Girl", released: 2014 } }
+            }
+            {
+              edge: { roles: ["Basketball Player #10"] }
+              node: { Series: { title: "Buffy the Vampire Slayer", episodes: 144 } }
+            }
+            {
+              edge: { roles: ["C.T. Granville"] }
+              node: { Series: { title: "The Voyage of the Mimi", episodes: 7 } }
+            }
+          ]
+        }
+      }
+    ]
+  ) {
+        people {
+            name
+        }
+    }
+}
+----
+====
+
+=== Updating a relationship to an Interface
+
+Operations on interfaces are abstract until you instruct them not to be. 
+
+image::relationships/data/Person-Movie-Series-creation.png[title="New disconnected nodes in the database (Left); Desired connections (Right)", height=70%]
+
+We're adding the newly released `Movie` "Henry Danger" to the database, and we want to connect it to the `Person` node `Jace Norman` through an `ACTED_IN` relationship with the role "Henry Hart". 
+There already exists a `Series` node with the same title.
+
+To achieve the desired connections, we can use the typename filter in the filters of an update mutation.
+
+.Update Person nodes and create ACTED_IN relationships to Production nodes filtered by Movie type
+====
+Notice the use of the typename filter to only target `Movie` nodes. 
+
+[source, graphql, indent=0]
+----
+mutation {
+  updatePeople(
+    where: { name: { eq: "Jace Norman" } }
+    update: {
+      actedIn: [
+        {
+          connect: [
+            {
+              edge: { roles: ["Henry Hart"] }
+              where: {
+                node: {
+                  typename: [Movie],
+                  title: { eq: "Henry Danger" }
+                },
+              },
+            },
+          ],
+        },
+      ],
+    }
+  ) {
+    info {
+      relationshipsCreated
+    }
+  }
+}
+----
+====
+
+If the relationship between `Person` and `Movie` already exists in the database, we can ensure the relationship properties are correct depending on the type of the connected node.
+
+.Update Person nodes and update the ACTED_IN relationships to any Production nodes with relationship properties based on the properties type
+====
+Notice the edge properties are updated with different values depending on the typename of the connected node.
+
+[source, graphql, indent=0]
+----
+mutation {
+  updatePeople(
+    where: {
+      name: {
+        eq: "Jace Norman"
+      }
+    }
+    update: {
+      actedIn: [
+        {
+          update: {
+            where: { node: { title: { eq: "Henry Danger" } } }
+            node: {
+              actors: [
+                {
+                  update: {
+                    edge: {
+                      ActedIn: { roles: { set: ["Henry Hart"] } },
+                      ActedInSeries: { roles: { set: ["Henry Hart"] }, episodes: { set: 121 } },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        }]
+    }
+  ) {
+    info {
+      relationshipsCreated
+    }
+  }
+}        
+----
+====
+
+

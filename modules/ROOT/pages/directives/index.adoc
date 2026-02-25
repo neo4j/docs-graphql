@@ -39,7 +39,7 @@ Configures the JWT authentication and authorization filters to include an additi
 | Specifies the configuration of a GraphQL object type which represents a Neo4j node.
 
 | xref::/directives/database-mapping.adoc#_relationship[`@relationship`]
-| Configures xref::/types/relationships.adoc[relationships] between object types. Also see xref::/directives/schema-configuration/field-configuration.adoc#_relationship[`@relationship` field configuration].
+| Configures xref::/relationships/index.adoc[relationships] between object types. Also see xref::/directives/schema-configuration/field-configuration.adoc#_relationship[`@relationship` field configuration].
 
 | xref::/directives/database-mapping.adoc#_relationshipproperties[`@relationshipProperties`]
 a| Required to differentiate interfaces that are used for relationship properties, and otherwise.
@@ -47,7 +47,7 @@ a| Required to differentiate interfaces that are used for relationship propertie
 | xref::/directives/database-mapping.adoc#_alias[`@alias`]
 | Maps a GraphQL schema field to a Neo4j property on a node or relationship.
 
-| xref::/types/relationships.adoc#_declarerelationship[`@declareRelationship`]
+| xref::/relationships/interfaces.adoc#_declarerelationship[`@declareRelationship`]
 | Configure relationships to be implemented on object types.
 
 |===

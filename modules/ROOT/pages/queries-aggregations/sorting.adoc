@@ -74,7 +74,7 @@ query {
 
 ----
 
-[CAUTION]
+[NOTE]
 ====
 You can only sort query results based on relationship properties when using the connection API.
 ====

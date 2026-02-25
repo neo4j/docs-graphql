@@ -116,3 +116,147 @@ The Neo4j GraphQL Library contains an optimization feature designed to mitigate 
 * A field is populated using the directive `@populated_by`.
 * The `connect` operations are used.
 * Interface and union types are present in the mutation.
+
+
+== Relationships
+
+=== Inserting data
+
+Nested mutations mean that there are many ways in which you can insert data into your database through the GraphQL schema.
+Consider the previously mentioned rule that a `Movie` node cannot be created without adding a director.
+You can, however, create a director node first and then create and connect it to a `Movie`. 
+Another option is to create both `Movie` and `Director` in the same mutation, for example:
+
+[source, graphql, indent=0]
+----
+mutation CreateMovieAndDirector {
+    createMovies(input: [
+        {
+            title: "Forrest Gump"
+            released: 1994
+            directors: {
+                create: [{
+                    node: {
+                        name: "Robert Zemeckis"
+                        born: 1951
+                    }
+                }]
+            }
+        }
+    ]) {
+        movies {
+            title
+            released
+            directors {
+                name
+                born
+            }
+        }
+    }
+}
+----
+
+You then need to create the actor in this example, and connect them to the new `Movie` node, also specifying which roles they played:
+
+[source, graphql, indent=0]
+----
+mutation CreateActor {
+  createPeople(
+    input: [
+      {
+        name: "Tom Hanks"
+        born: 1956
+        actedInMovies: {
+          connect: {
+            where: { node: { title: { eq: "Forrest Gump" } } }
+            edge: { roles: ["Forrest"] }
+          }
+        }
+      }
+    ]
+  ) {
+    people {
+      name
+      born
+      actedInMovies {
+        title
+        released
+        actorsConnection {
+          edges {
+            properties {
+              roles
+            }
+            node {
+              name
+              born
+            }
+          }
+        }
+      }
+    }
+  }
+}
+----
+
+Note the selection of the `actorsConnection` field in order to query the `roles` relationship property.
+
+Also observe that, in the second mutation, the entire graph was returned.
+That is not necessary, since you can compress down these mutations into one single operation that inserts all of the data needed:
+
+[source, graphql, indent=0]
+----
+mutation CreateMovieDirectorAndActor {
+    createMovies(input: [
+        {
+            title: "Forrest Gump"
+            released: 1994
+            directors: {
+                create: {
+                    node: {
+                        name: "Robert Zemeckis"
+                        born: 1951
+                    }
+                }
+            }
+            actors: {
+                create: [
+                    {
+                        node: {
+                            name: "Tom Hanks"
+                            born: 1956
+                        }
+                        edge: {
+                            roles: ["Forrest"]
+                        }
+                    }
+                ]
+            }
+        }
+    ]) {
+        movies {
+            title
+            released
+            directors {
+                name
+                born
+            }
+            actorsConnection {
+                edges {
+                    properties {
+                      roles
+                    }
+                    node {
+                        name
+                        born
+                    }
+                }
+            }
+        }
+    }
+}
+----
+
+Acknowledging this helps you create bigger sub-graphs in one mutation at once and, therefore, more efficiently.
+
+
+

@@ -1,0 +1,115 @@
+[[relationships]]
+= Relationships
+:page-aliases: type-definitions/relationships.adoc type-definitions/relationships/relationships.adoc
+:description: This page describes how to write type definitions for a simple connected model, inserting data through the schema, and then querying it.
+
+
+Without relationships, your type definitions work rather as a collection of disconnected nodes, with little value.
+Adding relationships into your data model gives your data the context that it needs to run complex queries across wide sections of your graph.
+
+This page describes how to write type definitions for a simple connected model.
+
+For examples of operations, see xref::/mutations/create.adoc#_relationships[`inserting`] and xref::/queries-aggregations/queries.adoc#_relationships[`querying`] data.
+
+== Data model
+
+Take the following graph as an example in which the `Person` and `Movie` types are connected by a single relationship type, *ACTED_IN*. The relationship has a property `roles` which describes the different roles that an actor played in a movie.
+
+image::relationships/relationship-with-properties.png[title="Model of a Movie node connected to a Person node through a relationship of type ACTED_IN, with a roles property."]
+
+
+== Writing type definitions
+
+=== Nodes
+
+To create that graph using the Neo4j GraphQL Library, first you need to define the two node types together with their fields. In order for these types to be represented as nodes in the graph, they need to be decorated with the `@node` directive. 
+See more xref::/directives/database-mapping.adoc#_node[`@node` directive].
+
+.Defining the node types
+[source, graphql, indent=0]
+----
+type Person @node {
+    name: String!
+}
+
+type Movie @node {
+    title: String!
+    released: Int!
+}
+----
+
+=== Relationships
+
+You can then define the relationships between these two types by adding special relationship fields using the `@relationship` directive. See more xref::/directives/database-mapping.adoc#_relationship[`@relationship` directive].
+
+A `Person` can _act in_ multiple movies, and a `Movie` can have multiple actors. Conceptually this is a *many-to-many* relationship and we model it by using list types for both relationship fields, on both sides of the relationship.
+
+.Defining the relationship fields
+[source, graphql, indent=0]
+----
+type Person @node {
+    name: String!
+    actedInMovies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+}
+
+type Movie @node {
+    title: String!
+    released: Int!
+    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
+}
+----
+
+[CAUTION]
+====
+Both the list type and the type inside the list must be non-nullable, meaning that the relationship field must always return an array of values, and that array cannot contain null values. This means there will always be a number of related nodes (even if that number is zero), and the related nodes will always be valid nodes (never null).
+
+In other words, both the array and the type inside must have a `!`.
+====
+
+=== Relationship direction
+
+The *direction* argument is relative to the node type on which the `@relationship` directive is used, the value *IN* meaning arrow pointing towards this node, while *OUT* means arrow points towards the other node. 
+
+In the example graph, `Person-[ACTED_IN]->Movie` means relationship of type ACTED_IN goes IN to a Movie, therefore Movie.actors relationship field has `direction: IN`. It follows that `Actors.actedInMovies` relationship field has `direction: OUT` because the relationship goes OUT from a Person to a Movie.
+
+To figure out whether the *direction* argument of the `@relationship` directive should be *IN* or *OUT* it can be helpful to visualize your graph like in the diagram above and model out the direction of the arrows. 
+
+
+=== Relationship properties
+
+The *ACTED_IN* relationship has a property `roles` which describes the different roles that an actor played in a movie. To model this, we need to:
+
+. Add an *ActedIn* type decorated with the `@relationshipProperties` directive, containing the desired relationship properties.
+. Set the `@relationship` directive's *properties* argument value to *ActedIn*. This can be done on both or either side of the relationship, depending on where you want to query the relationship properties from.
+
+.Defining relationship properties
+[source, graphql, indent=0]
+----
+type ActedIn @relationshipProperties {
+    roles: [String!]
+}
+
+type Person @node {
+    name: String!
+    actedIn: [Movie!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: OUT)
+    directed: [Movie!]! @relationship(type: "DIRECTED", direction: OUT)
+}
+
+type Movie @node {
+    title: String!
+    released: Int!
+    actors: [Person!]! @relationship(type: "ACTED_IN", properties: "ActedIn", direction: IN)
+    directors: Person @relationship(type: "DIRECTED", direction: IN)
+}
+----
+
+[NOTE]
+====
+Relationship properties fields can only be primitive types or their list variants.
+You cannot have relationship properties of a complex type such as object types or interfaces.
+====
+
+[NOTE]
+====
+The `@relationship` directive is a reference to Neo4j relationships, whereas when writing queries, the phrase `edge(s)` is used to be consistent with the general API language used by Relay.
+====
