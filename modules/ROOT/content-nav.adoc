@@ -8,27 +8,35 @@
 ** xref:getting-started/graphql-self-hosted.adoc[]
 * xref:getting-started/toolbox.adoc[]
 
+
+* *Security*
+
+* xref:security/configuration.adoc[]
+* xref:security/authentication.adoc[]
+* xref:security/authorization.adoc[]
+* xref:security/subscriptions-authorization.adoc[]
+* xref:security/impersonation-and-user-switching.adoc[]
+* xref:security/operations.adoc[]
+* xref:security/securing-a-graphql-api.adoc[]
+
 * *Reference*
-* xref:security/index.adoc[]
-** xref:security/configuration.adoc[]
-** xref:security/authentication.adoc[]
-** xref:security/authorization.adoc[]
-** xref:security/subscriptions-authorization.adoc[]
-** xref:security/impersonation-and-user-switching.adoc[]
-** xref:security/operations.adoc[]
+* xref:neo4jgraphql-class.adoc[]
 * xref:types/index.adoc[]
 ** xref:types/scalar.adoc[Scalar]
 ** xref:types/temporal.adoc[Temporal]
 ** xref:types/spatial.adoc[Spatial]
+
 * xref:/relationships/index.adoc[]
 ** xref:/relationships/single-relationships.adoc[Single relationships]
 ** xref:/relationships/interfaces.adoc[Interfaces]
 ** xref:/relationships/unions.adoc[Union]
+
 * xref:filtering.adoc[]
 * xref:neo4jgraphql-class.adoc[]
 * xref:directives/index.adoc[]
 ** xref:directives/database-mapping.adoc[]
 ** xref:directives/autogeneration.adoc[]
+
 ** xref:directives/schema-configuration/index.adoc[]
 *** xref:directives/schema-configuration/global-configuration.adoc[]
 *** xref:directives/schema-configuration/type-configuration.adoc[]
@@ -36,6 +44,8 @@
 ** xref:directives/indexes-and-constraints.adoc[]
 ** xref:directives/custom-logic.adoc[]
 ** xref:directives/custom-directives.adoc[]
+
+* xref:filtering.adoc[]
 
 * xref:queries-aggregations/index.adoc[Queries and aggregations]
 ** xref:queries-aggregations/queries.adoc[]
@@ -56,9 +66,8 @@
 
 * *How-To*
 
-* xref:driver-configuration.adoc[]
 * xref:graphql-modeling.adoc[]
-* xref:security/securing-a-graphql-api.adoc[]
+* xref:driver-configuration.adoc[]
 
 * *Products*
 
