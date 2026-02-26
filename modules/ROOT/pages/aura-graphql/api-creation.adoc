@@ -5,7 +5,7 @@
 
 Make sure that you have:
 
-* The ID, username and password for the AuraDB.
+* The ID for the AuraDB.
 * Your type definitions.
 * If you intend to use JWKS for authentication, the URL from your identity provider that will be used to verify JWKS tokens.
 
@@ -18,6 +18,12 @@ If you intend to use the Aura CLI, follow the guidance provided in xref:aura-gra
 . Use **Create API** and fill in the details in the **Create GraphQL Data API** dialog.
 +
 image::aura-graphql/create/details.png[]
++
+[NOTE]
+====
+Instance permission controls the type of access the GraphQL API has to your database instance. If you select "Read Only" but your API requires more permissions, this could cause runtime errors for users of your API.
+====
+
 +
 [CAUTION]
 ====
