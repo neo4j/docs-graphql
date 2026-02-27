@@ -102,39 +102,83 @@ When this feature is enabled:
 * You can use the `getComplexity` function from `graphql-query-complexity` to calculate the total complexity of incoming queries
 * You can set maximum complexity thresholds to reject overly complex queries
 
-To use the complexity estimators, include this logic to run when receiving a query in your GraphQL server implementation.
-[source, javascript, indent=0]
-----
- const complexity = getComplexity({
-    schema, // result of Neo4jGraphQL.getSchema() 
-    query,  // the GraphQL query document sent to server for execution
-    estimators: DefaultComplexityEstimators, // exported from the neo4j/graphql package
-});
+=== Example usage
 
-if (complexity > 100) {
-    throw new Error(`Query is too complex: ${complexity}. Maximum allowed complexity is 100.`);
-}
-----
+To use the complexity estimators, include this logic to run when receiving a query in your GraphQL server implementation.
 For example, if you are using Apollo Server, you can use the `requestDidStart` function of an `ApolloServerPlugin`.
 
+[source, javascript, indent=0]
+----
+const complexity = getComplexity({
+   schema, // result of Neo4jGraphQL.getSchema() 
+   query,  // the GraphQL query document sent to server for execution
+   estimators: DefaultComplexityEstimators, // exported from the neo4j/graphql package
+});
 
-Computing the complexity
+// Define your maximum complexity threshold
+const complexityThreshold = 1000; 
+if (complexity > complexityThreshold) {
+    throw new Error(`Query is too complex: ${complexity}. Maximum allowed complexity is ${complexityThreshold}.`);
+}
+----
 
-// COMPLEXITY FORMULA
-// c = c_child + lvl_limit * c_field, where
-// c_field = 1
-// lvl_limit defaults to 1
-// c_child comes from simpleEstimator 
+=== Computing the complexity
+
+The provided complexity estimators compute the complexity of a query using the following formula:
+- Each field has a base complexity of 1
+- If a field returns a list, the complexity of its children is multiplied by the `limit` argument provided on that field to which the field's complexity is added
+- If no `limit` argument is provided, a default multiplier of 1 is used
+
+[NOTE]
+====
+c_query = c_child * lvl_limit + c_field 
+
+where c_field = 1, lvl_limit defaults to 1
+====
+
+The queries below demonstrate the usage of the formula.
 
 [source, graphql, indent=0]
 ----
 query {
-    movies(limit: 10) {     # c = 10 * 1 = 10
+    movies(limit: 10) {     # c = 10 * 102 + 1 = 1021
         title               # c = 1
-        actors(limit: 50) { # c = 50 * 1 = 50
+        actors(limit: 50) { # c = 50 * 2 + 1 = 101
             name            # c = 1
+            age             # c = 1
         }
     }
 }
-# Total complexity = 10 + 1 + 50 + 1 = 62
+# Total complexity = 1 + 10 * (1 + 1 + 50 * (1 + 1)) = 1021
+----
+
+[source, graphql, indent=0]
+----
+ query {
+    productionsConnection(first: 10, sort: [{ title: ASC }]) {          # (12 + 2x) * 10 + 1 = 121 + 20x
+      edges {                                                           # 12 + 2x
+        node {                                                          # 9 + 2x + 1 + 1 = 11 + 2x
+          title                                                         # 1              
+          actorsConnection(first: 2, sort: { node: { name: ASC } }) {   # (4 + x) * 2 + 1 = 9 + 2x
+            edges {                                                     # 3 + x + 1 = 4 + x
+              node {                                                    # 2
+                name                                                    # 1
+              }
+              properties {                                              # 1 + x; x = max nr of properties in below fragments
+                ... on ActedIn {
+                  roles
+                }
+                ... on ActedInSeries {
+                  roles
+                  episodes
+                  year
+                }
+              }
+            }
+          }
+        }
+      }
+  }
+}
+# Total complexity = 1 + 10 * (1 + 1 + 1 + 1 + 2 * (1 + 1 + 1 + 1 + 3)) = 181
 ----

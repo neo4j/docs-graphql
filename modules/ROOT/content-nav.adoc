@@ -16,6 +16,7 @@
 ** xref:security/subscriptions-authorization.adoc[]
 ** xref:security/impersonation-and-user-switching.adoc[]
 ** xref:security/operations.adoc[]
+** xref:/security/avoid-unbounded-queries.adoc[Avoid unbounded queries]
 * xref:types/index.adoc[]
 ** xref:types/scalar.adoc[Scalar]
 ** xref:types/temporal.adoc[Temporal]
