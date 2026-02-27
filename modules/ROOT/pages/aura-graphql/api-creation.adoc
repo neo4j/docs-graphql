@@ -19,6 +19,9 @@ If you intend to use the Aura CLI, follow the guidance provided in xref:aura-gra
 +
 image::aura-graphql/create/details.png[]
 +
+*Instance permission* defaults to "Read & Write", alternative values are "Read Only" and "Custom Credentials".
+If you select the latter, also fill in the credentials.
++
 [NOTE]
 ====
 Instance permission controls the type of access the GraphQL API has to your database instance. If you select "Read Only" but your API requires more permissions, this could cause runtime errors for users of your API.
