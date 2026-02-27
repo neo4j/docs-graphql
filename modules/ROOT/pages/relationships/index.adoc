@@ -59,13 +59,6 @@ type Movie @node {
 }
 ----
 
-[CAUTION]
-====
-Both the list type and the type inside the list must be non-nullable, meaning that the relationship field must always return an array of values, and that array cannot contain null values. This means there will always be a number of related nodes (even if that number is zero), and the related nodes will always be valid nodes (never null).
-
-In other words, both the array and the type inside must have a `!`.
-====
-
 === Relationship direction
 
 The *direction* argument is relative to the node type on which the `@relationship` directive is used, the value *IN* meaning arrow pointing towards this node, while *OUT* means arrow points towards the other node. 
@@ -107,9 +100,4 @@ type Movie @node {
 ====
 Relationship properties fields can only be primitive types or their list variants.
 You cannot have relationship properties of a complex type such as object types or interfaces.
-====
-
-[NOTE]
-====
-The `@relationship` directive is a reference to Neo4j relationships, whereas when writing queries, the phrase `edge(s)` is used to be consistent with the general API language used by Relay.
 ====

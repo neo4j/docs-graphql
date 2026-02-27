@@ -29,7 +29,7 @@
 * xref:/relationships/index.adoc[]
 ** xref:/relationships/single-relationships.adoc[Single relationships]
 ** xref:/relationships/interfaces.adoc[Interfaces]
-** xref:/relationships/unions.adoc[Union]
+** xref:/relationships/unions.adoc[Unions]
 
 * xref:filtering.adoc[]
 * xref:neo4jgraphql-class.adoc[]

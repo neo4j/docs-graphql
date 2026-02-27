@@ -403,7 +403,7 @@ mutation CreateActorAndProductions {
 
 === Updating a relationship to an Interface
 
-Operations on interfaces are abstract until you instruct them not to be. 
+Operations on interfaces apply for all implementing concrete types unless you narrow them down.
 
 image::relationships/data/Person-Movie-Series-creation.png[title="New disconnected nodes in the database (Left); Desired connections (Right)", height=70%]
 
