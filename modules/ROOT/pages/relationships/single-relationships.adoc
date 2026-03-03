@@ -4,10 +4,11 @@
 :description: This page describes the different ways to model a Neo4j relationship in the GraphQL schema and talks about the limitations.
 
 
-Irrespective of the data model you have in your Neo4j database, the GraphQL schema should be designed in a way that allows the access of the data that your application needs. This means that there are often multiple ways to model the same data in the GraphQL schema, each with benefits and tradeoffs.
+Irrespective of the data model you have in your Neo4j database, the GraphQL schema should be designed in a way that allows the access of the data that your application needs.
+This means that there are often multiple ways to model the same data in the GraphQL schema, each with benefits and tradeoffs.
 
 With this in mind, the problem of data integrity arises in the case of APIs that allow for data manipulation.
-There are some limitations in the Neo4j database that make it impossible for the Neo4j GraphQL library generated operations to enforce certain data integrity rules that are valid in GraphQL schema design.
+There are some limitations in the Neo4j database that make it impossible for operations generated with the Neo4j GraphQL library to enforce certain data integrity rules that are valid in GraphQL schema design.
 
 This page describes the different ways to model a Neo4j relationship in the GraphQL schema and describes their limitations.
 
@@ -17,7 +18,7 @@ Take the following graph as an example in which a `Person` type has two differen
 
 image::relationships/2-relationship-types.png[title="Model of a Movie node connected to a Person node through two different relationship types: ACTED_IN and DIRECTED."]
 
-As before, we start with defining the two node types together with their fields.
+As before, start with defining the two node types together with their fields.
 
 .Defining the node types
 [source, graphql, indent=0]
@@ -32,12 +33,12 @@ type Movie @node {
 }
 ----
 
-== Modelling Relationships
+== Modeling relationships
 
-=== Many-to-Many Relationships
+=== Many-to-many relationships
 
-A `Person` can _act in_ multiple movies, and a `Movie` can have multiple actors acted in it. 
-Conceptually this is a *many-to-many* relationship and we model it by using list types for both relationship fields, on both sides of the relationship.
+A `Person` can act in multiple movies, and a `Movie` can have multiple actors acted in it. 
+Conceptually this is a many-to-many relationship and you can model it by using list types for both relationship fields, on both sides of the relationship.
 
 .Adding relationship fields both ways for a many-to-many relationship of type ACTED_IN between Person and Movie
 [source, graphql, indent=0]
@@ -56,14 +57,16 @@ type Movie @node {
 
 [CAUTION]
 ====
-Both the list type and the type inside the list must be non-nullable, meaning that the relationship field must always return an array of values, and that array cannot contain null values. This means there will always be a number of related nodes (even if that number is zero), and the related nodes will always be valid nodes (never null).
+Both the list type and the type inside the list must be non-nullable, meaning that the relationship field must always return an array of values, and that array cannot contain null values.
+This means there is always a number of related nodes (even if that number is zero), and the related nodes are always valid nodes (and never null).
 
 In other words, both the array and the type inside must have a `!`.
 ====
 
-=== One-to-Many Relationships
+=== One-to-many Relationships
 
-A `Person` can _direct_ multiple movies but a `Movie` only has one director. Conceptually this is a *one-to-many* relationship and we model it by using a list type for the relationship field on the `Person` type, and a non-list type for the relationship field on the `Movie` type. 
+A `Person` can direct multiple movies but a `Movie` only has one director.
+Conceptually this is a one-to-many relationship and you can model it by using a list type for the relationship field on the `Person` type, and a non-list type for the relationship field on the `Movie` type. 
 
 .Adding relationship fields both ways for a one-to-many relationship of type DIRECTED between Person and Movie
 [source, graphql, indent=0]
@@ -84,10 +87,11 @@ type Movie @node {
 
 [CAUTION]
 ====
-Note that it is impossible for a `Movie` to not have a director, so ideally we would want to make the `director` field non-nullable. This is however not possible with the Neo4j GraphQL Library due to a limitation of Neo4j in enforcing a cardinality of 1 relationship between nodes in the database, which is required for a non-nullable relationship field.
+Note that it is impossible for a `Movie` to not have a director, so ideally you would want to make the `director` field non-nullable.
+This is however not possible with the Neo4j GraphQL Library due to a limitation of Neo4j in enforcing a cardinality of only one relationship between nodes in the database, which is required for a non-nullable relationship field.
 ====
 
-=== One-to-One Relationships
+=== One-to-one Relationships
 
 A `Person` Ana can marry only one other `Person` Bob, and that other `Person` Bob can only be married to that `Person` Ana.
 Conceptually this is a one-to-one relationship and you can model it by using a non-list type for the relationship field on both sides of the relationship.
