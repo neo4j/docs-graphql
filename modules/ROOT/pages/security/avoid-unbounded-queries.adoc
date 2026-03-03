@@ -1,13 +1,13 @@
 = Avoid unbounded queries
 :description: This section describes how to prevent unbounded queries from reaching the server that can lead to performance issues.
 
-Unbounded queries can cause performance issues and potentially crash your application by consuming excessive resources. The Neo4j GraphQL Library provides several mechanisms to help you avoid these problems.
+Unbounded queries can cause performance issues and potentially crash your application by consuming excessive resources.
+The Neo4j GraphQL Library provides several mechanisms to help you avoid these problems.
 
 == Require `limit` argument
 
 Setting `limitRequired` to `true` in the feature settings makes the `limit` argument non-nullable in the generated schema, forcing all read operations to include a `limit` argument on all fields that return a list of items. 
-
-This protects against queries that return massive datasets across nested relationships.
+This protects the server from queries that return massive datasets across nested relationships.
 
 [source, javascript, indent=0]
 ----
@@ -22,7 +22,7 @@ const neoSchema = new Neo4jGraphQL({
 When this feature is enabled:
 
 * All queries that return arrays must include a `limit` argument
-* Queries without a `limit` will not be compliant with the GraphQL schema
+* Queries without a `limit` are not compliant with the GraphQL schema
 * This applies to both top-level queries and nested relationship queries
 
 Assuming the following type definitions:
@@ -82,7 +82,8 @@ query {
 
 == Complexity estimators
 
-Setting `complexityEstimators` to `true` enables the assignment of a complexity "score" to each field in your schema. This feature creates complexity estimators that are compatible with the link:https://www.npmjs.com/package/graphql-query-complexity[graphql-query-complexity] library.
+Setting `complexityEstimators` to `true` enables the assignment of a complexity "score" to each field in your schema.
+This feature creates complexity estimators that are compatible with the link:https://www.npmjs.com/package/graphql-query-complexity[graphql-query-complexity] library.
 
 You can then use the complexity "score" to automatically reject queries that exceed your defined complexity limits before reaching the server, protecting your system from resource-intensive operations.
 
@@ -125,9 +126,9 @@ if (complexity > complexityThreshold) {
 === Computing the complexity
 
 The provided complexity estimators compute the complexity of a query using the following formula:
-- Each field has a base complexity of 1
-- If a field returns a list, the complexity of its children is multiplied by the `limit` argument provided on that field to which the field's complexity is added
-- If no `limit` argument is provided, a default multiplier of 1 is used
+* Each field has a base complexity of `1`
+* If a field returns a list, its complexity is calculated by first adding the complexity values of its children and then multiplying it with the `limit` argument provided on that field (see examples below)
+* If no `limit` argument is provided, a default multiplier of `1` is used
 
 [NOTE]
 ====
