@@ -154,7 +154,7 @@ query {
 ----
 ====
 
-.Example 2:Query without `limit` arguments, using default multiplier of 1
+.Example 2: Query without `limit` arguments, using default multiplier of 1
 ====
 Notice the same query as before but without `limit` arguments has a much lower complexity score.
 
