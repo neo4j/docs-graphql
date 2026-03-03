@@ -31,8 +31,6 @@
 ** xref:/relationships/interfaces.adoc[Interfaces]
 ** xref:/relationships/unions.adoc[Unions]
 
-* xref:filtering.adoc[]
-* xref:neo4jgraphql-class.adoc[]
 * xref:directives/index.adoc[]
 ** xref:directives/database-mapping.adoc[]
 ** xref:directives/autogeneration.adoc[]

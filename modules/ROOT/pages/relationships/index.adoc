@@ -1,19 +1,20 @@
 [[relationships]]
 = Relationships
 :page-aliases: type-definitions/relationships.adoc type-definitions/relationships/relationships.adoc
-:description: This page describes how to write type definitions for a simple connected model, inserting data through the schema, and then querying it.
+:description: This section covers how relationships work in the Neo4j GraphQL Library.
 
 
-Without relationships, your type definitions work rather as a collection of disconnected nodes, with little value.
-Adding relationships into your data model gives your data the context that it needs to run complex queries across wide sections of your graph.
+Without relationships, your type definitions represent a collection of disconnected nodes with little value.
+Adding relationships to your data model gives your data the context that it needs to run complex queries across wide sections of your graph.
 
-This page describes how to write type definitions for a simple connected model.
+This page describes how to write type definitions for a simple connected model by using introducing relationships.
 
 For examples of operations, see xref::/mutations/create.adoc#_relationships[`inserting`] and xref::/queries-aggregations/queries.adoc#_relationships[`querying`] data.
 
 == Data model
 
-Take the following graph as an example in which the `Person` and `Movie` types are connected by a single relationship type, *ACTED_IN*. The relationship has a property `roles` which describes the different roles that an actor played in a movie.
+Take the following graph as an example in which the `Person` and `Movie` types are connected by a single relationship type, `ACTED_IN`.
+The relationship has a property `roles` which describes the different roles that an actor played in a movie.
 
 image::relationships/relationship-with-properties.png[title="Model of a Movie node connected to a Person node through a relationship of type ACTED_IN, with a roles property."]
 
@@ -22,8 +23,8 @@ image::relationships/relationship-with-properties.png[title="Model of a Movie no
 
 === Nodes
 
-To create that graph using the Neo4j GraphQL Library, first you need to define the two node types together with their fields. In order for these types to be represented as nodes in the graph, they need to be decorated with the `@node` directive. 
-See more xref::/directives/database-mapping.adoc#_node[`@node` directive].
+To create the graph using the Neo4j GraphQL Library, first define the two node types together with their fields.
+In order for these types to be represented as nodes in the graph, decorate them with the xref::/directives/database-mapping.adoc#_node[`@node` directive]. 
 
 .Defining the node types
 [source, graphql, indent=0]
@@ -40,7 +41,7 @@ type Movie @node {
 
 === Relationships
 
-You can then define the relationships between these two types by adding special relationship fields using the `@relationship` directive. See more xref::/directives/database-mapping.adoc#_relationship[`@relationship` directive].
+Define the relationships between the two types by adding special relationship fields using the xref::/directives/database-mapping.adoc#_relationship[`@relationship` directive].
 
 A `Person` can _act in_ multiple movies, and a `Movie` can have multiple actors. Conceptually this is a many-to-many relationship and you can model it by using list types for both relationship fields, on both sides of the relationship.
 
@@ -61,19 +62,22 @@ type Movie @node {
 
 === Relationship direction
 
-The *direction* argument is relative to the node type on which the `@relationship` directive is used, the value *IN* meaning arrow pointing towards this node, while *OUT* means arrow points towards the other node. 
+The *direction* argument is relative to the node type on which the `@relationship` directive is used.
+The value `IN` means that the relationship points to this node while `OUT` means that the relationship originates from this node. 
 
-In the example graph, `Person-[ACTED_IN]->Movie` means relationship of type ACTED_IN goes IN to a Movie, therefore Movie.actors relationship field has `direction: IN`. It follows that `Actors.actedInMovies` relationship field has `direction: OUT` because the relationship goes OUT from a Person to a Movie.
+In the example graph, `Person-[ACTED_IN]->Movie` means that the relationship of type `ACTED_IN` points to a Movie, therefore the `Movie.actors` relationship field has `direction: IN`.
+Conversely, the `Actors.actedInMovies` relationship field has `direction: OUT` because the relationship originates from a Person and points to a Movie.
 
-To figure out whether the *direction* argument of the `@relationship` directive should be *IN* or *OUT* it can be helpful to visualize your graph like in the diagram above and model out the direction of the arrows. 
+To figure out whether the direction argument of the `@relationship` directive should be `IN` or `OUT` it can be helpful to visualize your graph like in the diagram above and model the direction of the arrows. 
 
 
 === Relationship properties
 
-The *ACTED_IN* relationship has a property `roles` which describes the different roles that an actor played in a movie. To model this, we need to:
+The `ACTED_IN` relationship has a property `roles` which describes the different roles that an actor played in a movie.
+To model this:
 
-. Add an *ActedIn* type decorated with the `@relationshipProperties` directive, containing the desired relationship properties.
-. Set the `@relationship` directive's *properties* argument value to *ActedIn*. This can be done on both or either side of the relationship, depending on where you want to query the relationship properties from.
+. Add an `ActedIn` type decorated with the `@relationshipProperties` directive, containing the desired relationship properties.
+. Set the `@relationship` directive's `properties` argument value to `ActedIn`. This can be done on both or either side of the relationship, depending on where you want to query the relationship properties from.
 
 .Defining relationship properties
 [source, graphql, indent=0]
