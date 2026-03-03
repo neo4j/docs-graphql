@@ -42,7 +42,7 @@ type Movie @node {
 
 You can then define the relationships between these two types by adding special relationship fields using the `@relationship` directive. See more xref::/directives/database-mapping.adoc#_relationship[`@relationship` directive].
 
-A `Person` can _act in_ multiple movies, and a `Movie` can have multiple actors. Conceptually this is a *many-to-many* relationship and we model it by using list types for both relationship fields, on both sides of the relationship.
+A `Person` can _act in_ multiple movies, and a `Movie` can have multiple actors. Conceptually this is a many-to-many relationship and you can model it by using list types for both relationship fields, on both sides of the relationship.
 
 .Defining the relationship fields
 [source, graphql, indent=0]

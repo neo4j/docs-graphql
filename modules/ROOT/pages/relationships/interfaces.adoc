@@ -1,26 +1,28 @@
 [[type-definitions-interfaces]]
 = Interface types
-:page-aliases: type-definitions/interfaces.adoc, type-definitions/types/interfaces.adoc
+:page-aliases: type-definitions/interfaces.adoc
 :description: This page describes how to use and define interfaces on relationship fields.
 
 
-This page describes how to use Interfaces in the context of Relationships, as well as exemplifies how to use them in queries and mutations.
+This page describes how to use interfaces in the context of relationships, and exemplifies how to use them in queries and mutations.
 
 == Data model
 
-Take the following graph as an example in which a `Person` type has two different relationship types, which can connect it to a both a `Movie` and a `Series` type. The *ACTED_IN* relationship has different properties depending on the target node type.
+Take the following graph as an example in which a `Person` type has two different relationship types, which can connect it to a both a `Movie` and a `Series` type.
+The `ACTED_IN` relationship has different properties depending on the target node type.
 
 image::relationships/relationship-interface.png[title="Model of a Person node connected to both Movie and Series nodes through the ACTED_IN relationship. The ACTED_IN relationship properties differ between the two target node types.",width=80%]
 
 == Sample database data
 
-For the sake of query result examples, let's consider a hypothetical database consisting of the following sample data, which follows the data model described above.
+Consider a database consisting of the following sample data, which follows the data model described above.
 
 image::relationships/data/Person-2Movie-2Series-ActedIn.png[title="Sample database data of a Person node (shown in orange) that has ACTED_IN relationships to two Movies (shown in blue) and two Series (shown in green)", height=70%]
 
-== Relationships on an Interface
+== Relationships on an interface
 
-We see a lot of commonality between the `Movie` and `Series` types. This commonality can be captured by defining an interface `Production`, implemented by both `Movie` and `Series`, and declaring the relationship field `actors` on that interface.
+`Movie` and `Series` types are quite similar.
+What they have in common can be captured by defining an interface `Production`, implemented by both `Movie` and `Series`, and declaring the relationship field `actors` on that interface.
 
 This allows you to query the relationship from the interface, while supporting the flexibility of relationship details such as type and properties to be defined in the concrete types. 
 
@@ -32,7 +34,7 @@ If you want to model relationships on interfaces, which will then be implemented
 
 For more information, see xref::/directives/index.adoc#_declarerelationship[`@declareRelationship`].
 
-.Declaring a relationship field on an Interface
+.Declaring a relationship field on an interface
 [source, graphql, indent=0]
 ----
 interface Production {
@@ -47,7 +49,8 @@ type Person @node {
 
 === Implementing the declared relationship
 
-The concrete types implementing the `Production` interface must then define their own relationship details such as type and properties. This captures their nuances, while still being queryable as a field of the `Production` interface. 
+The concrete types implementing the `Production` interface must then define their own relationship details such as type and properties.
+This captures their nuances, while still being queryable as a field of the `Production` interface. 
 
 Notice how the `ACTED_IN` relationship differs between `ActedInSeries` and `ActedIn`. 
 
@@ -87,14 +90,13 @@ type Person @node {
 
 [CAUTION]
 ====
-A declared relationship needs to be implemented in all concrete types that implement the interface, just like any other field on an interface type. 
-
-In other words, the `actors` field needs to be implemented in both the `Movie` and `Series` types, and decorated with the `@relationship` directive.
+A declared relationship must be implemented in all concrete types that implement the interface, just like any other field on an interface type. 
+For instance, the `actors` field must be implemented in both the `Movie` and `Series` types, and decorated with the `@relationship` directive.
 ====
 
-=== Querying an Interface relationship
+=== Querying an interface relationship
 
-When querying a relationship field declared on an interface, while the relationship field is accessible from the interface level, the returned data will be based on the concrete types that implement the interface.
+When querying a relationship field declared on an interface, while the relationship field is accessible from the interface level, the returned data is based on the concrete types that implement the interface.
 
 .The generated query fields, ignoring the `Person` type
 [source, graphql, indent=0]
@@ -109,7 +111,7 @@ series(limit: Int, offset: Int, sort: [SeriesSort!], where: SeriesWhere): [Serie
 seriesConnection(after: String, first: Int, sort: [SeriesSort!], where: SeriesWhere): SeriesConnection!
 ----
 
-We are interested in the `productions` and `productionsConnection` query fields.
+The focus is on the `productions` and `productionsConnection` query fields.
 
 .Get Production nodes with related Actor nodes
 ====
@@ -132,7 +134,7 @@ query {
 }
 ----
 
-Results for the above query, considering the sample data of this page, would be:
+Assuming the sample data of this page, the result of the query is the following:
 [source, javascript, indent=0]
 ----
 const result = {
@@ -164,9 +166,9 @@ const result = {
 
 .Get Production nodes with related Actor nodes and relationship properties
 ====
-The query above will return a sorted list of up to 10 productions, that is a mix of `Movie` and `Series` nodes, with their related actors along with the relationship properties of the `ACTED_IN` relationship. 
+The query above returns a sorted list of up to 10 productions, that is a mix of `Movie` and `Series` nodes, with their related actors along with the relationship properties of the `ACTED_IN` relationship.
 
-Because of the different relationship properties type, `ActedIn` and `ActedInSeries`, the query needs to use inline fragments to access the relationship properties.
+Because of the different relationship properties type, `ActedIn` and `ActedInSeries`, the query must use inline fragments to access the relationship properties.
 
 [source, graphql, indent=0]
 ----
@@ -197,7 +199,7 @@ query {
 }
 ----
 
-For example, the response for the above query, considering the sample data of this page, would be:
+Assuming the sample data of this page, the response of the query is the following:
 
 [source, javascript, indent=0]
 ----
@@ -283,11 +285,11 @@ const result = {
 ====
 
 
-== Relationships to an Interface
+==Relationships to an interface
 
-For the data model described at the beginning of this chapter, the `Person` type nodes are connected to `Movie` and `Series` nodes but we have not modelled this relationship in the GraphQL schema yet.
+For the data model described at the beginning of this chapter, the `Person` type nodes are connected to `Movie` and `Series` nodes but this relationship has not been modeled in the GraphQL schema yet.
 
-These relationships can be modelled by adding relationship fields to the `Person` type that point to the `Production` interface, and then implementing the relationship details in the concrete types. 
+You can do so by adding relationship fields to the `Person` type that point to the `Production` interface, and then implementing the relationship details in the concrete types. 
 
 .Extending the `Person` type with new relationship fields
 [source, graphql, indent=0]
@@ -300,11 +302,11 @@ type Person @node {
 }
 ----
 
-=== Querying relationships to an Interface
+=== Querying the relationships of an interface
 
-When querying a relationship field of an Interface type, the Interface fields can be queried directly as these are conceptually shared by all the implementations of the Interface, for example `title` for `Production`.
+When querying a relationship field of an interface type, the interface fields can be queried directly as these are conceptually shared by all the implementations of the interface, for example `title` for `Production`.
 
-To query fields specific to the concrete types implementing the Interface, inline fragments need to be used, for example `released` for `Movie` and `episodes` for `Series`.
+To query fields specific to the concrete types implementing the interface, inline fragments must be used, for example `released` for `Movie` and `episodes` for `Series`.
 
 .Get all Person nodes with all Production nodes they ACTED_IN
 ====
@@ -331,9 +333,10 @@ query {
 ====
 
 
-=== Filtering for specific implementations of the Interface
+=== Filtering for specific implementations of the interface
 
-When querying a relationship field of an Interface type, receiving nodes of all implementing types is not mandatory. If desired, you can request specific node types by using the `typename` filter.
+When querying a relationship field of an interface type, receiving nodes of all implementing types is not mandatory.
+If desired, you can request specific node types by using the `typename` filter.
 
 .Get all Person nodes with Production nodes they ACTED_IN filtered by Movie type
 ====
@@ -355,9 +358,9 @@ query {
 ----
 ====
 
-=== Creating a relationship to an Interface
+=== Creating a relationship to an interface
 
-When creating a relationship to an Interface type, the concrete type of the node that is being connected needs to be specified in the mutation.
+When creating a relationship to an interface type, the concrete type of the node that is being connected must be specified in the mutation.
 
 .Create a Person node with related Production nodes
 ====
@@ -401,16 +404,16 @@ mutation CreateActorAndProductions {
 ----
 ====
 
-=== Updating a relationship to an Interface
+=== Updating a relationship to an interface
 
 Operations on interfaces apply for all implementing concrete types unless you narrow them down.
 
 image::relationships/data/Person-Movie-Series-creation.png[title="New disconnected nodes in the database (Left); Desired connections (Right)", height=70%]
 
-We're adding the newly released `Movie` "Henry Danger" to the database, and we want to connect it to the `Person` node `Jace Norman` through an `ACTED_IN` relationship with the role "Henry Hart". 
-There already exists a `Series` node with the same title.
+The mutation below adds the newly released `Movie` "Henry Danger" to the database, and connects it to the `Person` node `Jace Norman` through an `ACTED_IN` relationship with the role "Henry Hart". 
+Note that a `Series` node with the same title already exists.
 
-To achieve the desired connections, we can use the typename filter in the filters of an update mutation.
+To achieve the desired connections, use the `typename` filter in the filters of an update mutation.
 
 .Update Person nodes and create ACTED_IN relationships to Production nodes filtered by Movie type
 ====
@@ -447,11 +450,11 @@ mutation {
 ----
 ====
 
-If the relationship between `Person` and `Movie` already exists in the database, we can ensure the relationship properties are correct depending on the type of the connected node.
+If the relationship between `Person` and `Movie` already exists in the database, make sure the relationship properties are correct depending on the type of the connected node.
 
 .Update Person nodes and update the ACTED_IN relationships to any Production nodes with relationship properties based on the properties type
 ====
-Notice the edge properties are updated with different values depending on the typename of the connected node.
+Notice the edge properties are updated with different values depending on the `typename` of the connected node.
 
 [source, graphql, indent=0]
 ----
