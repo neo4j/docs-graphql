@@ -368,12 +368,12 @@ const resultWithEthanCoen = {
 
 === Addressing the cardinality limitation
 
-This is a limitation of the Neo4j GraphQL Library because at the moment Neo4j cannot reliably enforce cardinality 1 in relationships between nodes, which is required for a non-nullable relationship field on the *one-to-* side of a *one-to-one* or *one-to-many* relationship.
+This is a limitation of the Neo4j GraphQL Library because at the moment Neo4j cannot reliably enforce cardinality of only one in relationships between nodes, which is required for a non-nullable relationship field on the "one-to" side of a one-to-one or one-to-many relationship.
 
 There are a couple of options to work around this limitation:
 
-1. Model the relationship as nullable, as the DIRECTED relationship in the example above. Protect the integrity of your data through application logic, for example by ensuring that every time a `Movie` node is created, it is connected to a `Person` node through the `DIRECTED` relationship.
+1. Model the relationship as nullable, as the `DIRECTED` relationship in the example above. Protect the integrity of your data through application logic, for example by ensuring that every time a `Movie` node is created, it is connected to a `Person` node through the `DIRECTED` relationship.
 2. Define your relationship with the `@cypher` directive instead of the `@relationship` directive. This option means that some functionality provided by the Neo4j GraphQL Library will not be available. For more information, see xref::/directives/database-mapping.adoc#_cypher[`@cypher` directive].
-3. Model the relationship as a "many-to-many" relationship using list types, same as ACTED_IN in the example above. 
+3. Model the relationship as a many-to-many relationship using list types, same as `ACTED_IN` in the example above. 
 
 

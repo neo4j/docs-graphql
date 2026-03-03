@@ -3,7 +3,7 @@
 :page-aliases: type-definitions/unions.adoc, type-definitions/types/unions.adoc
 :description: This page describes how to use unions on relationship fields with the Neo4j GraphQL Library.
 
-This page describes how to use Unions in the context of Relationships, as well as exemplifies how to use them in queries and mutations.
+This page describes how to use unions in the context of relationships, and exemplifies how to use them in queries and mutations.
 
 == Data model
 
@@ -13,13 +13,14 @@ image::relationships/relationship-union.png[title="Model of a User node connecte
 
 == Sample database data
 
-For the sake of query result examples, let's consider a hypothetical database consisting of the following sample data, which follows the data model described above.
+Consider a database consisting of the following sample data, which follows the data model described above.
 
 image::relationships/data/Person-and-Blog-Post-Union.png[title="Sample database data of a Blog node (shown in blue) that has HAS_POST relationships to two Posts (shown in orange). User nodes (shown in green) have HAS_CONTENT relationships to both Blog and Post nodes.", width=70%]
 
 == Writing type definitions
 
-Conceptually, both `Blog` and `Post` are types of "content" attributed to a `User`. However they are fundamentally different types of content with different fields therefore they can be grouped together by a Union type. 
+Conceptually, both `Blog` and `Post` are types of "content" attributed to a `User`.
+However they are fundamentally different types of content with different fields therefore they can be grouped together by a union type. 
 
 .Defining the union and node types with relationship fields
 [source, graphql, indent=0]
@@ -45,7 +46,7 @@ type User @node {
 
 Union types are useful for modeling relationships that can point to multiple different node types which do not share common fields. 
 
-When querying a relationship field of a Union type, you must use inline fragments to specify which fields to return for each possible type in the union.
+When querying a relationship field of a union type, you must use inline fragments to specify which fields to return for each type in the union.
 
 .Get User nodes with related Content nodes with inline fragments for all concrete member types
 ====
@@ -69,7 +70,8 @@ query {
 ----
 ====
 
-If the inline fragment corresponding to a union member type is not included in the query, then no fields of that type will be returned. Instead the response will be an empty object.
+If the inline fragment corresponding to a union member type is not included in the query, then no fields of that type are returned.
+Instead the response will be an empty object.
 
 .Get User nodes with related Content nodes omitting the Post type inline fragment
 ====
@@ -88,7 +90,7 @@ query {
     }
 }
 ----
-The response to this query will include empty objects for the `Post` type, as no fields were specified for it in the query:
+The response to this query includes empty objects for the `Post` type, as no fields were specified for it in the query:
 [source, javascript, indent=0]
 ----
 const result = {
@@ -108,14 +110,14 @@ const result = {
 ----
 ====
 
-=== Filtering for specific union member type
+=== Filtering for a specific union member type
 
 To filter for a specific union member type, you can use the `where` argument on the relationship field.
 
 .Get User nodes with related Content nodes filtered by Blog type
 ====
 
-Notice the inline fragment corresponding to the `Post` type does not need to be included in the query, as they will be filtered out by the `where` argument:
+Notice the inline fragment corresponding to the `Post` type does not need to be included in the query, as they are filtered out by the `where` argument:
 
 [source, graphql, indent=0]
 ----
@@ -132,11 +134,12 @@ query {
 ----
 ====
 
-== Creating a Union relationship
+== Creating a union relationship
 
-To create the sample database data shown in the graph above, an approach could be to first create the `User` nodes.
+To create the sample database data shown in the graph above, one approach is to first create the `User` nodes.
 
-`User` Alice is connected through the `HAS_CONTENT` relationship to a `Blog` node with 2 `Post` nodes connected to it through the `HAS_POST` relationship. The relationship to the `Content` union can be created through a nested mutation at the same time.
+`User` Alice is connected through the `HAS_CONTENT` relationship to a `Blog` node with two `Post` nodes connected to it through the `HAS_POST` relationship.
+The relationship to the `Content` union can be created through a nested mutation at the same time.
 
 .Create User nodes with HAS_CONTENT relationship to Blog nodes
 ====
@@ -180,13 +183,13 @@ mutation {
 ----
 ====
 
-Executing this mutation on an empty database will create the following graph:
+Executing this mutation on an empty database creates the following graph:
 
 image::relationships/data/Person-and-Blog-Post-Union-partial.png[title="Sample database data of User nodes (shown in green) and a Blog node (shown in blue) that has HAS_POST relationships to two Posts (shown in orange). The HAS_CONTENT relationship between User and Post nodes is missing.", width=70%]
 
-== Update a Union relationship
+== Update a union relationship
 
-All that's left to do now is to update the `User` nodes and create their HAS_POST relationships to the `Post` nodes part of the `Content` union.
+You can update the `User` nodes and create their `HAS_POST` relationships to the `Post` nodes part of the `Content` union.
 
 .Update User nodes with HAS_CONTENT relationships to Post nodes
 ====
@@ -221,4 +224,4 @@ mutation {
 ----
 ====
 
-The same mutation should be executed again for `User` Bob, adjusting the filter criteria.
+Execute the same mutation again for `User` Bob, adjusting the filter criteria.
