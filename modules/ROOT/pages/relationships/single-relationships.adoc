@@ -1,127 +1,46 @@
 [[single-relationships]]
 = Single relationships and cardinality considerations
 :page-aliases: relationships/relationships.adoc relationships/single-relationships.adoc
-:description: This page describes the different ways to model a Neo4j relationship in the GraphQL schema and talks about the limitations.
+:description: This page describes the ways to interact with a Neo4j single relationship in the GraphQL schema.
 
+Single relationships are relationships that are modeled as a non-list type field on either side of the relationship. 
+If both sides are non-list types the relationship is a xref:relationships/cardinality.adoc#_one_to_one_relationships[one-to-one] relationship, while if one side is a non-list type and the other side is a list type, the relationship is a xref:relationships/cardinality.adoc#_one_to_many_relationships[one-to-many] relationship.
 
-Irrespective of the data model you have in your Neo4j database, the GraphQL schema should be designed in a way that allows the access of the data that your application needs.
-This means that there are often multiple ways to model the same data in the GraphQL schema, each with benefits and tradeoffs.
+Neo4j databases do not currently support constraints on relationship cardinality. 
+However, many users of GraphQL wish to model relationships as either one-to-one or one-to-many in the GraphQL schema, therefore we have chosen to support this in the Neo4j GraphQL Library. 
 
-With this in mind, the problem of data integrity arises in the case of APIs that allow for data manipulation.
-There are some limitations in the Neo4j database that make it impossible for operations generated with the Neo4j GraphQL library to enforce certain data integrity rules that are valid in GraphQL schema design.
-
-This page describes the different ways to model a Neo4j relationship in the GraphQL schema and describes their limitations.
+Users of this feature should be aware there is no guarantee that only one relationship will be present in the database and this may result in non-deterministic behaviour. 
+The only guarantee is that only one result will be returned when querying across a single relationship, but that result can be <<_at_most_one_relationship,any of the related nodes>>.
 
 == Data model
 
-Take the following graph as an example in which a `Person` type has two different relationship types, which can connect it to a `Movie` type.
+Take the following graph as an example in which a `Person` can direct multiple movies but a `Movie` only has one director. 
+
+Conceptually this is a one-to-many relationship and the single relationship is represented by the `DIRECTED` type relationship field on the `Movie` type.
 
 image::relationships/2-relationship-types.png[title="Model of a Movie node connected to a Person node through two different relationship types: ACTED_IN and DIRECTED."]
 
-As before, start with defining the two node types together with their fields.
-
-.Defining the node types
+.Defining the node types with a one-to-many relationship of type DIRECTED between Person and Movie
 [source, graphql, indent=0]
 ----
 type Person @node {
     name: String!
-}
-
-type Movie @node {
-    title: String!
-    released: Int!
-}
-----
-
-== Modeling relationships
-
-=== Many-to-many relationships
-
-A `Person` can act in multiple movies, and a `Movie` can have multiple actors acted in it. 
-Conceptually this is a many-to-many relationship and you can model it by using list types for both relationship fields, on both sides of the relationship.
-
-.Adding relationship fields both ways for a many-to-many relationship of type ACTED_IN between Person and Movie
-[source, graphql, indent=0]
-----
-type Person @node {
-    name: String!
-    actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
-}
-
-type Movie @node {
-    title: String!
-    released: Int!
-    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
-}
-----
-
-[CAUTION]
-====
-Both the list type and the type inside the list must be non-nullable, meaning that the relationship field must always return an array of values, and that array cannot contain null values.
-This means there is always a number of related nodes (even if that number is zero), and the related nodes are always valid nodes (and never null).
-
-In other words, both the array and the type inside must have a `!`.
-====
-
-=== One-to-many Relationships
-
-A `Person` can direct multiple movies but a `Movie` only has one director.
-Conceptually this is a one-to-many relationship and you can model it by using a list type for the relationship field on the `Person` type, and a non-list type for the relationship field on the `Movie` type. 
-
-.Adding relationship fields both ways for a one-to-many relationship of type DIRECTED between Person and Movie
-[source, graphql, indent=0]
-----
-type Person @node {
-    name: String!
-    actedIn: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
     directed: [Movie!]! @relationship(type: "DIRECTED", direction: OUT)
 }
 
 type Movie @node {
     title: String!
     released: Int!
-    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
     director: Person @relationship(type: "DIRECTED", direction: IN)
 }
 ----
 
-[CAUTION]
-====
-Note that it is impossible for a `Movie` to not have a director, so ideally you would want to make the `director` field non-nullable.
-This is however not possible with the Neo4j GraphQL Library due to a limitation of Neo4j in enforcing a cardinality of only one relationship between nodes in the database, which is required for a non-nullable relationship field.
-====
-
-=== One-to-one Relationships
-
-A `Person` Ana can marry only one other `Person` Bob, and that other `Person` Bob can only be married to that `Person` Ana.
-Conceptually this is a one-to-one relationship and you can model it by using a non-list type for the relationship field on both sides of the relationship.
-
-.Adding relationship fields both ways for a one-to-one relationship of type MARRIED between Person and Person
-[source, graphql, indent=0]
-----
-type Person @node {
-    name: String!
-    spouse: Person @relationship(type: "MARRIED", direction: OUT)
-}
-----
-
-In this case, the relationship is between nodes of the same type.
-This does not need to be the case and is only for the sake of this example. 
-
-[CAUTION]
-====
-The same limitation as in one-to-many relationships applies here, meaning that it is not possible to make the `spouse` field non-nullable.
-====
-
 == Querying single relationships
 
-Querying single relationships (of a non-null type) returns the data of a single node if there is a relationship, and null otherwise. 
+Querying single relationships returns the data of a single node if there is a relationship, and null otherwise. 
 If the database contains multiple relationships of the same type, which is possible as a consequence of the Neo4j cardinality limitation, only one node is returned. 
 
-[CAUTION]
-====
 The node that is returned is not deterministic, meaning that it can be any of the nodes that are connected through that relationship.
-====
 
 .Get Movie by title with related Person through the DIRECTED relationship
 ====
@@ -285,15 +204,23 @@ mutation {
 ----
 ====
 
-== Neo4j cardinality limitation
+== Cardinality limitations
 
-=== Example
+=== Exactly one relationship
 
-In the context of multiple surfaces accessing the same Neo4j database, it is possible that what a GraphQL API models as a single relationship between two types ends up matching multiple relationships in the database, due to the Neo4j cardinality limitation described above.
+Analyzing the model above, an observation is that it is impossible for a `Movie` to not have a director. Therefore, you would ideally want to make the `director` field non-nullable.
 
-Even within the same GraphQL API surface, it is possible for a one-to-many relationship to end up having multiple relationships.
+Because of the current lack of constraints on relationship cardinality in the Neo4j database, it is not possible to enforce this cardinality of exactly one relationship and so all single relationship fields must be nullable.
 
-Consider the following sample data in the database:
+=== At most one relationship
+
+A nullable single relationship field models a relationship of at most one relationship between any two nodes of those types.
+
+In the context of multiple surfaces accessing the same Neo4j database through different APIs or direct database access, it is possible that what a GraphQL API models as a single relationship between two types ends up matching multiple relationships in the database, due to the current lack of constraints on relationship cardinality.
+
+Even within the same GraphQL API surface, it is possible for a one-to-many relationship to end up matching multiple relationships in the database.
+
+Consider the following sample data:
 
 image::relationships/data/2Person-Movie-single-relationship.png[title="Disconnected nodes in the database (Left); The state of the database after running the following create and update operations (Right)"]
 
@@ -325,10 +252,8 @@ mutation {
 Querying for `Movies` and their `director` relationship fields returns only one object because of the type of the relationship in the GraphQL schema.
 If there are multiple relationships of the same type between the same two nodes, only one node is returned. 
 
-[CAUTION]
-====
 The node that is returned is not deterministic, meaning that it can be any of the nodes that are connected through that relationship.
-====
+
 
 .Get Movie by title with related Person through the DIRECTED relationship
 ====
@@ -369,15 +294,4 @@ const resultWithEthanCoen = {
 };
 ----
 ====
-
-=== Addressing the cardinality limitation
-
-This is a limitation of the Neo4j GraphQL Library because at the moment Neo4j cannot reliably enforce cardinality of only one in relationships between nodes, which is required for a non-nullable relationship field on the "one-to" side of a one-to-one or one-to-many relationship.
-
-There are a couple of options to work around this limitation:
-
-1. Model the relationship as nullable, as the `DIRECTED` relationship in the example above. Protect the integrity of your data through application logic, for example by ensuring that every time a `Movie` node is created, it is connected to a `Person` node through the `DIRECTED` relationship.
-2. Define your relationship with the `@cypher` directive instead of the `@relationship` directive. This option means that some functionality provided by the Neo4j GraphQL Library will not be available. For more information, see xref::/directives/database-mapping.adoc#_cypher[`@cypher` directive].
-3. Model the relationship as a many-to-many relationship using list types, same as `ACTED_IN` in the example above. 
-
 

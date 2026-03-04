@@ -1,6 +1,6 @@
 [[relationships]]
 = Relationships
-:page-aliases: type-definitions/relationships.adoc type-definitions/relationships/relationships.adoc
+:page-aliases: relationships/relationships.adoc 
 :description: This section covers how relationships work in the Neo4j GraphQL Library.
 
 
