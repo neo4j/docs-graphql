@@ -3,13 +3,15 @@
 :page-aliases: relationships/relationships.adoc 
 :description: This section covers how relationships work in the Neo4j GraphQL Library.
 
-
 Without relationships, your type definitions represent a collection of disconnected nodes with little value.
 Adding relationships to your data model gives your data the context that it needs to run complex queries across wide sections of your graph.
 
-This page describes how to write type definitions for a simple connected model by using introducing relationships.
+This section describes how to model and interact with relationships in your GraphQL schema:
 
-For examples of operations, see xref::/mutations/create.adoc#_relationships[`inserting`] and xref::/queries-aggregations/queries.adoc#_relationships[`querying`] data.
+* Read along to find out the <<_anatomy_of_a_relationship,anatomy of a relationship>>.
+* Learn about the different ways to model relationships in the GraphQL schema in <<_modeling_relationships,modeling relationships>>.
+* Understand the concept and limitations of <<_single_relationships,single relationships>>.
+* See how to use <<_interfaces,interfaces>> and <<_unions,unions>> with relationships.
 
 == Data model
 
@@ -59,6 +61,8 @@ type Movie @node {
     actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN)
 }
 ----
+
+== Anatomy of a relationship
 
 === Relationship direction
 

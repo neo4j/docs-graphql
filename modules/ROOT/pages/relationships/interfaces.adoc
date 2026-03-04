@@ -32,8 +32,6 @@ The `@relationship` directive can only be used on fields of object types.
 
 If you want to model relationships on interfaces, which will then be implemented by concrete object types, you can use the `@declareRelationship` directive.
 
-For more information, see xref::/directives/index.adoc#_declarerelationship[`@declareRelationship`].
-
 .Declaring a relationship field on an interface
 [source, graphql, indent=0]
 ----

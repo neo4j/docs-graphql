@@ -38,9 +38,7 @@ type Movie @node {
 == Querying single relationships
 
 Querying single relationships returns the data of a single node if there is a relationship, and null otherwise. 
-If the database contains multiple relationships of the same type, which is possible as a consequence of the Neo4j cardinality limitation, only one node is returned. 
-
-The node that is returned is not deterministic, meaning that it can be any of the nodes that are connected through that relationship.
+If the database contains multiple relationships of the same type, which is possible as a consequence of the Neo4j cardinality limitation, only one node is returned. See more details in <<_cardinality_limitations,Cardinality limitations>>.
 
 .Get Movie by title with related Person through the DIRECTED relationship
 ====
@@ -254,7 +252,6 @@ If there are multiple relationships of the same type between the same two nodes,
 
 The node that is returned is not deterministic, meaning that it can be any of the nodes that are connected through that relationship.
 
-
 .Get Movie by title with related Person through the DIRECTED relationship
 ====
 [source, graphql, indent=0]
@@ -270,6 +267,8 @@ query {
 ----
 
 Assuming the sample data of this page, the result of the above query is either of the following two options:
+
+.Potential query result
 [source, javascript, indent=0]
 ----
 const resultWithJoelCoen = {
@@ -282,6 +281,11 @@ const resultWithJoelCoen = {
             ],
     },
 };
+----
+
+.Equally potential query result
+[source, javascript, indent=0]
+----
 const resultWithEthanCoen = {
     data: {
          movies: [
