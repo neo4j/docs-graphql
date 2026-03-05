@@ -184,30 +184,35 @@ const result = {
 ----
 ====
 
-=== Fetching your data - another approach
+=== Fetching your data - connection query 
 
 The GraphQL library can generate connection fields for relationship fields, which allow you to query for relationship properties and other metadata about the relationship. 
 These fields are compliant with the Relay-style Connection specification.
 
-The following example shows the same query as above but using the connection fields for both relationships. 
+The query in the following example requests the same data as above but using the connection fields for both relationships. 
 
 .Get Person nodes with related nodes through connection fields
 ====
 [source, graphql, indent=0]
 ----
 query {
-    people {
-        friendsConnection {
-            edges {
-                node {
-                    name
+    peopleConnection {
+        edges {
+            node {
+                name
+                friendsConnection {
+                    edges {
+                        node {
+                            name
+                        }
+                    }
                 }
-            }
-        }
-        acquaintancesConnection {
-            edges {
-                node {
-                    name
+                acquaintancesConnection {
+                    edges {
+                        node {
+                            name
+                        }
+                    }
                 }
             }
         }
