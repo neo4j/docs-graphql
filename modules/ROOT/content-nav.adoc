@@ -27,7 +27,8 @@
 ** xref:types/spatial.adoc[Spatial]
 
 * xref:/relationships/index.adoc[]
-** xref:/relationships/cardinality.adoc[Cardinality]
+** xref:/relationships/operations.adoc[Operations]
+** xref:/relationships/cardinality.adoc[Cardinality and modeling relationships]
 ** xref:/relationships/single-relationships.adoc[Single relationships]
 ** xref:/relationships/interfaces.adoc[Interfaces]
 ** xref:/relationships/unions.adoc[Unions]

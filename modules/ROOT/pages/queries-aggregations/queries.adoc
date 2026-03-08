@@ -42,7 +42,8 @@ type Query {
 
 == Writing queries
 
-Based on the type definitions, here are two examples of how to write queries for reading or retrieving values:
+Based on the type definitions, the following are some queries examples that demonstrate how to read or retrieve values.
+For more examples of querying relationships please refer to xref:relationships/operations.adoc#_queries[Relationship operations].
 
 .Return all User nodes from their ID and name
 [source, graphql, indent=0]

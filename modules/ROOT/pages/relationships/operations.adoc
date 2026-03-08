@@ -1,0 +1,425 @@
+[[relationship-operations]]
+= Relationship Operations
+:page-aliases: relationships/relationship-operations.adoc 
+:description: This section covers the operations available on relationships in the Neo4j GraphQL Library.
+
+Relationships are a fundamental part of the Neo4j database, and the Neo4j GraphQL Library generates a comprehensive set of operations for working with them.
+These operations can be combined, enabling you to perform complex graph manipulations in a single mutation.
+
+This page demonstrates the various relationship operations available and how to use them effectively in your GraphQL schema through a sequence of scenarios and equivalent mutations to update "the City database".
+
+== Data model
+
+Consider the following data model graph:
+
+image::relationships/2-relationships-to-itself.png[title="Model of a Person node connected to Person nodes through KNOWS and HAS_FRIEND relationships."]
+
+== Writing type definitions
+
+Define the nodes and relationships as described in the xref:relationships/index.adoc[relationships page], making sure to include the relationship properties if needed.
+
+.Defining the Person node with two relationship types, KNOWS and HAS_FRIEND, to the same Person type
+[source, graphql, indent=0]
+----
+type Person @node {
+    name: String!
+    friends: [Person!]! @relationship(type: "HAS_FRIEND", direction: OUT, properties: "Friendship")
+    acquaintances: [Person!]! @relationship(type: "KNOWS", direction: OUT)
+}
+type Friendship @relationshipProperties {
+    since: Int
+}
+----
+
+== Queries
+
+=== `queryDirection`
+
+All relationships have a direction.
+However, when querying them, it is possible to perform undirected queries, that is queries that ignore the value of the relationship direction.
+
+To set the this query behavior of a relationship you can use the argument `queryDirection`:
+
+.Updating the KNOWS relationship field with the `queryDirection` argument
+[source, graphql, indent=0]
+----
+type Person @node {
+    name: String!
+    friends: [Person!]! @relationship(type: "HAS_FRIEND", direction: OUT)
+    acquaintances: [Person!]! @relationship(type: "KNOWS", direction: OUT, queryDirection: UNDIRECTED)
+}
+----
+
+`queryDirection` can have the following values:
+
+* `DIRECTED`: only directed queries can be performed on this relationship. This is the default value.
+* `UNDIRECTED`: only undirected queries can be performed on this relationship.
+
+=== Fetching your data
+
+Consider the following sample data in the database:
+
+image::relationships/data/Person-to-Person-2-relationships.png[title="Two Person nodes connected through KNOWS and HAS_FRIEND relationships. Both relationships have a direction."]
+
+As shown in the image above, the relationship has to have a direction in the database. This does not mean that the direction has to be taken into account when querying the relationship, as this is determined by the `queryDirection` argument of the `@relationship` directive.
+
+Notice the difference in the response when querying for both relationship fields: where `friends` takes into account the direction of the `HAS_FRIEND` relationship, `acquaintances` ignores the direction of the `KNOWS` relationship and returns all related nodes regardless of the direction of the relationship in the database.
+
+.Get Person nodes with related nodes: friends applies only from Alice to Bob, while acquaintances applies both from Alice to Bob and from Bob to Alice
+====
+[source, graphql, indent=0]
+----
+query {
+    people {
+        name
+        friends {
+            name
+        }
+        acquaintances {
+            name
+        }
+    }
+}
+----
+
+[source, javascript, indent=0]
+----
+const result = {
+    data: {
+         people: [
+                {
+                    name: "Alice",
+                    friends: [{ name: "Bob" }],
+                    acquaintances: [{ name: "Bob" }]
+                },
+                {
+                    name: "Bob",
+                    friends: [],
+                    acquaintances: [{ name: "Alice" }]
+                },
+            ],
+    },
+};
+----
+====
+
+=== Fetching your data - connection query 
+
+The GraphQL library can generate connection fields for relationship fields, which allow you to query for relationship properties and other metadata about the relationship. 
+These fields are compliant with the Relay-style Connection specification.
+
+The query in the following example requests the same data as above but using the connection fields for both relationships. 
+
+.Get Person nodes with related nodes through connection fields
+====
+[source, graphql, indent=0]
+----
+query {
+    peopleConnection {
+        edges {
+            node {
+                name
+                friendsConnection {
+                    edges {
+                        node {
+                            name
+                        }
+                        # can now request relationship properties
+                        properties {    
+                            since
+                        }
+                    }
+                }
+                acquaintancesConnection {
+                    edges {
+                        node {
+                            name
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+----
+====
+
+[NOTE]
+====
+The `@relationship` directive is a reference to Neo4j relationships, whereas when writing queries, the phrase `edge(s)` is used to be consistent with the general API language used by Relay.
+====
+
+
+== Mutations
+
+The top level operations always refer to nodes inside the database. 
+For the type definitions described above, containing only the `Person` type, the generated top level operations will be:
+
+.The generated mutation fields (top level operations)
+[source, graphql, indent=0]
+----
+createPeople(input: [PersonCreateInput!]!)!: CreatePeopleMutationResponse!
+updatePeople(where: PersonWhere!, update: PersonUpdateInput!)!: UpdatePeopleMutationResponse!
+deletePeople(where: PersonWhere!, delete: PersonDeleteInput!)!: DeleteInfo!
+----
+
+As arguments to the top level operations, the Neo4j GraphQL Library generates a set of nested operations manage the relationships between the nodes in the database. 
+
+[INFO]
+====
+Glossary:
+
+* The target of the top level operation becomes the "source node" of the relationship. 
+* Through the nested operations, the created/ traversed relationships have the top level matched node as the source node.
+* The nodes on the other side of the relationship are called the "target nodes". 
+* The nested operations allow CRUD operations of the target nodes, as well as of the relationships between the source node and the target nodes.
+* Creation and deletion of nodes use the nomenclature "create" and "delete", while creation and deletion of relationships use the nomenclature "connect" and "disconnect".
+====
+
+Through the nested operations, you can create, update or delete the target nodes, as well as relationships between the source and target nodes:
+
+* The `create` operation creates the target node, together with the relationship between the source and target nodes in the same operation.
+* The `connect` operation only creates the relationship between the source node and target nodes that already exist in the database.
+* The `delete` operation deletes the target node, together with *all* relationships connected to it. 
+* The `disconnect` operation only deletes the relationship between the source node and the target node, without deleting either of the nodes.
+* The `update` operation updates the properties of the target node, as well as the relationship between the source and target nodes. 
+ 
+Each of the top level operations support their own set of nested operations:
+
+.Generated input types of top level operations, focusing on nested operations for relationship HAS_FRIEND
+[source, graphql, indent=0]
+----
+# Top level Create operation supports nested: 
+# * create 
+# * connect
+input PersonCreateInput {
+    # ...other fields
+    friends: PersonFriendsFieldInput
+}
+input PersonFriendsFieldInput {
+    connect : [PersonFriendsConnectFieldInput!]
+    create : [PersonFriendsCreateFieldInput!]
+}
+
+# Top level Update operation supports nested:
+# * create 
+# * connect
+# * update 
+# * disconnect
+# * delete
+input PersonUpdateInput {
+    # ...other fields
+    friends: [PersonFriendsUpdateFieldInput!]
+}
+input PersonFriendsUpdateFieldInput {
+    connect : [PersonFriendsConnectFieldInput!]
+    create : [PersonFriendsCreateFieldInput!]
+    delete : [PersonFriendsDeleteFieldInput!]
+    disconnect : [PersonFriendsDisconnectFieldInput!]
+    update : PersonFriendsUpdateConnectionInput
+}
+
+# Top level Delete operation supports nested:
+# * delete
+input PersonDeleteInput {
+    # ...other fields
+    friends: [PersonFriendsDeleteFieldInput!]
+}
+input PersonFriendsDeleteFieldInput {
+    delete: PersonDeleteInput
+}
+----
+
+
+This section further illustrates the different operations and combinations between them through a sequence of scenarios and equivalent mutations to update the city database.
+
+=== Create and Connect
+
+*_Scenario:_* 
+_Bob goes to a party where he meets Charlie and Dave.
+When asked, Charlie says he considers Bob to be a friend, but Dave spoke too little so he is just an acquaintance for now._
+
+Charlie is not in the database so the `Person` node needs to be created. 
+This indicates that the `create` top level operation can be used.
+
+Note that when querying, the acquaintances relationship is undirected, so when Charlie says he became acquainted with Dave, the reverse is also true without needing to run another query.
+
+.Top level create with nested connect and create operations
+====
+[source, graphql, indent=0]
+----
+mutation {
+    createPeople(input: [{ 
+        name: "Charlie",
+        # Charlie is the source node
+        # creates the relationship HAS_FRIEND 
+        friends: { connect: { where: { node: { name: "Bob" } } } }, 
+        # creates the node Dave and the relationship KNOWS 
+        acquaintances: { create: { node: { name: "Dave" } } } 
+    }]) {
+        name
+        friends {
+            name
+        }
+        acquaintances {
+            name
+        }
+    }
+}
+----
+====
+
+
+*_Scenario:_* 
+_Bob shares Charlie's sentiment and also considers him a friend while Dave is an acquaintance._
+
+Bob's node exists in the database so his node has to be updated to reflect these new relationships. 
+This indicates a use case for the top-level `update` operation.
+
+.Top level update with nested connect and create operations
+====
+[source, graphql, indent=0]
+----
+mutation {
+    updatePeople(
+        where: { name: "Bob" },
+        update: {
+            # Bob is the source node
+            friends: { 
+                connect: { where: { node: { name: "Charlie" } } },
+                create: { node: { name: "Camilla" } }
+            },
+            acquaintances: { connect: { where: { node: { name: "Dave" } } } }
+        }
+    ) {
+        name
+        friends {
+            name
+        }
+        acquaintances {
+            name
+        }
+    }
+}
+----
+====
+
+=== Update
+
+*_Scenario:_* 
+_Bob and Camilla are getting married and changing their last names to B._
+
+Both nodes already exist in the database, indicating a use case for the top level `update` operation.
+
+Since their nodes are related through the _friends_ relationship, you can perform both changes in the same mutation starting with a top level update operation on either nodes and a nested update operation for the other one.
+
+.Top level update with nested update operation
+====
+[source, graphql, indent=0]
+----
+mutation {
+    updatePeople(
+        where: { name: { eq: "Bob" } }, 
+        update: {
+            # update Bob node's fields
+            name: { set: "Bob B." },
+            # Bob is the source node
+            friends: [{
+                update: {
+                    # Camilla is the target node
+                    where: {
+                        node: { name: { eq: "Camilla" } },
+                    },
+                    # update Camilla node's fields
+                    node: { name: { set: "Camilla B." } },
+                    # update the relationship between Bob and Camilla 
+                    edge: { since: { set: 2022 } },
+                },
+            }],
+        }
+    ) {
+    info {
+      nodesCreated
+    }
+  }
+}
+----
+====
+
+=== Delete and Disconnect
+
+
+*_Scenario:_* 
+_Alice notified everyone at the party that she moving away. 
+Bob did not like how Charlie behaved at hearing the news and wants to cut ties with him._
+
+
+Alice's node needs to be deleted from the database, indicating a use case for the top level `delete` operation.
+
+However both actions of the scenario have Bob in common, so a valid alternative is a top level `update` operation on Bob's node with nested operations to perform the correct changes on Alice and Charlie nodes. 
+
+Note that this is only possible because Bob has relationships to both.
+There has to be a relationship of type HAS_FRIEND between Bob and Alice in order for the node Alice to meet the filter criteria for the nested delete operation, and the same for Charlie and the nested disconnect operation.
+
+.Top level update with nested disconnect and delete operations
+====
+[source, graphql, indent=0]
+----
+mutation {
+    updatePeople(
+        where: { name:  { eq: "Bob B." } },
+        update: {
+            # Bob B. is the source node
+            friends: [ 
+                {
+                    # deletes Alice and all relationships between Alice and all other nodes (including the KNOWS relationships)
+                    delete: [ { where: { node: { name: { eq: "Alice" } } } } ], 
+                },
+                {
+                    # deletes the relationship between Bob B. and Charlie, without deleting either node
+                    disconnect: [ { where: { node: { name: { eq: "Charlie" } } } } ], 
+                },
+            ],
+        }
+    ) {
+    info {
+      nodesDeleted
+      relationshipsDeleted
+    }
+  }
+}
+----
+====
+
+
+*_Scenario:_* 
+_Bob and Camilla are moving away together._
+
+Both nodes need to be deleted, together with all relationships connected to them, indicating a use case for the top level `delete` operation.
+
+Since the nodes are related through the _friends_ relationship, both deletions can be performed in the same mutation starting with a delete operation on either nodes and a nested delete operation for the other one.
+
+.Top level delete with nested delete operation
+====
+[source, graphql, indent=0]
+----
+query {
+    deletePeople(
+        # deletes Camilla and all relationships between Camilla and all other nodes
+        where: { name: { eq: "Camilla B." } },
+        delete: {
+            # Camilla is the source node
+            friends: [ 
+                {
+                    # deletes Bob and all relationships between Bob and all other nodes (including the KNOWS relationships)
+                    where: { node: { name: { eq: "Bob B." } } } 
+                },
+            ],
+        }
+    ) {
+    nodesDeleted
+    relationshipsDeleted
+  }
+}
+----
+====

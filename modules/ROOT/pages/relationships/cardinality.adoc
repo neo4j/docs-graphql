@@ -1,4 +1,4 @@
-[[cardinality]]
+[[cardinality-modeling]]
 = Cardinality and modeling relationships
 :description: This page describes the different ways to model a Neo4j relationship in the GraphQL schema and talks about the limitations.
 

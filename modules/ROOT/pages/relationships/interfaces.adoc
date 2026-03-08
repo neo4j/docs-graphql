@@ -283,7 +283,7 @@ const result = {
 ====
 
 
-==Relationships to an interface
+== Relationships to an interface
 
 For the data model described at the beginning of this chapter, the `Person` type nodes are connected to `Movie` and `Series` nodes but this relationship has not been modeled in the GraphQL schema yet.
 

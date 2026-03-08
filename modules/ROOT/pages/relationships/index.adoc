@@ -9,9 +9,10 @@ Adding relationships to your data model gives your data the context that it need
 This section describes how to model and interact with relationships in your GraphQL schema:
 
 * Read along to find out the <<_anatomy_of_a_relationship,anatomy of a relationship>>.
-* Learn about the different ways to model relationships in the GraphQL schema in <<_modeling_relationships,modeling relationships>>.
-* Understand the concept and limitations of <<_single_relationships,single relationships>>.
-* See how to use <<_interfaces,interfaces>> and <<_unions,unions>> with relationships.
+* Learn about the different operations on relationships in xref:relationships/operations.adoc[relationship operations].
+* Learn about the different ways to model relationships in the GraphQL schema in xref:relationships/cardinality.adoc[modeling relationships].
+* Understand the concept of xref:relationships/single-relationships.adoc[single relationships].
+* See how to use xref:relationships/interfaces.adoc[interfaces] and xref:relationships/unions.adoc[unions] with relationships.
 
 == Data model
 
@@ -106,122 +107,4 @@ type Movie @node {
 ====
 Relationship properties fields can only be primitive types or their list variants.
 You cannot have relationship properties of a complex type such as object types or interfaces.
-====
-
-== Querying relationships
-
-Consider the following data model graph:
-
-image::relationships/2-relationships-to-itself.png[title="Model of a Person node connected to Person nodes through KNOWS and HAS_FRIEND relationships."]
-
-=== `queryDirection`
-
-All relationships have a direction.
-However, when querying them, it is possible to perform undirected queries, that is queries that ignore the value of the relationship direction.
-
-To set the this query behavior of a relationship you can use the argument `queryDirection`:
-
-.Defining the Person node with two relationships to itself, differing in the value of the `queryDirection` argument
-[source, graphql, indent=0]
-----
-type Person @node {
-    name: String!
-    friends: [Person!]! @relationship(type: "HAS_FRIEND", direction: OUT)
-    acquaintances: [Person!]! @relationship(type: "KNOWS", direction: OUT, queryDirection: UNDIRECTED)
-}
-----
-
-`queryDirection` can have the following values:
-
-* `DIRECTED`: only directed queries can be performed on this relationship. This is the default value.
-* `UNDIRECTED`: only undirected queries can be performed on this relationship.
-
-=== Fetching your data
-
-Consider the following sample data in the database:
-
-image::relationships/data/Person-to-Person-2-relationships.png[title="Two Person nodes connected through KNOWS and HAS_FRIEND relationships. Both relationships have a direction."]
-
-As shown in the image above, the relationship has to have a direction in the database. This does not mean that the direction has to be taken into account when querying the relationship, as this is determined by the `queryDirection` argument of the `@relationship` directive.
-
-Notice the difference in the response when querying for both relationship fields: where `friends` takes into account the direction of the `HAS_FRIEND` relationship, `acquaintances` ignores the direction of the `KNOWS` relationship and returns all related nodes regardless of the direction of the relationship in the database.
-
-.Get Person nodes with related nodes: friends applies only from Alice to Bob, while acquaintances applies both from Alice to Bob and from Bob to Alice
-====
-[source, graphql, indent=0]
-----
-query {
-    people {
-        name
-        friends {
-            name
-        }
-        acquaintances {
-            name
-        }
-    }
-}
-----
-
-[source, javascript, indent=0]
-----
-const result = {
-    data: {
-         people: [
-                {
-                    name: "Alice",
-                    friends: [{ name: "Bob" }],
-                    acquaintances: [{ name: "Bob" }]
-                },
-                {
-                    name: "Bob",
-                    friends: [],
-                    acquaintances: [{ name: "Alice" }]
-                },
-            ],
-    },
-};
-----
-====
-
-=== Fetching your data - connection query 
-
-The GraphQL library can generate connection fields for relationship fields, which allow you to query for relationship properties and other metadata about the relationship. 
-These fields are compliant with the Relay-style Connection specification.
-
-The query in the following example requests the same data as above but using the connection fields for both relationships. 
-
-.Get Person nodes with related nodes through connection fields
-====
-[source, graphql, indent=0]
-----
-query {
-    peopleConnection {
-        edges {
-            node {
-                name
-                friendsConnection {
-                    edges {
-                        node {
-                            name
-                        }
-                    }
-                }
-                acquaintancesConnection {
-                    edges {
-                        node {
-                            name
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-----
-====
-
-[NOTE]
-====
-The `@relationship` directive is a reference to Neo4j relationships, whereas when writing queries, the phrase `edge(s)` is used to be consistent with the general API language used by Relay.
 ====
