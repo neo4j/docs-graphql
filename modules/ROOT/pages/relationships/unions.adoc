@@ -91,18 +91,18 @@ query {
 }
 ----
 The response to this query includes empty objects for the `Post` type, as no fields were specified for it in the query:
-[source, javascript, indent=0]
+[source, json, indent=0]
 ----
-const result = {
-    data: {
-        users: [
+{
+    "data": {
+        "users": [
             {
-                name: "Alice",
-                content: [{ title: "Alice's Blog" }, {}]
+                "name": "Alice",
+                "content": [{ "title": "Alice's Blog" }, {}]
             },
             {
-                name: "Bob",
-                content: [{}]
+                "name": "Bob",
+                "content": [{}]
             }
         ]
     }

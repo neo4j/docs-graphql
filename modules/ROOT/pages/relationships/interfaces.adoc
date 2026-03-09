@@ -133,32 +133,32 @@ query {
 ----
 
 Assuming the sample data of this page, the result of the query is the following:
-[source, javascript, indent=0]
+[source, json, indent=0]
 ----
-const result = {
-    data: {
-         productions: [
-                {
-                    title: "Argo",
-                    released: 2012,
-                    actors: [{ name: "Ben Affleck" }],
-                },
-                {
-                    title: "Gone Girl",
-                    released: 2014,
-                    actors: [{ name: "Ben Affleck" }],
-                },
-                {
-                    title: "The Voyage of the Mimi",
-                    actors: [{ name: "Ben Affleck" }],
-                },
-                {
-                    title: "Buffy the Vampire Slayer",
-                    actors: [{ name: "Ben Affleck" }],
-                },
-            ],
-    },
-};
+{
+  "data": {
+    "productions": [
+      {
+          "title": "Argo",
+          "released": 2012,
+          "actors": [{ "name": "Ben Affleck" }],
+      },
+      {
+          "title": "Gone Girl",
+          "released": 2014,
+          "actors": [{ "name": "Ben Affleck" }],
+      },
+      {
+          "title": "The Voyage of the Mimi",
+          "actors": [{ "name": "Ben Affleck" }],
+      },
+      {
+          "title": "Buffy the Vampire Slayer",
+          "actors": [{ "name": "Ben Affleck" }],
+      },
+    ],
+  }
+}
 ----
 ====
 
@@ -199,86 +199,78 @@ query {
 
 Assuming the sample data of this page, the response of the query is the following:
 
-[source, javascript, indent=0]
+[source, json, indent=0]
 ----
-const result = {
-    data: {
-        productionsConnection: {
-              edges: [
-                  {
-                      node: {
-                          title: "Argo",
-                          actorsConnection: {
-                              edges: [
-                                  {
-                                      node: {
-                                          name: "Ben Affleck",
-                                      },
-                                      properties: {
-                                          roles: ["Tony Mendez"],
-                                      },
-                                  },
-                              ],
-                          },
-                      },
+{
+  "data": {
+    "productionsConnection": {
+      "edges": [
+        {
+          "node": {
+            "title": "Argo",
+            "actorsConnection": {
+              "edges": [{
+                  "node": {
+                      "name": "Ben Affleck",
                   },
-                  {
-                      node: {
-                          title: "Buffy the Vampire Slayer",
-                          actorsConnection: {
-                              edges: [
-                                  {
-                                      node: {
-                                          name: "Ben Affleck",
-                                      },
-                                      properties: {
-                                          roles: ["Basketball Player #10"],
-                                          episodes: 1,
-                                      },
-                                  },
-                              ],
-                          },
-                      },
+                  "properties": {
+                      "roles": ["Tony Mendez"],
                   },
-                  {
-                      node: {
-                          title: "Gone Girl",
-                          actorsConnection: {
-                              edges: [
-                                  {
-                                      node: {
-                                          name: "Ben Affleck",
-                                      },
-                                      properties: {
-                                          roles: ["Nick Dunne"],
-                                      },
-                                  },
-                              ],
-                          },
-                      },
-                  },
-                  {
-                      node: {
-                          title: "The Voyage of the Mimi",
-                          actorsConnection: {
-                              edges: [
-                                  {
-                                      node: {
-                                          name: "Ben Affleck",
-                                      },
-                                      properties: {
-                                          roles: ["C.T. Granville"],
-                                          episodes: 7,
-                                      },
-                                  },
-                              ],
-                          },
-                      },
-                  },
-              ],
+                }],
+            },
           },
+        },
+        {
+          "node": {
+            "title": "Buffy the Vampire Slayer",
+            "actorsConnection": {
+              "edges": [{
+                "node": {
+                    "name": "Ben Affleck",
+                },
+                "properties": {
+                    "roles": ["Basketball Player #10"],
+                    "episodes": 1,
+                },
+              }],
+            },
+          },
+        },
+        {
+          "node": {
+            "title": "Gone Girl",
+            "actorsConnection": {
+              "edges": [{
+                "node": {
+                    "name": "Ben Affleck",
+                },
+                "properties": {
+                    "roles": ["Nick Dunne"],
+                },
+              }],
+            },
+          },
+        },
+        {
+          "node": {
+            "title": "The Voyage of the Mimi",
+            "actorsConnection": {
+              "edges": [{
+                "node": {
+                    "name": "Ben Affleck",
+                },
+                "properties": {
+                    "roles": ["C.T. Granville"],
+                    "episodes": 7,
+                },
+              }],
+            },
+          },
+        },
+      ],
     },
-};
+  },
+}
 ----
 ====
 

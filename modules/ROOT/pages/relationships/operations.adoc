@@ -82,24 +82,58 @@ query {
 }
 ----
 
-[source, javascript, indent=0]
+[source, json, indent=0]
 ----
-const result = {
-    data: {
-         people: [
-                {
-                    name: "Alice",
-                    friends: [{ name: "Bob" }],
-                    acquaintances: [{ name: "Bob" }]
-                },
-                {
-                    name: "Bob",
-                    friends: [],
-                    acquaintances: [{ name: "Alice" }]
-                },
-            ],
-    },
-};
+{
+    "data": {
+        "people": [
+            {
+                "name": "Alice",
+                "friends": [{ "name": "Bob" }],
+                "acquaintances": [{ "name": "Bob" }]
+            },
+            {
+                "name": "Bob",
+                "friends": [],
+                "acquaintances": [{ "name": "Alice" }]
+            }
+        ]
+    }
+}
+----
+====
+
+For Alice to be returned in Bob's _friends_ list, another relationship of type HAS_FRIEND, directed from Bob to Alice, must exit in the database.
+
+.Directed relationship has to exist in each direction in order for the relationship to be traversable from both sides, while undirected relationship only has to exist in whichever direction
+====
+
+Setup: 
+[source, cypher, indent=0]
+----
+MATCH (alice:Person {name: "Alice"})
+MATCH (bob:Person {name: "Bob"})
+MERGE (bob)-[:HAS_FRIEND]->(alice)
+----
+Running the same query again now returns Alice in Bob's _friends_ list:
+[source, json, indent=0]
+----
+{
+    "data": {
+        "people": [
+            {
+                "name": "Alice",
+                "friends": [{ "name": "Bob" }],
+                "acquaintances": [{ "name": "Bob" }]
+            },
+            {
+                "name": "Bob",
+                "friends": [{ "name": "Alice" }],
+                "acquaintances": [{ "name": "Alice" }]
+            }
+        ]
+    }
+}
 ----
 ====
 
@@ -167,7 +201,7 @@ As arguments to the top level operations, the Neo4j GraphQL Library generates a 
 
 [INFO]
 ====
-Glossary:
+*Terminology*
 
 * The target of the top level operation becomes the "source node" of the relationship. 
 * Through the nested operations, the created/ traversed relationships have the top level matched node as the source node.
@@ -319,7 +353,7 @@ Since their nodes are related through the _friends_ relationship, you can perfor
 
 [NOTE]
 ====
-There is a caveat: the database only contains one _friends_ relationship, directed from Bob to Camilla. This means that the top level update operation has to be performed on Bob's node, as Camilla's node does not meet the filter criteria for the nested update operation.
+*Caveat*: the database only contains one _friends_ relationship, directed from Bob to Camilla. This means that the top level update operation has to be performed on Bob's node, as Camilla's node does not meet the filter criteria for the nested update operation.
 
 Read along the xref:#querydirection-and-mutations[`queryDirection` and mutations] section to understand how the `queryDirection` argument of the `@relationship` directive affects this caveat.
 ====
