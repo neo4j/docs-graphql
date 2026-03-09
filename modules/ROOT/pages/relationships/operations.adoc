@@ -253,16 +253,18 @@ mutation {
         name: "Charlie",
         # Charlie is the source node
         # creates the relationship HAS_FRIEND 
-        friends: { connect: { where: { node: { name: "Bob" } } } }, 
+        friends: { connect: { where: { node: { name: { eq: "Bob" } } } } }, 
         # creates the node Dave and the relationship KNOWS 
         acquaintances: { create: { node: { name: "Dave" } } } 
     }]) {
-        name
-        friends {
+        people {
             name
-        }
-        acquaintances {
-            name
+            friends {
+                name
+            }
+            acquaintances {
+                name
+            }
         }
     }
 }
@@ -286,18 +288,20 @@ mutation {
         update: {
             # Bob is the source node
             friends: { 
-                connect: { where: { node: { name: "Charlie" } } },
+                connect: { where: { node: { name: { eq: "Charlie" } } } },
                 create: { node: { name: "Camilla" } }
             },
-            acquaintances: { connect: { where: { node: { name: "Dave" } } } }
+            acquaintances: { connect: { where: { node: { name: { eq: "Dave" } } } } }
         }
     ) {
-        name
-        friends {
+        people {
             name
-        }
-        acquaintances {
-            name
+            friends {
+                name
+            }
+            acquaintances {
+                name
+            }
         }
     }
 }
@@ -311,7 +315,14 @@ _Bob and Camilla are getting married and changing their last names to B._
 
 Both nodes already exist in the database, indicating a use case for the top level `update` operation.
 
-Since their nodes are related through the _friends_ relationship, you can perform both changes in the same mutation starting with a top level update operation on either nodes and a nested update operation for the other one.
+Since their nodes are related through the _friends_ relationship, you can perform both changes in the same mutation starting with a top level update operation.
+
+[NOTE]
+====
+There is a caveat: the database only contains one _friends_ relationship, directed from Bob to Camilla. This means that the top level update operation has to be performed on Bob's node, as Camilla's node does not meet the filter criteria for the nested update operation.
+
+Read along the xref:#querydirection-and-mutations[`queryDirection` and mutations] section to understand how the `queryDirection` argument of the `@relationship` directive affects this caveat.
+====
 
 .Top level update with nested update operation
 ====
@@ -339,7 +350,8 @@ mutation {
         }
     ) {
     info {
-      nodesCreated
+        nodesCreated
+        relationshipsCreated
     }
   }
 }
@@ -359,7 +371,7 @@ Alice's node needs to be deleted from the database, indicating a use case for th
 However both actions of the scenario have Bob in common, so a valid alternative is a top level `update` operation on Bob's node with nested operations to perform the correct changes on Alice and Charlie nodes. 
 
 Note that this is only possible because Bob has relationships to both.
-There has to be a relationship of type HAS_FRIEND between Bob and Alice in order for the node Alice to meet the filter criteria for the nested delete operation, and the same for Charlie and the nested disconnect operation.
+There has to be a relationship of type HAS_FRIEND from Bob to Alice in order for the node Alice to meet the filter criteria for the nested delete operation, and the same for Charlie and the nested disconnect operation.
 
 .Top level update with nested disconnect and delete operations
 ====
@@ -397,13 +409,17 @@ _Bob and Camilla are moving away together._
 
 Both nodes need to be deleted, together with all relationships connected to them, indicating a use case for the top level `delete` operation.
 
-Since the nodes are related through the _friends_ relationship, both deletions can be performed in the same mutation starting with a delete operation on either nodes and a nested delete operation for the other one.
+Since the nodes are related through the _friends_ relationship, both deletions can be performed in the same mutation starting with a delete operation.
 
-.Top level delete with nested delete operation
+Just like the Update section above, there is a caveat: the database only contains one _friends_ relationship, directed from Bob to Camilla. This means that the top level delete operation has to be performed on Bob's node, as Camilla's node does not meet the filter criteria for the nested delete operation.
+
+Let's explore the outcome of running the same mutation in both directions:
+
+.Top level delete with nested delete operation matching 0 relationships
 ====
 [source, graphql, indent=0]
 ----
-query {
+mutation {
     deletePeople(
         # deletes Camilla and all relationships between Camilla and all other nodes
         where: { name: { eq: "Camilla B." } },
@@ -411,7 +427,7 @@ query {
             # Camilla is the source node
             friends: [ 
                 {
-                    # deletes Bob and all relationships between Bob and all other nodes (including the KNOWS relationships)
+                    # no relationship of type HAS_FRIEND matching this criteria exists
                     where: { node: { name: { eq: "Bob B." } } } 
                 },
             ],
@@ -420,6 +436,118 @@ query {
     nodesDeleted
     relationshipsDeleted
   }
+}
+----
+The result of this query is the deletion of Camilla node and the relationship between Bob and Camilla:
+[source, json, indent=0]
+----
+{
+  "data": {
+    "deletePeople": {
+      "nodesDeleted": 1,
+      "relationshipsDeleted": 1
+    }
+  } 
+}
+----
+====
+
+.Top level delete with nested delete operation matching correct node
+====
+[source, graphql, indent=0]
+----
+mutation {
+    deletePeople(
+        # deletes Bob and all relationships between Bob and all other nodes
+        where: { name: { eq: "Bob B." } },
+        delete: {
+            # Bob is the source node
+            friends: [ 
+                {
+                    # deletes Camilla and all relationships between Camilla and all other nodes (including the KNOWS relationships)
+                    where: { node: { name: { eq: "Camilla B." } } } 
+                },
+            ],
+        }
+    ) {
+    nodesDeleted
+    relationshipsDeleted
+  }
+}
+----
+The result of this query is the deletion of both Bob and Camilla nodes and the relationship between them:
+[source, json, indent=0]
+----
+{
+  "data": {
+    "deletePeople": {
+      "nodesDeleted": 2,
+      "relationshipsDeleted": 1
+    }
+  } 
+}
+----
+====
+
+Read along the xref:#querydirection-and-mutations[`queryDirection` and mutations] section to understand how the `queryDirection` argument of the `@relationship` directive affects the outcome of these mutations.
+
+[[querydirection-and-mutations]]
+=== `queryDirection` and mutations
+
+The `queryDirection` argument of the `@relationship` directive only affects queries. 
+
+However, the following is easy to overlook:
+
+[INFO]
+====
+When performing mutations, the nodes and relationships specified in the mutation input have to first be queried from the database.
+
+It is at this stage where the `queryDirection` argument is relevant, as it determines whether the relationships between the matched nodes and their related nodes are taken into account in a directed way or not for the execution of the mutation.
+====
+
+Reiterating the example above changing the _friends_ relationship from Bob to Camilla to an _acquaintances_ relationship, would change the outcome of the mutation as follows:
+
+.Top level delete with nested delete operation on an undirected relationship
+====
+Setup: 
+[source, cypher, indent=0]
+----
+CREATE (bob:Person {name: "Bob B."})
+CREATE (camilla:Person {name: "Camilla B."})
+MERGE (bob)-[:KNOWS]->(camilla)
+----
+Mutation:
+[source, graphql, indent=0]
+----
+mutation {
+    deletePeople(
+        # deletes Camilla and all relationships between Camilla and all other nodes
+        where: { name: { eq: "Camilla B." } },
+        delete: {
+            # Camilla is the source node
+            acquaintances: [ 
+                {
+                    # because the relationship is undirected, this filter matches the relationship between Bob and Camilla, even if it is directed from Bob to Camilla in the database
+                    where: { node: { name: { eq: "Bob B." } } } 
+                },
+            ],
+        }
+    ) {
+    nodesDeleted
+    relationshipsDeleted
+  }
+}
+----
+The result of this query is the deletion of both Bob and Camilla node and the relationship between them:
+[source, json, indent=0]
+----
+{
+  "data": {
+    "deletePeople": {
+      "nodesDeleted": 2,
+      "relationshipsDeleted": 1
+    }
+  } 
 }
 ----
 ====
