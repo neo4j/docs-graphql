@@ -6,7 +6,8 @@ The Neo4j GraphQL Library provides several mechanisms to help you avoid these pr
 
 == `@limit` directive
 
-Using the xref::/directives/custom-logic.adoc#_limit[`@limit`] directive on a type definition allows to set a default and a maximum limit on the number of nodes returned for that type from the server side. This is useful to prevent clients from accidentally or intentionally requesting too much data in a single query.
+Using the xref::/directives/custom-logic.adoc#_limit[`@limit`] directive on a type definition allows to set a default value and a maximum for the limit on the number of nodes returned for that type from the server side.
+This is useful to prevent clients from accidentally or intentionally requesting large amounts of data in a single query.
 
 
 == Require `limit` argument
@@ -211,13 +212,14 @@ Notice the complexity of the `properties` field depends on the maximum number of
 
 === Complexity considerations
 
-It is intended for this feature to be used in conjunction with `limitRequired` to provide the most effective protection against unbounded queries. 
+This feature is intended to be used in conjunction with xref::neo4jgraphql-class.adoc#_limit_required_settings[`limitRequired`] to provide the most effective protection against unbounded queries. 
 
 When `limitRequired` is enabled, the complexity score of a query will be higher due to the multiplication by the provided `limit` arguments, which more accurately reflects the potential cost of executing that query.
 
-When `limitRequired` is not enabled, the complexity score will be orders of magnitude lower since it uses a default multiplier of 1 for fields that return lists. 
-While it still provides a useful measure of query complexity based on the structure of the query and the number of fields requested, it will be less effective at preventing unbounded queries and the complexity threshold will be difficult to set (Examples 1 and 2 above demonstrate a major difference in complexity scores: 5 and 1021).
+When `limitRequired` is not enabled, the complexity score is orders of magnitude lower since it uses a default multiplier of 1 for fields that return lists.
+While it still provides a useful measure of query complexity based on the structure of the query and the number of fields requested, it is less effective at preventing unbounded queries and the complexity threshold will be difficult to set.
+For instance, the first two examples above demonstrate a major difference in complexity scores: 5 versus 1021.
 
 === Alternative solutions
 
-An alternative to compute the query complexity is to use a tool such as link:https://escape.tech/graphql-armor/docs/plugins/cost-limit/[GraphQL Armor].
+An alternative to computing the query complexity is to use a tool such as link:https://escape.tech/graphql-armor/docs/plugins/cost-limit/[GraphQL Armor].
