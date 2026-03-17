@@ -137,7 +137,7 @@ Running the same query again now returns Alice in Bob's _friends_ list:
 ----
 ====
 
-=== Fetching your data - connection query 
+=== Fetching your data using a connection query 
 
 The GraphQL library can generate connection fields for relationship fields, which allow you to query for relationship properties and other metadata about the relationship. 
 These fields are compliant with the Relay-style Connection specification.
@@ -405,7 +405,7 @@ Alice's node needs to be deleted from the database, indicating a use case for th
 However both actions of the scenario have Bob in common, so a valid alternative is a top level `update` operation on Bob's node with nested operations to perform the correct changes on Alice and Charlie nodes. 
 
 Note that this is only possible because Bob has relationships to both.
-There has to be a relationship of type HAS_FRIEND from Bob to Alice in order for the node Alice to meet the filter criteria for the nested delete operation, and the same for Charlie and the nested disconnect operation.
+There has to be a relationship of type `HAS_FRIEND` from Bob to Alice in order for the node Alice to meet the filter criteria for the nested delete operation, and the same for Charlie and the nested disconnect operation.
 
 .Top level update with nested disconnect and delete operations
 ====
@@ -528,9 +528,9 @@ Read along the xref:#querydirection-and-mutations[`queryDirection` and mutations
 [[querydirection-and-mutations]]
 === `queryDirection` and mutations
 
-The `queryDirection` argument of the `@relationship` directive only affects queries. 
+The `queryDirection` argument of the `@relationship` directive affects database queries. 
 
-However, the following is easy to overlook:
+In terms of GraphQL operations this means that both queries and mutations are affected by its value.
 
 [INFO]
 ====

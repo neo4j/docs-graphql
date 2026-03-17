@@ -207,7 +207,8 @@ mutation {
 
 === Exactly one relationship
 
-Analyzing the model above, an observation is that it is impossible for a `Movie` to not have a director. Therefore, you would ideally want to make the `director` field non-nullable.
+Analyzing the model above, an observation is that it is impossible for a `Movie` to not have a director. 
+Therefore, you would ideally want to make the `director` field non-nullable.
 
 Because of the current lack of constraints on relationship cardinality in the Neo4j database, it is not possible to enforce this cardinality of exactly one relationship which is why all single relationship fields must be nullable.
 
