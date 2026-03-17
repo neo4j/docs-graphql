@@ -11,6 +11,7 @@ This page describes the different ways to model a Neo4j relationship in the Grap
 
 Take the following graph as an example in which a `Person` type has two different relationship types, which can connect it to a `Movie` type.
 
+[#data-model]
 image::relationships/2-relationship-types.png[title="Model of a Movie node connected to a Person node through two different relationship types: ACTED_IN and DIRECTED."]
 
 
