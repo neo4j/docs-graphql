@@ -1,6 +1,6 @@
 [[cardinality-modeling]]
 = Cardinality and modeling relationships
-:description: This page describes the different ways to model a Neo4j relationship in the GraphQL schema and talks about the limitations.
+:description: This page describes the different ways of modeling a Neo4j relationship in a GraphQL schema and their limitations.
 
 Irrespective of the data model you have in your Neo4j database, the GraphQL schema should be designed in a way that allows the access of the data that your application needs.
 This means that there are often multiple ways to model the GraphQL schema given the same type of data in the database, each of which has benefits and tradeoffs.
