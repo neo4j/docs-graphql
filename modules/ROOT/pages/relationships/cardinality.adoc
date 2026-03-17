@@ -18,7 +18,7 @@ image::relationships/2-relationship-types.png[title="Model of a Movie node conne
 
 The data model in Figure 1 represents the state of the graph in the database, but there are multiple ways to model the relationships in the GraphQL schema.
 
-The way you model the relationships in the GraphQL schema will affect how you can query and manipulate the data, and it is important to choose a model that fits the needs of your application.
+The way you model the relationships in the GraphQL schema affects how you can query and manipulate the data, and it is important to choose a model that fits the needs of your application.
 
 The type definitions below do not contain any relationship fields but are equally valid as a GraphQL schema, with the only difference being that they do not allow for traversing the relationships between `Person` and `Movie` nodes.
 
