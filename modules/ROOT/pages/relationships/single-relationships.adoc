@@ -7,7 +7,7 @@ Single relationships are relationships that are modeled as a non-list type field
 If both sides are non-list types the relationship is a xref:relationships/cardinality.adoc#_one_to_one_relationships[one-to-one] relationship, while if one side is a non-list type and the other side is a list type, the relationship is a xref:relationships/cardinality.adoc#_one_to_many_relationships[one-to-many] relationship.
 
 Neo4j databases do not currently support constraints on relationship cardinality. 
-However, many users of GraphQL wish to model relationships as either one-to-one or one-to-many in the GraphQL schema, therefore we have chosen to support this in the Neo4j GraphQL Library. 
+However, one-to-one and one-to-many relationships can be modeled with a GraphQL schema and they are supported by the Neo4j GraphQL Library. 
 
 Users of this feature should be aware that there is no guarantee that only one relationship is present in the database and this may result in non-deterministic behavior. 
 The only guarantee is that only one result is returned when querying across a single relationship, but that result can be <<_at_most_one_relationship,any of the related nodes>>.
