@@ -8,10 +8,10 @@ Adding relationships to your data model gives your data the context that it need
 
 This section describes how to model and interact with relationships in your GraphQL schema:
 
-* Read along to find out the <<_anatomy_of_a_relationship,anatomy of a relationship>>.
+* Read along to find out about the <<_anatomy_of_a_relationship,anatomy of a relationship>>.
 * Learn about the different operations on relationships in xref:relationships/operations.adoc[relationship operations].
-* Learn about the different ways to model relationships in the GraphQL schema in xref:relationships/cardinality.adoc[modeling relationships].
-* Understand the concept of xref:relationships/single-relationships.adoc[single relationships].
+* Learn about the different ways of modeling relationships in the GraphQL schema in xref:relationships/cardinality.adoc[modeling relationships].
+* Learn about the concept of xref:relationships/single-relationships.adoc[single relationships].
 * See how to use xref:relationships/interfaces.adoc[interfaces] and xref:relationships/unions.adoc[unions] with relationships.
 
 == Data model

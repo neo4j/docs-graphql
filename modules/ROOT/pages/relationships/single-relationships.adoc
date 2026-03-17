@@ -9,8 +9,8 @@ If both sides are non-list types the relationship is a xref:relationships/cardin
 Neo4j databases do not currently support constraints on relationship cardinality. 
 However, many users of GraphQL wish to model relationships as either one-to-one or one-to-many in the GraphQL schema, therefore we have chosen to support this in the Neo4j GraphQL Library. 
 
-Users of this feature should be aware there is no guarantee that only one relationship will be present in the database and this may result in non-deterministic behaviour. 
-The only guarantee is that only one result will be returned when querying across a single relationship, but that result can be <<_at_most_one_relationship,any of the related nodes>>.
+Users of this feature should be aware that there is no guarantee that only one relationship is present in the database and this may result in non-deterministic behavior. 
+The only guarantee is that only one result is returned when querying across a single relationship, but that result can be <<_at_most_one_relationship,any of the related nodes>>.
 
 == Data model
 
@@ -38,7 +38,8 @@ type Movie @node {
 == Querying single relationships
 
 Querying single relationships returns the data of a single node if there is a relationship, and null otherwise. 
-If the database contains multiple relationships of the same type, which is possible as a consequence of the Neo4j cardinality limitation, only one node is returned. See more details in <<_cardinality_limitations,Cardinality limitations>>.
+If the database contains multiple relationships of the same type, which is possible as a consequence of the Neo4j cardinality limitation, only one node is returned.
+See more details in <<_cardinality_limitations,Cardinality limitations>>.
 
 .Get Movie by title with related Person through the DIRECTED relationship
 ====
@@ -208,13 +209,14 @@ mutation {
 
 Analyzing the model above, an observation is that it is impossible for a `Movie` to not have a director. Therefore, you would ideally want to make the `director` field non-nullable.
 
-Because of the current lack of constraints on relationship cardinality in the Neo4j database, it is not possible to enforce this cardinality of exactly one relationship and so all single relationship fields must be nullable.
+Because of the current lack of constraints on relationship cardinality in the Neo4j database, it is not possible to enforce this cardinality of exactly one relationship which is why all single relationship fields must be nullable.
 
 === At most one relationship
 
 A nullable single relationship field models a relationship of at most one relationship between any two nodes of those types.
 
-In the context of multiple surfaces accessing the same Neo4j database through different APIs or direct database access, it is possible that what a GraphQL API models as a single relationship between two types ends up matching multiple relationships in the database, due to the current lack of constraints on relationship cardinality.
+In the context of multiple surfaces accessing the same Neo4j database through different APIs or direct database access, it is possible that what a GraphQL API models as a single relationship between two types ends up matching multiple relationships in the database.
+This is due to the current lack of constraints on relationship cardinality.
 
 Even within the same GraphQL API surface, it is possible for a one-to-many relationship to end up matching multiple relationships in the database.
 

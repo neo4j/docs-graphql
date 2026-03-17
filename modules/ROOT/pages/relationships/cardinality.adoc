@@ -35,9 +35,13 @@ type Movie @node {
 }
 ----
 
-Similarly, a relationship does not have to be modeled on both sides of the relationship. While the underlying relationship in the database needs to have a source and a target node, it is possible for the GraphQL schema to only describe one side of the relationship.
+Similarly, a relationship does not have to be modeled on both sides of the relationship.
+While the underlying relationship in the database must have a source and a target node, it is possible for the GraphQL schema to only describe one side of the relationship.
 
-.Modelling a relationship only on one side of the relationship: a `Movie` has access to the `Person` nodes through the actors relationship field, but a `Person` does not have access to the `Movie` nodes
+.Modeling a relationship only on one side of the relationship
+
+In the following type definitions, a `Movie` has access to the `Person` nodes through the `actors` relationship field, but a `Person` does not have access to the `Movie` nodes.
+
 [source, graphql, indent=0]
 ----
 type Person @node {
@@ -51,13 +55,12 @@ type Movie @node {
 }
 ----
 
-The following sections describe some of the different options for modeling relationships.
 
 === Many-to-many relationships
 
 A `Person` can act in multiple movies, and a `Movie` can have multiple actors acted in it. 
 
-Conceptually this is a many-to-many relationship, which is modelled by using list types for both relationship fields on both sides of the relationship.
+Conceptually this is a many-to-many relationship, which is modeled by using list types for both relationship fields on both sides of the relationship.
 
 .Adding relationship fields both ways for a many-to-many relationship of type ACTED_IN between Person and Movie
 [source, graphql, indent=0]
@@ -86,7 +89,7 @@ In other words, both the array and the type inside must have a `!`.
 
 A `Person` can direct multiple movies but a `Movie` only has one director.
 
-Conceptually this is a one-to-many relationship, which is modelled by using a list type for the relationship field on the `Person` type, and a non-list type for the relationship field on the `Movie` type. 
+Conceptually this is a one-to-many relationship, which is modeled by using a list type for the relationship field on the `Person` type, and a non-list type for the relationship field on the `Movie` type. 
 
 .Adding relationship fields both ways for a one-to-many relationship of type DIRECTED between Person and Movie
 [source, graphql, indent=0]
@@ -107,16 +110,17 @@ type Movie @node {
 
 [CAUTION]
 ====
-On the many side of the relationship, the list type and the type inside the list must be non-nullable (see <<_many_to_many_relationships,many-to-many relationships>>). This means that the relationship field must always return an array of values, and that array cannot contain null values.
+On the "many" side of the relationship, the list type and the type inside the list must be non-nullable (see <<_many_to_many_relationships,many-to-many relationships>>).
+This means that the relationship field must always return an array of values, and that array cannot contain null values.
 
-On the single side of the relationship, the type must be nullable, meaning that the relationship field can return null if there is no related node.
+On the "one-to" side of the relationship, the type must be nullable, meaning that the relationship field can return null if there is no related node.
 ====
 
 === One-to-one relationships
 
 A `Person` Ana can marry only one other `Person` Bob, and that other `Person` Bob can only be married to that `Person` Ana.
 
-Conceptually this is a one-to-one relationship, which is modelled by using non-list types for the relationship field on both sides of the relationship.
+Conceptually this is a one-to-one relationship, which is modeled by using non-list types for the relationship field on both sides of the relationship.
 
 .Adding relationship fields both ways for a one-to-one relationship of type MARRIED between Person and Person
 [source, graphql, indent=0]
