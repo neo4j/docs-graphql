@@ -565,3 +565,107 @@ input ActorActedInNodeAggregationWhereInput {
 ----
 
 As shown by the previous inputs fields, the `actors` field is not available for filtering on both value and aggregation filters.
+
+
+== `@groupBy`
+
+This directive defines fields that can be used to group query results.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Enables groupBy operations for this field."""
+directive @groupBy() on FIELD_DEFINITION
+----
+
+=== Usage
+
+With this definition:
+
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String!
+    year: Int! @groupBy
+}
+----
+
+Now the field `groupBy` exists in the `movieConnection` operation. This fields allow to query movies grouped by the `year` field.
+
+
+The groupBy field, has one argument `fields`, that defines the field to group by. In this case `year` is the only option
+
+[source, graphql, indent=0]
+----
+query {
+  moviesConnection {
+    groupBy(fields: { year: true }) {
+      edges {
+        node {
+          title
+          year
+        }
+      }
+    }
+  }
+}
+----
+
+The `groupBy` field will return an list of results, each result will contain a list of `edges`, with all the results grouped by the `year` field. For example:
+
+[source, json, indent=0]
+----
+{
+    "moviesConnection": {
+        "groupBy": [
+            {
+                "edges": [
+                    {
+                        "node": {
+                            "title": "The Matrix",
+                            "year": 1999
+                        }
+                    },
+                    {
+                        "title": "Fight Club",
+                        "year": 1999
+                    }
+                ]
+            },
+            {
+                "edges": [
+                    {
+                        "node": {
+                            "title": "Gladiator",
+                            "year": 2000
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
+----
+
+Note that the groupedBy field `year` will be repeated on every node of the edges from each `groupBy` result.
+
+Nodes can be grouped by multiple fields:
+
+[source, graphql, indent=0]
+----
+query {
+  moviesConnection {
+    groupBy(fields: { year: true, rating: true }) {
+      edges {
+        node {
+          title
+          year
+        }
+      }
+    }
+  }
+}
+----
+
+In this case, all movies with the same `year` and `rating` will be grouped together in the same result.
