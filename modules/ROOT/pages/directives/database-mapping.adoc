@@ -263,7 +263,7 @@ type ActedIn @relationshipProperties {
 ----
 
 Note that in addition to this type, there is an added key `properties` in the existing `@relationship` directives.
-For more information, see xref::/types/relationships.adoc[Type definitions -> Relationships].
+For more information, see xref::/relationships/index.adoc#_relationship_properties[Relationships].
 
 
 == `@alias`

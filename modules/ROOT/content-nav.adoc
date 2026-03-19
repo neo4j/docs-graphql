@@ -25,9 +25,13 @@
 ** xref:types/scalar.adoc[Scalar]
 ** xref:types/temporal.adoc[Temporal]
 ** xref:types/spatial.adoc[Spatial]
-** xref:types/interfaces.adoc[Interfaces]
-** xref:types/unions.adoc[Union]
-** xref:types/relationships.adoc[]
+
+* xref:/relationships/index.adoc[]
+** xref:/relationships/operations.adoc[Operations]
+** xref:/relationships/cardinality.adoc[Cardinality and modeling relationships]
+** xref:/relationships/single-relationships.adoc[Single relationships]
+** xref:/relationships/interfaces.adoc[Interfaces]
+** xref:/relationships/unions.adoc[Unions]
 
 * xref:directives/index.adoc[]
 ** xref:directives/database-mapping.adoc[]

@@ -73,3 +73,5 @@ mutation {
   }
 }
 ----
+
+For more examples of operations on relationships please refer to xref:relationships/operations.adoc#_mutations[Relationship operations].
