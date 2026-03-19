@@ -581,7 +581,7 @@ directive @groupBy() on FIELD_DEFINITION
 
 === Usage
 
-With this definition:
+Consider the following definition:
 
 [source, graphql, indent=0]
 ----
@@ -591,10 +591,12 @@ type Movie @node {
 }
 ----
 
-Now the field `groupBy` exists in the `movieConnection` operation. This fields allow to query movies grouped by the `year` field.
+It adds the field `groupBy` to the `movieConnection` operation.
+The field allows you to query movies grouped by the `year` field.
 
 
-The groupBy field, has one argument `fields`, that defines the field to group by. In this case `year` is the only option
+The `groupBy` field has one argument `fields`, that defines the field to group by.
+In this case `year` is the only option.
 
 [source, graphql, indent=0]
 ----
@@ -612,7 +614,8 @@ query {
 }
 ----
 
-The `groupBy` field will return an list of results, each result will contain a list of `edges`, with all the results grouped by the `year` field. For example:
+The `groupBy` field returns a list of results and each result contains a list of `edges`, with all results grouped by the `year` field.
+For example:
 
 [source, json, indent=0]
 ----
@@ -648,7 +651,7 @@ The `groupBy` field will return an list of results, each result will contain a l
 }
 ----
 
-Note that the groupedBy field `year` will be repeated on every node of the edges from each `groupBy` result.
+Note that the `year` field is repeated on every node of the `edges` from each `groupBy` result.
 
 Nodes can be grouped by multiple fields:
 
@@ -668,4 +671,4 @@ query {
 }
 ----
 
-In this case, all movies with the same `year` and `rating` will be grouped together in the same result.
+In this case, all movies with the same `year` and `rating` are grouped together in the same result.
