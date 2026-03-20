@@ -1,6 +1,6 @@
 [[relationships]]
 = Relationships
-:page-aliases: relationships/relationships.adoc 
+:page-aliases: types/relationships.adoc 
 :description: This section covers how relationships work in the Neo4j GraphQL Library.
 
 Without relationships, your type definitions represent a collection of disconnected nodes with little value.
