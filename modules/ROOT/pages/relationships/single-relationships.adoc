@@ -1,6 +1,5 @@
 [[single-relationships]]
 = Single relationships and cardinality considerations
-:page-aliases: relationships/relationships.adoc, relationships/single-relationships.adoc
 :description: This page describes the ways to interact with a Neo4j single relationship in the GraphQL schema.
 
 Single relationships are relationships that are modeled as a non-list type field on either side of the relationship. 
