@@ -214,7 +214,7 @@ Notice the complexity of the `properties` field depends on the maximum number of
 
 This feature is intended to be used in conjunction with xref::neo4jgraphql-class.adoc#_limit_required_settings[`limitRequired`] to provide the most effective protection against unbounded queries. 
 
-When `limitRequired` is enabled, the complexity score of a query will be higher due to the multiplication by the provided `limit` arguments, which more accurately reflects the potential cost of executing that query.
+When `limitRequired` is enabled, the complexity score of a query is higher because the provided `limit` arguments act as multipliers, which more accurately reflects the potential cost of executing that query.
 
 When `limitRequired` is not enabled, the complexity score is orders of magnitude lower since it uses a default multiplier of 1 for fields that return lists.
 While it still provides a useful measure of query complexity based on the structure of the query and the number of fields requested, it is less effective at preventing unbounded queries and the complexity threshold will be difficult to set.
