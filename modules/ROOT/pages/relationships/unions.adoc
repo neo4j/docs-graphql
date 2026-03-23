@@ -1,0 +1,227 @@
+[[type-definitions-unions]]
+= Union types
+:page-aliases: type-definitions/unions.adoc, type-definitions/types/unions.adoc
+:description: This page describes how to use unions on relationship fields with the Neo4j GraphQL Library.
+
+This page describes how to use unions in the context of relationships, and exemplifies how to use them in queries and mutations.
+
+== Data model
+
+Take the following graph as an example in which a `User` type has a relationship `HAS_CONTENT` to a `Content` type, which is a union of two node types, `Blog` and `Post`.
+
+image::relationships/relationship-union.png[title="Model of a User node connected to both Blog and Post nodes through the HAS_CONTENT relationship. The HAS_CONTENT relationship properties differ between the two target node types."]
+
+== Sample database data
+
+Consider a database consisting of the following sample data, which follows the data model described above.
+
+image::relationships/data/Person-and-Blog-Post-Union.png[title="Sample database data of a Blog node (shown in blue) that has HAS_POST relationships to two Posts (shown in orange). User nodes (shown in green) have HAS_CONTENT relationships to both Blog and Post nodes.", width=70%]
+
+== Writing type definitions
+
+Conceptually, both `Blog` and `Post` are types of "content" attributed to a `User`.
+However they are fundamentally different types of content with different fields therefore they can be grouped together by a union type. 
+
+.Defining the union and node types with relationship fields
+[source, graphql, indent=0]
+----
+union Content = Blog | Post
+
+type Blog @node {
+    title: String
+    posts: [Post!]! @relationship(type: "HAS_POST", direction: OUT)
+}
+
+type Post @node {
+    content: String
+}
+
+type User @node {
+    name: String
+    content: [Content!]! @relationship(type: "HAS_CONTENT", direction: OUT)
+}
+----
+
+== Querying a union
+
+Union types are useful for modeling relationships that can point to multiple different node types which do not share common fields. 
+
+When querying a relationship field of a union type, you must use inline fragments to specify which fields to return for each type in the union.
+
+.Get User nodes with related Content nodes with inline fragments for all concrete member types
+====
+Notice the use of inline fragments for all the member types of the `Content` union, which are `Blog` and `Post` in this case. 
+
+[source, graphql, indent=0]
+----
+query {
+    users {
+        name
+        content {
+            ... on Blog {
+                title
+            }
+            ... on Post {
+                content
+            }
+        }
+    }
+}
+----
+====
+
+If the inline fragment corresponding to a union member type is not included in the query, then no fields of that type are returned.
+Instead the response will be an empty object.
+
+.Get User nodes with related Content nodes omitting the Post type inline fragment
+====
+
+The following query only includes an inline fragment for the `Blog` type, and omits the inline fragment for the `Post` type:
+[source, graphql, indent=0]
+----
+query {
+    users {
+        name
+        content {
+            ... on Blog {
+                title
+            }
+        }
+    }
+}
+----
+The response to this query includes empty objects for the `Post` type, as no fields were specified for it in the query:
+[source, json, indent=0]
+----
+{
+    "data": {
+        "users": [
+            {
+                "name": "Alice",
+                "content": [{ "title": "Alice's Blog" }, {}]
+            },
+            {
+                "name": "Bob",
+                "content": [{}]
+            }
+        ]
+    }
+}
+----
+====
+
+=== Filtering for a specific union member type
+
+To filter for a specific union member type, you can use the `where` argument on the relationship field.
+
+.Get User nodes with related Content nodes filtered by Blog type
+====
+
+Notice the inline fragment corresponding to the `Post` type does not need to be included in the query, as they are filtered out by the `where` argument:
+
+[source, graphql, indent=0]
+----
+query {
+    users {
+        name
+        content(where: { Blog: { NOT: { title: { eq: null } } }}) {
+            ... on Blog {
+                title
+            }
+        }
+    }
+}
+----
+====
+
+== Creating a union relationship
+
+To create the sample database data shown in the graph above, one approach is to first create the `User` nodes.
+
+`User` Alice is connected through the `HAS_CONTENT` relationship to a `Blog` node with two `Post` nodes connected to it through the `HAS_POST` relationship.
+The relationship to the `Content` union can be created through a nested mutation at the same time.
+
+.Create User nodes with HAS_CONTENT relationship to Blog nodes
+====
+Notice the specification of the concrete type (`Blog`) of the `Content` union in the `create` input.
+
+[source, graphql, indent=0]
+----
+mutation {
+    createUsers(
+        input: [
+            { 
+                name: "Bob" 
+            },
+            {
+                name: "Alice"
+                content: {
+                    Blog: {
+                        create: [
+                            {
+                                node: {
+                                    title: "Our Blog"
+                                    posts: { 
+                                        create: [
+                                            { node: { content: "Alice's Post" } },
+                                            { node: { content: "Bob's Post" } }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    ) {
+        users {
+            name
+        }
+    }
+}
+----
+====
+
+Executing this mutation on an empty database creates the following graph:
+
+image::relationships/data/Person-and-Blog-Post-Union-partial.png[title="Sample database data of User nodes (shown in green) and a Blog node (shown in blue) that has HAS_POST relationships to two Posts (shown in orange). The HAS_CONTENT relationship between User and Post nodes is missing.", width=70%]
+
+== Update a union relationship
+
+You can update the `User` nodes and create their `HAS_POST` relationships to the `Post` nodes part of the `Content` union.
+
+.Update User nodes with HAS_CONTENT relationships to Post nodes
+====
+Notice the specification of the concrete type (`Post`) of the `Content` union in the `update` input.
+
+[source, graphql, indent=0]
+----
+mutation {
+    mutation {
+        updateUsers(
+           where: { name: { eq: "Alice" } }
+           update: {
+               content: {
+                    Post: [
+                        {
+                            connect: [
+                                {
+                                    where: { node: { content: { eq: "Alice's Post" } } }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ) {
+            users {
+                name
+            }
+        }
+    }
+}
+----
+====
+
+Execute the same mutation again for `User` Bob, adjusting the filter criteria.

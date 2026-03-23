@@ -9,6 +9,8 @@ This page shows examples of the following mutations:
 - xref::mutations/update.adoc[`update`] - update nodes, and recursively perform any operations from there.
 - xref::mutations/delete.adoc[`delete`] - delete nodes, and recursively delete or disconnect further nodes in the graph.
 
+For more examples of mutation operations on relationships please refer to xref:relationships/operations.adoc#_mutations[Relationship operations].
+
 [NOTE]
 ====
 In order to provide the abstractions available in these mutations, the output Cypher can end up being complex.
