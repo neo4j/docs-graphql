@@ -18,6 +18,7 @@
 * xref:security/impersonation-and-user-switching.adoc[]
 * xref:security/operations.adoc[]
 * xref:security/securing-a-graphql-api.adoc[]
+* xref:security/avoid-unbounded-queries.adoc[Avoid unbounded queries]
 
 * *Reference*
 * xref:neo4jgraphql-class.adoc[]

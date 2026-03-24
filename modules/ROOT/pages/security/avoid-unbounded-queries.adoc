@@ -1,0 +1,225 @@
+= Avoid unbounded queries
+:description: This section describes how to prevent unbounded queries from reaching the server that can lead to performance issues.
+
+Unbounded queries can cause performance issues and potentially crash your application by consuming excessive resources.
+The Neo4j GraphQL Library provides several mechanisms to help you avoid these problems.
+
+== `@limit` directive
+
+Using the xref::/directives/custom-logic.adoc#_limit[`@limit`] directive on a type definition allows to set a default value and a maximum for the limit on the number of nodes returned for that type from the server side.
+This is useful to prevent clients from accidentally or intentionally requesting large amounts of data in a single query.
+
+
+== Require `limit` argument
+
+Setting `limitRequired` to `true` in the feature settings makes the `limit` argument non-nullable in the generated schema, forcing all read operations to include a `limit` argument on all fields that return a list of items. 
+This protects the server from queries that return massive datasets across nested relationships.
+
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        limitRequired: true
+    }
+});
+----
+
+When this feature is enabled:
+
+* All queries that return arrays must include a `limit` argument
+* Queries without a `limit` are not compliant with the GraphQL schema
+* This applies to both top-level queries and nested relationship queries
+
+Assuming the following type definitions:
+[source, graphql, indent=0]
+----
+type Movie @node { 
+    title: String 
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN) 
+}
+
+type Actor @node {
+    name: String
+}
+----
+
+* Valid query:
+[source, graphql, indent=0]
+----
+query {
+    movies(limit: 1) {
+        title
+        actors(limit: 1) {
+            name
+        }
+    }
+}
+----
+
+* Invalid query, `limit` argument not provided on `movies` field:
+[source, graphql, indent=0]
+----
+query {
+    # Error: `Field "movies" argument "limit" of type "Int!" is required, but it was not provided`
+    movies {
+        title
+        actors(limit: 1) {
+            name
+        }
+    }
+}
+----
+
+* Invalid query, `limit` argument not provided on `actors` field:
+[source, graphql, indent=0]
+----
+query {
+    movies(limit: 1) {
+        title
+        # Error: `Field "actors" argument "limit" of type "Int!" is required, but it was not provided`
+        actors {
+            name
+        }
+    }
+}
+----
+
+
+== Complexity estimators
+
+Setting `complexityEstimators` to `true` enables the assignment of a complexity "score" to each field in your schema.
+This feature creates complexity estimators that are compatible with the link:https://www.npmjs.com/package/graphql-query-complexity[graphql-query-complexity] library.
+
+You can then use the complexity "score" to automatically reject queries that exceed your defined complexity limits before reaching the server, protecting your system from resource-intensive operations.
+
+[source, javascript, indent=0]
+----
+const neoSchema = new Neo4jGraphQL({
+    typeDefs,
+    features: {
+        complexityEstimators: true
+    }
+});
+----
+
+When this feature is enabled:
+
+* Each field in your schema is assigned a complexity score
+* You can use the `getComplexity` function from `graphql-query-complexity` to calculate the total complexity of incoming queries
+* You can set maximum complexity thresholds to reject overly complex queries
+
+=== Example usage
+
+To use the complexity estimators, include this logic to run when receiving a query in your GraphQL server implementation.
+For example, if you are using Apollo Server, you can use the `requestDidStart` function of an `ApolloServerPlugin`.
+
+[source, javascript, indent=0]
+----
+const complexity = getComplexity({
+   schema, // result of Neo4jGraphQL.getSchema() 
+   query,  // the GraphQL query document sent to server for execution
+   estimators: DefaultComplexityEstimators, // exported from the neo4j/graphql package
+});
+
+// Define your maximum complexity threshold
+const complexityThreshold = 1000; 
+if (complexity > complexityThreshold) {
+    throw new Error(`Query is too complex: ${complexity}. Maximum allowed complexity is ${complexityThreshold}.`);
+}
+----
+
+=== Computing the complexity
+
+The provided complexity estimators compute the complexity of a query using the following formula:
+* Each field has a base complexity of `1`
+* If a field returns a list, its complexity is calculated by first adding the complexity values of its children and then multiplying it with the `limit` argument provided on that field (see examples below)
+* If no `limit` argument is provided, a default multiplier of `1` is used
+
+The queries below demonstrate the usage of the formula.
+
+.Example 1: Simple query example with `limit` arguments
+====
+[source, graphql, indent=0]
+----
+query {
+    movies(limit: 10) {     # c = 10 * 102 + 1 = 1021
+        title               # c = 1
+        actors(limit: 50) { # c = 50 * 2 + 1 = 101
+            name            # c = 1
+            age             # c = 1
+        }
+    }
+}
+# Total complexity = 1 + 10 * (1 + 1 + 50 * (1 + 1)) = 1021
+----
+====
+
+.Example 2: Query without `limit` arguments, using default multiplier of 1
+====
+Notice the same query as before but without `limit` arguments has a much lower complexity score.
+
+[source, graphql, indent=0]
+----
+query {
+    movies {                # c = 1 * 4 + 1 = 5
+        title               # c = 1
+        actors {            # c = 1 * 2 + 1 = 3
+            name            # c = 1
+            age             # c = 1
+        }
+    }
+}
+# Total complexity = 1 + 1 * (1 + 1 + 1 * (1 + 1)) = 5
+----
+====
+
+.Example 3: Deeply nested query example with `limit` arguments and fragments
+====
+Notice the complexity of the `properties` field depends on the maximum number of properties in the fragments.
+
+[source, graphql, indent=0]
+----
+ query {
+    productionsConnection(first: 10, sort: [{ title: ASC }]) {          # (12 + 2x) * 10 + 1 = 121 + 20x
+      edges {                                                           # 12 + 2x
+        node {                                                          # 9 + 2x + 1 + 1 = 11 + 2x
+          title                                                         # 1              
+          actorsConnection(first: 2, sort: { node: { name: ASC } }) {   # (4 + x) * 2 + 1 = 9 + 2x
+            edges {                                                     # 3 + x + 1 = 4 + x
+              node {                                                    # 2
+                name                                                    # 1
+              }
+              properties {                                              # 1 + x; x = max nr of properties in below fragments
+                ... on ActedIn {
+                  roles
+                }
+                ... on ActedInSeries {
+                  roles
+                  episodes
+                  year
+                }
+              }
+            }
+          }
+        }
+      }
+  }
+}
+# Total complexity = 1 + 10 * (1 + 1 + 1 + 1 + 2 * (1 + 1 + 1 + 1 + 3)) = 181
+----
+====
+
+=== Complexity considerations
+
+This feature is intended to be used in conjunction with xref::neo4jgraphql-class.adoc#_limit_required_settings[`limitRequired`] to provide the most effective protection against unbounded queries. 
+
+When `limitRequired` is enabled, the complexity score of a query is higher because the provided `limit` arguments act as multipliers, which more accurately reflects the potential cost of executing that query.
+
+When `limitRequired` is not enabled, the complexity score is orders of magnitude lower since it uses a default multiplier of 1 for fields that return lists.
+While it still provides a useful measure of query complexity based on the structure of the query and the number of fields requested, it is less effective at preventing unbounded queries and the complexity threshold will be difficult to set.
+For instance, the first two examples above demonstrate a major difference in complexity scores: 5 versus 1021.
+
+=== Alternative solutions
+
+An alternative to computing the query complexity is to use a tool such as link:https://escape.tech/graphql-armor/docs/plugins/cost-limit/[GraphQL Armor].

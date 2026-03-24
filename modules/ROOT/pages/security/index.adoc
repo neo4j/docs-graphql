@@ -12,3 +12,4 @@ auth/authorization/where.adoc, authentication-and-authorization/index.adoc
 * xref::/security/impersonation-and-user-switching.adoc[Impersonation and user switching] - How to set up impersonation and user switching features.
 * xref::/security/operations.adoc[Operation examples] - GraphQL query examples on how to trigger the evaluation of different authentication and authorization rules.
 * xref::/security/securing-a-graphql-api.adoc[Securing a GraphQL API] - A tutorial to improve the security of a GraphQL API.
+* xref::/security/avoid-unbounded-queries.adoc[Avoid unbounded queries] - Strategies to prevent unbounded queries from reaching the server through mandatory limit arguments or evaluating the complexity of incoming queries.
