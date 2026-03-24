@@ -25,6 +25,8 @@
   "dependencies": {
     "@neo4j-antora/aliases-redirects": "^0.2.7",
     "@neo4j-antora/antora-add-notes": "^0.3.2",
+    "@neo4j-antora/antora-modify-sitemaps": "^0.7.2",
+    "@neo4j-antora/antora-page-roles": "^0.3.2",
     "@neo4j-antora/mark-terms": "^1.1.4",
     "@neo4j-antora/roles-labels": "^0.1.8",
     "@neo4j-antora/selector-labels": "^0.1.1",
