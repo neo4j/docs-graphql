@@ -105,7 +105,7 @@ query {
 ----
 
 Spatial types use numerical filtering differently and they also have additional options. 
-See xref:filtering.adoc#_spatial_type_filtering[] for more information.
+See <<_spatial_type_filtering>> for more information.
 
 === Spatial type filtering
 

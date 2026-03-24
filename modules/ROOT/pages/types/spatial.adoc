@@ -25,7 +25,7 @@ In order to use it in your schema, add a field with a type `Point` to any other 
 
 The `Point` type is automatically added to your schema, in addition to the input and output types that you need to query and manipulate spatial types through your API.
 
-See xref::filtering.adoc#_filtering_spatial_types[Filtering spatial types] for filter options. 
+See xref::filtering.adoc#_spatial_type_filtering[Filtering spatial types] for filter options. 
 
 ==== Type definition
 
@@ -117,7 +117,7 @@ type TypeWithCartesianPoint @node {
 
 The `CartesianPoint` type is automatically added to your schema, in addition to the input and output types that you need to query and manipulate spatial types through your API.
 
-See xref::filtering.adoc#_filtering_spatial_types[Filtering spatial types] for filter options.
+See xref::filtering.adoc#_spatial_type_filtering[Filtering spatial types] for filter options.
 
 ==== Type definition
 

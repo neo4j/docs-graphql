@@ -145,7 +145,7 @@ type ActorActedInConnection {
 *Configure nested operations*
 
 A large part of the schema produced by the library is needed to support nested operations. 
-Example of using the nested operations can be found in xref::/mutations/create.adoc#_inserting_data[Relationships -> Inserting data].
+// Example of using the nested operations can be found in xref::/mutations/create.adoc#_inserting_data[Relationships -> Inserting data].
 
 The nested operations available are:
 
