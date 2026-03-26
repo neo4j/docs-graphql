@@ -569,7 +569,7 @@ As shown by the previous inputs fields, the `actors` field is not available for 
 
 == `@groupBy`
 
-This directive defines fields that can be used to group query results.
+This directive defines fields that can be used to group query results in a connection.
 
 === Definition
 
@@ -581,8 +581,6 @@ directive @groupBy on FIELD_DEFINITION
 
 === Usage
 
-Consider the following definition:
-
 [source, graphql, indent=0]
 ----
 type Movie @node {
@@ -591,13 +589,7 @@ type Movie @node {
 }
 ----
 
-It adds the field `groupBy` to the `movieConnection` operation.
-
-
-The `groupBy` field has a single, mandatory argument `fields` which defines the field to group the results by.
-The type of the `groupBy` field is a list of results compliant to the Connection Spec.
-The following example shows how to query movies grouped by the `year` field.
-In this case, `year` is the only field the results can be group by.
+Adding a `@groupBy` directive to a field will enable `groupBy` operations inside connection queries. These will group the results by the provided fields:
 
 [source, graphql, indent=0]
 ----
@@ -615,72 +607,4 @@ query {
 }
 ----
 
-The result of this query is a list of `edges` wherein all results share the same value of the `year` field.
-
-[source, json, indent=0]
-----
-{
-    "moviesConnection": {
-        "groupBy": [
-            {
-                "edges": [
-                    {
-                        "node": {
-                            "title": "The Matrix",
-                            "year": 1999
-                        }
-                    },
-                    {
-                        "title": "Fight Club",
-                        "year": 1999
-                    }
-                ]
-            },
-            {
-                "edges": [
-                    {
-                        "node": {
-                            "title": "Gladiator",
-                            "year": 2000
-                        }
-                    }
-                ]
-            }
-        ]
-    }
-}
-----
-
-
-Nodes can be grouped by multiple fields.
-
-Consider the following type definition:
-
-[source, graphql, indent=0]
-----
-type Movie @node {
-    title: String!
-    year: Int! @groupBy
-    rating: Int! @groupBy
-}
-----
-
-You can now use both `year` and `rating` fields in the argument of the `groupBy` field.
-
-[source, graphql, indent=0]
-----
-query {
-  moviesConnection {
-    groupBy(fields: { year: true, rating: true }) {
-      edges {
-        node {
-          title
-          year
-        }
-      }
-    }
-  }
-}
-----
-
-In this case, all movies with the same `year` and `rating` are grouped together in the same result.
+Check the usage of `groupBy` xref::/queries-aggregations/group-by.adoc[here].
