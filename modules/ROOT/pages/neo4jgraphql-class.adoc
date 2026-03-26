@@ -99,12 +99,13 @@ See xref:security/avoid-unbounded-queries.adoc#_limit_required[Avoid unbounded q
 Changing these options is dangerous, and can lead to security risks.
 ====
 
-These are options intended to disable automatic escaping of input values in the generated Cypher. By default, node labels and relationship types are escaped in the generated Cypher, to ensure queries are safe.
+These are options intended to disable automatic escaping of input values in the generated Cypher.
+By default, node labels and relationship types are escaped in the generated Cypher to ensure queries are safe.
 
-This behaviour can be disabled by using the flags inside `unsafeEscapeOptions`
+This behavior can be disabled by using the flags inside `unsafeEscapeOptions`:
 
-* `disableNodeLabelEscaping`: If set to true, node labels will not be escaped.
-* `disableRelationshipTypeEscaping`: If set to true, relationship types will not be escaped.
+* `disableNodeLabelEscaping`: If set to true, node labels are not escaped.
+* `disableRelationshipTypeEscaping`: If set to true, relationship types are not escaped.
 
 
 === Complexity estimators settings
