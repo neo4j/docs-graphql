@@ -576,7 +576,7 @@ This directive defines fields that can be used to group query results.
 [source, graphql, indent=0]
 ----
 """Enables groupBy operations for this field."""
-directive @groupBy() on FIELD_DEFINITION
+directive @groupBy on FIELD_DEFINITION
 ----
 
 === Usage
@@ -592,11 +592,12 @@ type Movie @node {
 ----
 
 It adds the field `groupBy` to the `movieConnection` operation.
-The field allows you to query movies grouped by the `year` field.
 
 
-The `groupBy` field has one argument `fields`, that defines the field to group by.
-In this case `year` is the only option.
+The `groupBy` field has a single, mandatory argument `fields` which defines the field to group the results by.
+The type of the `groupBy` field is a list of results compliant to the Connection Spec.
+The following example shows how to query movies grouped by the `year` field.
+In this case, `year` is the only field the results can be group by.
 
 [source, graphql, indent=0]
 ----
@@ -614,8 +615,7 @@ query {
 }
 ----
 
-The `groupBy` field returns a list of results and each result contains a list of `edges`, with all results grouped by the `year` field.
-For example:
+The result of this query is a list of `edges` wherein all results share the same value of the `year` field.
 
 [source, json, indent=0]
 ----
@@ -651,9 +651,21 @@ For example:
 }
 ----
 
-Note that the `year` field is repeated on every node of the `edges` from each `groupBy` result.
 
-Nodes can be grouped by multiple fields:
+Nodes can be grouped by multiple fields.
+
+Consider the following type definition:
+
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String!
+    year: Int! @groupBy
+    rating: Int! @groupBy
+}
+----
+
+You can now use both `year` and `rating` fields in the argument of the `groupBy` field.
 
 [source, graphql, indent=0]
 ----
