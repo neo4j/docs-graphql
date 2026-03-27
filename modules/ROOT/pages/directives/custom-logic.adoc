@@ -508,7 +508,7 @@ to populate fields which have not been provided within the input.
 
 For non-required values, callbacks may return `undefined` (meaning that nothing is changed or added to the property) or `null` (meaning that the property will be removed).
 
-The `@populatedBy` directive can only be used on scalar fields. 
+The `@populatedBy` directive can only be used on fields of a scalar or enum type.
 
 === Definition
 
