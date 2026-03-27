@@ -257,5 +257,4 @@ console.log(`🚀  Server ready at ${url}`);
 For further iteration, this subgraph can also be composed into a supergraph. 
 Check Apollo's guides for more instructions:
 
-* https://www.apollographql.com/docs/federation/quickstart/studio-composition[Composition in Apollo Studio]
-* https://www.apollographql.com/docs/federation/quickstart/local-composition[Local composition]
+* https://www.apollographql.com/docs/graphos/schema-design/federated-schemas/federation[Introduction to Apollo Federation]
