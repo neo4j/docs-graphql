@@ -57,7 +57,7 @@ query {
 
 === Filter by single relationships
 
-Single relationships (of a non-null type) can be used as filters in the `where` argument of a query.
+Single relationships (of a non-list type) can be used as filters in the `where` argument of a query.
 
 .Get Movie nodes filtered by the name of the director through the DIRECTED relationship
 ====
@@ -74,7 +74,7 @@ query {
 
 == Mutating single relationships
 
-Only a subset of the operations provided by the Neo4j GraphQL Library for relationship fields is available for single relationships (of a non-null type).
+Only a subset of the operations provided by the Neo4j GraphQL Library for relationship fields is available for single relationships (of a non-list type).
 
 At the moment only create and delete operations are supported on single relationships.
 
