@@ -199,7 +199,7 @@ deletePeople(where: PersonWhere!, delete: PersonDeleteInput!)!: DeleteInfo!
 
 As arguments to the top level operations, the Neo4j GraphQL Library generates a set of nested operations manage the relationships between the nodes in the database. 
 
-[INFO]
+[NOTE]
 ====
 *Terminology*
 
@@ -532,7 +532,7 @@ The `queryDirection` argument of the `@relationship` directive affects database 
 
 In terms of GraphQL operations this means that both queries and mutations are affected by its value.
 
-[INFO]
+[NOTE]
 ====
 When performing mutations, the nodes and relationships specified in the mutation input have to first be queried from the database.
 
