@@ -104,8 +104,8 @@ By default, node labels and relationship types are escaped in the generated Cyph
 
 This behavior can be disabled by using the flags inside `unsafeEscapeOptions`:
 
-* `disableNodeLabelEscaping`: If set to true, node labels are not escaped.
-* `disableRelationshipTypeEscaping`: If set to true, relationship types are not escaped.
+* `disableNodeLabelEscaping`: Defaults to false. If set to true, node labels are not escaped.
+* `disableRelationshipTypeEscaping`: Defaults to false. If set to true, relationship types are not escaped.
 
 
 === Complexity estimators settings
