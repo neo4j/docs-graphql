@@ -53,6 +53,7 @@
 ** xref:queries-aggregations/aggregations.adoc[]
 ** xref:queries-aggregations/sorting.adoc[]
 ** xref:queries-aggregations/pagination.adoc[]
+** xref:queries-aggregations/group-by.adoc[]
 
 * xref:mutations/index.adoc[]
 ** xref:mutations/create.adoc[]
