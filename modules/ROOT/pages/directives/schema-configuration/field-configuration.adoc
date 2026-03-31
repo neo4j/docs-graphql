@@ -565,3 +565,46 @@ input ActorActedInNodeAggregationWhereInput {
 ----
 
 As shown by the previous inputs fields, the `actors` field is not available for filtering on both value and aggregation filters.
+
+
+== `@groupBy`
+
+This directive defines fields that can be used to group query results in a connection.
+
+=== Definition
+
+[source, graphql, indent=0]
+----
+"""Enables groupBy operations for this field."""
+directive @groupBy on FIELD_DEFINITION
+----
+
+=== Usage
+
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String!
+    year: Int! @groupBy
+}
+----
+
+Adding a `@groupBy` directive to a field will enable `groupBy` operations inside connection queries. These will group the results by the provided fields:
+
+[source, graphql, indent=0]
+----
+query {
+  moviesConnection {
+    groupBy(fields: { year: true }) {
+      edges {
+        node {
+          title
+          year
+        }
+      }
+    }
+  }
+}
+----
+
+Check the usage of `groupBy` xref::/queries-aggregations/group-by.adoc[here].

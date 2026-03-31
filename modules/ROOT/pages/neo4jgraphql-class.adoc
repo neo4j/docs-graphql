@@ -32,10 +32,6 @@ export type Neo4jFeaturesSettings = {
     populatedBy?: Neo4jPopulatedBySettings;
     authorization?: Neo4jAuthorizationSettings;
     subscriptions?: Neo4jGraphQLSubscriptionsEngine | boolean;
-    /** If set to `true`, removes `@neo4j/graphql` fields that are marked as deprecated to reduce schema size.
-     *
-     * NOTE: this will not remove user defined deprecated fields
-     **/
     excludeDeprecatedFields?: {
         mutationOperations?: boolean;
         aggregationFilters?: boolean;
@@ -46,6 +42,10 @@ export type Neo4jFeaturesSettings = {
     vector?: Neo4jVectorSettings;
     limitRequired?: boolean;
     complexityEstimators?: boolean;
+    unsafeEscapeOptions?: {
+        disableNodeLabelEscaping?: boolean;
+        disableRelationshipTypeEscaping?: boolean;
+    }
 };
 ----
 
@@ -91,6 +91,21 @@ See xref:directives/indexes-and-constraints.adoc#_vector_index_search[`@vector`]
 Set `limitRequired` to `true` to require a `limit` argument for all read operations that return lists.
 This is useful to prevent unbounded queries that can lead to performance issues.
 See xref:security/avoid-unbounded-queries.adoc#_limit_required[Avoid unbounded queries > Require `limit` argument].
+
+=== Unsafe escape options
+
+[WARNING]
+====
+Changing these options is dangerous, and can lead to security risks.
+====
+
+These are options intended to disable automatic escaping of input values in the generated Cypher.
+By default, node labels and relationship types are escaped in the generated Cypher to ensure queries are safe.
+
+This behavior can be disabled by using the flags inside `unsafeEscapeOptions`:
+
+* `disableNodeLabelEscaping`: Defaults to false. If set to true, node labels are not escaped.
+* `disableRelationshipTypeEscaping`: Defaults to false. If set to true, relationship types are not escaped.
 
 
 === Complexity estimators settings
