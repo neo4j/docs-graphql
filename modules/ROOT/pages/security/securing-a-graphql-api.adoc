@@ -222,7 +222,7 @@ type Customer
 
 It is important to be aware that error messages generated through validation can be a security concern since they can report database internals to your users.
 
-Also see <<best-practice-internal-errors>> on this page.
+Also see <<_best_practice_checklist>> on this page.
 
 
 === `@selectable` and `@settable`

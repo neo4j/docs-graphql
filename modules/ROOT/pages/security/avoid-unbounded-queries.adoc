@@ -9,7 +9,7 @@ The Neo4j GraphQL Library provides several mechanisms to help you avoid these pr
 Using the xref::/directives/custom-logic.adoc#_limit[`@limit`] directive on a type definition allows to set a default value and a maximum for the limit on the number of nodes returned for that type from the server side.
 This is useful to prevent clients from accidentally or intentionally requesting large amounts of data in a single query.
 
-
+[[_limit_required]]
 == Require `limit` argument
 
 Setting `limitRequired` to `true` in the feature settings makes the `limit` argument non-nullable in the generated schema, forcing all read operations to include a `limit` argument on all fields that return a list of items. 
