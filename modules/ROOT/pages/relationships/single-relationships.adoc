@@ -71,6 +71,22 @@ query {
 ----
 ====
 
+=== Filter by existence of relationship
+
+The existence of a relationship in the database can be checked by filtering for null values on the relationship field.
+
+.Get Movie nodes that have a DIRECTED relationship to a Person node 
+====
+[source, graphql, indent=0]
+----
+query {
+  movies(where: { NOT: { director: null } }) {
+    title
+  }
+}
+----
+====
+
 
 == Mutating single relationships
 
