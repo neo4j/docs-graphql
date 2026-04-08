@@ -19,7 +19,7 @@ If you intend to use the Aura CLI, follow the guidance provided in xref:aura-gra
 +
 image::aura-graphql/create/connected-instance.png[]
 +
-. Select either to generate type definitions based on the existing data in your AuraDB or to write your own type definitions.
+. Select **Define my own** to write your own type definitions or **Fetch from instance** to generate type definitions based on the existing data in your AuraDB.
 +
 image::aura-graphql/create/type-definitions-choice.png[]
 +
