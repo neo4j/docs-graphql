@@ -16,13 +16,7 @@ If you intend to use the Aura CLI, follow the guidance provided in xref:aura-gra
 
 . In the Aura Console, select **Data APIs** from the left side navigation.
 . Ensure you are connected to the Neo4j AuraDB instance that the GraphQL API will be used with.
-+
-image::aura-graphql/create/connected-instance.png[]
-+
 . Select **Define my own** to write your own type definitions or **Fetch from instance** to generate type definitions based on the existing data in your AuraDB.
-+
-image::aura-graphql/create/type-definitions-choice.png[]
-+
 . Type definitions
 +
 This is where you describe the graph database in the AuraDB that the GraphQL API will be used with.
@@ -34,9 +28,6 @@ The Neo4j GraphQL Toolbox has the ability to connect to an AuraDB, automatically
 Alternatively you can write your own type definitions from first principles by following the guidance provided in xref:index.adoc[Neo4j GraphQL Library] documentation.
 +
 If you are using GraphQL Federation then make sure to select **Enable GraphQL subgraph**.
-+
-image::aura-graphql/create/type-definitions-refinement.png[]
-+
 . Once you are satisfied with the type definitions, select **Try out the API** to proceed. The next step lets you simulate GraphQL queries and mutations against the type definitions you have provided. Note that while this does run against your database, it does not create a GraphQL API that can be used by applications until you have completed the final step of the creation process.
 +
 image::aura-graphql/create/query-editor.png[]
