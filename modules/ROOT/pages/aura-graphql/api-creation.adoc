@@ -26,7 +26,7 @@ image::aura-graphql/create/type-definitions-choice.png[]
 . Type definitions
 +
 This is where you describe the graph database in the AuraDB that the GraphQL API will be used with.
-The type definitions are the same as those used with Neo4j GraphQL Library with the exception that custom resolvers cannot be used.
+The type definitions follow the rules of the Neo4j GraphQL Library with the exception that custom resolvers cannot be used.
 +
 If you already have data in the AuraDB, a quick way to obtain type definitions is to use the https://graphql-toolbox.neo4j.io[Neo4j GraphQL Toolbox]. This facility has the ability to connect to an AuraDB, automatically create type definitions and allow GraphQL operations.
 +
