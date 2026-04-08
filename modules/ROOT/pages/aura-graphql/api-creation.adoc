@@ -40,7 +40,7 @@ image::aura-graphql/create/type-definitions-refinement.png[]
 +
 image::aura-graphql/create/query-editor.png[]
 +
-. Proceed to get API ready and fill in the details in the final step.
+. Proceed to get the API ready and fill in the details in the final step.
 +
 image::aura-graphql/create/details.png[]
 +
