@@ -36,7 +36,7 @@ If you are using GraphQL Federation then make sure to select **Enable GraphQL su
 +
 image::aura-graphql/create/type-definitions-refinement.png[]
 +
-. Once you are satisfied with the type definitions, select **Try out the API** to proceed to the next step where you can simulate GraphQL queries and mutations against the type definitions you have provided. Note that this while this does run against your database, it does not create a GraphQL API that can be used by applications until you have completed the final step of the creation process.
+. Once you are satisfied with the type definitions, select **Try out the API** to proceed. The next step lets you simulate GraphQL queries and mutations against the type definitions you have provided. Note that while this does run against your database, it does not create a GraphQL API that can be used by applications until you have completed the final step of the creation process.
 +
 image::aura-graphql/create/query-editor.png[]
 +
