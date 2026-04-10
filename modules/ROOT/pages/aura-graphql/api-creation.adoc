@@ -15,7 +15,7 @@ If you intend to use the Aura CLI, follow the guidance provided in xref:aura-gra
 == Console
 
 . In the Aura Console, select **Data APIs** from the left side navigation.
-. Ensure you are connected to the Neo4j AuraDB instance that the GraphQL API will be used with.
+. Ensure you are connected to the Neo4j AuraDB instance with which you want to use the GraphQL API. The **Instance** drop-down at the top left shows your current connection.
 . Select **Define my own** to write your own type definitions or **Fetch from instance** to generate type definitions based on the existing data in your AuraDB.
 . Type definitions
 +
