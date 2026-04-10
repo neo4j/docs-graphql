@@ -25,7 +25,7 @@ The type definitions follow the rules of the Neo4j GraphQL Library with the exce
 If you already have data in the AuraDB, a quick way to obtain type definitions is to use the link:https://graphql-toolbox.neo4j.io[Neo4j GraphQL Toolbox].
 The Neo4j GraphQL Toolbox has the ability to connect to an AuraDB, automatically create type definitions and allow GraphQL operations.
 +
-Alternatively you can write your own type definitions from first principles by following the guidance provided in xref:index.adoc[Neo4j GraphQL Library] documentation.
+Alternatively you can write your own type definitions from scratch by following the guidance provided in xref:index.adoc[Neo4j GraphQL Library] documentation.
 +
 If you are using GraphQL Federation then make sure to select **Enable GraphQL subgraph**.
 . Once you are satisfied with the type definitions, select **Try out the API** to proceed. The next step lets you simulate GraphQL queries and mutations against the type definitions you have provided. Note that while this does run against your database, it does not create a GraphQL API that can be used by applications until you have completed the final step of the creation process.
