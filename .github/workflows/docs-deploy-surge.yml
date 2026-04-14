@@ -22,22 +22,23 @@ on:
       - completed
 
 jobs:
-  # Gate job: only runs for fork PRs, requires manual approval via the "preview" environment.
+   # [Optional] Restrict automatic dpeloyment to PRs from the upstream repo
+  # For fork PRs, requires manual approval via the "preview" environment.
   # For PRs from the main repository this job is skipped and deploy-docs runs immediately.
   # Setup: create a "preview" environment in Settings → Environments with required reviewers.
   # approve-fork:
-    # if: github.event.workflow_run.head_repository.full_name != github.repository
-    # environment: preview
-    # runs-on: ubuntu-latest
-    # steps:
-    #   - name: Fork PR approved for deployment
-    #     run: echo "Approved"
+  #   if: github.event.workflow_run.head_repository.full_name != github.repository
+  #   environment: preview
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Fork PR approved for deployment
+  #       run: echo "Approved"
 
   deploy-docs:
-  # needs: [approve-fork]
-  # Run when approve-fork succeeded (fork, approved) or was skipped (non-fork).
-  # Uncomment the conclusion check to deploy only when the PR builds cleanly:
-  # && github.event.workflow_run.conclusion == 'success'
+    # needs: [approve-fork]
+    # Run when approve-fork succeeded (fork, approved) or was skipped (non-fork).
+    # Uncomment the conclusion check to deploy only when the PR builds cleanly:
+    # && github.event.workflow_run.conclusion == 'success'
     # if: |
     #   always() &&
     #   (needs.approve-fork.result == 'success' || needs.approve-fork.result == 'skipped')
