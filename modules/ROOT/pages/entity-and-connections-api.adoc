@@ -1,0 +1,20 @@
+= The entity and connections APIs
+:description: This page introduces the entity and connections APIs and aims to shed light on their differences, when to use which API and how they can be mixed in practice.
+
+[source, javascript, indent=0]
+----
+export interface Neo4jGraphQLConstructor {
+    typeDefs: TypeDefinitions; <1>
+    resolvers?: IExecutableSchemaDefinition["resolvers"]; <2>
+    features?: Neo4jFeaturesSettings; <3>
+    driver?: Driver; <4>
+    debug?: boolean;
+    validate?: boolean;
+}
+----
+<1> See xref:types/index.adoc[].
+<2> See xref:directives/custom-logic.adoc#_customresolver[Custom resolvers].
+<3> See xref:#_feature_settings[] on this page.
+<4> See xref:driver-configuration.adoc[].
+
+

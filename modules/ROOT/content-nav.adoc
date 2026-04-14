@@ -8,6 +8,10 @@
 ** xref:getting-started/graphql-self-hosted.adoc[]
 * xref:getting-started/toolbox.adoc[]
 
+* *Concepts*
+
+* xref:entity-and-connections-api.adoc[]
+
 
 * *Security*
 
