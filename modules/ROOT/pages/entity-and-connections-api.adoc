@@ -1,20 +1,132 @@
-= The entity and connections APIs
+= Entity API and connections API
 :description: This page introduces the entity and connections APIs and aims to shed light on their differences, when to use which API and how they can be mixed in practice.
 
-[source, javascript, indent=0]
+Coming from the xref:index.adoc[introduction] or one of the xref:index.adoc[getting started guides], you might be wondering what exactly the GraphQL Library generates based on the type definition schema that you provide.
+
+It is a pair of distinct APIs that you can explore with the Apollo Server.
+Examples drawing from the auto-generated fields of the two APIs are used throughout the GraphQL Library documentation, but the difference and separation of them is implicit.
+
+
+== Distinction
+
+The API split is mainly due to development-historic reasons.
+The entity API came first and is simpler and more performant, while the connections API allows for relationship traversal, accessing relationship fields, aggregations and more.
+Knowing the difference allows you to make a more deliberate choice of when to use which API.
+
+Consider the following type definitions:
+
+[source, graphql, indent=0]
 ----
-export interface Neo4jGraphQLConstructor {
-    typeDefs: TypeDefinitions; <1>
-    resolvers?: IExecutableSchemaDefinition["resolvers"]; <2>
-    features?: Neo4jFeaturesSettings; <3>
-    driver?: Driver; <4>
-    debug?: boolean;
-    validate?: boolean;
+type Movie @node {
+    title: String!
+    released: Int
+    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProps")
+}
+
+type Person @node {
+    name: String!
+    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProps")
+}
+
+type ActedInProps @relationshipProperties {
+    roles: [String!]!
 }
 ----
-<1> See xref:types/index.adoc[].
-<2> See xref:directives/custom-logic.adoc#_customresolver[Custom resolvers].
-<3> See xref:#_feature_settings[] on this page.
-<4> See xref:driver-configuration.adoc[].
+
+The following sections outline the entity and connections APIs that are generated based on the definitions.
 
 
+=== Entity API
+
+The entity API provides the following fields for the `Movie` and `Person` `@node` types:
+
+[source, text, indent=0]
+----
+movies(...): [Movie!]!
+
+people(...): [Person!]!
+----
+
+Each entity can take four arguments:
+
+* `where`
+* `limit`
+* `offset`
+* `sort`
+
+`Movie` and `Person` entities are connected via the `ACTED_IN` relationship.
+`Movie` types have a field `actors` that is a list of `Person` entities, while `Person` entities have a field `movies` that is a list of `Movie` entities.
+This means that you can access other entities directly from an entity that is connected to them.
+
+A `Movie` entity also allows you to access the `title` and `released` fields, while a `Person` entity allows you to access its `name` field.
+
+
+=== Connections API
+
+
+
+
+HOW?
+
+New page explaining the differences
+
+Short demo:
+Movies db
+Most basic schema (below)
+Apollo server to explore
+
+The APIs can be mixed in the same request
+*/
+
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { Neo4jGraphQL } from "@neo4j/graphql";
+import neo4j from "neo4j-driver";
+
+const typeDefs = `#graphql
+type Movie @node {
+        title: String!
+        released: Int
+        actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProps")
+    }
+
+    type Person @node {
+        name: String!
+        movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProps")
+    }
+
+    type ActedInProps @relationshipProperties {
+        roles: [String!]!
+    }
+`;
+
+const driver = neo4j.driver(
+    "neo4j://localhost:7687",
+    neo4j.auth.basic("neo4j", "verysecret")
+);
+
+const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
+
+const server = new ApolloServer({
+    schema: await neoSchema.getSchema(),
+});
+
+const { url } = await startStandaloneServer(server, {
+    context: async ({ req }) => ({
+        req,
+        cypherQueryOptions: {
+            addVersionPrefix: true,
+        },
+    }),
+    listen: { port: 4000 },
+});
+
+console.log(`🚀 Server ready at ${url}`);
+
+
+
+
+
+== Links
+
+* xref:directives/schema-configuration/index.adoc[]
