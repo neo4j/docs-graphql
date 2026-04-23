@@ -1,7 +1,7 @@
 = Entity API and connections API
 :description: This page introduces the entity and connections APIs and aims to shed light on their differences, when to use which API and how they can be mixed in practice.
 
-Coming from the xref:index.adoc[introduction] or one of the xref:index.adoc[getting started guides], you might be wondering what exactly the GraphQL Library generates based on the type definition schema that you provide.
+The xref:index.adoc[introduction] or one of the xref:getting-started/index.adoc[getting started] pages touch on the topic of auto-generated fields exactly the GraphQL Library generates based on the type definition schema that you provide.
 
 It is a pair of distinct APIs that you can explore with the Apollo Server.
 Examples drawing from the auto-generated fields of the two APIs are used throughout the GraphQL Library documentation, but the difference and separation of them is implicit.
@@ -35,8 +35,13 @@ type ActedInProps @relationshipProperties {
 
 The following sections outline the entity and connections APIs that are generated based on the definitions.
 
+[NOTE]
+====
+To explore the different fields outlined on this page yourself, put the type definitions in a JavaScript file and fire up an Apollo server as explained in the xref:getting-started/graphql-self-hosted.adoc[Self-hosting GraphQL] guide.
+====
 
-=== Entity API
+
+== Entity API
 
 The entity API provides the following fields for the `Movie` and `Person` `@node` types:
 
@@ -54,79 +59,118 @@ Each entity can take four arguments:
 * `offset`
 * `sort`
 
+The `where` and `sort` arguments can be used to filter and sort query results.
+Refer to xref:filtering.adoc[] and xref:sorting.adoc[].
+`limit` and `offset` allow for xref:queries-aggregations/pagination.adoc#pagination-offset-based[offset-based pagination].
+
 `Movie` and `Person` entities are connected via the `ACTED_IN` relationship.
 `Movie` types have a field `actors` that is a list of `Person` entities, while `Person` entities have a field `movies` that is a list of `Movie` entities.
 This means that you can access other entities directly from an entity that is connected to them.
 
+Note that alongside the `actors` field (for `Movie` entities) and the `movies` field (for `Person` entities) you can also access the fields `actorsConnection` and `moviesConnection` respectively.
+These fields are provided by the connections API, not the entity API.
+You can mix both APIs at certain levels in the same query.
+
 A `Movie` entity also allows you to access the `title` and `released` fields, while a `Person` entity allows you to access its `name` field.
 
+For example:
 
-=== Connections API
-
-
-
-
-HOW?
-
-New page explaining the differences
-
-Short demo:
-Movies db
-Most basic schema (below)
-Apollo server to explore
-
-The APIs can be mixed in the same request
-*/
-
-import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
-import { Neo4jGraphQL } from "@neo4j/graphql";
-import neo4j from "neo4j-driver";
-
-const typeDefs = `#graphql
-type Movie @node {
-        title: String!
-        released: Int
-        actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProps")
+[source, graphql, indent=0]
+----
+query EntityApi {
+  movies(limit: 10, offset: 5) {
+    title
+    released
+    actors(limit: 2) {
+      name
     }
+  }
+}
+----
 
-    type Person @node {
-        name: String!
-        movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProps")
+== Connections API
+
+The connections API follows a different approach.
+For each entity identified in the schema, it creates a connection field:
+
+[source, text, indent=0]
+----
+moviesConnection(...): MoviesConnection!
+
+peopleConnection(...): PeopleConnection!
+----
+
+Each connection can take four arguments:
+
+* `first`
+* `after`
+* `where`
+* `sort`
+
+While `where` and `sort` are used to xref:filtering.adoc[filter] and xref:sorting.adoc[sort] query results similarly to the entity API, `first` and `after` describe a pagination cursor that you can use in subsequent queries (see xref:queries-aggregations/pagination.adoc#pagination-cursor-based[cursor-based pagination]).
+
+Connections fields can access the following:
+
+* `aggregate`
+* `edges`
+* `pageInfo`
+* `totalCount`
+
+For examples on how to use the `aggregate` field, refer xref:queries-aggregations/aggregations.adoc#_querying_aggregations[].
+
+`edges` represent a set of relationship connections.
+They let you access the fields `cursor`, which is the pagination cursor, and `node`, which makes the corresponding field provided by the entity API accessible.
+This means that you can at this level mix in the entity API while you are using the connections API.
+
+
+Nested connections also let you access the relationship properties via the field `properties`.
+This does not work with top-level connections.
+
+For example:
+
+[source, graphql, indent=0]
+----
+query ConnectionApi {
+  moviesConnection(first: 10) {
+    edges {
+      node {
+        title
+        actorsConnection {
+          edges {
+            node {
+              name
+            }
+            properties {
+              roles
+            }
+          }
+        }
+      }aggregation.a
+      cursor
     }
-
-    type ActedInProps @relationshipProperties {
-        roles: [String!]!
+    aggregate {
+      node {
+        title {
+          longest
+        }
+      }
     }
-`;
+  }
+}
+----
 
-const driver = neo4j.driver(
-    "neo4j://localhost:7687",
-    neo4j.auth.basic("neo4j", "verysecret")
-);
+Note how `actorsConnection` is available under `moviesConnection.edges.node`, which is different from the top-level `peopleConnection`.
+It's a nested connection and lets you access the relationship property `roles`.
 
-const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
+`pageInfo` has the fields `startCursor`, `endCursor`, `hasPreviousPage` and `hasNextPage` which are used for xref:queries-aggregations/pagination.adoc#pagination-cursor-based[pagination].
 
-const server = new ApolloServer({
-    schema: await neoSchema.getSchema(),
-});
-
-const { url } = await startStandaloneServer(server, {
-    context: async ({ req }) => ({
-        req,
-        cypherQueryOptions: {
-            addVersionPrefix: true,
-        },
-    }),
-    listen: { port: 4000 },
-});
-
-console.log(`🚀 Server ready at ${url}`);
-
-
-
+Finally, `totalCount` is the number of connection items.
 
 
 == Links
 
-* xref:directives/schema-configuration/index.adoc[]
+* xref:directives/schema-configuration/index.adoc[] - Configure your schema and limit field accessibility
+* xref:relationships/index.adoc[] - Learn more about relationships
+* Pages about xref:filtering.adoc[] and xref:sorting.adoc[]
+* More about xref:queries-aggregations/aggregations.adoc[]
+* More aobut xref:queries-aggregations/pagination.adoc[]
