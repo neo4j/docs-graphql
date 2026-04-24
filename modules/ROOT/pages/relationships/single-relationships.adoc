@@ -71,9 +71,10 @@ query {
 ----
 ====
 
-=== Filter by existence of relationship
+=== Check relationship existence
 
-The existence of a relationship in the database can be checked by filtering for null values on the relationship field.
+You can check the existence of a relationship in the database by filtering for null values on the relationship field.  
+
 
 .Get Movie nodes that have a DIRECTED relationship to a Person node 
 ====
