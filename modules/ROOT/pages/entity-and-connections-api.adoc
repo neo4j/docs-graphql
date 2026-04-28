@@ -1,8 +1,6 @@
 = Entity API and connections API
 :description: This page introduces the entity and connections APIs and aims to shed light on their differences, when to use which API, and how they can be combined in practice.
 
-This page introduces the entity and connections APIs and aims to shed light on their differences, when to use which API, and how they can be combined in practice.
-
 The entity and connections APIs are distinct APIs you can explore with the Apollo Server.
 Examples drawn from the auto-generated fields of the two APIs are used throughout the GraphQL Library documentation, but the differences and separations between them are implicit.
 This page aims to clarify these points, when to use which API, and how they can be combined in practice.
