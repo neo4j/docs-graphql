@@ -9,8 +9,7 @@ Examples drawing from the auto-generated fields of the two APIs are used through
 
 == Distinction
 
-The API split is mainly due to development-historic reasons.
-The entity API came first and is simpler and more performant, while the connections API allows for relationship traversal, accessing relationship fields, aggregations and more.
+The entity API allows ofr simple traversal while the connections API allows access to relationship properties, more complex features such as aggregations and it is xref:integrations/relay-compatibility.adoc[relay-compatible].
 Knowing the difference allows you to make a more deliberate choice of when to use which API.
 
 Consider the following type definitions:
