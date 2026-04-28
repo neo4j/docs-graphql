@@ -1,15 +1,16 @@
 = Entity API and connections API
-:description: This page introduces the entity and connections APIs and aims to shed light on their differences, when to use which API and how they can be mixed in practice.
+:description: This page introduces the entity and connections APIs and aims to shed light on their differences, when to use which API, and how they can be combined in practice.
+This page introduces the entity and connections APIs and aims to shed light on their differences, when to use which API, and how they can be combined in practice.
+The entity and connections APIs are distinct APIs you can explore with the Apollo Server.
+Examples drawn from the auto-generated fields of the two APIs are used throughout the GraphQL Library documentation, but the differences and separations between them are implicit.
+This page aims to clarify these points, when to use which API, and how they can be combined in practice.
+For more information on auto-generated fields and how the GraphQL Library generates them based on the type definition schema that you provide, see the xref:index.adoc[Introduction] and the xref:getting-started/index.adoc[Getting started] pages.
 
-The xref:index.adoc[introduction] or one of the xref:getting-started/index.adoc[getting started] pages touch on the topic of auto-generated fields exactly the GraphQL Library generates based on the type definition schema that you provide.
-
-It is a pair of distinct APIs that you can explore with the Apollo Server.
-Examples drawing from the auto-generated fields of the two APIs are used throughout the GraphQL Library documentation, but the difference and separation of them is implicit.
 
 
 == Distinction
 
-The entity API allows ofr simple traversal while the connections API allows access to relationship properties, more complex features such as aggregations and it is xref:integrations/relay-compatibility.adoc[relay-compatible].
+The entity API allows simple traversal, while the connections API provides access to relationship properties and more complex features such as aggregations, and it is xref:integrations/relay-compatibility.adoc[relay-compatible].
 Knowing the difference allows you to make a more deliberate choice of when to use which API.
 
 Consider the following type definitions:
@@ -36,7 +37,7 @@ The following sections outline the entity and connections APIs that are generate
 
 [NOTE]
 ====
-To explore the different fields outlined on this page yourself, put the type definitions in a JavaScript file and fire up an Apollo server as explained in the xref:getting-started/graphql-self-hosted.adoc[Self-hosting GraphQL] guide.
+You can explore the different fields outlined on this page by putting the type definitions in a JavaScript file and firing up an Apollo server, as explained in the xref:getting-started/graphql-self-hosted.adoc[Self-hosting GraphQL] guide.
 ====
 
 
@@ -58,20 +59,17 @@ Each entity can take four arguments:
 * `offset`
 * `sort`
 
-The `where` and `sort` arguments can be used to filter and sort query results.
-Refer to xref:filtering.adoc[] and xref:sorting.adoc[].
-`limit` and `offset` allow for xref:queries-aggregations/pagination.adoc#pagination-offset-based[offset-based pagination].
+While the `where` and `sort` arguments can be used for xref:filtering.adoc[filtering] and xref:sorting.adoc[sorting] query results, `limit` and `offset` allow for xref:queries-aggregations/pagination.adoc#pagination-offset-based[offset-based pagination].
 
-`Movie` and `Person` entities are connected via the `ACTED_IN` relationship.
-`Movie` types have a field `actors` that is a list of `Person` entities, while `Person` entities have a field `movies` that is a list of `Movie` entities.
-This means that you can access other entities directly from an entity that is connected to them.
+Also, note that: 
 
-Note that alongside the `actors` field (for `Movie` entities) and the `movies` field (for `Person` entities) you can also access the fields `actorsConnection` and `moviesConnection` respectively.
-These fields are provided by the connections API, not the entity API.
-You can mix both APIs at certain levels in the same query.
+* The `Movie` and `Person` entities are connected via the `ACTED_IN` relationship.
+* The `Movie` types have an `actors` field that is a list of `Person` entities, while the `Person` entities have a `movies` field that is a list of `Movie` entities.
+This means you can access other entities directly from an entity that is connected to them.
+* Alongside the `actors` field (for `Movie` entities) and the `movies` field (for `Person` entities), you can access the `actorsConnection` and `moviesConnection` fields, respectively.
+These fields are provided by the connections API, not the entity API, and you can combine both APIs at certain levels in the same query.
 
 A `Movie` entity also allows you to access the `title` and `released` fields, while a `Person` entity allows you to access its `name` field.
-
 For example:
 
 [source, graphql, indent=0]
@@ -115,12 +113,13 @@ Connections fields can access the following:
 * `pageInfo`
 * `totalCount`
 
-For examples on how to use the `aggregate` field, refer xref:queries-aggregations/aggregations.adoc#_querying_aggregations[].
+For examples on how to use the `aggregate` field, refer to xref:queries-aggregations/aggregations.adoc#_querying_aggregations[].
 
 `edges` represent a set of relationship connections.
 They let you access the fields `cursor`, which is the pagination cursor, and `node`, which makes the corresponding field provided by the entity API accessible.
-This means that you can at this level mix in the entity API while you are using the connections API.
+This means that you can, at this level, combine the entity API with the connections API.
 
+=== Nested connections
 
 Nested connections also let you access the relationship properties via the field `properties`.
 This does not work with top-level connections.
@@ -159,17 +158,17 @@ query ConnectionApi {
 ----
 
 Note how `actorsConnection` is available under `moviesConnection.edges.node`, which is different from the top-level `peopleConnection`.
-It's a nested connection and lets you access the relationship property `roles`.
+It's a nested connection, and it lets you access the relationship property `roles`.
 
 `pageInfo` has the fields `startCursor`, `endCursor`, `hasPreviousPage` and `hasNextPage` which are used for xref:queries-aggregations/pagination.adoc#pagination-cursor-based[pagination].
 
 Finally, `totalCount` is the number of connection items.
 
 
-== Links
+== Keep learning
 
-* xref:directives/schema-configuration/index.adoc[] - Configure your schema and limit field accessibility
-* xref:relationships/index.adoc[] - Learn more about relationships
-* Pages about xref:filtering.adoc[] and xref:sorting.adoc[]
-* More about xref:queries-aggregations/aggregations.adoc[]
-* More aobut xref:queries-aggregations/pagination.adoc[]
+* xref:directives/schema-configuration/index.adoc[] - Configure your schema and limit field accessibility.
+* xref:relationships/index.adoc[] - Learn more about relationships.
+* xref:filtering.adoc[] and xref:sorting.adoc[] - Find information about filtering and sortering.
+* More about xref:queries-aggregations/aggregations.adoc[].
+* More aobut xref:queries-aggregations/pagination.adoc[].
