@@ -40,6 +40,10 @@ type Query {
 }
 ----
 
+`posts` and `users` are fields provided by the entity API, while `postsConnection` and `usersConnection` are provided by the connections API.
+See xref:entity-and-connections-api.adoc[] for more information about the two.
+
+
 == Querying aggregations
 
 Aggregations on a type are provided in the field `aggregate` inside Connection:
