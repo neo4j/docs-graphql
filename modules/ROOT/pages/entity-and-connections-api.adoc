@@ -1,0 +1,174 @@
+= Entity API and connections API
+:description: This page introduces the entity and connections APIs and aims to shed light on their differences, when to use which API, and how they can be combined in practice.
+
+The entity and connections APIs are distinct APIs you can explore with the Apollo Server.
+Examples drawn from the auto-generated fields of the two APIs are used throughout the GraphQL Library documentation, but the differences and separations between them are implicit.
+This page aims to clarify these points, when to use which API, and how they can be combined in practice.
+
+For more information on auto-generated fields and how the GraphQL Library generates them based on the type definition schema that you provide, see the xref:index.adoc[Introduction] and the xref:getting-started/index.adoc[Getting started] pages.
+
+
+== Distinction
+
+The entity API allows simple traversal, while the connections API provides access to relationship properties and more complex features such as aggregations, and it is xref:integrations/relay-compatibility.adoc[relay-compatible].
+Knowing the difference allows you to make a more deliberate choice of when to use which API.
+
+Consider the following type definitions:
+
+[source, graphql, indent=0]
+----
+type Movie @node {
+    title: String!
+    released: Int
+    actors: [Person!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProps")
+}
+
+type Person @node {
+    name: String!
+    movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProps")
+}
+
+type ActedInProps @relationshipProperties {
+    roles: [String!]!
+}
+----
+
+The following sections outline the entity and connections APIs that are generated based on the definitions.
+
+[NOTE]
+====
+You can explore the different fields outlined on this page by putting the type definitions in a JavaScript file and firing up an Apollo server, as explained in the xref:getting-started/graphql-self-hosted.adoc[Self-hosting GraphQL] guide.
+====
+
+
+== Entity API
+
+The entity API provides the following fields for the `Movie` and `Person` `@node` types:
+
+[source, text, indent=0]
+----
+movies(...): [Movie!]!
+
+people(...): [Person!]!
+----
+
+Each entity can take four arguments:
+
+* `where`
+* `limit`
+* `offset`
+* `sort`
+
+While the `where` and `sort` arguments can be used for xref:filtering.adoc[filtering] and xref:sorting.adoc[sorting] query results, `limit` and `offset` allow for xref:queries-aggregations/pagination.adoc#pagination-offset-based[offset-based pagination].
+
+Also, note that: 
+
+* The `Movie` and `Person` entities are connected via the `ACTED_IN` relationship.
+* The `Movie` types have an `actors` field that is a list of `Person` entities, while the `Person` entities have a `movies` field that is a list of `Movie` entities.
+This means you can access other entities directly from an entity that is connected to them.
+* Alongside the `actors` field (for `Movie` entities) and the `movies` field (for `Person` entities), you can access the `actorsConnection` and `moviesConnection` fields, respectively.
+These fields are provided by the connections API, not the entity API, and you can combine both APIs at certain levels in the same query.
+
+A `Movie` entity also allows you to access the `title` and `released` fields, while a `Person` entity allows you to access its `name` field.
+For example:
+
+[source, graphql, indent=0]
+----
+query EntityApi {
+  movies(limit: 10, offset: 5) {
+    title
+    released
+    actors(limit: 2) {
+      name
+    }
+  }
+}
+----
+
+== Connections API
+
+The connections API follows a different approach.
+For each entity identified in the schema, it creates a connection field:
+
+[source, text, indent=0]
+----
+moviesConnection(...): MoviesConnection!
+
+peopleConnection(...): PeopleConnection!
+----
+
+Each connection can take four arguments:
+
+* `first`
+* `after`
+* `where`
+* `sort`
+
+While `where` and `sort` are used to xref:filtering.adoc[filter] and xref:sorting.adoc[sort] query results similarly to the entity API, `first` and `after` describe a pagination cursor that you can use in subsequent queries (see xref:queries-aggregations/pagination.adoc#pagination-cursor-based[cursor-based pagination]).
+
+Connections fields can access the following:
+
+* `aggregate`
+* `edges`
+* `pageInfo`
+* `totalCount`
+
+For examples on how to use the `aggregate` field, refer to xref:queries-aggregations/aggregations.adoc#_querying_aggregations[].
+
+`edges` represent a set of relationship connections.
+They let you access the fields `cursor`, which is the pagination cursor, and `node`, which makes the corresponding field provided by the entity API accessible.
+This means that you can, at this level, combine the entity API with the connections API.
+
+=== Nested connections
+
+Nested connections also let you access the relationship properties via the field `properties`.
+This does not work with top-level connections.
+
+For example:
+
+[source, graphql, indent=0]
+----
+query ConnectionApi {
+  moviesConnection(first: 10) {
+    edges {
+      node {
+        title
+        actorsConnection {
+          edges {
+            node {
+              name
+            }
+            properties {
+              roles
+            }
+          }
+        }
+      }aggregation.a
+      cursor
+    }
+    aggregate {
+      node {
+        title {
+          longest
+        }
+      }
+    }
+  }
+}
+----
+
+Note how `actorsConnection` is available under `moviesConnection.edges.node`, which is different from the top-level `peopleConnection`.
+It's a nested connection, and it lets you access the relationship property `roles`.
+
+`pageInfo` has the fields `startCursor`, `endCursor`, `hasPreviousPage` and `hasNextPage` which are used for xref:queries-aggregations/pagination.adoc#pagination-cursor-based[pagination].
+
+Finally, `totalCount` is the number of connection items.
+
+
+== Keep learning
+
+* xref:directives/schema-configuration/index.adoc[] - Configure your schema and limit field accessibility.
+* xref:relationships/index.adoc[] - Learn more about relationships.
+* xref:filtering.adoc[] and xref:sorting.adoc[] - Find information about filtering and sortering.
+* More about xref:queries-aggregations/aggregations.adoc[].
+* More aobut xref:queries-aggregations/pagination.adoc[].
