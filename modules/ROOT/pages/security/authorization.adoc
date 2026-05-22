@@ -181,7 +181,8 @@ type Post @node @authorization(validate: [
 
 === A note on CREATE_RELATIONSHIP and DELETE_RELATIONSHIP
 
-Creating or deleting a relationship targets both ends of the relationship, therefore the `CREATE_RELATIONSHIP` and `DELETE_RELATIONSHIP` validation rules will run for both target and source node.
+Creating or deleting a relationship affects both ends of the relationship.
+This means that the `CREATE_RELATIONSHIP` and `DELETE_RELATIONSHIP` validation rules apply to both the source and the target node.
 Note that for `CREATE_RELATIONSHIP` only the `AFTER` validation applies for the source node.
 
 For example, consider a `Post` type and a `User` type both with CREATE_RELATIONSHIP validation rules for BEFORE and AFTER:
