@@ -175,9 +175,62 @@ type Post @node @authorization(validate: [
 ]) {
     title: String!
     content: String!
-    author: User! @relationship(type: "AUTHORED", direction: IN)
+    author: User @relationship(type: "AUTHORED", direction: IN)
 }
 ----
+
+=== A note on CREATE_RELATIONSHIP and DELETE_RELATIONSHIP
+
+Creating or deleting a relationship affects both ends of the relationship.
+This means that the `CREATE_RELATIONSHIP` and `DELETE_RELATIONSHIP` validation rules apply to both the source and the target node.
+Note that for `CREATE_RELATIONSHIP` only the `AFTER` validation applies for the source node.
+
+For example, consider a `Post` type and a `User` type both with CREATE_RELATIONSHIP validation rules for BEFORE and AFTER:
+* Only an existing author of the post can add another co-author. 
+* Only a user which is not locked can be added as an author to a post.
+* 
+
+The rules for each type can be combined into one but we are separating them here for clarity:
+
+[source, graphql, indent=0]
+----
+type Post @node @authorization(validate: [
+    { operations: [CREATE_RELATIONSHIP], when: [BEFORE], where: { node: { authors: { some: { id: { eq: "$jwt.sub" } } } } } }  <1>
+    { operations: [CREATE_RELATIONSHIP], when: [AFTER], where: { node: { authors: { some: { id: { eq: "$jwt.sub" } } } } } }   <2>
+]) {
+    title: String!
+    content: String!
+    authors: [User!]! @relationship(type: "AUTHORED", direction: IN)
+}
+type User @node @authorization(validate: [
+    { operations: [CREATE_RELATIONSHIP], when: [BEFORE], where: { node: { locked: { eq: false } } } }               <3>
+    { operations: [CREATE_RELATIONSHIP], when: [AFTER], where: { node: { locked: { eq: false } } } }                <4>
+]) {
+    id: ID!
+    locked: Boolean!
+}
+----
+<1> Rule 1
+<2> Rule 2
+<3> Rule 3
+<4> Rule 4
+
+When executing the following query, rules 2, 3, and 4 are applied:
+
+[source, graphql, indent=0]
+----
+mutation {
+    createPosts(
+        input: [{ title: "My Post", content: "Amazing content", authors: { connect: { where: { node: { id: { eq: "some-id" } } } } } }]
+    ) {
+        posts {
+            title
+        }
+    }
+}
+----
+
+Rule 1 isn't applied because the relationship has not been created yet, so there is no author of the post to check the ID of.
 
 == Authorization on fields 
 
