@@ -17,9 +17,26 @@ on:
       - completed
 
 jobs:
-  publish-docs:
-    # Uncomment this if statement to deploy only when the PR builds cleanly
-    # if: github.event.workflow_run.conclusion == 'success'
+  # [Optional] Restrict automatic deployment to PRs from the upstream repo
+  # For fork PRs, requires manual approval via the "preview" environment.
+  # For PRs from the main repository this job is skipped and deploy-docs runs immediately.
+  # Setup: create a "preview" environment in Settings → Environments with required reviewers.
+  # approve-fork:
+  #   if: github.event.workflow_run.head_repository.full_name != github.repository
+  #   environment: preview
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Fork PR approved for deployment
+  #       run: echo "Approved"
+
+  deploy-docs:
+    # needs: [approve-fork]
+    # Run when approve-fork succeeded (fork, approved) or was skipped (non-fork).
+    # Uncomment the conclusion check to deploy only when the PR builds cleanly:
+    # && github.event.workflow_run.conclusion == 'success'
+    # if: |
+    #   always() &&
+    #   (needs.approve-fork.result == 'success' || needs.approve-fork.result == 'skipped')
 
     runs-on: ubuntu-latest
 
@@ -34,7 +51,7 @@ jobs:
             var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               run_id: ${{ env.RUN_ID }},
+               run_id: process.env.RUN_ID,
             });
 
             var matchArtifactDocs = artifacts.data.artifacts.filter((artifact) => {
@@ -69,9 +86,34 @@ jobs:
           echo "top-dir=$root" >> $GITHUB_OUTPUT
 
       - id: unzip-changelog
-        if: ${{ hashFiles('changelog.zip') != '' }}
-        run: unzip changelog.zip
-      
+        name: Unzip changelog artifact
+        if: ${{ steps.find-changelog.outputs.has-changelog == 'true' }}
+        env:
+          ARTIFACT_DIR: ${{ runner.temp }}/artifacts/changelog
+        run: |
+          cd "$ARTIFACT_DIR"
+          unzip changelog.zip
+
+      # The changelog file is built from untrusted PR content and its contents
+      # are posted to the PR as a comment. A malicious artifact could make
+      # `changelog` a symlink pointing at an arbitrary file the runner can read,
+      # turning the comment step into an arbitrary-file-read. Reject anything
+      # that isn't a plain regular file before we read it.
+      - id: validate-changelog
+        name: Validate changelog is a regular file
+        if: ${{ steps.find-changelog.outputs.has-changelog == 'true' }}
+        env:
+          CHANGELOG_FILE: ${{ runner.temp }}/artifacts/changelog/changelog
+        run: |
+          if [ -L "$CHANGELOG_FILE" ]; then
+            echo "Security Alert: changelog is a symlink — refusing!"
+            exit 1
+          fi
+          if [ ! -f "$CHANGELOG_FILE" ]; then
+            echo "changelog missing or not a regular file"
+            exit 1
+          fi
+
       - id: get-deploy-id
         run: |
           deployid=$(<deployid)
