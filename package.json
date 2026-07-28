@@ -39,6 +39,9 @@
     "express": "5.2.1",
     "nodemon": "3.1.14"
   },
+  "overrides": {
+    "js-yaml": "4.3.0"
+  },
   "nodemonConfig": {
     "watch": [
       "**/modules/**",
