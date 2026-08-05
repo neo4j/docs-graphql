@@ -299,7 +299,7 @@ type User @node {
     id: ID!
     username: String!
     password: String!
-        @authorization(validate: [{ operations: [UPDATE], where: { jwt: { roles: { includes: "admin" } } } }])
+        @authorization(validate: [{ operations: [READ, UPDATE], where: { node: { id: { eq: "$jwt.sub" } } } }])}])
         @sortable(byValue: false)
         @filterable(byValue: false, byAggregate: false)
 }
