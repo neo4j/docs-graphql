@@ -273,6 +273,40 @@ However, consider the following query:
 This will require a valid JWT to have been provided with the request, and the matching users will be filtered down according to the JWT subject.
 The same applies for attempting to update the `password` field, the update will only apply to the user matching the JWT.
 
+[WARNING]
+====
+Field-level `@authorization` *does not* protect a field when it is used in a `where` filter or a `sort` argument.
+
+For example, given the type definition above, the following query is not protected by `@authorization`, even without a valid JWT:
+
+[source, graphql, indent=0]
+----
+query {
+    users(where: { password: { startsWith: "$2b$10$a" } }) {
+        id
+    }
+}
+----
+
+A non-empty result confirms the guess is correct, and an attacker can repeat this one character at a time to reconstruct the entire field value.
+Sorting on the field (`sort: [{ password: ASC }]`) similarly leaks the relative ordering of every value.
+
+To prevent a protected field from being filtered or sorted on, add the xref:directives/schema-configuration/field-configuration.adoc#_filterable[`@filterable`] and xref:directives/schema-configuration/field-configuration.adoc#_sortable[`@sortable`] directive.
+
+[source, graphql, indent=0]
+----
+type User @node {
+    id: ID!
+    username: String!
+    password: String!
+        @authorization(validate: [{ operations: [READ, UPDATE], where: { node: { id: { eq: "$jwt.sub" } } } }])}])
+        @sortable(byValue: false)
+        @filterable(byValue: false, byAggregate: false)
+}
+----
+
+====
+
 
 == Authorization without authentication
 
