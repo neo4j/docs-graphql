@@ -13,6 +13,12 @@ These filtering rules can only be used to filter against the properties of the n
 
 All subscriptions authorization rules have an implied requirement for authentication, given that the rules are normally evaluated against values in the JWT payload.
 
+[NOTE]
+====
+Subscriptions run over a WebSocket connection, so there is no `Authorization` header to populate the JWT payload from.
+See xref:security/configuration.adoc#_subscriptions[Subscriptions] for how clients send a token and how a server owner can inject claims directly for subscription connections.
+====
+
 == Filtering rules
 
 Filtering rules prevent events which contain information that users don't have access to from reaching them - they will receive no indication that this is the case.
