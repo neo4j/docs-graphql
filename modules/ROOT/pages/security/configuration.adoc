@@ -189,7 +189,7 @@ The Neo4j GraphQL Library then decodes and verifies this token in exactly the sa
 ==== Server-injected claims
 
 A server owner can also bypass client-sent tokens altogether and inject already-verified claims directly into the `jwt` field of the WebSocket context.
-This is useful, for example, for internal or trusted connections where the server itself determines the caller's identity rather than trusting a token supplied by the client.
+This is useful, for example, if you need to support an authentication mechanism not supported by the Neo4j GraphQL library. You can perform the verification within the context and then pass the trusted claims to the Neo4j GraphQL library.
 
 [WARNING]
 ====
