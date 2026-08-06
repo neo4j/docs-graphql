@@ -8,16 +8,82 @@ Data APIs created in Aura Console currently do not support the `subscriptionsAut
 ====
 
 Subscriptions require their own authorization rules, which are configured with the `@subscriptionsAuthorization` directive.
-These rules are different to authorization rules for queries and mutations because they use filtering rules available for subscriptions events. 
+These rules are different to authorization rules for queries and mutations because they use filtering rules available for subscriptions events.
 These filtering rules can only be used to filter against the properties of the nodes impacted by the events.
+
+See xref:subscriptions/index.adoc[Subscriptions] for how to set up subscriptions in general.
 
 All subscriptions authorization rules have an implied requirement for authentication, given that the rules are normally evaluated against values in the JWT payload.
 
-[NOTE]
+== Authenticating subscriptions
+
+Subscription operations never go through the Apollo/HTTP `context` function.
+They are served over a WebSocket connection and handled entirely by the WebSocket server, so they run the `context` function passed to `useServer` from `graphql-ws` instead.
+Because of this, there is no `Authorization` header to read a token from once the connection is established — the token (or an already-decoded set of claims) has to be passed into that WebSocket context some other way.
+
+=== Clients sending a token
+
+Clients send their token as part of `connectionParams` when the WebSocket connection is created.
+This is the expected channel for a client to authenticate a subscription — it plays the same role that the `Authorization` header plays for a regular HTTP request:
+
+[source, javascript, indent=0]
+----
+import { createClient } from "graphql-ws";
+
+const client = createClient({
+    url: "ws://localhost:4000/graphql",
+    connectionParams: () => ({
+        // Send the exact same JWT here that you would otherwise put in an
+        // `Authorization` header — `connectionParams` is the WebSocket
+        // equivalent of a request header.
+        token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE3ODU5MjQ2OTJ9.pDddhOtjvuV9VPR3-0XGoQ5dybwMobVB2H72eaPgeG8",
+    }),
+});
+----
+
+On the server, no extra mapping is required to pick this up — the Neo4j GraphQL Library reads the token directly from `connectionParams`, so the default `context` function shown in xref:subscriptions/getting-started.adoc[Getting started] is already enough:
+
+[source, javascript, indent=0]
+----
+const serverCleanup = useServer(
+    {
+        schema,
+        context: (ctx) => ctx,
+    },
+    wsServer
+);
+----
+
+The Neo4j GraphQL Library then decodes and verifies this token in exactly the same way as it does for HTTP requests, see xref:security/configuration.adoc#_encoded_jwts[].
+
+=== Server-injected claims
+
+A server owner can also bypass client-sent tokens altogether and inject already-verified claims directly into the WebSocket context.
+This is useful, for example, if you need to support an authentication mechanism not supported by the Neo4j GraphQL library. You can perform the verification within the context and then pass the trusted claims to the Neo4j GraphQL library.
+
+[WARNING]
 ====
-Subscriptions run over a WebSocket connection, so there is no `Authorization` header to populate the JWT payload from.
-See xref:security/configuration.adoc#_subscriptions[Subscriptions] for how clients send a token and how a server owner can inject claims directly for subscription connections.
+Claims injected this way are trusted implicitly by the Neo4j GraphQL Library — they are *not* decoded or verified again.
+Only use this pattern for claims that the server owner has already verified through some other mechanism.
 ====
+
+[source, javascript, indent=0]
+----
+const serverCleanup = useServer(
+    {
+        schema,
+        context: (ctx) => {
+            return {
+                ...ctx,
+                jwt: {
+                    roles: ["admin"],
+                },
+            };
+        },
+    },
+    wsServer
+);
+----
 
 == Filtering rules
 

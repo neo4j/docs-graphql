@@ -140,83 +140,13 @@ const { url } = await startStandaloneServer(server, {
 `customImplementation` is a placeholder for a function that provides a decoded JWT.
 Using `jwt` instead of `token` in the `context` informs the Neo4j GraphQL Library that it doesn't need to decode it.
 
-=== Subscriptions
-
-Subscriptions are served over a WebSocket connection rather than a regular HTTP request, so there is no `Authorization` header to read from once the connection is established.
-Instead, the token (or an already-decoded set of claims) is passed into the context object returned by the `context` function given to `useServer` from `graphql-ws`.
-
-==== Clients sending a token
-
-Clients send their token as part of `connectionParams` when the WebSocket connection is created.
-This is the expected channel for a client to authenticate a subscription — it plays the same role that the `Authorization` header plays for a regular HTTP request:
-
-[source, javascript, indent=0]
-----
-import { createClient } from "graphql-ws";
-
-const client = createClient({
-    url: "ws://localhost:4000/graphql",
-    connectionParams: () => ({
-        // Send the exact same JWT here that you would otherwise put in an
-        // `Authorization` header — `connectionParams` is the WebSocket
-        // equivalent of a request header.
-        token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE3ODU5MjQ2OTJ9.pDddhOtjvuV9VPR3-0XGoQ5dybwMobVB2H72eaPgeG8",
-    }),
-});
-----
-
-On the server, `connectionParams` are exposed on the connection context (`ctx`) that `graphql-ws` passes into the `context` function.
-Extract the token from there and assign it to the `token` field, exactly as `req.headers.authorization` is assigned for a regular HTTP request:
-
-[source, javascript, indent=0]
-----
-const serverCleanup = useServer(
-    {
-        schema,
-        context: (ctx) => {
-            return {
-                ...ctx,
-                token: ctx.connectionParams?.token,
-            };
-        },
-    },
-    wsServer
-);
-----
-
-The Neo4j GraphQL Library then decodes and verifies this token in exactly the same way as it does for HTTP requests, see xref:#_encoded_jwts[].
-
-==== Server-injected claims
-
-A server owner can also bypass client-sent tokens altogether and inject already-verified claims directly into the `jwt` field of the WebSocket context.
-This is useful, for example, for internal or trusted connections where the server itself determines the caller's identity rather than trusting a token supplied by the client.
-
 [WARNING]
 ====
-Claims injected this way are trusted implicitly by the Neo4j GraphQL Library — they are *not* decoded or verified again.
-Only use this pattern for claims that the server owner has already verified through some other mechanism.
+Claims passed in this way are trusted implicitly by the Neo4j GraphQL Library — they are *not* decoded or verified again.
+Only use this pattern for claims that have already been verified through some other mechanism.
 ====
 
-[source, javascript, indent=0]
-----
-const serverCleanup = useServer(
-    {
-        schema,
-        context: (ctx) => {
-            return {
-                ...ctx,
-                // JWT set by the server owner (trusted) — the sanctioned channel
-                // for a developer-injected identity on subscriptions. These claims
-                // must already be verified by the server owner.
-                jwt: {
-                    roles: ["admin"],
-                },
-            };
-        },
-    },
-    wsServer
-);
-----
+For how JWTs are authenticated on subscriptions specifically, see xref:security/subscriptions-authorization.adoc#_authenticating_subscriptions[Authenticating subscriptions].
 
 == Adding JWT claims
 
