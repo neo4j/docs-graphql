@@ -205,9 +205,6 @@ const serverCleanup = useServer(
         context: (ctx) => {
             return {
                 ...ctx,
-                // JWT set by the server owner (trusted) — the sanctioned channel
-                // for a developer-injected identity on subscriptions. These claims
-                // must already be verified by the server owner.
                 jwt: {
                     roles: ["admin"],
                 },
