@@ -18,15 +18,31 @@ All subscriptions authorization rules have an implied requirement for authentica
 == Authenticating subscriptions
 
 Subscription operations never go through the Apollo/HTTP `context` function.
-They are served over a WebSocket connection and handled entirely by the WebSocket server, so they run the `context` function passed to `useServer` from `graphql-ws` instead.
+They are served over a WebSocket connection and handled entirely by the WebSocket server, so authentication has to happen in the context function of whichever WebSocket server implementation is being used — for example, the `context` function passed to `useServer` from `graphql-ws`.
 Because of this, there is no `Authorization` header to read a token from once the connection is established.
 
 Just as with regular HTTP requests, the Neo4j GraphQL Library accepts both xref:security/configuration.adoc#_encoded_jwts[encoded] and xref:security/configuration.adoc#_decoded_jwts[decoded] JWTs on subscription connections — only the channel they travel over is different.
 
 === Encoded JWTs: clients sending a token
 
-Clients send their token as part of `connectionParams` when the WebSocket connection is created.
-This is the expected channel for a client to authenticate a subscription — it plays the same role that the `Authorization` header plays for a regular HTTP request:
+On the server, no extra mapping is required to authenticate a token sent this way — the Neo4j GraphQL Library reads the `token` directly from `connectionParams`, so the default `context` function shown in xref:subscriptions/getting-started.adoc[Getting started] is already enough:
+
+[source, javascript, indent=0]
+----
+const serverCleanup = useServer(
+    {
+        schema,
+        context: (ctx) => ctx,
+    },
+    wsServer
+);
+----
+
+The Neo4j GraphQL Library then decodes and verifies this token in exactly the same way as it does for xref:security/configuration.adoc#_encoded_jwts[encoded JWTs on HTTP requests].
+
+On the client, the token is sent as part of `connectionParams` when the WebSocket connection is created.
+This is the expected channel for a client to authenticate a subscription — it plays the same role that the `Authorization` header plays for a regular HTTP request.
+The following example uses `graphql-ws`, but this is just one option — any WebSocket client library that supports sending `connectionParams` can be used the same way:
 
 [source, javascript, indent=0]
 ----
@@ -42,21 +58,6 @@ const client = createClient({
     }),
 });
 ----
-
-On the server, no extra mapping is required to pick this up — the Neo4j GraphQL Library reads the `token` directly from `connectionParams`, so the default `context` function shown in xref:subscriptions/getting-started.adoc[Getting started] is already enough:
-
-[source, javascript, indent=0]
-----
-const serverCleanup = useServer(
-    {
-        schema,
-        context: (ctx) => ctx,
-    },
-    wsServer
-);
-----
-
-The Neo4j GraphQL Library then decodes and verifies this token in exactly the same way as it does for xref:security/configuration.adoc#_encoded_jwts[encoded JWTs on HTTP requests].
 
 === Decoded JWTs: server-injected claims
 
@@ -75,17 +76,19 @@ const serverCleanup = useServer(
     {
         schema,
         context: (ctx) => {
+            const jwt = customImplementation(ctx);
+
             return {
                 ...ctx,
-                jwt: {
-                    roles: ["admin"],
-                },
+                jwt,
             };
         },
     },
     wsServer
 );
 ----
+
+`customImplementation` is a placeholder for a function that provides a decoded JWT, in the same way as it does for xref:security/configuration.adoc#_decoded_jwts[decoded JWTs on HTTP requests] — for example, verifying a token found elsewhere on `ctx` using a mechanism not supported by the Neo4j GraphQL Library, and returning the resulting claims, such as `{ sub: "user1234" }`.
 
 == Filtering rules
 
