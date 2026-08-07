@@ -144,7 +144,7 @@ Using `jwt` instead of `token` in the `context` informs the Neo4j GraphQL Librar
 [NOTE]
 ====
 When passing in a decoded JWT, the Neo4j GraphQL Library does not perform any claim mapping.
-The claim path resolution normally handled by the `@jwtClaim` directive is not applied, so the server administrator is responsible for providing a decoded JWT whose payload already matches the shape expected by the `@jwt` type.
+The claim path resolution normally handled by the <<jwtclaim, `@jwtClaim`>> directive is not applied, so the server administrator is responsible for providing a decoded JWT whose payload already matches the shape expected by the `@jwt` type.
 ====
 
 == Adding JWT claims
@@ -182,6 +182,7 @@ The type name `JWT` is not mandatory.
 You can use any name as long as it is decorated with the `@jwt` directive.
 ====
 
+[#jwtclaim]
 === `@jwtClaim`
 
 ==== Definition
