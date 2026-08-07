@@ -120,6 +120,7 @@ interface JwtPayload {
 Do not pass in the header or the signature.
 ====
 
+[#decoded-jwts]
 === Decoded JWTs
 
 A decoded JWT is passed to the context in a similar way that an encoded JWT is.
@@ -139,6 +140,12 @@ const { url } = await startStandaloneServer(server, {
 
 `customImplementation` is a placeholder for a function that provides a decoded JWT.
 Using `jwt` instead of `token` in the `context` informs the Neo4j GraphQL Library that it doesn't need to decode it.
+
+[NOTE]
+====
+When passing in a decoded JWT, the Neo4j GraphQL Library does not perform any claim mapping.
+The claim path resolution normally handled by the `@jwtClaim` directive is not applied, so the server administrator is responsible for providing a decoded JWT whose payload already matches the shape expected by the `@jwt` type.
+====
 
 == Adding JWT claims
 
@@ -240,5 +247,11 @@ type JWT @jwt {
 [NOTE]
 ====
 The `path` must be escaped twice: once for GraphQL and once for `dot-prop`, which is used under the hood to resolve the path.
+====
+
+[NOTE]
+====
+`@jwtClaim` path resolution is only applied when the Neo4j GraphQL Library decodes the token itself (that is, when using the `token` context field).
+When passing in a <<decoded-jwts, decoded JWT>> via the `jwt` context field, this mapping is not performed, and the server administrator is responsible for providing a payload that already matches the shape expected by the `@jwt` type.
 ====
 
