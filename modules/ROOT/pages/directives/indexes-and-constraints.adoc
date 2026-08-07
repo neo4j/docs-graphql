@@ -231,7 +231,7 @@ The optional field `maxPhraseLength` limits the number of characters allowed in 
 When set, any query by phrase whose `phrase` argument is longer than this limit is rejected with an error before the phrase is forwarded to the GenAI plugin, so no embedding is generated for it.
 This lets server owners cap the cost that clients can incur against their GenAI provider.
 The value must be a positive integer, and length is measured in characters (Unicode code points).
-It has no effect on a query by vector index.
+Because it only applies to a query by phrase, `maxPhraseLength` can only be set on an index that also defines a `provider`; setting it on a query-by-vector index (one without a `provider`) is a schema build error.
 
 
 === Usage
