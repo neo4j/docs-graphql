@@ -139,7 +139,7 @@ main();
 
 == GraphQL subscriptions
 
-With the previous server running, the available subscriptions are set for `Movie` and `Actor`. 
+With the previous server running, the available subscriptions are set for `Movie` and `Actor`.
 You can subscribe to new movies created with the following statement:
 
 [source, graphql, indent=0]
@@ -153,7 +153,7 @@ subscription {
 }
 ----
 
-With that, any new movie created with the matching title will trigger a subscription. 
+With that, any new movie created with the matching title will trigger a subscription.
 You can try this with the following query:
 
 [source, graphql, indent=0]
@@ -166,3 +166,42 @@ mutation {
     }
 }
 ----
+
+== Connecting a client
+
+To run subscriptions from a client, connect to the server with a `graphql-ws` client rather than a regular HTTP GraphQL client:
+
+[source, bash]
+----
+npm i --save graphql-ws
+----
+
+[source, javascript, indent=0]
+----
+import { createClient } from "graphql-ws";
+
+const client = createClient({
+    url: "ws://localhost:4000/graphql",
+});
+
+const dispose = client.subscribe(
+    {
+        query: `
+            subscription {
+                movieCreated(where: { title: { eq: "The Matrix" } }) {
+                    createdMovie {
+                        title
+                    }
+                }
+            }
+        `,
+    },
+    {
+        next: (data) => console.log(data),
+        error: (err) => console.error(err),
+        complete: () => console.log("Subscription complete"),
+    }
+);
+----
+
+For how to authenticate this connection, see xref:security/subscriptions-authorization.adoc#_authenticating_subscriptions[Authenticating subscriptions].

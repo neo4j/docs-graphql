@@ -140,6 +140,14 @@ const { url } = await startStandaloneServer(server, {
 `customImplementation` is a placeholder for a function that provides a decoded JWT.
 Using `jwt` instead of `token` in the `context` informs the Neo4j GraphQL Library that it doesn't need to decode it.
 
+[WARNING]
+====
+Claims passed in this way are trusted implicitly by the Neo4j GraphQL Library — they are *not* decoded or verified again.
+Only use this pattern for claims that have already been verified through some other mechanism.
+====
+
+For how JWTs are authenticated on subscriptions specifically, see xref:security/subscriptions-authorization.adoc#_authenticating_subscriptions[Authenticating subscriptions].
+
 == Adding JWT claims
 
 By default, filtering is available on https://www.rfc-editor.org/rfc/rfc7519#section-4.1[the registered claim names] in the JWT specification.
