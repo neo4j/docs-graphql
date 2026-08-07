@@ -19,9 +19,11 @@ All subscriptions authorization rules have an implied requirement for authentica
 
 Subscription operations never go through the Apollo/HTTP `context` function.
 They are served over a WebSocket connection and handled entirely by the WebSocket server, so they run the `context` function passed to `useServer` from `graphql-ws` instead.
-Because of this, there is no `Authorization` header to read a token from once the connection is established — the token (or an already-decoded set of claims) has to be passed into that WebSocket context some other way.
+Because of this, there is no `Authorization` header to read a token from once the connection is established.
 
-=== Clients sending a token
+Just as with regular HTTP requests, the Neo4j GraphQL Library accepts both xref:security/configuration.adoc#_encoded_jwts[encoded] and xref:security/configuration.adoc#_decoded_jwts[decoded] JWTs on subscription connections — only the channel they travel over is different.
+
+=== Encoded JWTs: clients sending a token
 
 Clients send their token as part of `connectionParams` when the WebSocket connection is created.
 This is the expected channel for a client to authenticate a subscription — it plays the same role that the `Authorization` header plays for a regular HTTP request:
@@ -41,7 +43,7 @@ const client = createClient({
 });
 ----
 
-On the server, no extra mapping is required to pick this up — the Neo4j GraphQL Library reads the token directly from `connectionParams`, so the default `context` function shown in xref:subscriptions/getting-started.adoc[Getting started] is already enough:
+On the server, no extra mapping is required to pick this up — the Neo4j GraphQL Library reads the `token` directly from `connectionParams`, so the default `context` function shown in xref:subscriptions/getting-started.adoc[Getting started] is already enough:
 
 [source, javascript, indent=0]
 ----
@@ -54,11 +56,11 @@ const serverCleanup = useServer(
 );
 ----
 
-The Neo4j GraphQL Library then decodes and verifies this token in exactly the same way as it does for HTTP requests, see xref:security/configuration.adoc#_encoded_jwts[].
+The Neo4j GraphQL Library then decodes and verifies this token in exactly the same way as it does for xref:security/configuration.adoc#_encoded_jwts[encoded JWTs on HTTP requests].
 
-=== Server-injected claims
+=== Decoded JWTs: server-injected claims
 
-A server owner can also bypass client-sent tokens altogether and inject already-verified claims directly into the WebSocket context.
+A server owner can also bypass client-sent tokens altogether and inject an already-decoded set of claims directly into the WebSocket context — the subscriptions equivalent of passing a xref:security/configuration.adoc#_decoded_jwts[decoded JWT] on an HTTP request.
 This is useful, for example, if you need to support an authentication mechanism not supported by the Neo4j GraphQL library. You can perform the verification within the context and then pass the trusted claims to the Neo4j GraphQL library.
 
 [WARNING]
