@@ -227,12 +227,6 @@ input VectorIndexInput {
 If the optional field `provider` is set, the type is used for a query by phrase, otherwise for a query by vector.
 Allowed values for the `provider` field are defined by the available link:https://neo4j.com/docs/cypher-manual/current/genai-integrations/#ai-providers[GenAI providers].
 
-The optional field `maxPhraseLength` limits the number of characters allowed in a query phrase.
-When set, any query by phrase whose `phrase` argument is longer than this limit is rejected with an error before the phrase is forwarded to the GenAI plugin, so no embedding is generated for it.
-This lets server owners cap the cost that clients can incur against their GenAI provider.
-The value must be a positive integer, and length is measured in characters (Unicode code points).
-Because it only applies to a query by phrase, `maxPhraseLength` can only be set on an index that also defines a `provider`; setting it on a query-by-vector index (one without a `provider`) is a schema build error.
-
 
 === Usage
 
@@ -382,3 +376,5 @@ type Product @node @vector(indexes: [{
 
 With this configuration, a `searchByPhrase` query whose `phrase` argument is longer than 100 characters is rejected with an error before any embedding is generated, and no request is made to the GenAI provider.
 Phrases of 100 characters or fewer are unaffected.
+
+Because it only applies to a query by phrase, `maxPhraseLength` can only be set on an index that also defines a `provider`; setting it on a query-by-vector index (one without a `provider`) is a schema build error.
