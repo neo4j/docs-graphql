@@ -101,6 +101,37 @@ This is only evaluated under the following circumstances:
 * The `password` field is set on either `create` or `update`.
 * The `password` field is present in a selection set.
 
+[WARNING]
+====
+Field-level `@authentication` *does not* protect a field when it is used in a `where` filter or a `sort` argument.
+
+For example, given the type definition above, the following query is not protected by `@authentication`, even without a valid token:
+
+[source, graphql, indent=0]
+----
+query {
+    users(where: { password: { startsWith: "$2b$10$a" } }) {
+        id
+    }
+}
+----
+
+A non-empty result confirms the guess is correct, and an attacker can repeat this one character at a time to reconstruct the entire field value.
+Sorting on the field (`sort: [{ password: ASC }]`) similarly leaks the relative ordering of every value.
+
+To prevent a protected field from being filtered or sorted on, add the xref:directives/schema-configuration/field-configuration.adoc#_filterable[`@filterable`] and xref:directives/schema-configuration/field-configuration.adoc#_sortable[`@sortable`] directive.
+
+[source, graphql, indent=0]
+----
+type User @node {
+    id: ID!
+    name: String!
+    password: String! @authentication @sortable(byValue: false) @filterable(byValue: false, byAggregate: false)
+}
+----
+
+====
+
 
 == Additional verification
 

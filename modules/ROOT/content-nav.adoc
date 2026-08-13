@@ -7,6 +7,7 @@
 ** xref:getting-started/graphql-aura.adoc[]
 ** xref:getting-started/graphql-self-hosted.adoc[]
 * xref:getting-started/toolbox.adoc[]
+* xref:entity-and-connections-api.adoc[]
 
 
 * *Security*
