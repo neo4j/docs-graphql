@@ -377,4 +377,5 @@ type Product @node @vector(indexes: [{
 With this configuration, a `searchByPhrase` query whose `phrase` argument is longer than 100 characters is rejected with an error before any embedding is generated, and no request is made to the GenAI provider.
 Phrases of 100 characters or fewer are unaffected.
 
-Because it only applies to a query by phrase, `maxPhraseLength` can only be set on an index that also defines a `provider`; setting it on a query-by-vector index (one without a `provider`) is a schema build error.
+Because it only applies to a query by phrase, `maxPhraseLength` can only be set on an index that also defines a `provider`.
+Setting it on a query-by-vector index (one without a `provider`) results in a schema build error.
