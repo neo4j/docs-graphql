@@ -4,6 +4,8 @@ name: "Documentation Teardown"
 on:
   pull_request_target:
     branches:
+      - release
+      - 7.x
       - 6.x
       - 5.x
       - 4.x
