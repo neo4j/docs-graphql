@@ -74,6 +74,7 @@ See xref:security/configuration.adoc[Security > Configuration].
 Enable the `subscriptions` feature of the Neo4j GraphQL Library by setting it to `true`.
 It is also used to provide subscription settings. See xref:subscriptions/customize-cdc.adoc[Subscription engines].
 
+
 === Exclude deprecated fields
 
 If you are not using them, use `excludeDeprecatedFields` to disable the generation of various deprecated fields.
@@ -91,6 +92,7 @@ See xref:directives/indexes-and-constraints.adoc#_vector_index_search[`@vector`]
 Set `limitRequired` to `true` to require a `limit` argument for all read operations that return lists.
 This is useful to prevent unbounded queries that can lead to performance issues.
 See xref:security/avoid-unbounded-queries.adoc#_limit_required[Avoid unbounded queries > Require `limit` argument].
+
 
 === Unsafe escape options
 

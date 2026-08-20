@@ -8,11 +8,13 @@ These operations can be combined, enabling you to perform complex graph manipula
 
 This page demonstrates the various relationship operations available and how to use them effectively in your GraphQL schema through a sequence of scenarios and equivalent mutations to update "the City database".
 
+
 == Data model
 
 Consider the following data model graph:
 
-image::relationships/2-relationships-to-itself.png[title="Model of a Person node connected to Person nodes through KNOWS and HAS_FRIEND relationships."]
+image::relationships/2-relationships-to-itself.png[title="Model of a Person node connected to Person nodes through KNOWS and HAS_FRIEND relationships"]
+
 
 == Writing type definitions
 
@@ -31,7 +33,9 @@ type Friendship @relationshipProperties {
 }
 ----
 
+
 == Queries
+
 
 === `queryDirection`
 
@@ -136,6 +140,7 @@ Running the same query again now returns Alice in Bob's _friends_ list:
 }
 ----
 ====
+
 
 === Fetching your data using a connection query 
 
@@ -267,6 +272,7 @@ input PersonFriendsDeleteFieldInput {
 
 This section further illustrates the different operations and combinations between them through a sequence of scenarios and equivalent mutations to update the city database.
 
+
 === Create and Connect
 
 *_Scenario:_* 
@@ -342,6 +348,7 @@ mutation {
 ----
 ====
 
+
 === Update
 
 *_Scenario:_* 
@@ -392,8 +399,8 @@ mutation {
 ----
 ====
 
-=== Delete and Disconnect
 
+=== Delete and Disconnect
 
 *_Scenario:_* 
 _Alice notified everyone at the party that she moving away. 

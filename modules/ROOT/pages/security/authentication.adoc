@@ -99,7 +99,7 @@ type User @node {
 This is only evaluated under the following circumstances:
 
 * The `password` field is set on either `create` or `update`.
-* The `password` field is present in a selection set.
+* The `password` field is present in a GraphQL selection set.
 
 [WARNING]
 ====
@@ -135,8 +135,8 @@ type User @node {
 
 == Additional verification
 
-Additional checks against JWT claims can be performed together with authentication. 
-For instance, if it was a requirement that only users with the `admin` role can delete users:
+You can perform additional checks against JWT claims together with authentication. 
+For instance, if it is a requirement that only users with the `admin` role can delete users:
 
 [source, graphql, indent=0]
 ----

@@ -7,7 +7,7 @@
 Data APIs created in Aura Console currently do not support the `subscriptionsAuthorization` directive. 
 ====
 
-Subscriptions require their own authorization rules, which are configured with the `@subscriptionsAuthorization` directive.
+Subscriptions require their own authorization rules, which you can configure with the `@subscriptionsAuthorization` directive.
 These rules are different to authorization rules for queries and mutations because they use filtering rules available for subscriptions events. 
 These filtering rules can only be used to filter against the properties of the nodes impacted by the events.
 
@@ -15,8 +15,8 @@ All subscriptions authorization rules have an implied requirement for authentica
 
 == Filtering rules
 
-Filtering rules prevent events which contain information that users don't have access to from reaching them - they will receive no indication that this is the case.
-These rules are evaluated when the events are returned from the database, before they are broadcasted out to subscribing GraphQL clients.
+Filtering rules prevent events from being broadcasted to users who do not have access to the information contained in the events.
+The users don't receive an indication at all: the rules are evaluated when the events are returned from the database, before they are broadcasted to subscribing GraphQL clients.
 
 For instance, here is how to filter out `User` events which don't match the JWT of the user listening for events:
 
@@ -29,13 +29,13 @@ type User @node @subscriptionsAuthorization(filter: [
 }
 ----
 
-Filtering can be configured to only be performed on certain events:
+You can configure filtering to only be performed on certain events:
 
 * `CREATED`
 * `UPDATED`
 * `DELETED`
 
-For instance, to only require filtering for mutations to a type itself and not its relationships:
+For instance, to only require filtering for mutations of a type itself and not its relationships:
 
 [source, graphql, indent=0]
 ----
@@ -46,12 +46,14 @@ type User @node @subscriptionsAuthorization(filter: [
 }
 ----
 
+
 == Authorization without authentication
 
-Authentication is implicitly required for every authorization check by default, but this can be disabled on a per-rule basis.
-This could be the case, for instance, when a node has a property which flags whether the node should be public or not.
+Authentication is implicitly required for every authorization check by default.
+You can disable this behavior on a per-rule basis.
+This can be desirable, for instance, when a node has a property which flags whether the node should be public or not.
 
-For instance, in the case where some `Post` nodes are private whilst other `Post` nodes are public, here is how to set this up:
+In the case where some `Post` nodes are private whilst other `Post` nodes are public, here is how to set this up:
 
 [source, graphql, indent=0]
 ----

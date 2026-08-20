@@ -41,7 +41,7 @@ Alternatively, you can decode a token via a xref:#_jwks_endpoint[].
 
 ==== Symmetric secret
 
-To configure the library with a symmetric secret (e.g. "secret"), the following instantiation is required:
+To configure the library with a symmetric secret (e.g. "secret"), use the following instantiation:
 
 [source, typescript, indent=0]
 ----
@@ -57,7 +57,7 @@ new Neo4jGraphQL({
 
 ==== JWKS endpoint
 
-To configure the library to verify tokens against a JSON Web Key Set (JWKS) endpoint, for example "https://www.example.com/.well-known/jwks.json", the following instantiation is required:
+To configure the library to verify tokens against a JSON Web Key Set (JWKS) endpoint, for example "https://www.example.com/.well-known/jwks.json", use the following instantiation:
 
 [source, typescript, indent=0]
 ----
@@ -89,7 +89,7 @@ await startStandaloneServer(server, {
 });
 ----
 
-For example, a HTTP request with the following `authorization` header should look like this:
+For example, an HTTP request with the following `authorization` header should look like this:
 
 [source]
 ----

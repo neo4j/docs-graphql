@@ -21,6 +21,7 @@ This also applies if the directive has no arguments because `operations` default
 
 The following examples apply to the `@authentication` directive, and also any rules within an `@authorization` directive.
 
+
 == Query
 
 For a simple query, rules with `READ` in the operations are evaluated for any type being read:
@@ -36,6 +37,7 @@ query {
     }
 }
 ----
+
 
 === Connection
 
@@ -60,6 +62,7 @@ query {
     }
 }
 ----
+
 
 === Aggregation
 
@@ -97,7 +100,9 @@ query {
 }
 ----
 
+
 == Mutation
+
 
 === Create
 
@@ -117,6 +122,7 @@ mutation {
     }
 }
 ----
+
 
 === Delete
 
@@ -145,6 +151,7 @@ mutation {
 }
 ----
 
+
 === Update
 
 For a complex `update` mutation with many effects, a variety of rules is evaluated, as well as `READ` rules for the selection set:
@@ -168,6 +175,7 @@ mutation {
     }
 }
 ----
+
 
 == Subscription
 
