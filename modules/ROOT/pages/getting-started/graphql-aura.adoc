@@ -2,6 +2,7 @@
 
 This tutorial shows you how to create and use a GraphQL Data API in Aura Console.
 
+
 == Prerequisites
 
 Set up an AuraDB instance.
