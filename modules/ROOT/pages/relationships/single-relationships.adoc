@@ -173,7 +173,7 @@ mutation {
 
 === Deleting a single relationship
 
-Similarly to create operations, it is possible to delete the node on the single side of a single relationship as a nested operation when deleting the source node.
+You can delete the node on the single side of a single relationship as a nested operation when deleting the source node.
 
 .Deleting `Movie` and `Person` nodes that are connected via the `DIRECTED` relationship
 ====
@@ -200,7 +200,7 @@ mutation {
 However, the `disconnect` nested mutation is not available. 
 Therefore, if the intention is to delete the relationship, the disconnect must be performed from the "many" side of the relationship. 
 
-.Delete an existing DIRECTED relationship between a Movie and a Person node
+.Delete an existing `DIRECTED` relationship between a `Movie` and a `Person` node
 ====
 [source, graphql, indent=0]
 ----
@@ -225,16 +225,17 @@ mutation {
 
 == Cardinality limitations
 
-=== Exactly one relationship
+=== Exactly-one relationships
 
-Analyzing the model above, an observation is that it is impossible for a `Movie` to not have a director. 
-Therefore, you would ideally want to make the `director` field non-nullable.
+According to the xref:#_data_model[data model], it is impossible for a `Movie` to not have a director. 
+Ideally this would be reflected by making the `director` field non-nullable.
 
-Because of the current lack of constraints on relationship cardinality in the Neo4j database, it is not possible to enforce this cardinality of exactly one relationship which is why all single relationship fields must be nullable.
+Because of the current lack of constraints on relationship cardinality in the Neo4j database, it is not possible to enforce an exactly-one relationship which is why all single relationship fields must be nullable.
 
-=== At most one relationship
 
-A nullable single relationship field models a relationship of at most one relationship between any two nodes of those types.
+=== At-most-one relationship
+
+A nullable single relationship field models an at-most-one relationship between any two nodes of those types.
 
 In the context of multiple surfaces accessing the same Neo4j database through different APIs or direct database access, it is possible that what a GraphQL API models as a single relationship between two types ends up matching multiple relationships in the database.
 This is due to the current lack of constraints on relationship cardinality.
@@ -243,12 +244,10 @@ Even within the same GraphQL API surface, it is possible for a one-to-many relat
 
 Consider the following sample data:
 
-image::relationships/data/2Person-Movie-single-relationship.png[title="Disconnected nodes in the database (Left); The state of the database after running the following create and update operations (Right)"]
+image::relationships/data/2Person-Movie-single-relationship.png[title="Disconnected nodes and the same nodes with `DIRECTED` relationships"]
 
-.Create a Movie node and connect it to two Person nodes through the DIRECTED relationship
+.Connecting two `Person` nodes to a `Movie` node via the `DIRECTED` relationship
 ====
-The following query will connect the `Movie` node to both `Person` nodes through the `DIRECTED` relationship.
-
 [source, graphql, indent=0]
 ----
 mutation {
@@ -270,12 +269,12 @@ mutation {
 ----
 ====
 
-Querying for `Movies` and their `director` relationship fields returns only one object because of the type of the relationship in the GraphQL schema.
+Querying `Movies` and their `director` relationship fields returns only one object because of the type of the relationship in the GraphQL schema.
 If there are multiple relationships of the same type between the same two nodes, only one node is returned. 
 
-The node that is returned is not deterministic, meaning that it can be any of the nodes that are connected through that relationship.
+The node that is returned is not deterministic: it can be any of the nodes that are connected through that relationship.
 
-.Get Movie by title with related Person through the DIRECTED relationship
+.Querying a `Movie` by title and the now ambiguous director
 ====
 [source, graphql, indent=0]
 ----
@@ -289,7 +288,7 @@ query {
 }
 ----
 
-Assuming the sample data of this page, the result of the above query is either of the following two options:
+This results in either of the following:
 
 .Potential query result
 [source, javascript, indent=0]
