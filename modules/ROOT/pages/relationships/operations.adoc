@@ -552,7 +552,7 @@ When performing mutations, the nodes and relationships specified in the mutation
 That is when the `queryDirection` argument is relevant, as it determines whether the relationships between the matched nodes and their related nodes are taken into account in a directed or undirected fashion for the execution of the mutation.
 ====
 
-For asimilar mutation to <<top-level-delete-directed>> but with an `acquaintances` instead of `friends` relationship from Bob to Camilla, the outcome changes as follows:
+For a similar mutation to <<top-level-delete-directed>> but with an `acquaintances` instead of `friends` relationship from Bob to Camilla, the outcome changes as follows:
 
 .Top level delete with nested delete operation on an undirected relationship
 ====
