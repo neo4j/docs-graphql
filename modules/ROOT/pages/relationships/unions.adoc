@@ -144,7 +144,7 @@ To create the sample database data shown in the graph above, one approach is to 
 `User` Alice is connected through the `HAS_CONTENT` relationship to a `Blog` node with two `Post` nodes connected to it through the `HAS_POST` relationship.
 The relationship to the `Content` union can be created through a nested mutation at the same time.
 
-.Creatin `User` nodes with `HAS_CONTENT` relationships to `Blog` nodes
+.Creating `User` nodes with `HAS_CONTENT` relationships to `Blog` nodes
 ====
 [source, graphql, indent=0]
 ----

@@ -13,7 +13,7 @@ The only guarantee is that only one result is returned when querying across a si
 
 == Data model
 
-Cosnider the following graph where a `Person` can direct multiple movies but a `Movie` only has one director. 
+Consider the following graph where a `Person` can direct multiple movies but a `Movie` only has one director. 
 
 Conceptually this is a one-to-many relationship and the single relationship is represented by the `DIRECTED` type relationship field on the `Movie` type.
 
