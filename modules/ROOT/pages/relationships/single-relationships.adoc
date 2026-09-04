@@ -3,7 +3,7 @@
 :description: This page describes the ways to interact with a Neo4j single relationship in the GraphQL schema.
 
 Single relationships are relationships that are modeled as a non-list type field on either side of the relationship. 
-If both sides are non-list types the relationship is a xref:relationships/cardinality.adoc#_one_to_one_relationships[one-to-one] relationship, while if one side is a non-list type and the other side is a list type, the relationship is a xref:relationships/cardinality.adoc#_one_to_many_relationships[one-to-many] relationship.
+If both sides are non-list types the relationship is a xref:relationships/cardinality.adoc#_one_to_one_relationships[one-to-one] relationship and a xref:relationships/cardinality.adoc#_one_to_many_relationships[one-to-many] relationship otherwise.
 
 Neo4j databases do not currently support constraints on relationship cardinality. 
 However, one-to-one and one-to-many relationships can be modeled with a GraphQL schema and they are supported by the Neo4j GraphQL Library. 
@@ -13,13 +13,13 @@ The only guarantee is that only one result is returned when querying across a si
 
 == Data model
 
-Take the following graph as an example in which a `Person` can direct multiple movies but a `Movie` only has one director. 
+Consider the following graph where a `Person` can direct multiple movies but a `Movie` only has one director. 
 
 Conceptually this is a one-to-many relationship and the single relationship is represented by the `DIRECTED` type relationship field on the `Movie` type.
 
-image::relationships/2-relationship-types.png[title="Model of a Movie node connected to a Person node through two different relationship types: ACTED_IN and DIRECTED."]
+image::relationships/2-relationship-types.png[title="Model of a Movie node connected to a Person node through the `ACTED_IN` and `DIRECTED` relationships"]
 
-.Defining the node types with a one-to-many relationship of type DIRECTED between Person and Movie
+.Defining the `Person` and `Movie` nodes with the one-to-many relationship `DIRECTED`
 [source, graphql, indent=0]
 ----
 type Person @node {
@@ -34,13 +34,14 @@ type Movie @node {
 }
 ----
 
+
 == Querying single relationships
 
 Querying single relationships returns the data of a single node if there is a relationship, and null otherwise. 
 If the database contains multiple relationships of the same type, which is possible as a consequence of the Neo4j cardinality limitation, only one node is returned.
 See more details in <<_cardinality_limitations,Cardinality limitations>>.
 
-.Get Movie by title with related Person through the DIRECTED relationship
+.Get `Movie` nodes by title with related `Person` nodes via the `DIRECTED` relationship
 ====
 [source, graphql, indent=0]
 ----
@@ -55,11 +56,12 @@ query {
 ----
 ====
 
+
 === Filter by single relationships
 
 Single relationships (of a non-list type) can be used as filters in the `where` argument of a query.
 
-.Get Movie nodes filtered by the name of the director through the DIRECTED relationship
+.Get `Movie` nodes filtered by the name of the director via the `DIRECTED` relationship
 ====
 [source, graphql, indent=0]
 ----
@@ -71,12 +73,12 @@ query {
 ----
 ====
 
-=== Check relationship existence
 
-You can check the existence of a single relationship in the database by filtering for null values on the relationship field.  
+=== Check for relationship existence
 
+You can check the existence of a single relationship in the database by filtering for null values on the relationship field:
 
-.Get Movie nodes that have a DIRECTED relationship to a Person node 
+.Get `Movie` nodes with a `DIRECTED` relationship to a `Person` node 
 ====
 [source, graphql, indent=0]
 ----
@@ -95,13 +97,14 @@ Only a subset of the operations provided by the Neo4j GraphQL Library for relati
 
 At the moment only create and delete operations are supported on single relationships.
 
+
 === Creating a single relationship
 
-It is possible to create the node on the single side of a single relationship and connect it to the source node in the same operation, using the `create` nested mutation.
+It is possible to create the node on the single side of a single relationship and connect it to the source node in the same operation, using the `create` nested mutation:
 
-.Create a Movie node and connect it to an inline created Person node through the DIRECTED relationship
+.Creating a `Movie` node and connecting it to a `Person` node relationship in a single operation
 ====
-The following query will create both the `Movie` node and the `Person` node, and connect them through the `DIRECTED` relationship.
+The following query will create both the `Movie` node and the `Person` node, and connect them via the `DIRECTED` relationship.
 
 [source, graphql, indent=0]
 ----
@@ -124,9 +127,9 @@ mutation {
 
 However, the nested `connect` mutation is not available. 
 Therefore, if the node on the single side of a single relationship already exists, the relationship must be created from the "many" side of the relationship.
-This can imply a second operation.
+This can imply a second operation:
 
-.Create a Movie node and connect it to an existing Person node through the DIRECTED relationship
+.Creating a `Movie` node and connecting it to an existing `Person` node
 ====
 The following query will create the `Movie` node.
 
@@ -144,7 +147,7 @@ mutation {
 }
 ----
 
-Then, a second query can connect the two nodes through the `DIRECTED` relationship.
+Then, a second query can connect the two nodes via the `DIRECTED` relationship.
 
 [source, graphql, indent=0]
 ----
@@ -167,11 +170,12 @@ mutation {
 ----
 ====
 
+
 === Deleting a single relationship
 
-Similarly to create operations, it is possible to delete the node on the single side of a single relationship as a nested operation when deleting the source node.
+You can delete the node on the single side of a single relationship as a nested operation when deleting the source node.
 
-.Delete Movie and Person nodes that are connected through the DIRECTED relationship
+.Deleting `Movie` and `Person` nodes that are connected via the `DIRECTED` relationship
 ====
 The following query deletes the `Movie` node and the `Person` node if any is found by traversing the `DIRECTED` relationship.
 
@@ -196,7 +200,7 @@ mutation {
 However, the `disconnect` nested mutation is not available. 
 Therefore, if the intention is to delete the relationship, the disconnect must be performed from the "many" side of the relationship. 
 
-.Delete an existing DIRECTED relationship between a Movie and a Person node
+.Delete an existing `DIRECTED` relationship between a `Movie` and a `Person` node
 ====
 [source, graphql, indent=0]
 ----
@@ -221,16 +225,17 @@ mutation {
 
 == Cardinality limitations
 
-=== Exactly one relationship
+=== Exactly-one relationships
 
-Analyzing the model above, an observation is that it is impossible for a `Movie` to not have a director. 
-Therefore, you would ideally want to make the `director` field non-nullable.
+According to the xref:#_data_model[data model], it is impossible for a `Movie` to not have a director. 
+Ideally this would be reflected by making the `director` field non-nullable.
 
-Because of the current lack of constraints on relationship cardinality in the Neo4j database, it is not possible to enforce this cardinality of exactly one relationship which is why all single relationship fields must be nullable.
+Because of the current lack of constraints on relationship cardinality in the Neo4j database, it is not possible to enforce an exactly-one relationship which is why all single relationship fields must be nullable.
 
-=== At most one relationship
 
-A nullable single relationship field models a relationship of at most one relationship between any two nodes of those types.
+=== At-most-one relationship
+
+A nullable single relationship field models an at-most-one relationship between any two nodes of those types.
 
 In the context of multiple surfaces accessing the same Neo4j database through different APIs or direct database access, it is possible that what a GraphQL API models as a single relationship between two types ends up matching multiple relationships in the database.
 This is due to the current lack of constraints on relationship cardinality.
@@ -239,12 +244,10 @@ Even within the same GraphQL API surface, it is possible for a one-to-many relat
 
 Consider the following sample data:
 
-image::relationships/data/2Person-Movie-single-relationship.png[title="Disconnected nodes in the database (Left); The state of the database after running the following create and update operations (Right)"]
+image::relationships/data/2Person-Movie-single-relationship.png[title="Disconnected nodes and the same nodes with `DIRECTED` relationships"]
 
-.Create a Movie node and connect it to two Person nodes through the DIRECTED relationship
+.Connecting two `Person` nodes to a `Movie` node via the `DIRECTED` relationship
 ====
-The following query will connect the `Movie` node to both `Person` nodes through the `DIRECTED` relationship.
-
 [source, graphql, indent=0]
 ----
 mutation {
@@ -266,12 +269,12 @@ mutation {
 ----
 ====
 
-Querying for `Movies` and their `director` relationship fields returns only one object because of the type of the relationship in the GraphQL schema.
+Querying `Movies` and their `director` relationship fields returns only one object because of the type of the relationship in the GraphQL schema.
 If there are multiple relationships of the same type between the same two nodes, only one node is returned. 
 
-The node that is returned is not deterministic, meaning that it can be any of the nodes that are connected through that relationship.
+The node that is returned is not deterministic: it can be any of the nodes that are connected through that relationship.
 
-.Get Movie by title with related Person through the DIRECTED relationship
+.Querying a `Movie` by title and the now ambiguous director
 ====
 [source, graphql, indent=0]
 ----
@@ -285,7 +288,7 @@ query {
 }
 ----
 
-Assuming the sample data of this page, the result of the above query is either of the following two options:
+This results in either of the following:
 
 .Potential query result
 [source, javascript, indent=0]

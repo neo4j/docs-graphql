@@ -14,15 +14,17 @@ This section describes how to model and interact with relationships in your Grap
 * Learn about the concept of xref:relationships/single-relationships.adoc[single relationships].
 * See how to use xref:relationships/interfaces.adoc[interfaces] and xref:relationships/unions.adoc[unions] with relationships.
 
+
 == Data model
 
 Take the following graph as an example in which the `Person` and `Movie` types are connected by a single relationship type, `ACTED_IN`.
 The relationship has a property `roles` which describes the different roles that an actor played in a movie.
 
-image::relationships/relationship-with-properties.png[title="Model of a Movie node connected to a Person node through a relationship of type ACTED_IN, with a roles property."]
+image::relationships/relationship-with-properties.png[title="Model of a Movie node connected to a Person node through a relationship of type ACTED_IN, with a roles property"]
 
 
 == Writing type definitions
+
 
 === Nodes
 
@@ -42,11 +44,13 @@ type Movie @node {
 }
 ----
 
+
 === Relationships
 
 Define the relationships between the two types by adding special relationship fields using the xref::/directives/database-mapping.adoc#_relationship[`@relationship` directive].
 
-A `Person` can _act in_ multiple movies, and a `Movie` can have multiple actors. Conceptually this is a many-to-many relationship and you can model it by using list types for both relationship fields, on both sides of the relationship.
+A `Person` can _act in_ multiple movies, and a `Movie` can have multiple actors.
+Conceptually this is a many-to-many relationship and you can model it by using list types for both relationship fields, on both sides of the relationship.
 
 .Defining the relationship fields
 [source, graphql, indent=0]
@@ -63,7 +67,9 @@ type Movie @node {
 }
 ----
 
+
 == Anatomy of a relationship
+
 
 === Relationship direction
 

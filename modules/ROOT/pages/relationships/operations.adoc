@@ -8,17 +8,19 @@ These operations can be combined, enabling you to perform complex graph manipula
 
 This page demonstrates the various relationship operations available and how to use them effectively in your GraphQL schema through a sequence of scenarios and equivalent mutations to update "the City database".
 
+
 == Data model
 
 Consider the following data model graph:
 
-image::relationships/2-relationships-to-itself.png[title="Model of a Person node connected to Person nodes through KNOWS and HAS_FRIEND relationships."]
+image::relationships/2-relationships-to-itself.png[title="Model of a Person node connected to Person nodes through KNOWS and HAS_FRIEND relationships"]
 
+[[writing-type-defs]]
 == Writing type definitions
 
-Define the nodes and relationships as described in the xref:relationships/index.adoc[relationships page], making sure to include the relationship properties if needed.
+Define the nodes and relationships as described in the xref:relationships/index.adoc[relationships page] and make sure to include the relationship properties as needed.
 
-.Defining the Person node with two relationship types, KNOWS and HAS_FRIEND, to the same Person type
+.Defining the Person node with two relationship types, `KNOWS` and `HAS_FRIEND`
 [source, graphql, indent=0]
 ----
 type Person @node {
@@ -31,16 +33,18 @@ type Friendship @relationshipProperties {
 }
 ----
 
+
 == Queries
 
+[[query-direction]]
 === `queryDirection`
 
 All relationships have a direction.
-However, when querying them, it is possible to perform undirected queries, that is queries that ignore the value of the relationship direction.
+However, when querying them, it is possible to perform undirected queries, that is, queries that ignore the relationship direction.
 
-To set the this query behavior of a relationship you can use the argument `queryDirection`:
+Use the argument `queryDirection` to control this behavior:
 
-.Updating the KNOWS relationship field with the `queryDirection` argument
+.Updating the `KNOWS` relationship field with the `queryDirection` argument
 [source, graphql, indent=0]
 ----
 type Person @node {
@@ -55,17 +59,17 @@ type Person @node {
 * `DIRECTED`: only directed queries can be performed on this relationship. This is the default value.
 * `UNDIRECTED`: only undirected queries can be performed on this relationship.
 
+
 === Fetching your data
 
 Consider the following sample data in the database:
 
-image::relationships/data/Person-to-Person-2-relationships.png[title="Two Person nodes connected through KNOWS and HAS_FRIEND relationships. Both relationships have a direction."]
+image::relationships/data/Person-to-Person-2-relationships.png[title="Two Person nodes connected through KNOWS and HAS_FRIEND relationships"]
 
-As shown in the image above, the relationship has to have a direction in the database. This does not mean that the direction has to be taken into account when querying the relationship, as this is determined by the `queryDirection` argument of the `@relationship` directive.
+Using the updated type definition from <<query-direction>>, notice the difference in the response when querying for both relationship fields:
+`friends` takes into account the direction of the `HAS_FRIEND` relationship while `acquaintances` ignores the direction of the `KNOWS` relationship and returns all related nodes.
 
-Notice the difference in the response when querying for both relationship fields: where `friends` takes into account the direction of the `HAS_FRIEND` relationship, `acquaintances` ignores the direction of the `KNOWS` relationship and returns all related nodes regardless of the direction of the relationship in the database.
-
-.Get Person nodes with related nodes: friends applies only from Alice to Bob, while acquaintances applies both from Alice to Bob and from Bob to Alice
+.`friends` only applies from Alice to Bob, while `acquaintances` applies in both directions
 ====
 [source, graphql, indent=0]
 ----
@@ -103,9 +107,9 @@ query {
 ----
 ====
 
-For Alice to be returned in Bob's _friends_ list, another relationship of type HAS_FRIEND, directed from Bob to Alice, must exit in the database.
+For Alice to be returned in Bob's `friends` list, another relationship of type HAS_FRIEND, directed from Bob to Alice, must exit in the database.
 
-.Directed relationship has to exist in each direction in order for the relationship to be traversable from both sides, while undirected relationship only has to exist in whichever direction
+.Using Cypher to add the missing `HAS_FRIEND` relationship from Bob to Alice
 ====
 
 Setup: 
@@ -115,7 +119,9 @@ MATCH (alice:Person {name: "Alice"})
 MATCH (bob:Person {name: "Bob"})
 MERGE (bob)-[:HAS_FRIEND]->(alice)
 ----
+
 Running the same query again now returns Alice in Bob's _friends_ list:
+
 [source, json, indent=0]
 ----
 {
@@ -135,12 +141,16 @@ Running the same query again now returns Alice in Bob's _friends_ list:
     }
 }
 ----
+
+In order to be traversable from both sides, directed relationships have to exist in each direction, while undirected relationships only have to exist in one direction.
 ====
+
 
 === Fetching your data using a connection query 
 
 The GraphQL library can generate connection fields for relationship fields, which allow you to query for relationship properties and other metadata about the relationship. 
-These fields are compliant with the Relay-style Connection specification.
+These fields are compliant with the Relay-style connection specification.
+// the above could use a link
 
 The query in the following example requests the same data as above but using the connection fields for both relationships. 
 
@@ -186,10 +196,10 @@ The `@relationship` directive is a reference to Neo4j relationships, whereas whe
 
 == Mutations
 
-The top level operations always refer to nodes inside the database. 
-For the type definitions described above, containing only the `Person` type, the generated top level operations will be:
+The top level operations refer to nodes in the database. 
+For the type definitions in <<writing-type-defs>>, the generated top level operations are:
 
-.The generated mutation fields (top level operations)
+.Generated mutation fields (top level operations)
 [source, graphql, indent=0]
 ----
 createPeople(input: [PersonCreateInput!]!)!: CreatePeopleMutationResponse!
@@ -197,20 +207,20 @@ updatePeople(where: PersonWhere!, update: PersonUpdateInput!)!: UpdatePeopleMuta
 deletePeople(where: PersonWhere!, delete: PersonDeleteInput!)!: DeleteInfo!
 ----
 
-As arguments to the top level operations, the Neo4j GraphQL Library generates a set of nested operations manage the relationships between the nodes in the database. 
+As arguments to the top level operations, the Neo4j GraphQL Library generates a set of nested operations which manage the relationships between the nodes in the database. 
 
 [NOTE]
 ====
 *Terminology*
 
 * The target of the top level operation becomes the "source node" of the relationship. 
-* Through the nested operations, the created/ traversed relationships have the top level matched node as the source node.
+* Through the nested operations, the created or traversed relationships have the top level matched node as the source node.
 * The nodes on the other side of the relationship are called the "target nodes". 
-* The nested operations allow CRUD operations of the target nodes, as well as of the relationships between the source node and the target nodes.
+* The nested operations allow CRUD operations for the target nodes and for the relationships between the source node and the target nodes.
 * Creation and deletion of nodes use the nomenclature "create" and "delete", while creation and deletion of relationships use the nomenclature "connect" and "disconnect".
 ====
 
-Through the nested operations, you can create, update or delete the target nodes, as well as relationships between the source and target nodes:
+The nested operations are:
 
 * The `create` operation creates the target node, together with the relationship between the source and target nodes in the same operation.
 * The `connect` operation only creates the relationship between the source node and target nodes that already exist in the database.
@@ -220,10 +230,10 @@ Through the nested operations, you can create, update or delete the target nodes
  
 Each of the top level operations support their own set of nested operations:
 
-.Generated input types of top level operations, focusing on nested operations for relationship HAS_FRIEND
+.Generated input types of top level operations, focusing on nested operations for relationship `HAS_FRIEND`
 [source, graphql, indent=0]
 ----
-# Top level Create operation supports nested: 
+# Top level create operation supports nested: 
 # * create 
 # * connect
 input PersonCreateInput {
@@ -235,7 +245,7 @@ input PersonFriendsFieldInput {
     create : [PersonFriendsCreateFieldInput!]
 }
 
-# Top level Update operation supports nested:
+# Top level update operation supports nested:
 # * create 
 # * connect
 # * update 
@@ -253,7 +263,7 @@ input PersonFriendsUpdateFieldInput {
     update : PersonFriendsUpdateConnectionInput
 }
 
-# Top level Delete operation supports nested:
+# Top level delete operation supports nested:
 # * delete
 input PersonDeleteInput {
     # ...other fields
@@ -264,14 +274,11 @@ input PersonFriendsDeleteFieldInput {
 }
 ----
 
+=== Create and connect
 
-This section further illustrates the different operations and combinations between them through a sequence of scenarios and equivalent mutations to update the city database.
-
-=== Create and Connect
-
-*_Scenario:_* 
-_Bob goes to a party where he meets Charlie and Dave.
-When asked, Charlie says he considers Bob to be a friend, but Dave spoke too little so he is just an acquaintance for now._
+Consider the following scenario:
+Bob goes to a party where he meets Charlie and Dave.
+When asked, Charlie says he considers Bob to be a friend, but Dave spoke too little so he is just an acquaintance for now.
 
 Charlie is not in the database so the `Person` node needs to be created. 
 This indicates that the `create` top level operation can be used.
@@ -305,9 +312,8 @@ mutation {
 ----
 ====
 
-
-*_Scenario:_* 
-_Bob shares Charlie's sentiment and also considers him a friend while Dave is an acquaintance._
+Consider the following:
+Bob shares Charlie's sentiment and also considers him a friend while Dave is an acquaintance.
 
 Bob's node exists in the database so his node has to be updated to reflect these new relationships. 
 This indicates a use case for the top-level `update` operation.
@@ -342,18 +348,20 @@ mutation {
 ----
 ====
 
+
 === Update
 
-*_Scenario:_* 
-_Bob and Camilla are getting married and changing their last names to B._
+Consider the following scenario:
+Bob and Camilla are getting married and changing their last names to B.
 
 Both nodes already exist in the database, indicating a use case for the top level `update` operation.
 
-Since their nodes are related through the _friends_ relationship, you can perform both changes in the same mutation starting with a top level update operation.
+Since their nodes are related through the `friends` relationship, you can perform both changes in the same mutation starting with a top level update operation.
 
 [NOTE]
 ====
-*Caveat*: the database only contains one _friends_ relationship, directed from Bob to Camilla. This means that the top level update operation has to be performed on Bob's node, as Camilla's node does not meet the filter criteria for the nested update operation.
+*Caveat*: the database only contains one `friends` relationship, directed from Bob to Camilla.
+This means that the top level update operation has to be performed on Bob's node, as Camilla's node does not meet the filter criteria for the nested update operation.
 
 Read along the xref:#querydirection-and-mutations[`queryDirection` and mutations] section to understand how the `queryDirection` argument of the `@relationship` directive affects this caveat.
 ====
@@ -392,20 +400,20 @@ mutation {
 ----
 ====
 
-=== Delete and Disconnect
+
+=== Delete and disconnect
+
+Consider the following scenario:
+Alice notified everyone at the party that she moving away. 
+Bob did not like how Charlie behaved at hearing the news and wants to cut ties with him.
 
 
-*_Scenario:_* 
-_Alice notified everyone at the party that she moving away. 
-Bob did not like how Charlie behaved at hearing the news and wants to cut ties with him._
+Alice's node must be deleted from the database, indicating a use case for the top level `delete` operation.
 
-
-Alice's node needs to be deleted from the database, indicating a use case for the top level `delete` operation.
-
-However both actions of the scenario have Bob in common, so a valid alternative is a top level `update` operation on Bob's node with nested operations to perform the correct changes on Alice and Charlie nodes. 
+However, both actions of the scenario have Bob in common, so a valid alternative is a top level `update` operation on Bob's node with nested operations to perform the correct changes on Alice and Charlie nodes. 
 
 Note that this is only possible because Bob has relationships to both.
-There has to be a relationship of type `HAS_FRIEND` from Bob to Alice in order for the node Alice to meet the filter criteria for the nested delete operation, and the same for Charlie and the nested disconnect operation.
+There must be a relationship of type `HAS_FRIEND` from Bob to Alice in order for the node Alice to meet the filter criteria for the nested delete operation, and the same for Charlie and the nested disconnect operation.
 
 .Top level update with nested disconnect and delete operations
 ====
@@ -437,17 +445,18 @@ mutation {
 ----
 ====
 
-
-*_Scenario:_* 
-_Bob and Camilla are moving away together._
+Consider also:
+Bob and Camilla are moving away together.
 
 Both nodes need to be deleted, together with all relationships connected to them, indicating a use case for the top level `delete` operation.
 
-Since the nodes are related through the _friends_ relationship, both deletions can be performed in the same mutation starting with a delete operation.
+Since the nodes are related through the `friends` relationship, both deletions can be performed in the same mutation starting with a delete operation.
 
-Just like the Update section above, there is a caveat: the database only contains one _friends_ relationship, directed from Bob to Camilla. This means that the top level delete operation has to be performed on Bob's node, as Camilla's node does not meet the filter criteria for the nested delete operation.
+Similar to the <<_update>> section, there is a caveat:
+the database only contains one `friends` relationship, from Bob to Camilla.
+This means that the top level delete operation must be performed on Bob's node, as Camilla's node does not meet the filter criteria for the nested delete operation.
 
-Let's explore the outcome of running the same mutation in both directions:
+Here's the outcome of running the same mutation in both directions:
 
 .Top level delete with nested delete operation matching 0 relationships
 ====
@@ -472,7 +481,7 @@ mutation {
   }
 }
 ----
-The result of this query is the deletion of Camilla node and the relationship between Bob and Camilla:
+This results in the deletion of Camilla node and the relationship between Bob and Camilla:
 [source, json, indent=0]
 ----
 {
@@ -486,7 +495,8 @@ The result of this query is the deletion of Camilla node and the relationship be
 ----
 ====
 
-.Top level delete with nested delete operation matching correct node
+[[top-level-delete-directed]]
+.Top level delete with nested delete operation matching the correct node
 ====
 [source, graphql, indent=0]
 ----
@@ -509,7 +519,9 @@ mutation {
   }
 }
 ----
-The result of this query is the deletion of both Bob and Camilla nodes and the relationship between them:
+
+This results in the deletion of both Bob's and Camilla's nodes and the relationship between them:
+
 [source, json, indent=0]
 ----
 {
@@ -525,6 +537,7 @@ The result of this query is the deletion of both Bob and Camilla nodes and the r
 
 Read along the xref:#querydirection-and-mutations[`queryDirection` and mutations] section to understand how the `queryDirection` argument of the `@relationship` directive affects the outcome of these mutations.
 
+
 [[querydirection-and-mutations]]
 === `queryDirection` and mutations
 
@@ -534,12 +547,12 @@ In terms of GraphQL operations this means that both queries and mutations are af
 
 [NOTE]
 ====
-When performing mutations, the nodes and relationships specified in the mutation input have to first be queried from the database.
+When performing mutations, the nodes and relationships specified in the mutation input must be queried from the database first.
 
-It is at this stage where the `queryDirection` argument is relevant, as it determines whether the relationships between the matched nodes and their related nodes are taken into account in a directed way or not for the execution of the mutation.
+That is when the `queryDirection` argument is relevant, as it determines whether the relationships between the matched nodes and their related nodes are taken into account in a directed or undirected fashion for the execution of the mutation.
 ====
 
-Reiterating the example above changing the _friends_ relationship from Bob to Camilla to an _acquaintances_ relationship, would change the outcome of the mutation as follows:
+For a similar mutation to <<top-level-delete-directed>> but with an `acquaintances` instead of `friends` relationship from Bob to Camilla, the outcome changes as follows:
 
 .Top level delete with nested delete operation on an undirected relationship
 ====
@@ -572,7 +585,9 @@ mutation {
   }
 }
 ----
-The result of this query is the deletion of both Bob and Camilla node and the relationship between them:
+
+This results the deletion of both Bob's and Camilla's node and the relationship between them:
+
 [source, json, indent=0]
 ----
 {

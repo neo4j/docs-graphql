@@ -9,8 +9,8 @@ Impersonation and user switching are features of the Neo4j database and driver w
 Impersonation still authenticates with the database as the original configured user, but runs the query in the context of an impersonated user.
 When impersonating a user, the query is run within the complete security context of the impersonated user and not the authenticated user (home database, permissions etc).
 
-Consider the following an example of how to impersonate a different user per request.
-Here the user to impersonate is taken from an HTTP header `User`:
+The following example showcases how to impersonate a different user per request.
+The user to impersonate is taken from an HTTP header `User`:
 
 [.tabbed-example]
 ====
@@ -108,7 +108,9 @@ console.log(`🚀  Server ready at: ${url}`);
 
 User switching completely switches the user authenticating with the database for the given session, without the performance cost of instantiating an entire new driver instance.
 
-An example of configuring user switching on a per request basis can be found in the example below. Note that the username and password are provided in HTTP headers `User` and `Password`, but this would not be recommended for production use:
+The example below showcases the configuration of user switching on a per request basis.
+Note that the username and password are provided via the HTTP headers `User` and `Password`.
+This is not recommended for production use.
 
 [.tabbed-example]
 ====

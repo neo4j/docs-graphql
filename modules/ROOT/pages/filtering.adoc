@@ -372,7 +372,7 @@ The query returns all movies which have "Action" as one of their genres.
 == Interface filtering
 
 You can use the `typename` filter to filter interfaces.
-Refer to xref:relationships/interfaces.adoc#_filtering_for_specific_implementations_of_the_interface[Relationships -> Interfaces] for more details and an example.
+Refer to xref:relationships/interfaces.adoc#_filtering_for_specific_implementations_of_an_interface[Relationships -> Interfaces] for more details and an example.
 
 == Relationship filtering
 

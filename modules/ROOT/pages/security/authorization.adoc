@@ -2,7 +2,7 @@
 :description: This page describes how to set up authorization features in the Neo4j GraphQL Library.
 = Authorization
 
-Authorization rules cover what specific data a generated Cypher query is allowed to access.
+Authorization rules determine which data is accessible by generated Cypher queries.
 They use predicates to evaluate the data accessed by the Cypher generated from a GraphQL query, thus allowing or disallowing execution within the context of nodes and their properties.
 
 All authorization rules have an implied requirement for authentication, given that the rules are normally evaluated against values in the JWT payload.
@@ -10,11 +10,12 @@ All authorization rules have an implied requirement for authentication, given th
 In the case of explicit authentication, configured using the xref::/security/securing-a-graphql-api.adoc#_authentication[`@authentication`] directive, it is only evaluated during Cypher translation time.
 Unauthenticated requests with queries requiring authentication never reach the database.
 
-[WARNING]
+[NOTE]
 ====
 The `@authorization` directive does not apply to subscriptions, it only applies to queries and mutations.
 Instead, use xref::/security/subscriptions-authorization.adoc[`@subscriptionsAuthorization`] to configure the authorization for subscriptions if you intend to use subscriptions in your API and want the events protected.
 ====
+
 
 == Filtering rules
 
@@ -43,9 +44,10 @@ type Post @node @authorization(filter: [
 }
 ----
 
+
 === Operations
 
-Filtering can be configured to only be performed on certain operations:
+You can configure filtering to only be performed on certain operations:
 
 * `READ`
 * `AGGREGATE`
@@ -95,9 +97,10 @@ type User @node @authorization(validate: [
 }
 ----
 
+
 === Operations
 
-Validation can be configured to only be performed on certain operations:
+You can configure validation to only be performed on certain operations:
 
 * `READ`
 * `AGGREGATE`
@@ -128,15 +131,16 @@ type Post @node @authorization(validate: [
 In case there is no `operations` argument with a list of operations, the GraphQL Library treats the authorization configuration as if the full list of operations had been provided.
 ====
 
+
 === When
 
-Validation can be configured to only be performed before or after an operation is executed. 
-This is done using the `when` argument which accepts an array of the following values:
+You can configure validation to only be performed before or after an operation is executed. 
+Use the `when` argument which accepts an array of the following values:
 
 * `BEFORE`
 * `AFTER`
 
-Additionally, some operations only support validation either before or after them, which is summarised in this table:
+Additionally, some operations only support validation either before or after them, which is summarized in this table:
 
 [cols="2,5"]
 |===
@@ -166,7 +170,7 @@ Additionally, some operations only support validation either before or after the
 |===
 
 As an example, let's say you want someone to be able to update a post.
-If you want to check that after the update the author of the post is still the current user,  do the following:
+If you want to check that after the update the author of the post is still the current user, do the following:
 
 [source, graphql, indent=0]
 ----
@@ -179,32 +183,33 @@ type Post @node @authorization(validate: [
 }
 ----
 
+
 === A note on CREATE_RELATIONSHIP and DELETE_RELATIONSHIP
 
 Creating or deleting a relationship affects both ends of the relationship.
 This means that the `CREATE_RELATIONSHIP` and `DELETE_RELATIONSHIP` validation rules apply to both the source and the target node.
 Note that for `CREATE_RELATIONSHIP` only the `AFTER` validation applies for the source node.
 
-For example, consider a `Post` type and a `User` type both with CREATE_RELATIONSHIP validation rules for BEFORE and AFTER:
+For example, consider a `Post` type and a `User` type both with `CREATE_RELATIONSHIP` validation rules for `BEFORE` and `AFTER`:
+
 * Only an existing author of the post can add another co-author. 
 * Only a user which is not locked can be added as an author to a post.
-* 
 
-The rules for each type can be combined into one but we are separating them here for clarity:
+The rules for each type can be combined into one but the following example separates them for clarity:
 
 [source, graphql, indent=0]
 ----
 type Post @node @authorization(validate: [
-    { operations: [CREATE_RELATIONSHIP], when: [BEFORE], where: { node: { authors: { some: { id: { eq: "$jwt.sub" } } } } } }  <1>
-    { operations: [CREATE_RELATIONSHIP], when: [AFTER], where: { node: { authors: { some: { id: { eq: "$jwt.sub" } } } } } }   <2>
+    { operations: [CREATE_RELATIONSHIP], when: [BEFORE], where: { node: { authors: { some: { id: { eq: "$jwt.sub" } } } } } } <1>
+    { operations: [CREATE_RELATIONSHIP], when: [AFTER], where: { node: { authors: { some: { id: { eq: "$jwt.sub" } } } } } }  <2>
 ]) {
     title: String!
     content: String!
     authors: [User!]! @relationship(type: "AUTHORED", direction: IN)
 }
 type User @node @authorization(validate: [
-    { operations: [CREATE_RELATIONSHIP], when: [BEFORE], where: { node: { locked: { eq: false } } } }               <3>
-    { operations: [CREATE_RELATIONSHIP], when: [AFTER], where: { node: { locked: { eq: false } } } }                <4>
+    { operations: [CREATE_RELATIONSHIP], when: [BEFORE], where: { node: { locked: { eq: false } } } } <3>
+    { operations: [CREATE_RELATIONSHIP], when: [AFTER], where: { node: { locked: { eq: false } } } }  <4>
 ]) {
     id: ID!
     locked: Boolean!
@@ -230,11 +235,13 @@ mutation {
 }
 ----
 
-Rule 1 isn't applied because the relationship has not been created yet, so there is no author of the post to check the ID of.
+Rule 1 isn't applied because the relationship has not been created yet, so there is no author ID to be checked for the post.
+
 
 == Authorization on fields 
 
-The `@authorization` directive can be used either on object types or their fields, with the former being used in examples for the most part on this page.
+You can use the `@authorization` directive either on object types or their fields.
+Most examples on this page showcase authorization on object ypes.
 When applied to a field, the authorization rules are only evaluated if the matching operations are performed on that field.
 For example, consider a `User` type with a `password` field:
 
@@ -270,8 +277,8 @@ However, consider the following query:
 }
 ----
 
-This will require a valid JWT to have been provided with the request, and the matching users will be filtered down according to the JWT subject.
-The same applies for attempting to update the `password` field, the update will only apply to the user matching the JWT.
+The query requires a valid JWT to have been provided with the request, and the matching users are filtered down according to the JWT subject.
+The same applies for attempting to update the `password` field, the update only applies to the user matching the JWT.
 
 [WARNING]
 ====
@@ -310,10 +317,11 @@ type User @node {
 
 == Authorization without authentication
 
-Authentication is implicitly required for every authorization check by default, but this can be disabled on a per-rule basis.
-This could be the case, for instance, when a node has a property which flags whether the node should be public or not.
+Authentication is implicitly required for every authorization check by default.
+You can disable this behavior on a per-rule basis.
+This can be desirable, for instance, when a node has a property which flags whether the node should be public or not.
 
-For instance, in the case where some `Post` nodes are private and belong to a particular `User`, while other `Post` nodes are public and readable by any user, here is how to set this up:
+In the case where some `Post` nodes are private and belong to a particular `User`, while other `Post` nodes are public and readable by any user, here is how to set this up:
 
 [source, graphql, indent=0]
 ----
@@ -335,12 +343,13 @@ type Post @node @authorization(filter: [
 }
 ----
 
+
 == Ordering of rules
 
 In each ruleset (`filter` and `validate`), rules are joined with an `OR`.
 The two rulesets are joined with an `AND`.
 
-For example, the following would allow for the update of a `User` node if the JWT roles claim includes `admin` _or_ if the `locked` property on the node is `false`:
+For example, the following allows for the update of a `User` node if the JWT roles claim includes `admin` _or_ if the `locked` property on the node is `false`:
 
 [source, graphql, indent=0]
 ----
