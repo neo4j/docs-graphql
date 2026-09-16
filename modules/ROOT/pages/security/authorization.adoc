@@ -237,8 +237,57 @@ mutation {
 
 Rule 1 isn't applied because the relationship has not been created yet, so there is no author ID to be checked for the post.
 
+=== Relationship property updates
 
-== Authorization on fields 
+[WARNING]
+====
+There is no `UPDATE_RELATIONSHIP` authorization operation, which means that `@authorization` *does not* protect mutations that update only relationship properties.
+
+For example, with the following typeDefs:
+
+[source, graphql, indent=0]
+----
+type JWTPayload @jwt {
+    sub: String
+}
+
+type Movie @node {
+    title: String
+    ownerId: String
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
+}
+
+type Actor @node {
+    name: String
+}
+
+type ActedIn @relationshipProperties {
+    role: String
+}
+
+extend type Movie @authorization(filter: [{ where: { node: { ownerId: { eq: "$jwt.sub" } } } }])
+----
+
+When executing the following query, an unauthorized user is able to update relationship properties:
+
+[source, graphql, indent=0]
+----
+mutation {
+  updateMovies(
+    where: { title: { eq: "VictimMovie" } }
+    update: {
+      actors: [{
+        update: { where: { node: { name: { eq: "Keanu" } } }, edge: { role: { set: "attacker-controlled-role" } } }
+      }]
+    }
+  ) {
+    info { relationshipsCreated }
+  }
+}
+----
+====
+
+== Authorization on fields
 
 You can use the `@authorization` directive either on object types or their fields.
 Most examples on this page showcase authorization on object ypes.
