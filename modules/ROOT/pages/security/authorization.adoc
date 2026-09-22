@@ -285,6 +285,33 @@ mutation {
   }
 }
 ----
+
+For this reason it's advised to avoid storing sensitive data in relationship
+properties. You can also prevent updating relationship properties with the @settable directive:
+
+[source, graphql, indent=0]
+----
+type JWTPayload @jwt {
+    sub: String
+}
+
+type Movie @node {
+    title: String
+    ownerId: String
+    actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN, properties: "ActedIn")
+}
+
+type Actor @node {
+    name: String
+}
+
+type ActedIn @relationshipProperties {
+    role: String @settable(onUpdate: false)
+}
+
+extend type Movie @authorization(filter: [{ where: { node: { ownerId: { eq: "$jwt.sub" } } } }])
+----
+
 ====
 
 == Authorization on fields
