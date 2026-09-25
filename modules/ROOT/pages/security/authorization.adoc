@@ -314,6 +314,41 @@ type User @node {
 
 ====
 
+[WARNING]
+====
+Field-level `@authorization` `filter` rules only apply when the field is read (`READ` and `AGGREGATE` operations).
+They do not restrict which nodes a mutation is allowed to match, even if `UPDATE`, `DELETE`, `CREATE_RELATIONSHIP`, or `DELETE_RELATIONSHIP` are listed in the `operations` argument.
+
+For example, given the type definition below, a user can only read the `email` field on their own node:
+
+[source, graphql, indent=0]
+----
+type JWT @jwt {
+    sub: String
+}
+
+type User @node {
+    id: ID
+    email: String @authorization(filter: [{ where: { node: { id: { eq: "$jwt.sub" } } } }])
+}
+----
+
+However, the same rule does *not* stop a user from updating the `email` field on every `User` node:
+
+[source, graphql, indent=0]
+----
+mutation {
+    updateUsers(update: { email: { set: "new@example.com" } }) {
+        users {
+            id
+        }
+    }
+}
+----
+
+To restrict which nodes a mutation is allowed to match and update, apply the `@authorization` filter rule to the type instead of the field.
+====
+
 
 == Authorization without authentication
 
