@@ -241,9 +241,7 @@ Rule 1 isn't applied because the relationship has not been created yet, so there
 
 [WARNING]
 ====
-There is no `UPDATE_RELATIONSHIP` authorization operation, which means that `@authorization` *does not* protect mutations that update only relationship properties.
-
-For example, with the following typeDefs:
+With the following typeDefs:
 
 [source, graphql, indent=0]
 ----
@@ -286,8 +284,11 @@ mutation {
 }
 ----
 
-For this reason it's advised to avoid storing sensitive data in relationship
-properties. You can also prevent updating relationship properties with the @settable directive:
+There's no `UPDATE_RELATIONSHIP` authorization operation, so `@authorization` *does not* protect mutations that update only relationship properties.
+
+You should avoid storing sensitive data in relationship properties.
+
+You can also prevent a relationship property being updated with the `@settable` directive:
 
 [source, graphql, indent=0]
 ----
