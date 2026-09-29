@@ -2,6 +2,13 @@
 :description: This section describes how to use the OGM functionality in Neo4j GraphQL.
 = OGM
 
+[NOTE]
+====
+The OGM is discontinued with version 6.0.0 of the GraphQL Library. Version 5 (LTS) is the last version to feature the OGM.
+
+The xref:directives/custom-logic/#_cypher[`@cypher`] and xref:directives/custom-logic/#_customresolver[`@customResolver`] directives offer an alternative in terms of functionality.
+====
+
 Most applications don't only expose a single GraphQL API -- there may also be scheduled jobs, authentication, and migrations keeping an application on.
 The OGM (Object Graph Mapper) can be used to programmatically interact with your Neo4j GraphQL API, so you can achieve these goals.
 
