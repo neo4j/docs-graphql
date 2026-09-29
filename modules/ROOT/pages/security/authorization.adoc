@@ -239,9 +239,8 @@ Rule 1 isn't applied because the relationship has not been created yet, so there
 
 === Relationship property updates
 
-[WARNING]
-====
-With the following typeDefs:
+
+Consider the following type definitions:
 
 [source, graphql, indent=0]
 ----
@@ -266,6 +265,8 @@ type ActedIn @relationshipProperties {
 extend type Movie @authorization(filter: [{ where: { node: { ownerId: { eq: "$jwt.sub" } } } }])
 ----
 
+[WARNING]
+====
 When executing the following query, an unauthorized user is able to update relationship properties:
 
 [source, graphql, indent=0]
@@ -283,12 +284,13 @@ mutation {
   }
 }
 ----
+====
 
 There's no `UPDATE_RELATIONSHIP` authorization operation, so `@authorization` *does not* protect mutations that update only relationship properties.
 
-You should avoid storing sensitive data in relationship properties.
+Avoid storing sensitive data in relationship properties.
 
-You can also prevent a relationship property being updated with the `@settable` directive:
+You can prevent a relationship property being updated with the `@settable` directive:
 
 [source, graphql, indent=0]
 ----
@@ -312,8 +314,6 @@ type ActedIn @relationshipProperties {
 
 extend type Movie @authorization(filter: [{ where: { node: { ownerId: { eq: "$jwt.sub" } } } }])
 ----
-
-====
 
 == Authorization on fields
 
