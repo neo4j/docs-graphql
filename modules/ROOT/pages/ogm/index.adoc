@@ -6,7 +6,7 @@
 ====
 The OGM is discontinued with version 6.0.0 of the GraphQL Library. Version 5 (LTS) is the last version to feature the OGM.
 
-The xref:directives/custom-logic/#_cypher[`@cypher`] and xref:directives/custom-logic/#_customresolver[`@customResolver`] directives offer an alternative in terms of functionality.
+The xref:directives/custom-logic.adoc#_cypher[`@cypher`] and xref:directives/custom-logic.adoc#_customresolver[`@customResolver`] directives offer an alternative in terms of functionality.
 ====
 
 Most applications don't only expose a single GraphQL API -- there may also be scheduled jobs, authentication, and migrations keeping an application on.
