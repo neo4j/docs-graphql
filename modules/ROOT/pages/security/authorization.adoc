@@ -424,7 +424,22 @@ mutation {
 ----
 ====
 
-To restrict which nodes a mutation is allowed to match and update, apply the `@authorization` filter rule to the type instead of the field.
+To restrict which nodes a mutation is allowed to match and update, apply the `@authorization` filter rule to the type instead of the field:
+
+[source, graphql, indent=0]
+----
+type JWT @jwt {
+    sub: String
+}
+
+type User @node @authorization(filter: [{ operations: [UPDATE], where: { node: { id: { eq: "$jwt.sub" } } } }]) {
+    id: ID
+    email: String
+}
+----
+
+The `updateUsers` mutation above now only matches and updates the `User` node belonging to the current user.
+The type-level rule can be combined with the field-level rule, so that reads of the `email` field remain restricted as well.
 
 
 == Authorization without authentication
