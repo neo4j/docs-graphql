@@ -439,7 +439,8 @@ type User @node @authorization(filter: [{ operations: [UPDATE], where: { node: {
 ----
 
 The `updateUsers` mutation above now only matches and updates the `User` node belonging to the current user.
-The type-level rule can be combined with the field-level rule, so that reads of the `email` field remain restricted as well.
+You can combine the type-level rule with the field-level rule.
+This also restricts reading the `email` field.
 
 
 == Authorization without authentication
